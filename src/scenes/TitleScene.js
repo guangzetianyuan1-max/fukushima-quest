@@ -1,7 +1,7 @@
-import { EPISODES } from '../data/episodes.js?v=77';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=77';
-import { drawScroll, BRUSH_FONT, smooth } from '../ui/scroll.js?v=77';
-import { newGame, load, SAVE_KEY } from '../field/game.js?v=77';
+import { EPISODES } from '../data/episodes.js?v=78';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=78';
+import { drawScroll, BRUSH_FONT, smooth } from '../ui/scroll.js?v=78';
+import { newGame, load, SAVE_KEY } from '../field/game.js?v=78';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ① 開いた時：題と巻物と「▶ さわって はじめる」（音はブラウザの決まりで、まだ出せない）
