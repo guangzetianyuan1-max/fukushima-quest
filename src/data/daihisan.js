@@ -5,7 +5,7 @@
 // ゲームでは、忘れの力でよみがえった大蛇。弱点＝「鉄の釘」。助っ人＝玉都（本人 10/3「戦いの中で琵琶を弾く助っ人」）＝語って弱点が明かされると
 // 琵琶が鳴り、大蛇は聞き入って2回動けない。その後も ときどき琵琶で止める
 // ⚠絵は届くまで仮（武士の絵）。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=81';
+import { BASIC_ITEMS } from './basic_items.js?v=82';
 
 export const DAIHISAN = {
   art: {

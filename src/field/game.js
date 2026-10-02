@@ -1,14 +1,14 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=81';
-import { SOMA_ROWS } from './soma_map.js?v=81';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=81';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=81';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=81';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=81';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=81';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=81';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=81';
+import { IWAKI_ROWS } from './iwaki_map.js?v=82';
+import { SOMA_ROWS } from './soma_map.js?v=82';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=82';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=82';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=82';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=82';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=82';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=82';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=82';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -301,8 +301,8 @@ export function walkStep(game) {
 // 道中の戦いの話のデータ（ボスの話と同じ形にして、戦いの画面を使い回す）
 // 帯ごとの専用の背景（Gemini・2026-10-02。それまではボスの背景を借りていた）
 export const ZONE_BG = { ...Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`])), soma: 'assets/bg_dochu_north.png' };
-// 帯ごとの強さの倍率（1章の相馬は 1.5倍・もらう経験と文も 1.6倍）
-export const ZONE_SCALE = { soma: { stat: 1.5, reward: 1.6 } };
+// 帯ごとの強さの倍率（1章の相馬・HP／攻／守を別々に・もらう経験と文も多め）
+export const ZONE_SCALE = { soma: { hp: 6, atk: 3.4, def: 3, reward: 2.5 } }; // 10/3 試算：1.5倍ではLv6の4人が1ターンで倒した＝この倍率で1戦2〜3ターン・HP約1割減（いわきの道中と同じ手ごたえ）
 export const HARAI = {
   name: '祓いの言葉', cost: 4, power: 14, weakMult: 1, plainMult: 1,
   weakText: '祓いの 言葉が もやを 打った！', plainText: '祓いの 言葉が もやを 打った！',
@@ -316,7 +316,7 @@ export function zakoData(game, zakoId, zone) {
     items: {},
     spells: { harai: HARAI },
     enemy: {
-      id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone]?.stat ?? 1; return { hp: Math.round(z.hp * k), atk: Math.round(z.atk * k), def: Math.round(z.def * k) }; })(), agi: z.agi,
+      id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone] ?? {}; return { hp: Math.round(z.hp * (k.hp ?? 1)), atk: Math.round(z.atk * (k.atk ?? 1)), def: Math.round(z.def * (k.def ?? 1)) }; })(), agi: z.agi,
       rewardRate: ZONE_SCALE[zone]?.reward ?? 1, // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
       weakness: null, noWeak: true, canFlee: true, trick: z.trick ?? null, special: null,
       biteName: z.biteName, introText: z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,
