@@ -22,6 +22,9 @@ export const GUN_MULT = 1.1;
 export const gunHit = (lv = 1) => Math.min(0.85, 0.05 + 0.1 * lv);
 // 昔話の主に、弱点が明かされる前に撃ったときの割合
 export const GUN_UNREVEALED = 0.15;
+// 急所（本人 10/3「1/10の確率で敵の急所にあたり、一発でしとめる」）＝当たったうちの1割で一発。道中の敵だけ
+// ボス（昔話の主）には無い＝語って元に戻す話なので、鉄砲一発で終わらせない
+export const GUN_KYUSHO = 0.1;
 // 投網（釣りの景品）が ぬし（ボス）に かかる見込み。道中の敵には必ず かかる
 export const NET_BOSS = 0.6;
 
@@ -150,6 +153,9 @@ function allyAct(state, a, cmd, data, rng, log) {
     if (!e.noWeak && !e.revealed) {
       d = Math.max(1, Math.round(d * GUN_UNREVEALED));
       log.push({ text: '黒い もやが 玉の 勢いを 呑みこんだ……' });
+    } else if (e.noWeak && rng() < GUN_KYUSHO) {
+      d = e.hp;
+      log.push({ text: '急所に 命中した！ 一発で しとめた！', effect: { kind: 'crit' }, sfx: 'hit' });
     } else {
       log.push({ text: '玉が 命中した！', effect: { kind: 'crit' } });
     }
@@ -289,9 +295,12 @@ function enemyAct(state, rng, log) {
     return;
   }
   if (e.trick && rng() < e.trick.chance && doTrick(state, e, living, rng, log)) return;
-  if (e.special && rng() < e.special.chance) {
-    log.push({ text: `${e.name}の 必殺技！ ${e.special.name}！`, effect: { kind: 'special', flash: e.special.flash }, sfx: e.special.sfx ?? 'flame' });
-    for (const a of living) hurt(a, Math.max(1, Math.round(e.special.power * spread(rng))), log);
+  // 必殺技は2つまで（本人 10/3「4話の龍に必殺技を増やして。全員に大ダメージ」）＝special2 を先に見て、出なければ special
+  // ⚠special2 の無い敵は rng を引く回数が前と同じ（運の並びを変えない）
+  const sp = [e.special2, e.special].find((x) => x && rng() < x.chance);
+  if (sp) {
+    log.push({ text: `${e.name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash }, sfx: sp.sfx ?? 'flame' });
+    for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * spread(rng))), log);
     // 必殺技をくらうと、もやが1つ立ちこめる（最大 max まで・本人 10/1「敵の必殺技をくらうとモヤがかかる」）
     if (e.mist && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive)) {
       e.mistLeft += 1;

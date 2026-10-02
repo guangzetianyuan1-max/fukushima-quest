@@ -2,27 +2,28 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=76';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=76';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=76';
-import { TILE } from '../field/tiles.js?v=76';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=76';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=76';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=76';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=76';
+import { EPISODES } from '../data/episodes.js?v=77';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=77';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=77';
+import { TILE } from '../field/tiles.js?v=77';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=77';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=77';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=77';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=77';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME,
-} from '../field/game.js?v=76';
-import { membersOf } from '../battle/levels.js?v=76';
-import { COMPANIONS } from '../data/companions.js?v=76';
-import { ICON_IDS } from '../data/icons.js?v=76';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=76';
-import { makeRng } from '../battle/rules.js?v=76';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=76';
-import { buyEquip, partyView } from '../field/game.js?v=76';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=76';
+} from '../field/game.js?v=77';
+import { membersOf } from '../battle/levels.js?v=77';
+import { COMPANIONS } from '../data/companions.js?v=77';
+import { ICON_IDS } from '../data/icons.js?v=77';
+import { FACE_IDS } from '../data/faces.js?v=77';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=77';
+import { makeRng } from '../battle/rules.js?v=77';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=77';
+import { buyEquip, partyView } from '../field/game.js?v=77';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=77';
 
 const W = 360;
 const MAP_H = 420; // 地図の見える高さ
@@ -79,7 +80,7 @@ export class FieldScene extends Phaser.Scene {
     if (!this.textures.exists('bg_fishing')) this.load.image('bg_fishing', 'assets/bg_fishing.png'); // 小名浜の釣り場（Gemini・夕焼けと灯台と桟橋）
     // 一枚絵（町の入口・章の地図＝Gemini 4組目・art_src/prep_cards.py）
     for (const k of ['town_taira', 'town_yumoto', 'town_onahama', 'map']) if (!this.textures.exists(`card_${k}`)) this.load.image(`card_${k}`, `assets/cards/${k}.png`);
-    for (const f of ['normal', 'surprise', 'sad']) if (!this.textures.exists(`face_${f}`)) this.load.image(`face_${f}`, `assets/cards/face_${f}.png`);
+    for (const f of ['normal', 'surprise', 'sad', ...FACE_IDS]) if (!this.textures.exists(`face_${f}`)) this.load.image(`face_${f}`, `assets/cards/face_${f}.png`);
   }
 
   create() {
@@ -401,7 +402,8 @@ export class FieldScene extends Phaser.Scene {
       }
       const m = list[i++];
       this.dlgSpeaker.setText(m.speaker ?? '');
-      this.setFace(m.speaker?.startsWith('しおり') ? m.face ?? 'normal' : null);
+      // 顔：しおりは表情（m.face）・ほかの仲間は m.face に その人の id（顔絵が届いていれば）
+      this.setFace(m.speaker?.startsWith('しおり') ? m.face ?? 'normal' : m.face && this.textures.exists(`face_${m.face}`) ? m.face : null);
       // 窓（▼の上 y 約600）に収まらなければ、残りを次のページに回す
       const pages = paginate(this.dlgText, m.text, 600);
       list.splice(i, 0, ...pages.slice(1).map((text) => ({ speaker: m.speaker, face: m.face, text })));
@@ -969,7 +971,36 @@ export class FieldScene extends Phaser.Scene {
       ['道具を 使う', () => this.foodMenu()],
       ['そうびを 見る', () => this.showGear()],
       ['ちずを 見る', () => this.showMap()],
+      ['セーブして 終わる', () => this.saveAndQuit()],
       ['とじる', () => this.closeDialog()],
+    ]);
+  }
+
+  // どうぐ → セーブして終わる（本人 10/3「通常画面→道具→セーブしてゲームを終了する」）＝その場で記録 → 題の画面へ（題から「つづきから」）
+  saveAndQuit() {
+    this.showMenu('旅を 記録して、ゲームを 終わりますか？', [
+      ['はい', () => {
+        const { game, text } = save(this.g);
+        this.setGame(game);
+        let stored = false;
+        try {
+          localStorage.setItem(SAVE_KEY, text);
+          stored = true;
+        } catch {
+          // 端末の決まりで残せないときは、終わらずに知らせる（記録が消えるのを防ぐ）
+        }
+        sfx('reveal');
+        if (!stored) {
+          this.showMessages([{ text: '（この 端末では 記録が 残せない ようだ……）' }]);
+          return;
+        }
+        this.showMessages([{ text: '旅の 記録を 残した。' }, { speaker: 'しおり', text: 'おつかれさま。また 続きを 語りましょうね。' }], () => {
+          this.closeDialog();
+          this.cameras.main.fadeOut(600, 0, 0, 0);
+          this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('title'));
+        });
+      }],
+      ['いいえ', () => this.closeDialog()],
     ]);
   }
 
@@ -977,7 +1008,8 @@ export class FieldScene extends Phaser.Scene {
 
   showGear() {
     const lines = partyView(this.g).map((p) => ({
-      speaker: `${NAMES[p.id]}　Lv ${this.g.lv ?? 1}`,
+      speaker: `${NAMES[p.id]}　Lv ${p.lv}`, // 仲間ごとのレベル（10/3〜 加わった味方は低めから）
+      face: p.id === 'shiori' ? 'normal' : p.id, // 本人 10/3「しおり以外顔が無い。みんな顔をつけて」
       text: [`攻 ${p.atk}　守 ${p.def}　速 ${p.agi}`, ...SLOTS.map((s) => `${SLOT_NAME[s]}：${p.gear[s] ? EQUIP[p.gear[s]].name : 'なし'}`)].join('\n'),
     }));
     this.showMessages(lines);

@@ -1,13 +1,13 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=76';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=76';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=76';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=76';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=76';
-import { statsAt, levelFor, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=76';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=76';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=76';
+import { IWAKI_ROWS } from './iwaki_map.js?v=77';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=77';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=77';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=77';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=77';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=77';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=77';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=77';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -17,7 +17,15 @@ export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan' };
 
 // 仲間の強さ＝レベルで決まる（src/battle/levels.js）。PARTY_BASE はレベル1の強さ
 export const PARTY_BASE = Object.fromEntries(ALL_IDS.map((id) => [id, statsAt(id, 1)]));
-export const maxOf = (game, id) => statsAt(id, game.lv ?? 1);
+// 仲間ごとのレベル（本人 10/3「合流メンバーが初めの2人といきなり同じLvはおかしい」）
+// 始めの2人＝game.lv（経験 game.exp を2人で持つ）。昔話の味方＝自分の経験 game.expOf[id]（加わると JOIN_LV_BELOW 下のレベルの経験から）
+// 経験は同じだけ入るので、レベルの段差（10・20・30…）が広がるぶん、加わった味方は少しずつ追いつく
+export const JOIN_LV_BELOW = 2;
+export function lvOf(game, id) {
+  if (PARTY_IDS.includes(id) || game?.expOf?.[id] == null) return game?.lv ?? 1; // 前の記録には expOf が無い＝今のレベルのまま
+  return levelFor(game.expOf[id]);
+}
+export const maxOf = (game, id) => statsAt(id, lvOf(game, id));
 
 function findChar(rows, ch) {
   for (let y = 0; y < rows.length; y++) {
@@ -167,7 +175,7 @@ export function battleData(game, ep) {
   const joined = membersOf(game).filter((id) => COMPANIONS[id] && !ep.allies.some((a) => a.id === id))
     .map((id) => ({ id, name: COMPANIONS[id].name, spells: COMPANIONS[id].spells, gun: !!COMPANIONS[id].gun }));
   const allies = [...ep.allies, ...joined].map((a) => {
-    const m = statsWithGear(a.id, game.lv ?? 1, game.equip ?? START_EQUIP);
+    const m = statsWithGear(a.id, lvOf(game, a.id), game.equip ?? START_EQUIP);
     const p = game.party[a.id] ?? {};
     // 力つきて幽霊の仲間は戦いに出ない（alive:false・HP 0）
     if (p.dead) return { ...a, ...m, maxHp: m.hp, maxMp: m.mp, hp: 0, mp: p.mp ?? 0, alive: false };
@@ -213,25 +221,28 @@ export function afterZako(game, zakoId, state) {
   if (state.over !== 'win') return { game: g, lines };
   const z = ZAKO[zakoId];
   const mon = z.mon * MON_RATE;
-  g = { ...g, exp: (g.exp ?? 0) + z.exp, mon: g.mon + mon };
+  const before = Object.fromEntries(membersOf(g).map((id) => [id, lvOf(g, id)]));
+  // 経験：始めの2人は game.exp、加わった味方は自分の経験（幽霊には入らない）
+  const expOf = Object.fromEntries(Object.entries(g.expOf ?? {}).map(([id, x]) => [id, g.party[id]?.dead ? x : x + z.exp]));
+  g = { ...g, exp: (g.exp ?? 0) + z.exp, expOf, mon: g.mon + mon };
   lines.push(`経験 ${z.exp}と、文を ${mon} 手に入れた！`);
   if (z.drop) {
     g = { ...g, items: { ...g.items, [z.drop]: (g.items[z.drop] ?? 0) + 1 } };
     lines.push(`お礼に ${ITEMS[z.drop].name}を もらった！`);
   }
-  const newLv = levelFor(g.exp);
-  if (newLv > (g.lv ?? 1)) {
-    // 上がった分だけ HP と術の力も増える（ドラクエと同じ）
-    const party = Object.fromEntries(membersOf(g).map((id) => {
-      const before = statsAt(id, g.lv ?? 1);
-      const after = statsAt(id, newLv);
-      const p = g.party[id];
-      if (p.dead) return [id, p]; // 幽霊は伸びない（生き返ると今のレベルの満タン）
-      return [id, { ...p, hp: p.hp + after.hp - before.hp, mp: p.mp + after.mp - before.mp }];
-    }));
-    g = { ...g, lv: newLv, party };
-    lines.push(`旅の者たちは レベル ${newLv}に 上がった！`);
-  }
+  g = { ...g, lv: levelFor(g.exp) };
+  // 上がった分だけ HP と術の力も増える（ドラクエと同じ）。幽霊は伸びない（生き返ると今のレベルの満タン）
+  const party = Object.fromEntries(membersOf(g).map((id) => {
+    const p = g.party[id];
+    const lv = lvOf(g, id);
+    if (p.dead || lv === before[id]) return [id, p];
+    const b = statsAt(id, before[id]);
+    const a = statsAt(id, lv);
+    return [id, { ...p, hp: p.hp + a.hp - b.hp, mp: p.mp + a.mp - b.mp }];
+  }));
+  g = { ...g, party };
+  if (g.lv > before.tabi) lines.push(`旅の者たちは レベル ${g.lv}に 上がった！`);
+  for (const id of membersOf(g)) if (!PARTY_IDS.includes(id) && lvOf(g, id) > before[id]) lines.push(`${NAME[id]}は レベル ${lvOf(g, id)}に 上がった！`);
   return { game: g, lines };
 }
 
@@ -363,7 +374,7 @@ export function buyEquip(game, id, who) {
 // 強さを見る（どうぐ → そうび）
 export function partyView(game) {
   return membersOf(game).map((id) => ({
-    id, ...statsWithGear(id, game.lv ?? 1, game.equip ?? START_EQUIP),
+    id, ...statsWithGear(id, lvOf(game, id), game.equip ?? START_EQUIP),
     gear: game.equip?.[id] ?? START_EQUIP[id] ?? {}, // 昔話の味方は装備なし（いまは）
   }));
 }
@@ -372,6 +383,9 @@ export function partyView(game) {
 export function join(game, id) {
   const members = membersOf(game);
   if (!COMPANIONS[id] || members.includes(id) || members.length >= MAX_PARTY) return { ok: false, game };
-  const m = maxOf(game, id);
-  return { ok: true, game: { ...game, members: [...members, id], party: { ...game.party, [id]: { hp: m.hp, mp: m.mp } } } };
+  // 始めの2人より JOIN_LV_BELOW 下のレベルで加わる（Lv1 より下にはならない）
+  const lv = Math.max(1, (game.lv ?? 1) - JOIN_LV_BELOW);
+  const g = { ...game, members: [...members, id], expOf: { ...game.expOf, [id]: EXP_TO[lv] } };
+  const m = maxOf(g, id);
+  return { ok: true, game: { ...g, party: { ...game.party, [id]: { hp: m.hp, mp: m.mp } } } };
 }

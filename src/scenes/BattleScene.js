@@ -1,12 +1,13 @@
-import { EPISODES } from '../data/episodes.js?v=76';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=76';
-import { chooseCommands } from '../battle/auto.js?v=76';
-import { itemNote } from '../data/items.js?v=76';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=76';
-import { STORY_FILES } from '../data/story_assets.js?v=76';
-import { drawScroll } from '../ui/scroll.js?v=76';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=76';
-import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=76';
+import { EPISODES } from '../data/episodes.js?v=77';
+import { revealAt } from '../ui/reveal.js?v=77';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=77';
+import { chooseCommands } from '../battle/auto.js?v=77';
+import { itemNote } from '../data/items.js?v=77';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=77';
+import { STORY_FILES } from '../data/story_assets.js?v=77';
+import { drawScroll } from '../ui/scroll.js?v=77';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=77';
+import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=77';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -414,8 +415,17 @@ export class BattleScene extends Phaser.Scene {
       if (now > nextBlink) { blinkUntil = now + 120; nextBlink = now + 2500 + Math.random() * 3500; }
       sh.setTexture(`shiori3d_m${mouth}_e${now < blinkUntil ? 1 : 0}`);
     };
-    this.events.on('update', animate);
-    this.events.once('shutdown', () => this.events.off('update', animate)); // 場面を出直すと events は残る＝口の動きを外す（10/3 試しで、紙芝居の途中に場面が替わると止まった）
+    // 字幕を声に合わせて少しずつ出す（本人 10/3「ナレーションと下の字幕の表示スピードを合わせて」）＝鳴りはじめから声の長さで頭から順に
+    let pages = [];
+    let revealFrom = null;
+    let revealMs = 1;
+    const reveal = () => {
+      if (revealFrom === null || !text.scene) return;
+      text.setText(revealAt(pages, (this.time.now - revealFrom) / revealMs).text);
+    };
+    const tick = () => { animate(); reveal(); };
+    this.events.on('update', tick);
+    this.events.once('shutdown', () => this.events.off('update', tick)); // 場面を出直すと events は残る＝口の動きを外す（10/3 試しで、紙芝居の途中に場面が替わると止まった）
     let i = -1;
     let ended = false;
     let timer = null;
@@ -425,7 +435,7 @@ export class BattleScene extends Phaser.Scene {
       timer?.remove(false);
       stopVoice();
       if (part === 'tell') startBgm('battle'); else stopBgm(); // 語る＝戦いへ戻る／勝った後＝静かに
-      this.events.off('update', animate);
+      this.events.off('update', tick);
       this.tweens.add({ targets: box, alpha: 0, duration: 250, onComplete: () => { box.destroy(); done(); } });
     };
     const show = () => {
@@ -444,23 +454,28 @@ export class BattleScene extends Phaser.Scene {
         pic.setScale(k).setAlpha(0);
         this.tweens.add({ targets: pic, alpha: 1, duration: 500 });
       }
-      // 窓に入りきらなければ、時間の半ばで次のページへ（さわると次の絵へ）
-      const pages = paginate(text, c.text, MSG_Y + 200);
+      // 窓に入りきらなければ2ページ（1ページ目を出し切ってから2ページ目）。さわると次の絵へ
+      pages = paginate(text, c.text, MSG_Y + 200);
+      text.setText('');
       const shown = i;
       const fallback = Math.max(2600, [...c.text].length * 130);
+      // 声が無い・まだ鳴らない間は、字数の時間で出す（1.5秒たっても鳴らなければ＝音の出ない端末）
+      const startReveal = (ms) => { revealFrom = this.time.now; revealMs = Math.max(500, ms); };
+      revealFrom = null;
       // 声が終わってからの間：最後の1枚は 約2秒そのまま止める（本人 10/2「昔話04の後の切り替えが早い。少しフリーズ」）
       const hold = i === cards.length - 1 ? 2200 : 500;
-      if (pages.length > 1) this.time.delayedCall(fallback / 2, () => { if (!ended && shown === i) text.setText(pages[1]); });
       talking = !STORY_FILES.includes(c.voice);
       if (talking) this.time.delayedCall(fallback - 400, () => { if (shown === i) talking = false; });
       if (STORY_FILES.includes(c.voice)) {
         // 安全弁：音が出ない端末（音の出口が開いていない iPhone など）でも、字数の時間の1.6倍で次へ
         timer = this.time.delayedCall(fallback * 1.6 + 3000, show);
+        this.time.delayedCall(1500, () => { if (!ended && shown === i && revealFrom === null) startReveal(fallback * 0.9); });
         // 鳴りはじめたら、安全弁を声の長さ＋3秒に延ばす（10/3 本人「第3話のしおりのナレーションが途中で切れている」＝蛇岸淵①②③は声が字数の安全弁より長かった）
         const onStart = (sec) => {
           if (ended || shown !== i) return;
           timer?.remove(false);
           timer = this.time.delayedCall(sec * 1000 + 3000, show);
+          startReveal(sec * 1000 * 0.97); // 声の終わりの少し前に出し切る
         };
         playVoice(c.voice, onStart).then((sec) => {
           if (ended || shown !== i) return;
@@ -468,6 +483,7 @@ export class BattleScene extends Phaser.Scene {
           timer = this.time.delayedCall(sec > 0 ? hold : fallback, show);
         });
       } else {
+        startReveal(fallback * 0.9);
         timer = this.time.delayedCall(fallback + hold - 500, show);
       }
     };
