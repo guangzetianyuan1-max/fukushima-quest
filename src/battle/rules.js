@@ -107,6 +107,12 @@ function allyAct(state, a, cmd, data, rng, log) {
     log.push({ text: `${a.name}は 声を 出したが、爆音で かき消された！` });
     return;
   }
+  // 隠れる敵（1章 橘墨虎・本人 10/3）：弱点が明かされるまで、たたかう・鉄砲の半分は岩穴の闇に とどかない
+  if ((cmd.type === 'attack' || cmd.type === 'shoot') && e.hide && !e.revealed && !(cmd.type === 'shoot' && (e.mistLeft > 0 || !(state.items.tama > 0))) && rng() < e.hide.chance) {
+    log.push({ text: cmd.type === 'shoot' ? `${a.name}は 鉄砲を かまえた。` : `${a.name}の こうげき！`, sfx: cmd.type === 'shoot' ? undefined : 'attack' });
+    log.push({ text: e.hide.text });
+    return;
+  }
   if (cmd.type === 'attack') {
     if (state.blind > 0 && rng() < 0.5) {
       log.push({ text: `${a.name}の こうげき！`, sfx: 'attack' });
@@ -265,6 +271,15 @@ function allyAct(state, a, cmd, data, rng, log) {
     } else if (!e.revealed) {
       e.revealed = true;
       log.push({ text: e.revealText, effect: { kind: 'reveal' } });
+      // 助っ人（1章 玉都の琵琶・白狼）が 弱点の明かされた時に現れる
+      const h = e.helper;
+      if (h) {
+        log.push({ text: h.revealText, effect: { kind: 'helper' } });
+        if (h.revealBind) {
+          e.bound = Math.max(e.bound ?? 0, h.revealBind);
+          e.boundText = h.boundText;
+        }
+      }
     } else {
       log.push({ text: 'もう 弱点は 明かされている。' });
     }
@@ -425,6 +440,21 @@ export function resolveTurn(state0, commands, data, rng) {
       enemyAct(state, rng, log);
     }
     state.over = state.over || isOver(state); // 逃げた・盗んで逃げた（'fled'）は消さない
+  }
+  // 助っ人は、弱点が明かされた後のターンの終わりに 見込み chance で もう一度（止める／打つ）
+  const h = state.enemy.helper;
+  if (!state.over && h?.chance && state.enemy.revealed && !log.some((m) => m.effect?.kind === 'helper') && rng() < h.chance) {
+    log.push({ text: h.text, effect: { kind: 'helper' } });
+    if (h.bind) {
+      state.enemy.bound = Math.max(state.enemy.bound ?? 0, 1);
+      state.enemy.boundText = h.boundText;
+    }
+    if (h.dmg) {
+      const d = Math.max(1, Math.round(h.dmg * spread(rng)));
+      state.enemy.hp = Math.max(0, state.enemy.hp - d);
+      log.push({ text: `${state.enemy.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+      state.over = isOver(state);
+    }
   }
   if (state.over === 'win') state.enemy.restored = true;
   if (state.silence > 0) state.silence -= 1;

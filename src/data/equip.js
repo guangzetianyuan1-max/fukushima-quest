@@ -12,6 +12,12 @@ export const EQUIP = {
   yamagatana: { name: '山刀', slot: 'weapon', who: ['kariudo'], atk: 9, price: 90 },
   kashizue: { name: '樫の杖', slot: 'weapon', who: ['sou'], atk: 3, price: 20 },
   kongozue: { name: '金剛杖', slot: 'weapon', who: ['sou'], atk: 6, price: 60 },
+  // 1章 相馬の町（中村）の刀屋で買える物（10/3・Claudeの決め）
+  tachi: { name: '太刀', slot: 'weapon', who: ['tabi'], atk: 16, price: 220 },
+  naginata: { name: '薙刀', slot: 'weapon', who: ['shiori'], atk: 11, price: 160 },
+  kumayari: { name: '熊槍', slot: 'weapon', who: ['kariudo'], atk: 14, price: 180 },
+  shakujo: { name: '錫杖', slot: 'weapon', who: ['sou'], atk: 10, price: 130 },
+  domaru: { name: '胴丸', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 10, price: 150 },
   // 防具とお守りは4人とも着けられる（10/2 仲間が加わった）
   kasa: { name: '旅の笠', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 2, price: 15 },
   kyahan: { name: '脚絆', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 3, agi: 2, price: 30 },
@@ -60,4 +66,9 @@ export const EXPECT_GEAR = {
   // 4〜5は加わった仲間の分も（猟師＝賢沼のあと・僧＝蛇岸淵のあと。加わったばかりは安い得物だけ）
   4: { tabi: { weapon: 'bokuto', armor: 'kasa', charm: null }, shiori: { weapon: 'sensu', armor: 'kasa', charm: null }, kariudo: { weapon: 'nata', armor: null, charm: null } },
   5: { tabi: { weapon: 'katana', armor: 'kasa', charm: null }, shiori: { weapon: 'sensu', armor: 'kasa', charm: null }, kariudo: { weapon: 'nata', armor: 'kasa', charm: null }, sou: { weapon: 'kashizue', armor: null, charm: null } },
+  // 6〜9＝1章 相馬（10/3）。6＝ザルカブリ（いわきの2つ目の得物）・7＝大悲山（蓑）・8＝手長明神（相馬の町の太刀と熊槍）・9＝橘墨虎（相馬の得物と胴丸）
+  6: { tabi: { weapon: 'katana', armor: 'mino', charm: null }, shiori: { weapon: 'tessen', armor: 'kasa', charm: null }, kariudo: { weapon: 'yamagatana', armor: 'kasa', charm: null }, sou: { weapon: 'kongozue', armor: 'kasa', charm: null } },
+  7: { tabi: { weapon: 'katana', armor: 'mino', charm: null }, shiori: { weapon: 'tessen', armor: 'mino', charm: null }, kariudo: { weapon: 'yamagatana', armor: 'mino', charm: null }, sou: { weapon: 'kongozue', armor: 'mino', charm: null } },
+  8: { tabi: { weapon: 'tachi', armor: 'mino', charm: null }, shiori: { weapon: 'tessen', armor: 'mino', charm: null }, kariudo: { weapon: 'kumayari', armor: 'mino', charm: null }, sou: { weapon: 'kongozue', armor: 'mino', charm: null } },
+  9: { tabi: { weapon: 'tachi', armor: 'domaru', charm: null }, shiori: { weapon: 'naginata', armor: 'mino', charm: null }, kariudo: { weapon: 'kumayari', armor: 'domaru', charm: null }, sou: { weapon: 'shakujo', armor: 'mino', charm: null } },
 };

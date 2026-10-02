@@ -2,29 +2,29 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=80';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=80';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=80';
-import { TILE } from '../field/tiles.js?v=80';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=80';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=80';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=80';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=80';
+import { EPISODES } from '../data/episodes.js?v=81';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=81';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=81';
+import { TILE } from '../field/tiles.js?v=81';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=81';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=81';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=81';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=81';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
-  purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME,
-} from '../field/game.js?v=80';
-import { membersOf } from '../battle/levels.js?v=80';
-import { COMPANIONS } from '../data/companions.js?v=80';
-import { ICON_IDS } from '../data/icons.js?v=80';
-import { FACE_IDS } from '../data/faces.js?v=80';
-import { mapPointOf } from '../field/mapcard.js?v=80';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=80';
-import { makeRng } from '../battle/rules.js?v=80';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=80';
-import { buyEquip, partyView } from '../field/game.js?v=80';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=80';
+  purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
+} from '../field/game.js?v=81';
+import { membersOf } from '../battle/levels.js?v=81';
+import { COMPANIONS } from '../data/companions.js?v=81';
+import { ICON_IDS } from '../data/icons.js?v=81';
+import { FACE_IDS } from '../data/faces.js?v=81';
+import { mapPointOf } from '../field/mapcard.js?v=81';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=81';
+import { makeRng } from '../battle/rules.js?v=81';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=81';
+import { buyEquip, partyView } from '../field/game.js?v=81';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=81';
 
 const W = 360;
 const MAP_H = 420; // 地図の見える高さ
@@ -47,14 +47,29 @@ const WALL_HINT = {
   1: '鮫川の 河口の うずを しずめれば、この もやも 晴れるはず。',
   2: '賢沼の ぬしを しずめたら、この もやも 晴れると 思う。',
   3: '好間川の 淵の ぬしを しずめましょう。峠の もやは それからね。',
+  4: '閼伽井嶽の 龍の 灯を 取りもどせば、北の 相馬への 道も 開くはず。',
+  5: '金谷の 山の 化け物を しずめれば、大悲山への もやも 晴れると 思う。',
+  6: '大悲山の 大蛇を 何とか しないと、北へは 行けないわ。',
+  7: '鹿狼山の 手長明神さまを 元に もどせば、虎捕山への もやも 晴れるはず。',
 };
 // ボスを元に戻して歩く地図へ帰ったときの、しおりの一言
 const CLEARED_LINES = {
   matsukawa: ['鮫川の 橋の もやが 晴れたわ！', '北へ 行けば、小名浜・湯本・平の 町が あるの。賢沼にも 行けるわ。'],
   kashinuma: ['平の 北、好間川の 橋の もやが 晴れたわ！', '好間川の 淵に、また 黒い うずが あるみたい。'],
   jagan: ['閼伽井嶽へ 登る 峠の もやが 晴れたわ！', '山の上の お寺で、龍の 灯が 消えかけているの。'],
-  ryuto: ['これで いわきの 昔話は みんな 元に もどったわ。', '序章「いわき」の 旅は ここまで。つづきは 準備中です。'],
+  ryuto: ['これで いわきの 昔話は みんな 元に もどったわ。', '北の 口の もやが 晴れた！ 1章「相馬」へ 行けるわ。いわきの 地図の いちばん 北よ。'],
+  // 1章 相馬（10/3）
+  zarukaburi: ['大悲山への 入口の もやが 晴れたわ！', '大悲山の 薬師堂の 池に、大蛇が いるそうよ。小高の 町で 支度を しましょう。'],
+  daihisan: ['北の 浜街道の もやが 晴れたわ！', '北に 相馬の 町が あるの。その 先の 鹿狼山に、手長明神さまが いらっしゃるわ。'],
+  tenaga: ['虎捕山への 山道の もやが 晴れたわ！', '虎捕山には、凶賊 橘墨虎が 隠れているの。相馬の 町で しっかり 支度してね。'],
+  sumitora: ['これで 相馬の 昔話は みんな 元に もどったわ。', '1章「相馬」の 旅は ここまで。つづきは 準備中です。'],
 };
+// いわきの北の口から 相馬へ入ったとき（1章の始まり）
+const CROSS_SOMA = [
+  { text: '浜街道を 北へ。ここから 1章「相馬」。' },
+  { speaker: 'しおり', text: '南相馬の 小高よ。金谷の 山に、ざるの ような 頭の 化け物が 出るそうなの。' },
+  { speaker: 'しおり', text: '相馬の 道の 敵は いわきより 強いわ。小高の 町で 支度を ととのえましょう。' },
+];
 const INTRO = [
   { text: 'ここは 勿来の関。むかしから 歌に よまれた、みちのくの 入口。' },
   { speaker: 'しおり', text: 'ようこそ、旅の人。わたしは しおり。昔話の 語り部よ。' },
@@ -63,7 +78,7 @@ const INTRO = [
 ];
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, TOWNS, ITEMS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, CROSS_SOMA, TOWNS, ITEMS])
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
 
 export class FieldScene extends Phaser.Scene {
@@ -80,7 +95,7 @@ export class FieldScene extends Phaser.Scene {
     for (const id of [...ICON_IDS, ...FISHING_ICON_IDS]) if (!this.textures.exists(`icon_${id}`)) this.load.image(`icon_${id}`, `assets/icons/${id}.png`);
     if (!this.textures.exists('bg_fishing')) this.load.image('bg_fishing', 'assets/bg_fishing.png'); // 小名浜の釣り場（Gemini・夕焼けと灯台と桟橋）
     // 一枚絵（町の入口・章の地図＝Gemini 4組目・art_src/prep_cards.py）
-    for (const k of ['town_taira', 'town_yumoto', 'town_onahama', 'map']) if (!this.textures.exists(`card_${k}`)) this.load.image(`card_${k}`, `assets/cards/${k}.png`);
+    for (const k of [...Object.keys(TOWNS).filter((t) => !TOWNS[t].cardPending).map((t) => `town_${t}`), 'map']) if (!this.textures.exists(`card_${k}`)) this.load.image(`card_${k}`, `assets/cards/${k}.png`);
     for (const f of ['normal', 'surprise', 'sad', ...FACE_IDS]) if (!this.textures.exists(`face_${f}`)) this.load.image(`face_${f}`, `assets/cards/face_${f}.png`);
   }
 
@@ -100,7 +115,7 @@ export class FieldScene extends Phaser.Scene {
     this.layer = this.add.renderTexture(0, 0, mapW, mapH).setOrigin(0);
     const objs = [];
     this.rows.forEach((r, y) => [...r].forEach((ch, x) => {
-      const look = this.mapId === 'field' ? fieldLook(this.g, ch, x, y) : townLook(ch, x, y);
+      const look = isField(this.mapId) ? fieldLook(this.g, ch, x, y) : townLook(ch, x, y);
       this.layer.stamp(`g_${look.ground}`, null, x * CELL, y * CELL, { originX: 0, originY: 0 });
       for (const o of look.objs) objs.push({ key: `o_${o}`, x, y, w: 1, h: 1 });
     }));
@@ -147,7 +162,7 @@ export class FieldScene extends Phaser.Scene {
     cam.setBounds(0, Math.min(0, (mapH - MAP_H) / 2), Math.max(mapW, W), Math.max(mapH, MAP_H));
     cam.startFollow(this.player, true);
     cam.setRoundPixels(true);
-    cam.setBackgroundColor(this.mapId === 'field' ? '#2f5fb3' : '#000000');
+    cam.setBackgroundColor(isField(this.mapId) ? '#2f5fb3' : '#000000');
     this.ui = this.add.container(0, 0);
     this.uiCam = this.cameras.add(0, 0, W, 640);
     cam.ignore(this.ui);
@@ -180,6 +195,11 @@ export class FieldScene extends Phaser.Scene {
     } else if (this.g.justEntered === this.mapId) {
       this.setGame({ ...this.g, justEntered: null });
       this.showTownCard();
+    } else if (this.g.justCrossed) {
+      // 地図の口を通ったとき（10/3 1章）：相馬へ入ると章の始まりの一言
+      const to = this.g.justCrossed;
+      this.setGame({ ...this.g, justCrossed: null });
+      if (to === 'soma') this.time.delayedCall(350, () => this.showMessages(CROSS_SOMA));
     } else if (this.g.justCleared) {
       const id = this.g.justCleared;
       // ボスを元に戻したあと、昔話の味方が加わる回はその台詞も続ける（afterWin が justJoined を付ける）
@@ -217,7 +237,7 @@ export class FieldScene extends Phaser.Scene {
   // ---- 黒いもや（道をふさぐ壁・ボスの渦）の上に赤い矢印（本人 10/2「移動画面で、モヤが分かりにくい。上部に赤の矢印を付けて欲しい」）----
   // 晴れた壁・元に戻したボスの場所には出さない。上下にゆっくり揺らす
   makeMistArrows() {
-    if (this.mapId !== 'field') return [];
+    if (!isField(this.mapId)) return [];
     if (!this.textures.exists('mist_arrow')) {
       const tex = this.textures.createCanvas('mist_arrow', 20, 22);
       const c = tex.getContext();
@@ -252,11 +272,12 @@ export class FieldScene extends Phaser.Scene {
 
   // ---- 町に入った瞬間の一枚絵（1.3秒・さわると飛ばす）----
   showTownCard() {
-    const NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港' };
+    const NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港', odaka: '小高の町', nakamura: '相馬の城下町' };
     this.busy = true;
     const box = this.add.container(0, 0).setAlpha(0);
     box.add(this.add.rectangle(0, 0, W, MAP_H, 0x000000, 0.7).setOrigin(0));
-    box.add(this.add.image(W / 2, 190, `card_town_${this.mapId}`));
+    // 町の入口の一枚絵（Gemini）。まだ届いていない町（1章）は名前だけ
+    if (this.textures.exists(`card_town_${this.mapId}`)) box.add(this.add.image(W / 2, 190, `card_town_${this.mapId}`));
     box.add(this.add.text(W / 2, 318, NAME[this.mapId], {
       fontFamily: '"Potta One", "Yuji Boku", serif', fontSize: '30px', color: '#ffffff', resolution: 3, stroke: '#1a1008', strokeThickness: 6,
     }).setOrigin(0.5));
@@ -373,7 +394,7 @@ export class FieldScene extends Phaser.Scene {
     const hp = (id) => (p[id].dead ? `${NAMES[id]} 幽霊` : `${NAMES[id]}${mark(id)} ${p[id].hp}/${maxOf(this.g, id).hp}`);
     // 術の力も見せる（本人 10/2「術は温泉で回復しますか？」＝宿で戻るのが見えるように）
     const mp = (id) => (maxOf(this.g, id).mp > 0 && !p[id].dead ? ` 術${p[id].mp}` : '');
-    const place = this.town ? this.town.name : 'いわき';
+    const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
     // 2人ずつ1行（4人なら2行）・いちばん下の行に Lv と場所（右に所持金）
     const ids = membersOf(this.g);
     const lines = [];
@@ -536,7 +557,7 @@ export class FieldScene extends Phaser.Scene {
       onComplete: () => {
         this.moving = false;
         let g = { ...this.g, pos: { map: this.mapId, x: nx, y: ny, dir } };
-        if (this.mapId === 'field') g = walkStep(g);
+        if (isField(this.mapId)) g = walkStep(g);
         this.setGame(g);
         this.arrive(nx, ny);
       },
@@ -545,7 +566,7 @@ export class FieldScene extends Phaser.Scene {
 
   bump(x, y) {
     const t = terrainAt(this.mapId, x, y);
-    if (this.mapId !== 'field' || !t || !WALL_OPENED_BY[t.ch]) return;
+    if (!isField(this.mapId) || !t || !WALL_OPENED_BY[t.ch]) return;
     if (this.time.now - this.lastBump < 1200) return;
     this.lastBump = this.time.now;
     this.showMessages([{ text: '黒い もやが 道を ふさいでいる……' }, { speaker: 'しおり', text: WALL_HINT[t.ch] }]);
@@ -553,8 +574,12 @@ export class FieldScene extends Phaser.Scene {
 
   arrive(x, y) {
     const ch = this.rows[y][x];
-    if (this.mapId === 'field') {
-      if (TOWN_OF[ch]) {
+    if (isField(this.mapId)) {
+      const crossed = crossAt(this.g, this.mapId, x, y); // 地図の口（いわき⇔相馬・10/3 1章）
+      if (crossed) {
+        sfx('select');
+        this.goto({ ...crossed, steps: 0, justCrossed: crossed.pos.map });
+      } else if (TOWN_OF[ch]) {
         sfx('select');
         this.goto(enterTown(this.g, TOWN_OF[ch]));
       } else if (this.meet(x, y)) {
@@ -718,7 +743,7 @@ export class FieldScene extends Phaser.Scene {
   }
 
   shrineMenu() {
-    this.showMenu('八幡さまで 何を しますか？', [
+    this.showMenu(`${this.town?.shrineName ?? '八幡さま'}で 何を しますか？`, [ // 1章の町は町ごとの名（towns.js の shrineName）
       ['お参りして 記録する', () => this.doSave()],
       // 右に効き目（本人 10/2「供養するとどうなる？」＝何が治るか書いていなかった）
       [`お祓い（${HARAI_PRICE}文）`, () => this.cureMenu(purify, HARAI_PRICE, 'お祓い', 'curse'), '呪いを とく'],
@@ -969,7 +994,7 @@ export class FieldScene extends Phaser.Scene {
         sfx('reveal');
         this.showMessages([
           { text: stored ? '旅の 記録を 残した。' : '（この 端末では 記録が 残せない ようだ……）' },
-          { speaker: 'しおり', text: '八幡さまは 武運の 神さまと 伝わるの。旅の 無事を お願いしましょう。' },
+          { speaker: 'しおり', text: this.town?.shrineLine ?? '八幡さまは 武運の 神さまと 伝わるの。旅の 無事を お願いしましょう。' },
         ]);
       }],
       ['いいえ', () => this.closeDialog()],

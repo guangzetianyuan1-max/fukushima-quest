@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=80';
+import { makeRng } from '../battle/rules.js?v=81';
 
 export const TILE = 16;
 
@@ -83,7 +83,8 @@ export const TILE_INDEX = Object.fromEntries(TILE_NAMES.map((n, i) => [n, i]));
 export const FIELD_TERRAIN = {
   '~': ['sea', false], ',': ['sand', true], '.': ['grass', true], T: ['forest', true], '^': ['mountain', false],
   w: ['river', false], o: ['pond', false], '=': ['road', true], b: ['bridge', true],
-  1: ['mist', false], 2: ['mist', false], 3: ['mist', false],
+  1: ['mist', false], 2: ['mist', false], 3: ['mist', false], 4: ['mist', false], 5: ['mist', false], 6: ['mist', false], 7: ['mist', false],
+  E: ['road', true], Q: ['town_yumoto', true], Z: ['boss', true], D: ['boss', true], L: ['boss', true], G: ['boss', true], M: ['town_taira', true], // 10/3 1章：E＝地図の口（いわき⇔相馬）・Q＝小高の町・Z／D＝ザルカブリ山／大悲山
   N: ['gate', true], H: ['town_taira', true], Y: ['town_yumoto', true], O: ['town_onahama', true],
   S: ['boss_sand', true], K: ['boss', true], J: ['boss', true], R: ['boss', true],
 };

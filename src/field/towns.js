@@ -144,7 +144,105 @@ export const TOWNS = {
       ] },
     ],
   },
+  // ---- 1章 相馬（10/3・本人「4話分進めて」）。町の形は平と同じ（神社・左右の店）。shrineName／shrineLine＝お参りの名と、しおりの一言 ----
+  odaka: {
+    name: '小高',
+    cardPending: true, // 町の入口の一枚絵は まだ（Gemini 待ち）
+    shrineName: '小高の 神社',
+    shrineLine: '小高の 神社で 旅の 無事を お願いしましょう。大悲山は この 町の 西よ。',
+    props: [
+      { img: 'jinja', x: 5, y: 2, w: 3, h: 2 },
+      { img: 'yadoya', x: 0, y: 7, w: 4, h: 2 }, { img: 'counter', x: 1, y: 9, w: 2, h: 1 },
+      { img: 'mise', x: 9, y: 7, w: 4, h: 2 }, { img: 'counter', x: 10, y: 9, w: 2, h: 1 },
+      { img: 'toro', x: 4, y: 5, w: 1, h: 1 }, { img: 'toro', x: 8, y: 5, w: 1, h: 1 },
+    ],
+    rows: [
+      'TTTTTTTTTTTTT',
+      'TTTTTTTTTTTTT',
+      'TTTTTzzzTTTTT',
+      'TTTT.zzz.TTTT',
+      'TTT...=...TTT',
+      'T.....t.....T',
+      'T.....=.....T',
+      '####..=..####',
+      '#__#..=..#__#',
+      '#cc#..=..#cc#',
+      '.===========.',
+      'T.....=.....T',
+      'T.....=.....T',
+      'TTTTTTxTTTTTT',
+    ],
+    npcs: [
+      { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 小高の 神社へ。'] },
+      { x: 1, y: 8, look: 'okami', role: 'inn', price: 15, lines: ['いらっしゃいませ。小高の 宿で ございます。'] },
+      { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['katana', 'tessen', 'yamagatana', 'kongozue', 'kasa', 'kyahan', 'mino'], items: ['tama'], lines: ['小高の よろず屋だ。得物も 防具も、鉄砲の 玉も あるぜ。'] },
+      // 話の手がかり（出どころで確かめた筋だけ）
+      { x: 9, y: 12, look: 'ryoshi', lines: [
+        '金谷の 山には 行くなよ。鹿を 追って 山に 入った 猟師が、ざるの ような 頭の 女の 化け物に 会ったそうだ。',
+        '化け物は 乱れ髪を 地面に 引きずって、にたりと 笑ったと。……それから その 猟師は、殺生を やめたんだと。',
+      ] },
+      { x: 3, y: 11, look: 'toshiyori', lines: [
+        '西の 大悲山には 薬師堂が あってな、むかし 玉都という 琵琶法師が こもって 琵琶を 弾いておった。',
+        '堂の 前の 池の 大蛇が、武士に 化けて 玉都の もとへ 来たという 話じゃ。',
+      ] },
+      { x: 10, y: 5, look: 'yakunin', lines: [
+        '小高の お城の 殿様は、大悲山の 山や 谷に、大蛇の 苦手な 鉄の 釘を 打たせたと 伝わる。',
+        '大悲山の 入口の 黒い もやは、金谷の 山の 化け物を しずめれば 晴れるはずだ。',
+      ] },
+      { x: 2, y: 5, look: 'kodomo', lines: [
+        '相馬の 道は いわきより 敵が 強いよ。レベルを 上げて、よろず屋で 得物を そろえてから 行こう。',
+        '加わった 仲間は レベルが 低めだから、宿で 休んで 守ってあげてね。',
+      ] },
+    ],
+  },
+  nakamura: {
+    name: '相馬',
+    cardPending: true,
+    shrineName: '相馬の 神社',
+    shrineLine: '相馬の 神社で 旅の 無事を お願いしましょう。北の 鹿狼山と、西の 虎捕山へ 行けるわ。',
+    props: [
+      { img: 'jinja', x: 5, y: 2, w: 3, h: 2 },
+      { img: 'mise', x: 0, y: 7, w: 4, h: 2 }, { img: 'counter', x: 1, y: 9, w: 2, h: 1 },
+      { img: 'yadoya', x: 9, y: 7, w: 4, h: 2 }, { img: 'counter', x: 10, y: 9, w: 2, h: 1 },
+      { img: 'toro', x: 4, y: 5, w: 1, h: 1 }, { img: 'toro', x: 8, y: 5, w: 1, h: 1 },
+    ],
+    rows: [
+      'TTTTTTTTTTTTT',
+      'TTTTTTTTTTTTT',
+      'TTTTTzzzTTTTT',
+      'TTTT.zzz.TTTT',
+      'TTT...=...TTT',
+      'T.....t.....T',
+      'T.....=.....T',
+      '####..=..####',
+      '#__#..=..#__#',
+      '#cc#..=..#cc#',
+      '.===========.',
+      'T.....=.....T',
+      'T.....=.....T',
+      'TTTTTTxTTTTTT',
+    ],
+    npcs: [
+      { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 相馬の 神社へ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['tachi', 'naginata', 'kumayari', 'shakujo', 'domaru', 'mino'], items: ['tama'], lines: ['相馬の 刀屋だ。太刀も 熊槍も、胴丸も あるぜ。'] },
+      { x: 11, y: 8, look: 'okami', role: 'inn', price: 18, lines: ['いらっしゃいませ。相馬の 宿で ございます。'] },
+      { x: 9, y: 12, look: 'ryoshi', lines: [
+        '海から 帰る 舟は、北の 鹿狼山を 目印に するんだ。',
+        '鹿狼山の 手長明神さまは、白い 鹿と 白い 狼を 従えた 手の 長い 神さま。海と 人の 暮らしを 見守って くださる。',
+      ] },
+      { x: 3, y: 11, look: 'toshiyori', lines: [
+        '新地の 貝塚はな、食べた 貝を 捨てた 跡じゃと 伝わる。海の めぐみに 感謝を 忘れては いかん。',
+      ] },
+      { x: 10, y: 5, look: 'yakunin', lines: [
+        '西の 虎捕山には、平安の むかし、橘墨虎という 凶賊が 隠れて おったそうだ。',
+        '源頼義さまが 白い 狼の 足跡を たどって、墨虎を 捕らえた。それで「虎捕山」と よぶのだ。',
+      ] },
+      { x: 2, y: 5, look: 'musume', lines: [
+        '虎捕山の 入口の もやは、鹿狼山の 手長明神さまを 元に もどせば 晴れると 思うの。',
+      ] },
+    ],
+  },
 };
 
-// 歩く地図の字 → 町
-export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama' };
+// 歩く地図の字 → 町（Q＝小高・M＝相馬は 1章の地図「相馬」）
+export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: 'nakamura' };

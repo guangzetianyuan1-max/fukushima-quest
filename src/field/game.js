@@ -1,19 +1,26 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=80';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=80';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=80';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=80';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=80';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=80';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=80';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=80';
+import { IWAKI_ROWS } from './iwaki_map.js?v=81';
+import { SOMA_ROWS } from './soma_map.js?v=81';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=81';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=81';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=81';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=81';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=81';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=81';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=81';
 
 export const SAVE_KEY = 'fq-save-v1';
 
 // 地図の字 → ボス（episodes.js の enemy.id）と、もやの壁 → 晴れる条件
-export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto' };
-export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan' };
+export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora' };
+export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan', 4: 'ryuto', 5: 'zarukaburi', 6: 'daihisan', 7: 'tenaga' };
+
+// 歩く地図は2枚（10/3 1章〜）：field＝いわき（序章）・soma＝相馬（1章）。字 E の口で行き来する
+export const FIELDS = { field: IWAKI_ROWS, soma: SOMA_ROWS };
+export const isField = (map) => Object.hasOwn(FIELDS, map);
+// 口：いわきの北の端の E ⇔ 相馬の南の端の E。出た先は口の1歩内側（いわきへは南・相馬へは北）
+const EXITS = { field: { to: 'soma', dy: -1, dir: 'up' }, soma: { to: 'field', dy: 1, dir: 'down' } };
 
 // 仲間の強さ＝レベルで決まる（src/battle/levels.js）。PARTY_BASE はレベル1の強さ
 export const PARTY_BASE = Object.fromEntries(ALL_IDS.map((id) => [id, statsAt(id, 1)]));
@@ -66,14 +73,24 @@ export function newGame() {
 
 // ---- 地図 ----
 export function mapRows(map) {
-  return map === 'field' ? IWAKI_ROWS : TOWNS[map].rows;
+  return FIELDS[map] ?? TOWNS[map].rows;
+}
+
+// 口（E）を踏んだら、つながる地図の口の1歩内側へ。口でなければ null
+export function crossAt(game, map, x, y) {
+  const ex = EXITS[map];
+  if (!ex || mapRows(map)[y]?.[x] !== 'E') return null;
+  const rows = FIELDS[ex.to];
+  const ty = rows.findIndex((r) => r.includes('E'));
+  const tx = rows[ty].indexOf('E');
+  return { ...game, pos: { map: ex.to, x: tx, y: ty + ex.dy, dir: ex.dir } };
 }
 
 export function terrainAt(map, x, y) {
   const rows = mapRows(map);
   if (y < 0 || y >= rows.length || x < 0 || x >= rows[0].length) return null;
   const ch = rows[y][x];
-  const t = (map === 'field' ? FIELD_TERRAIN : TOWN_TERRAIN)[ch];
+  const t = (isField(map) ? FIELD_TERRAIN : TOWN_TERRAIN)[ch];
   return { ch, tile: t[0], walk: t[1] };
 }
 
@@ -85,14 +102,14 @@ export function wallOpen(game, ch) {
 export function canWalk(game, map, x, y) {
   const t = terrainAt(map, x, y);
   if (!t) return false;
-  if (map === 'field' && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch);
+  if (isField(map) && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch);
   return t.walk;
 }
 
 // もやの壁を晴れた絵（橋）に、元に戻したボスの場所を鳥居の絵に
 export function tileNameAt(game, map, x, y) {
   const t = terrainAt(map, x, y);
-  if (map !== 'field') return t.tile;
+  if (!isField(map)) return t.tile;
   if (WALL_OPENED_BY[t.ch] && wallOpen(game, t.ch)) return 'bridge';
   if (BOSS_AT[t.ch] && game.cleared[BOSS_AT[t.ch]]) return t.ch === 'S' ? 'cleared_sand' : 'cleared';
   return t.tile;
@@ -102,11 +119,11 @@ export const DELTA = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }
 
 // ---- 町に入る・出る ----
 export function enterTown(game, town) {
-  return { ...game, fieldPos: { x: game.pos.x, y: game.pos.y }, pos: { map: town, ...TOWN_ENTRY, dir: 'up' }, justEntered: town };
+  return { ...game, fieldMap: game.pos.map, fieldPos: { x: game.pos.x, y: game.pos.y }, pos: { map: town, ...TOWN_ENTRY, dir: 'up' }, justEntered: town };
 }
 
 export function leaveTown(game) {
-  return { ...game, pos: { map: 'field', x: game.fieldPos.x, y: game.fieldPos.y, dir: 'down' } };
+  return { ...game, pos: { map: game.fieldMap ?? 'field', x: game.fieldPos.x, y: game.fieldPos.y, dir: 'down' } }; // 入った地図へ戻る（前の記録は いわき）
 }
 
 // ---- 店・宿・記録 ----
@@ -138,7 +155,7 @@ export function revive(game) {
 }
 
 export function save(game) {
-  const g = { ...game, savePos: { ...game.pos }, saveFieldPos: { ...game.fieldPos }, intro: false };
+  const g = { ...game, savePos: { ...game.pos }, saveFieldPos: { ...game.fieldPos }, saveFieldMap: game.fieldMap ?? 'field', intro: false };
   return { game: g, text: JSON.stringify(g) };
 }
 
@@ -203,7 +220,7 @@ function settle(game, state) {
 
 // 勝った：ボスを元に戻した印・残った道具・HP（力つきた仲間は幽霊のまま）
 // ボスを元に戻したお礼の文（本人 10/2「ボスを倒した際は、お金を多めに出して。ここでは50文」＝松川様50・あとは順に増やす＝Claudeの決め）
-export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120 };
+export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 140, daihisan: 170, tenaga: 190, sumitora: 240 }; // 1章は順に多め（Claudeの決め）
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
 export function afterWin(game, enemyId, state) {
@@ -220,12 +237,14 @@ export function afterZako(game, zakoId, state) {
   const lines = [];
   if (state.over !== 'win') return { game: g, lines };
   const z = ZAKO[zakoId];
-  const mon = z.mon * MON_RATE;
+  const k = state.enemy?.rewardRate ?? 1; // 帯の倍率（1章の相馬は多め）
+  const exp = Math.round(z.exp * k);
+  const mon = Math.round(z.mon * MON_RATE * k);
   const before = Object.fromEntries(membersOf(g).map((id) => [id, lvOf(g, id)]));
   // 経験：始めの2人は game.exp、加わった味方は自分の経験（幽霊には入らない）
-  const expOf = Object.fromEntries(Object.entries(g.expOf ?? {}).map(([id, x]) => [id, g.party[id]?.dead ? x : x + z.exp]));
-  g = { ...g, exp: (g.exp ?? 0) + z.exp, expOf, mon: g.mon + mon };
-  lines.push(`経験 ${z.exp}と、文を ${mon} 手に入れた！`);
+  const expOf = Object.fromEntries(Object.entries(g.expOf ?? {}).map(([id, x]) => [id, g.party[id]?.dead ? x : x + exp]));
+  g = { ...g, exp: (g.exp ?? 0) + exp, expOf, mon: g.mon + mon };
+  lines.push(`経験 ${exp}と、文を ${mon} 手に入れた！`);
   if (z.drop) {
     g = { ...g, items: { ...g.items, [z.drop]: (g.items[z.drop] ?? 0) + 1 } };
     lines.push(`お礼に ${ITEMS[z.drop].name}を もらった！`);
@@ -260,12 +279,14 @@ export const MIN_STEPS = 4; // 戦いのすぐあとは出ない
 export const MON_RATE = 2;
 
 export function encounterAt(game, map, x, y, rng) {
-  if (map !== 'field') return null;
-  const ch = IWAKI_ROWS[y][x];
+  if (!isField(map)) return null;
+  const ch = mapRows(map)[y][x];
   const rate = ENCOUNTER_ON[ch];
   if (!rate || (game.steps ?? 0) < MIN_STEPS || rng() >= rate) return null;
-  const zone = zoneOf(y);
-  const list = Object.keys(ZAKO).filter((id) => !ZAKO[id].pending && !ZAKO[id].retired).filter((id) => ZAKO[id].zones.includes(zone)
+  // 相馬（1章）は いわきの北の顔ぶれを強めて出す（ZONE_SCALE）
+  const zone = map === 'soma' ? 'soma' : zoneOf(y);
+  const pool = zone === 'soma' ? 'north' : zone;
+  const list = Object.keys(ZAKO).filter((id) => !ZAKO[id].pending && !ZAKO[id].retired).filter((id) => ZAKO[id].zones.includes(pool)
     || (ch === '=' && ZAKO[id].zones.includes('road'))
     || (ch === ',' && ZAKO[id].zones.includes('coast')));
   return list.length ? { id: list[Math.floor(rng() * list.length)], zone } : null;
@@ -279,7 +300,9 @@ export function walkStep(game) {
 
 // 道中の戦いの話のデータ（ボスの話と同じ形にして、戦いの画面を使い回す）
 // 帯ごとの専用の背景（Gemini・2026-10-02。それまではボスの背景を借りていた）
-export const ZONE_BG = Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`]));
+export const ZONE_BG = { ...Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`])), soma: 'assets/bg_dochu_north.png' };
+// 帯ごとの強さの倍率（1章の相馬は 1.5倍・もらう経験と文も 1.6倍）
+export const ZONE_SCALE = { soma: { stat: 1.5, reward: 1.6 } };
 export const HARAI = {
   name: '祓いの言葉', cost: 4, power: 14, weakMult: 1, plainMult: 1,
   weakText: '祓いの 言葉が もやを 打った！', plainText: '祓いの 言葉が もやを 打った！',
@@ -293,7 +316,8 @@ export function zakoData(game, zakoId, zone) {
     items: {},
     spells: { harai: HARAI },
     enemy: {
-      id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, hp: z.hp, atk: z.atk, def: z.def, agi: z.agi,
+      id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone]?.stat ?? 1; return { hp: Math.round(z.hp * k), atk: Math.round(z.atk * k), def: Math.round(z.def * k) }; })(), agi: z.agi,
+      rewardRate: ZONE_SCALE[zone]?.reward ?? 1, // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
       weakness: null, noWeak: true, canFlee: true, trick: z.trick ?? null, special: null,
       biteName: z.biteName, introText: z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,
       loseLines: ['旅の者たちは 力つきた……'],
@@ -327,7 +351,8 @@ export function returnStolen(game) {
 // 負けた：最後にお参りした所へ戻り、文が半分。HP は戻る（持ち物と、元に戻したボスはそのまま）
 export function afterLose(game) {
   const back = game.savePos ?? START;
-  return { ...game, mon: Math.floor(game.mon / 2), party: fullParty(game), steps: 0, pos: { ...back }, fieldPos: back.map === 'field' ? { x: back.x, y: back.y } : { ...(game.saveFieldPos ?? game.fieldPos) } };
+  const inField = isField(back.map);
+  return { ...game, mon: Math.floor(game.mon / 2), party: fullParty(game), steps: 0, pos: { ...back }, fieldPos: inField ? { x: back.x, y: back.y } : { ...(game.saveFieldPos ?? game.fieldPos) }, fieldMap: inField ? back.map : game.saveFieldMap ?? 'field' };
 }
 
 // 歩いている間に道具を使う：HP の物は一番弱っている仲間に、術の物は術を使う仲間に
