@@ -1,0 +1,124 @@
+// 和風の窓とボタン（Gemini の部品表・art_src/prep_ui.py が assets/ui/ に出す）
+// 本人 10/2「デザインをもっと上げたい」「ボタンは押されたら、凹ませたい」
+// ・窓＝四隅の飾りはそのまま、辺と中だけを伸ばす（9つに分けて並べる。NineSlice は WebGL だけなので使わない）
+// ・丸いボタン＝押すと凹んだ絵に替わり2ドット沈む。離す・指が外れると戻る
+// ・十字キー＝押したキーだけ凹む。当たりはキーより広め（親指で外さない）
+import { KEY_POS } from './kit_layout.js?v=76';
+
+export const BTN_COLORS = ['orange', 'purple', 'red', 'green', 'blue'];
+const DIRS = ['up', 'down', 'left', 'right'];
+const FONT = 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
+
+export function preloadKit(scene) {
+  const names = ['window', 'tab', 'bar', 'pad',
+    ...BTN_COLORS.flatMap((c) => [`btn_${c}`, `btn_${c}_down`]),
+    ...DIRS.flatMap((d) => [`key_${d}`, `key_${d}_down`])];
+  for (const n of names) if (!scene.textures.exists(`ui_${n}`)) scene.load.image(`ui_${n}`, `assets/ui/${n}.png`);
+}
+
+// 絵を9つに分けたコマ（s0〜s8）を、1度だけ作る
+function slice(scene, key, c) {
+  const tex = scene.textures.get(key);
+  if (tex.has('s0')) return;
+  const img = tex.getSourceImage();
+  const xs = [0, c, img.width - c, img.width];
+  const ys = [0, c, img.height - c, img.height];
+  for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) tex.add(`s${j * 3 + i}`, 0, xs[i], ys[j], xs[i + 1] - xs[i], ys[j + 1] - ys[j]);
+}
+
+// 伸び縮みする枠（左上 x,y・幅 w・高さ h・角の大きさ c）
+export function makeFrame(scene, key, x, y, w, h, c) {
+  slice(scene, key, c);
+  const box = scene.add.container(x, y);
+  const xs = [0, c, w - c];
+  const ws = [c, w - 2 * c, c];
+  const ys = [0, c, h - c];
+  const hs = [c, h - 2 * c, c];
+  for (let j = 0; j < 3; j++) {
+    for (let i = 0; i < 3; i++) {
+      box.add(scene.add.image(xs[i], ys[j], key, `s${j * 3 + i}`).setOrigin(0).setDisplaySize(ws[i], hs[j]));
+    }
+  }
+  return box;
+}
+
+export const makeWindow = (scene, x, y, w, h) => makeFrame(scene, 'ui_window', x, y, w, h, 16);
+
+// 丸いボタン（中心 x,y）。label はボタンの下に出す（below=false なら ボタンの上に重ねる）
+export function makeButton(scene, x, y, color, label, onPress, { size = 62, fontSize = 16, below = true } = {}) {
+  const box = scene.add.container(x, y);
+  const face = scene.add.container(0, 0);
+  const img = scene.add.image(0, 0, `ui_btn_${color}`).setDisplaySize(size, size);
+  face.add(img);
+  if (label && !below) {
+    face.add(scene.add.text(0, 0, label, {
+      fontFamily: FONT, fontSize: `${fontSize}px`, color: '#ffffff', resolution: 3, stroke: '#1a1030', strokeThickness: 4,
+    }).setOrigin(0.5));
+  }
+  box.add(face);
+  if (label && below) {
+    box.add(scene.add.text(0, size / 2 + 4, label, {
+      fontFamily: FONT, fontSize: `${fontSize}px`, color: '#ffffff', resolution: 3,
+    }).setOrigin(0.5, 0));
+  }
+  const up = () => { img.setTexture(`ui_btn_${color}`); face.y = 0; };
+  img.setInteractive(new Phaser.Geom.Circle(img.width / 2, img.height / 2, img.width / 2), Phaser.Geom.Circle.Contains);
+  img.input.cursor = 'pointer';
+  img.on('pointerdown', () => {
+    img.setTexture(`ui_btn_${color}_down`);
+    face.y = 2; // 凹む
+    onPress?.();
+  });
+  img.on('pointerup', up);
+  img.on('pointerout', up);
+  scene.input.on('pointerup', up);
+  return box;
+}
+
+// 十字キー（中心 cx,cy・倍率 scale）。onDir(向き) を押した時に、onDir(null) を離した時に呼ぶ
+export function makePad(scene, cx, cy, onDir, scale = 1) {
+  const box = scene.add.container(cx, cy);
+  const base = scene.add.image(0, 0, 'ui_pad').setScale(scale);
+  box.add(base);
+  const left = -base.displayWidth / 2;
+  const top = -base.displayHeight / 2;
+  const downs = {};
+  for (const d of DIRS) {
+    const [kx, ky] = KEY_POS[d];
+    const img = scene.add.image(left + kx * scale, top + ky * scale, `ui_key_${d}_down`).setOrigin(0).setScale(scale).setVisible(false);
+    downs[d] = img;
+    box.add(img);
+    // 当たり：キーの1.6倍の四角（キーの中心に合わせる）
+    const keyImg = scene.textures.get(`ui_key_${d}`).getSourceImage();
+    const kw = keyImg.width * scale * 1.6;
+    const kh = keyImg.height * scale * 1.6;
+    const hit = scene.add.zone(left + (kx + keyImg.width / 2) * scale, top + (ky + keyImg.height / 2) * scale, kw, kh).setInteractive();
+    hit.on('pointerdown', () => { downs[d].setVisible(true); onDir(d); });
+    const release = () => { downs[d].setVisible(false); onDir(null); };
+    hit.on('pointerup', release);
+    hit.on('pointerout', release);
+    box.add(hit);
+  }
+  scene.input.on('pointerup', () => { for (const d of DIRS) downs[d].setVisible(false); });
+  return box;
+}
+
+// 窓に収まらない文を、ページに分ける（区切りは文の中の空白＝言葉の切れ目。本人 10/2「下の会話の文字がはみ出る。枠内に収めて」）
+// ⛔字を小さくして収める手は、顔ありの長い文で15ドットでもはみ出した
+export function paginate(textObj, text, maxY) {
+  const segs = text.split(/(?<= )/);
+  const pages = [];
+  let cur = '';
+  for (const s of segs) {
+    textObj.setText(cur + s);
+    if (cur && textObj.y + textObj.height > maxY) {
+      pages.push(cur.trimEnd());
+      cur = s;
+    } else {
+      cur += s;
+    }
+  }
+  if (cur) pages.push(cur.trimEnd());
+  textObj.setText(pages[0] ?? '');
+  return pages;
+}
