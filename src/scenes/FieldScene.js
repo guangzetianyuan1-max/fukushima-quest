@@ -2,28 +2,29 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=79';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=79';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=79';
-import { TILE } from '../field/tiles.js?v=79';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=79';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=79';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=79';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=79';
+import { EPISODES } from '../data/episodes.js?v=80';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=80';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=80';
+import { TILE } from '../field/tiles.js?v=80';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=80';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=80';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=80';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=80';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME,
-} from '../field/game.js?v=79';
-import { membersOf } from '../battle/levels.js?v=79';
-import { COMPANIONS } from '../data/companions.js?v=79';
-import { ICON_IDS } from '../data/icons.js?v=79';
-import { FACE_IDS } from '../data/faces.js?v=79';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=79';
-import { makeRng } from '../battle/rules.js?v=79';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=79';
-import { buyEquip, partyView } from '../field/game.js?v=79';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=79';
+} from '../field/game.js?v=80';
+import { membersOf } from '../battle/levels.js?v=80';
+import { COMPANIONS } from '../data/companions.js?v=80';
+import { ICON_IDS } from '../data/icons.js?v=80';
+import { FACE_IDS } from '../data/faces.js?v=80';
+import { mapPointOf } from '../field/mapcard.js?v=80';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=80';
+import { makeRng } from '../battle/rules.js?v=80';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=80';
+import { buyEquip, partyView } from '../field/game.js?v=80';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=80';
 
 const W = 360;
 const MAP_H = 420; // 地図の見える高さ
@@ -277,7 +278,18 @@ export class FieldScene extends Phaser.Scene {
     this.busy = true;
     const box = this.add.container(0, 0);
     box.add(this.add.rectangle(0, 0, W, 640, 0x000000, 0.85).setOrigin(0).setInteractive());
-    box.add(this.add.image(W / 2, 312, 'card_map'));
+    const card = this.add.image(W / 2, 312, 'card_map');
+    box.add(card);
+    // いま ここ（本人 10/3「現在地を矢印で表示して欲しい」）＝赤い下向きの矢印が上下にゆれ、先が いまの場所を指す
+    const pt = mapPointOf(this.g);
+    const px = card.x - card.width / 2 + pt.x;
+    const py = card.y - card.height / 2 + pt.y;
+    box.add(this.add.circle(px, py, 4, 0xffffff).setStrokeStyle(2, 0xd02020));
+    const arrow = this.add.container(px, py - 8);
+    arrow.add(this.add.triangle(0, 0, -11, -22, 11, -22, 0, 0, 0xe02020).setOrigin(0, 0).setStrokeStyle(2, 0xffffff));
+    arrow.add(this.add.text(0, -26, 'いま ここ', { fontFamily: FONT, fontSize: '14px', color: '#ffffff', resolution: 3, stroke: '#a01010', strokeThickness: 4 }).setOrigin(0.5, 1));
+    box.add(arrow);
+    this.tweens.add({ targets: arrow, y: py - 16, duration: 450, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
     box.add(this.add.text(W / 2, 628, 'さわると とじる', { fontFamily: FONT, fontSize: '15px', color: '#cfd8ff', resolution: 3 }).setOrigin(0.5, 1));
     this.addUi(box);
     this.time.delayedCall(250, () => this.input.once('pointerdown', () => { box.destroy(); this.busy = false; }));

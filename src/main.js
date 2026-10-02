@@ -1,11 +1,11 @@
-import { TitleScene } from './scenes/TitleScene.js?v=79';
-import { BattleScene } from './scenes/BattleScene.js?v=79';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=79';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=79';
-import { HARAI } from './field/game.js?v=79';
-import { EQUIP } from './data/equip.js?v=79';
-import { EPISODES } from './data/episodes.js?v=79';
-import { unlock, isUnlocked } from './audio/chip.js?v=79';
+import { TitleScene } from './scenes/TitleScene.js?v=80';
+import { BattleScene } from './scenes/BattleScene.js?v=80';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=80';
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=80';
+import { HARAI } from './field/game.js?v=80';
+import { EQUIP } from './data/equip.js?v=80';
+import { EPISODES } from './data/episodes.js?v=80';
+import { unlock, isUnlocked } from './audio/chip.js?v=80';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
