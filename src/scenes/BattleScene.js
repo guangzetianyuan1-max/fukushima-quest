@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=110';
-import { revealAt } from '../ui/reveal.js?v=110';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=110';
-import { chooseCommands } from '../battle/auto.js?v=110';
-import { itemNote } from '../data/items.js?v=110';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=110';
-import { STORY_FILES } from '../data/story_assets.js?v=110';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=110';
-import { drawScroll } from '../ui/scroll.js?v=110';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=110';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=110';
+import { EPISODES } from '../data/episodes.js?v=111';
+import { revealAt } from '../ui/reveal.js?v=111';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=111';
+import { chooseCommands } from '../battle/auto.js?v=111';
+import { itemNote } from '../data/items.js?v=111';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=111';
+import { STORY_FILES } from '../data/story_assets.js?v=111';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=111';
+import { drawScroll } from '../ui/scroll.js?v=111';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=111';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=111';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -373,7 +373,7 @@ export class BattleScene extends Phaser.Scene {
     } else if (fx.kind === 'special') {
       // 必殺技：画面が光り（色は敵ごと・既定は炎の赤）、大きく揺れる
       const [r, g, b] = fx.flash ?? [255, 90, 30];
-      sfx('special'); // 激しい効果音（本人 10/4）＝挿絵が すべりこんで 当たる 0.18秒に合わせてある
+      if (!fx.solo) sfx('special'); // 激しい効果音（本人 10/4）＝挿絵が すべりこんで 当たる 0.18秒に合わせてある（solo＝技の音だけ＝すごいおなら）
       if (fx.cutin && this.textures.exists(fx.cutin)) {
         this.showCutin(fx.cutin, () => { this.cameras.main.flash(450, r, g, b); this.cameras.main.shake(500, 0.022); });
       } else {
@@ -546,6 +546,13 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
     const a = allies[this.inputIndex];
+    // 気絶している人には聞かない（その番は休む・本人 10/4 すごいおなら）
+    if (a.stunned > 0) {
+      this.pending[a.id] = { type: 'attack' };
+      this.inputIndex += 1;
+      this.askNextAlly();
+      return;
+    }
     // 色分けした丸いボタン（押すと凹む・本人 10/2）。たたかう＝橙／語る＝紫・術＝赤／道具＝緑／にげる＝藍／自動＝残りの色
     // 道中の敵（昔話の主でない）には しおりは語らない＝「語る」を出さない（本人 10/2）
     // 語り終えた（弱点が明かされた）あとは「語る」を出さない＝同じ筋を二度聞かせない（本人 10/2「ダブらないように」）
@@ -571,6 +578,7 @@ export class BattleScene extends Phaser.Scene {
   backAlly() {
     const allies = this.livingAllies();
     this.inputIndex = Math.max(0, this.inputIndex - 1);
+    while (this.inputIndex > 0 && allies[this.inputIndex].stunned > 0) this.inputIndex -= 1; // 気絶している人は とばして戻る
     delete this.pending[allies[this.inputIndex].id];
     this.askNextAlly();
   }

@@ -126,6 +126,36 @@ function noise(start, dur, { vol = 0.3, from = 4000, to = 400 } = {}) {
   src.start(start);
 }
 
+// おならの音（本人 10/4「おならの効果音を入れてください」）：低い のこぎり波を 速く ふるわせる（ブルルッ）。高さは だんだん 下がる
+function rasp(start, dur, { from = 130, to = 65, rate = 28, vol = 0.4 } = {}) {
+  const o = ctx.createOscillator();
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(from, start);
+  o.frequency.exponentialRampToValueAtTime(to, start + dur);
+  const f = ctx.createBiquadFilter();
+  f.type = 'lowpass';
+  f.frequency.value = 1100;
+  const am = ctx.createGain(); // ふるえ＝音の大きさを rate 回/秒で 開け閉め
+  am.gain.value = 0.5;
+  const lfo = ctx.createOscillator();
+  lfo.type = 'square';
+  lfo.frequency.setValueAtTime(rate, start);
+  lfo.frequency.linearRampToValueAtTime(rate * 0.6, start + dur);
+  const depth = ctx.createGain();
+  depth.gain.value = 0.5;
+  lfo.connect(depth).connect(am.gain);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.001, start);
+  g.gain.exponentialRampToValueAtTime(vol, start + 0.03);
+  g.gain.setValueAtTime(vol, start + dur * 0.7);
+  g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  o.connect(f).connect(am).connect(g).connect(master);
+  o.start(start);
+  lfo.start(start);
+  o.stop(start + dur + 0.02);
+  lfo.stop(start + dur + 0.02);
+}
+
 // 弦をはじく音（琵琶）：のこぎり波を、明るい所から暗い所へ閉じていく窓に通す。
 // はじいた瞬間だけ少し高く入って本来の高さへ落ちる＝撥（ばち）で弾いた「ビィン」。bend で押し手（あとから高さを上げる）
 function pluck(freq, start, dur, { vol = 0.3, bend = null } = {}) {
@@ -209,6 +239,13 @@ const SFX = {
   lose: (t) => arp([74, 70, 67, 62], t, 0.35, 0.6, { type: 'triangle', vol: 0.3 }),
   // ⭐ボスの必殺技（本人 10/4「必殺技のとき、効果音を入れて欲しい。激しめの」）＝挿絵が すべりこむ「シュバッ」→ 0.18秒で「ドガァン」と重く当たり、地鳴りが残る
   //   技ごとの音（wave・flame・shock など）に かさねて鳴らす
+  // すごいおなら（へっぴり嫁・本人 10/4）＝挿絵が すべりこむ 0.15秒に「ブッ」→ 長い「ブゥゥ〜〜」→ 最後に 小さく「プッ」。後ろで 突風
+  onara: (t) => {
+    rasp(t + 0.15, 0.14, { from: 160, to: 140, rate: 34, vol: 0.4 });
+    rasp(t + 0.33, 1.15, { from: 140, to: 58, rate: 30, vol: 0.5 });
+    tone(N(70), t + 1.52, 0.1, { type: 'square', vol: 0.12, slideTo: N(82) });
+    noise(t + 0.35, 1.2, { vol: 0.22, from: 300, to: 2600 });
+  },
   special: (t) => {
     noise(t, 0.18, { vol: 0.35, from: 800, to: 9000 }); // すべりこむ風切り
     tone(N(72), t, 0.18, { type: 'sawtooth', vol: 0.12, slideTo: N(96) });

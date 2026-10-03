@@ -2,14 +2,14 @@
 // 話（川俣町公式「へっぴり嫁（部屋の由来の話）」語り 佐藤庄吉＝vault 日本昔話/2026-10-04-調査-福島昔話クエスト2章県北5話.md）：
 // 気立てのよい嫁が「大きな屁をたれる癖」を打ち明ける。臼につかまった姑と婿は吹き飛ばされ、嫁は里へ帰される。
 // 帰る途中、馬を連れた商人と賭けて屁で梨の実を落とし、馬と反物をもらう。婿は「宝嫁」と呼び戻し、姑が奥に一間を造った＝「へ屋＝部屋」の始まり
-// 必殺技は「おなら」（本人 10/1）。⛔下品に振れさせない（音・臭いを書かない。可笑しみは真面目に語ることから）・子ども向けの絵柄に寄せない
+// 必殺技は「すごいおなら」（本人 10/1「おなら」→10/4「おおきな屁」→同日「すごいおなら」・おならの効果音・くらうと全員しばらく気絶）。⛔下品に振れさせない（音・臭いを書かない。可笑しみは真面目に語ることから）・子ども向けの絵柄に寄せない
 // ゲームでは、忘れられて黒いもやに呑まれた嫁。弱点＝「迎えの言葉」（遠慮は いらんよ）。倒すと元に戻り、二本松への道の大岩を吹き飛ばす
 // 絵＝まだ（仮に道中の娘の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=110';
+import { BASIC_ITEMS } from './basic_items.js?v=111';
 
 export const HEPPIRI = {
   art: {
-    dark: 'assets/zako_gal.png', light: 'assets/zako_gal.png', bg: 'assets/bg_dochu_north.png', // ⏳絵が届くまで仮
+    dark: 'assets/heppiri_dark.png', light: 'assets/heppiri_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 ①が届いた（②が届くまで light も呑まれた姿・背景は仮）
     glowDark: 0xc9a0ff, glowLight: 0xffc8a0, // 夕暮れの薄紫 → 戻ったら あたたかい茜色
   },
   allies: [
@@ -33,12 +33,14 @@ export const HEPPIRI = {
     autoWinTarget: 0.93,
     // 強さ＝試算（node tests/_autotune.mjs <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 13,
-    hp: 640, atk: 90, def: 104, agi: 10,
+    hp: 640, atk: 65, def: 104, agi: 10, // 10/4 気絶を足したので攻め 90→65（tests/_tune_onara.mjs で自動の勝率0.93）
     bgm: 'heppiri',
     weakness: 'mukae',
     mist: { min: 1, max: 3, rise: 0.2 },
-    // 必殺技（本人 10/1「必殺技は おなら」）。絵と音は突風（ゴーッという風）で見せる
-    special: { name: 'おなら', chance: 0.28, power: 49, flash: [255, 245, 210], sfx: 'wave', cutin: 'assets/cutin/heppiri_onara.png' },
+    // 必殺技（本人 10/4「へっぴり嫁の必殺技は『すごいおなら』に」「おならの効果音を」「くらったら全員しばらくの間、気絶」）
+    // stun＝くらった全員が その数だけ 自分の番を休む（気絶）。気絶している人がいる間は この技を出さない（続けて出て 何もできないまま負けるのを防ぐ）
+    // sfxSolo＝ふつうの必殺技の「ドガァン」を重ねず、おならの音だけ
+    special: { name: 'すごいおなら', chance: 0.2, power: 30, stun: 2, flash: [255, 245, 210], sfx: 'onara', sfxSolo: true, cutin: 'assets/cutin/heppiri_onara.png' },
     biteName: '臼で ひと振り',
     introText: '川俣の 道に、お嫁さんが ひとり。何かを じっと こらえている……',
     tellLines: [

@@ -335,11 +335,21 @@ function enemyStrike(state, rng, log, name, bite) {
   if (e.trick && rng() < e.trick.chance && doTrick(state, e, living, rng, log)) return;
   // 必殺技は2つまで（本人 10/3「4話の龍に必殺技を増やして。全員に大ダメージ」）＝special2 を先に見て、出なければ special
   // ⚠special2 の無い敵は rng を引く回数が前と同じ（運の並びを変えない）
-  const sp = [e.special2, e.special].find((x) => x && rng() < x.chance);
+  // stun の技（へっぴり嫁の すごいおなら）は、気絶している人がいる間は出さない＝続けて気絶させて何もできないまま負けるのを防ぐ
+  const sp = [e.special2, e.special].find((x) => x && !(x.stun && living.some((a) => a.stunned > 0)) && rng() < x.chance);
   if (sp) {
     // cutin＝技の挿絵（本人 10/3「今回から、ボスの必殺技は別のアクション(挿絵)を」）。挿絵のある技は文を長めに止める（hold）
-    log.push({ text: `${name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
+    log.push({ text: `${name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin, solo: !!sp.sfxSolo }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
     for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * spread(rng))), log);
+    // 気絶（本人 10/4「おならをくらったら全員しばらくの間、気絶」）＝生き残った全員が stun 回 自分の番を休む
+    if (sp.stun) {
+      const hit = living.filter((a) => a.alive);
+      for (const a of hit) {
+        a.stunned = Math.max(a.stunned ?? 0, sp.stun);
+        a.stunText = `${a.name}は 気絶して 動けない……`;
+      }
+      if (hit.length) log.push({ text: 'みんな 目を まわして 気絶して しまった！', sfx: 'down' });
+    }
     // 必殺技をくらうと、もやが1つ立ちこめる（最大 max まで・本人 10/1「敵の必殺技をくらうとモヤがかかる」）
     if (e.mist && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive)) {
       e.mistLeft += 1;
