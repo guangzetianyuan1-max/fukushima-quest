@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=93';
-import { revealAt } from '../ui/reveal.js?v=93';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=93';
-import { chooseCommands } from '../battle/auto.js?v=93';
-import { itemNote } from '../data/items.js?v=93';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=93';
-import { STORY_FILES } from '../data/story_assets.js?v=93';
-import { CUTIN_FILES } from '../data/cutin_assets.js?v=93';
-import { drawScroll } from '../ui/scroll.js?v=93';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=93';
-import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=93';
+import { EPISODES } from '../data/episodes.js?v=94';
+import { revealAt } from '../ui/reveal.js?v=94';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=94';
+import { chooseCommands } from '../battle/auto.js?v=94';
+import { itemNote } from '../data/items.js?v=94';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=94';
+import { STORY_FILES } from '../data/story_assets.js?v=94';
+import { CUTIN_FILES } from '../data/cutin_assets.js?v=94';
+import { drawScroll } from '../ui/scroll.js?v=94';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=94';
+import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=94';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -562,9 +562,8 @@ export class BattleScene extends Phaser.Scene {
       ['道具', () => this.itemMenu(a), 'green'],
       ['にげる', () => this.choose(a, { type: 'flee' }), 'blue'],
       ['自動', () => this.startAuto(), a.canTell ? 'red' : 'purple'],
-      // 2人目からは「もどる」＝前の人のコマンドを選び直す（本人 10/3「戦闘中のボタンで『戻る』を追加してほしい」）
-      this.inputIndex > 0 ? ['もどる', () => this.backAlly(), 'blue'] : null,
-    ].filter(Boolean));
+    ].filter(Boolean), this.inputIndex > 0 ? () => this.backAlly() : null);
+    // ↑ 2人目からは「戻る」＝前の人のコマンドを選び直す（本人 10/3「戦闘中のボタンで『戻る』を追加」「他と同じ大きさで、違う色で」）
   }
 
   // 前の人へ戻る：その人の決めたコマンドを消して、もう一度聞く
@@ -587,23 +586,24 @@ export class BattleScene extends Phaser.Scene {
 
 
 
-  // 丸いボタンを横一列に（下の窓の中）
-  showButtons(title, options) {
+  // 丸いボタンを横一列に（下の窓の中）。back があれば 右端に銀の「戻る」（本人 10/3「他と同じ大きさで、違う色で」「キレイに並ばなかったら大きさを調整」）
+  // ＝6つ並んでも隣とぶつからない大きさ（50）に、どの人の列もそろえる（人によって大きさが変わらない）
+  showButtons(title, options, back = null) {
     this.clearMenu();
     this.setFace(null);
     this.msgSpeaker.setText('');
     this.msgText.setText(title);
     this.menuReadyAt = this.time.now + 200;
-    const pitch = (W - 40) / options.length;
-    const six = options.length >= 6; // 「もどる」が入って6つ並ぶときは、少し小さく（字が隣とぶつからない）
-    options.forEach(([label, fn, color], i) => {
+    const all = back ? [...options, ['戻る', back, 'gray']] : options;
+    const pitch = (W - 40) / all.length;
+    all.forEach(([label, fn, color], i) => {
       const b = makeButton(this, 20 + pitch * (i + 0.5), MSG_Y + 112, color, label, () => {
         if (this.time.now < this.menuReadyAt) return;
         this.menuReadyAt = Infinity; // 凹んでいる間の二度押しで、次の人のコマンドまで決めない
         sfx('select');
         // 凹んだ絵を一瞬見せてから次へ
         this.time.delayedCall(90, fn);
-      }, six ? { size: 50, fontSize: 13 } : { size: 58, fontSize: 15 });
+      }, { size: 50, fontSize: 15 });
       this.menu.push(b);
     });
   }
@@ -619,7 +619,7 @@ export class BattleScene extends Phaser.Scene {
       const sp = this.ep.spells[id];
       return [`${sp.name}（術${sp.cost}）`, () => this.choose(a, { type: 'spell', spellId: id })];
     });
-    this.showMenu('どの 術を つかう？', [...opts, ['もどる', () => this.askNextAlly()]]);
+    this.showMenu('どの 術を つかう？', [...opts, ['戻る', () => this.askNextAlly()]]);
   }
 
   // 道具。無くなった物は灰色で残す
@@ -630,7 +630,7 @@ export class BattleScene extends Phaser.Scene {
       const note = itemNote(it);
       return [`${it.name}×${n}`, n > 0 ? () => this.choose(a, { type: 'item', itemId: id }) : null, note];
     });
-    this.showMenu('どの 道具を 使う？', [...opts, ['もどる', () => this.askNextAlly()]]);
+    this.showMenu('どの 道具を 使う？', [...opts, ['戻る', () => this.askNextAlly()]]);
   }
 
   startAuto() {

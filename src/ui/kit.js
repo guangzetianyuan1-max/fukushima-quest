@@ -3,9 +3,9 @@
 // ・窓＝四隅の飾りはそのまま、辺と中だけを伸ばす（9つに分けて並べる。NineSlice は WebGL だけなので使わない）
 // ・丸いボタン＝押すと凹んだ絵に替わり2ドット沈む。離す・指が外れると戻る
 // ・十字キー＝押したキーだけ凹む。当たりはキーより広め（親指で外さない）
-import { KEY_POS } from './kit_layout.js?v=93';
+import { KEY_POS } from './kit_layout.js?v=94';
 
-export const BTN_COLORS = ['orange', 'purple', 'red', 'green', 'blue'];
+export const BTN_COLORS = ['orange', 'purple', 'red', 'green', 'blue', 'gray']; // gray＝戦いの「戻る」（art_src/make_btn_gray.py）
 const DIRS = ['up', 'down', 'left', 'right'];
 const FONT = 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
 
