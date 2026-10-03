@@ -207,6 +207,18 @@ const SFX = {
     strum([45, 50, 57, 62], t + 2.9, 0.14);
   },
   lose: (t) => arp([74, 70, 67, 62], t, 0.35, 0.6, { type: 'triangle', vol: 0.3 }),
+  // ⭐ボスの必殺技（本人 10/4「必殺技のとき、効果音を入れて欲しい。激しめの」）＝挿絵が すべりこむ「シュバッ」→ 0.18秒で「ドガァン」と重く当たり、地鳴りが残る
+  //   技ごとの音（wave・flame・shock など）に かさねて鳴らす
+  special: (t) => {
+    noise(t, 0.18, { vol: 0.35, from: 800, to: 9000 }); // すべりこむ風切り
+    tone(N(72), t, 0.18, { type: 'sawtooth', vol: 0.12, slideTo: N(96) });
+    const h = t + 0.18;
+    noise(h, 0.08, { vol: 0.8, from: 10000, to: 3000 }); // 当たる瞬間の破裂
+    tone(N(36), h, 0.5, { type: 'square', vol: 0.45, slideTo: N(18) }); // 重い ドン
+    tone(N(43), h, 0.35, { type: 'sawtooth', vol: 0.25, slideTo: N(24) });
+    noise(h + 0.03, 0.9, { vol: 0.5, from: 2500, to: 80 }); // 砕ける音から地鳴りへ
+    noise(h + 0.45, 0.6, { vol: 0.15, from: 600, to: 100 }); // 残る ゴゴゴ
+  },
 };
 
 export const SFX_NAMES = Object.keys(SFX);

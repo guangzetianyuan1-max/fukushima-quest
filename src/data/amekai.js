@@ -4,12 +4,12 @@
 // 掘ると赤子が飴をなめていた（その日が四十九日）。子はのちに伊達家の家臣になったと伝わる。柱田の遠藤家の墓地＝田元の地蔵（子育て地蔵）
 // 原典には敵はいない＝ゲームでは、忘れられて黒いもやに呑まれた母の霊。弱点＝「子を守る約束」。原典は紙芝居④で しおりが語る
 // ⚠身ごもった母の死・墓の赤子＝絵と語りは直接見せず、やさしく語る
-// 絵＝まだ（仮に道中の霊の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=107';
+// 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
+import { BASIC_ITEMS } from './basic_items.js?v=108';
 
 export const AMEKAI = {
   art: {
-    dark: 'assets/zako_rei.png', light: 'assets/zako_rei.png', bg: 'assets/bg_dochu_north.png', // ⏳絵が届くまで仮
+    dark: 'assets/amekai_dark.png', light: 'assets/amekai_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 絵が届いた（ng9l8f・q5ld7m・挿絵 wygk69）。⏳背景はまだ（道中の北を借りる）
     glowDark: 0x9fb4ff, glowLight: 0xffe6c8, // 墓地の月明かり → 戻ったら やわらかな 灯
   },
   allies: [

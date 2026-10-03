@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=107';
-import { revealAt } from '../ui/reveal.js?v=107';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=107';
-import { chooseCommands } from '../battle/auto.js?v=107';
-import { itemNote } from '../data/items.js?v=107';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=107';
-import { STORY_FILES } from '../data/story_assets.js?v=107';
-import { CUTIN_FILES } from '../data/cutin_assets.js?v=107';
-import { drawScroll } from '../ui/scroll.js?v=107';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=107';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=107';
+import { EPISODES } from '../data/episodes.js?v=108';
+import { revealAt } from '../ui/reveal.js?v=108';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=108';
+import { chooseCommands } from '../battle/auto.js?v=108';
+import { itemNote } from '../data/items.js?v=108';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=108';
+import { STORY_FILES } from '../data/story_assets.js?v=108';
+import { CUTIN_FILES } from '../data/cutin_assets.js?v=108';
+import { drawScroll } from '../ui/scroll.js?v=108';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=108';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=108';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -373,6 +373,7 @@ export class BattleScene extends Phaser.Scene {
     } else if (fx.kind === 'special') {
       // 必殺技：画面が光り（色は敵ごと・既定は炎の赤）、大きく揺れる
       const [r, g, b] = fx.flash ?? [255, 90, 30];
+      sfx('special'); // 激しい効果音（本人 10/4）＝挿絵が すべりこんで 当たる 0.18秒に合わせてある
       if (fx.cutin && this.textures.exists(fx.cutin)) {
         this.showCutin(fx.cutin, () => { this.cameras.main.flash(450, r, g, b); this.cameras.main.shake(500, 0.022); });
       } else {
