@@ -2,31 +2,32 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=113';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=113';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=113';
-import { RIDERS } from '../data/nomaoi_assets.js?v=113';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=113';
-import { TILE } from '../field/tiles.js?v=113';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=113';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=113';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=113';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=113';
+import { EPISODES } from '../data/episodes.js?v=114';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=114';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=114';
+import { RIDERS } from '../data/nomaoi_assets.js?v=114';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=114';
+import { TILE } from '../field/tiles.js?v=114';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=114';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=114';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=114';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=114';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt,
-} from '../field/game.js?v=113';
-import { membersOf } from '../battle/levels.js?v=113';
-import { COMPANIONS } from '../data/companions.js?v=113';
-import { ICON_IDS } from '../data/icons.js?v=113';
-import { FACE_IDS } from '../data/faces.js?v=113';
-import { mapPointOf } from '../field/mapcard.js?v=113';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=113';
-import { makeRng } from '../battle/rules.js?v=113';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=113';
-import { buyEquip, partyView } from '../field/game.js?v=113';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=113';
+} from '../field/game.js?v=114';
+import { membersOf } from '../battle/levels.js?v=114';
+import { COMPANIONS } from '../data/companions.js?v=114';
+import { ICON_IDS } from '../data/icons.js?v=114';
+import { FACE_IDS } from '../data/faces.js?v=114';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=114';
+import { mapPointOf } from '../field/mapcard.js?v=114';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=114';
+import { makeRng } from '../battle/rules.js?v=114';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=114';
+import { buyEquip, partyView } from '../field/game.js?v=114';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=114';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -48,7 +49,8 @@ const style = (size = 20, color = '#ffffff') => ({
 const OPPOSITE = { up: 'down', down: 'up', left: 'right', right: 'left' };
 const NAMES = NAME;
 // 歩く絵の名前（昔話の味方は自分の絵が届くまで町の人の絵を借りる）。幽霊の絵があるのは旅の者・しおり
-const lookOf = (id) => COMPANIONS[id]?.look ?? id;
+// 武士になった旅の者は 武士の絵（本人 10/4「武士になったら、キャラクターの見た目も更新したい」・絵が届くまでは旅の者のまま）
+const lookOf = (id, g) => (id === 'tabi' && g?.flags?.bushi && EXTRA_LOOKS.includes('bushi') ? 'bushi' : COMPANIONS[id]?.look ?? id);
 const HAS_GHOST = ['tabi', 'shiori', 'kariudo', 'sou'];
 
 // もやの壁にぶつかったとき、しおりが言う手がかり
@@ -189,7 +191,7 @@ export class FieldScene extends Phaser.Scene {
     }
     // 後ろの人から置く＝前の人が上に重なる
     for (const f of [...this.followers].reverse()) {
-      f.sprite = this.add.sprite(...this.center(f.x, f.y), `p-${lookOf(f.id)}`, frameOf(this.facing, 0, lookOf(f.id))).setOrigin(0.5, ORIGIN_Y);
+      f.sprite = this.add.sprite(...this.center(f.x, f.y), `p-${lookOf(f.id, this.g)}`, frameOf(this.facing, 0, lookOf(f.id, this.g))).setOrigin(0.5, ORIGIN_Y);
     }
     this.shiori = this.followers[0].sprite;
     this.player = this.add.sprite(...this.center(x, y), 'p-tabi', frameOf(this.facing, 0, 'tabi')).setOrigin(0.5, ORIGIN_Y);
@@ -276,7 +278,7 @@ export class FieldScene extends Phaser.Scene {
     if (!this.player) return;
     for (const [id, s] of [['tabi', this.player], ...this.followers.map((f) => [f.id, f.sprite])]) {
       const dead = !!this.g.party[id]?.dead;
-      const key = dead && HAS_GHOST.includes(id) ? `p-${id}_ghost` : `p-${lookOf(id)}`;
+      const key = dead && HAS_GHOST.includes(id) ? `p-${id}_ghost` : `p-${lookOf(id, this.g)}`;
       if (s.texture.key !== key) s.setTexture(key, s.frame.name);
       s.setAlpha(dead ? 0.85 : 1);
       // 幽霊の絵がまだ無い者（昔話の味方）は青白く透かす
@@ -411,7 +413,7 @@ export class FieldScene extends Phaser.Scene {
   refreshFrames() {
     this.player.setFrame(frameOf(this.facing, this.step, 'tabi'));
     for (const f of this.followers) {
-      const look = this.g.party[f.id]?.dead && HAS_GHOST.includes(f.id) ? `${f.id}_ghost` : lookOf(f.id);
+      const look = this.g.party[f.id]?.dead && HAS_GHOST.includes(f.id) ? `${f.id}_ghost` : lookOf(f.id, this.g);
       f.sprite.setFrame(frameOf(f.dir, this.step, look));
     }
     for (const n of this.npcs) n.sprite.setFrame(frameOf(n.dir, this.step, n.look));

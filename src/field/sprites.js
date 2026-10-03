@@ -2,6 +2,8 @@
 // 旅の者・しおり＝16コマ（正面0〜3／後ろ4〜7／左8〜11／右12〜15＝左の裏返し）・足の運び4コマ
 // 町の人＝正面の足踏み2コマ（向きは変わらない）
 // 1コマ 36×42 ドット。足もとをマスの中心から14ドット下に置く（origin y＝1−14/42）
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=114';
+
 export const DIRS = ['down', 'up', 'left', 'right'];
 // 仲間（本人 10/2：猟師・閼伽井嶽の僧）も旅の者・しおりと同じ16コマ
 export const HEROES = ['tabi', 'shiori', 'kariudo', 'sou'];
@@ -13,12 +15,12 @@ export const FRAME_H = 42;
 export const ORIGIN_Y = 1 - 14 / FRAME_H;
 
 export function frameOf(dir, step, look = 'tabi') {
-  if (!HEROES.includes(look) && !GHOSTS.includes(look)) return step % 2;
+  if (!HEROES.includes(look) && !GHOSTS.includes(look) && !EXTRA_LOOKS.includes(look)) return step % 2;
   return DIRS.indexOf(dir) * 4 + (step % 4);
 }
 
 export function preloadPeople(scene) {
-  for (const n of [...HEROES, ...GHOSTS, ...NPC_LOOKS]) {
+  for (const n of [...HEROES, ...GHOSTS, ...NPC_LOOKS, ...EXTRA_LOOKS]) {
     if (!scene.textures.exists(`p-${n}`)) scene.load.spritesheet(`p-${n}`, `assets/people/${n}.png`, { frameWidth: FRAME_W, frameHeight: FRAME_H });
   }
 }
