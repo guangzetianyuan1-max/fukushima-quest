@@ -1,15 +1,15 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=109';
-import { SOMA_ROWS } from './soma_map.js?v=109';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=109';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=109';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=109';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=109';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=109';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=109';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS } from '../data/companions.js?v=109';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=109';
+import { IWAKI_ROWS } from './iwaki_map.js?v=110';
+import { SOMA_ROWS } from './soma_map.js?v=110';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=110';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=110';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=110';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=110';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=110';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=110';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS } from '../data/companions.js?v=110';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=110';
 
 export const SAVE_KEY = 'fq-save-v1';
 

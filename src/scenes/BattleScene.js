@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=109';
-import { revealAt } from '../ui/reveal.js?v=109';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=109';
-import { chooseCommands } from '../battle/auto.js?v=109';
-import { itemNote } from '../data/items.js?v=109';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=109';
-import { STORY_FILES } from '../data/story_assets.js?v=109';
-import { CUTIN_FILES } from '../data/cutin_assets.js?v=109';
-import { drawScroll } from '../ui/scroll.js?v=109';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=109';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=109';
+import { EPISODES } from '../data/episodes.js?v=110';
+import { revealAt } from '../ui/reveal.js?v=110';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=110';
+import { chooseCommands } from '../battle/auto.js?v=110';
+import { itemNote } from '../data/items.js?v=110';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=110';
+import { STORY_FILES } from '../data/story_assets.js?v=110';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=110';
+import { drawScroll } from '../ui/scroll.js?v=110';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=110';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=110';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -73,7 +73,7 @@ export class BattleScene extends Phaser.Scene {
       }
     }
     // 必殺技の挿絵（カットイン・10/3〜）。届いている物だけ読む
-    for (const sp of [this.ep.enemy.special, this.ep.enemy.special2]) if (sp?.cutin && CUTIN_FILES.includes(sp.cutin) && !this.textures.exists(sp.cutin)) this.load.image(sp.cutin, sp.cutin);
+    for (const sp of [this.ep.enemy.special, this.ep.enemy.special2]) if (sp?.cutin && CUTIN_FILES.includes(sp.cutin) && !this.textures.exists(sp.cutin)) this.load.image(sp.cutin, `${sp.cutin}?v=${CUTIN_V}`);
     preloadKit(this);
     for (const f of ['normal', 'surprise', 'sad']) if (!this.textures.exists(`face_${f}`)) this.load.image(`face_${f}`, `assets/cards/face_${f}.png`);
   }
