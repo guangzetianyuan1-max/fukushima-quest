@@ -5,11 +5,11 @@
 // 必殺技は「すごいおなら」（本人 10/1「おなら」→10/4「おおきな屁」→同日「すごいおなら」・おならの効果音・くらうと全員しばらく気絶）。⛔下品に振れさせない（音・臭いを書かない。可笑しみは真面目に語ることから）・子ども向けの絵柄に寄せない
 // ゲームでは、忘れられて黒いもやに呑まれた嫁。弱点＝「迎えの言葉」（遠慮は いらんよ）。倒すと元に戻り、二本松への道の大岩を吹き飛ばす
 // 絵＝まだ（仮に道中の娘の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=111';
+import { BASIC_ITEMS } from './basic_items.js?v=112';
 
 export const HEPPIRI = {
   art: {
-    dark: 'assets/heppiri_dark.png', light: 'assets/heppiri_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 ①が届いた（②が届くまで light も呑まれた姿・背景は仮）
+    dark: 'assets/heppiri_dark.png', light: 'assets/heppiri_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 ①②が届いた（背景は仮）
     glowDark: 0xc9a0ff, glowLight: 0xffc8a0, // 夕暮れの薄紫 → 戻ったら あたたかい茜色
   },
   allies: [

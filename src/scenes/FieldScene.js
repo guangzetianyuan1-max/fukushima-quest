@@ -2,31 +2,31 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=111';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=111';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=111';
-import { RIDERS } from '../data/nomaoi_assets.js?v=111';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=111';
-import { TILE } from '../field/tiles.js?v=111';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=111';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=111';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=111';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=111';
+import { EPISODES } from '../data/episodes.js?v=112';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=112';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=112';
+import { RIDERS } from '../data/nomaoi_assets.js?v=112';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=112';
+import { TILE } from '../field/tiles.js?v=112';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=112';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=112';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=112';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=112';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=111';
-import { membersOf } from '../battle/levels.js?v=111';
-import { COMPANIONS } from '../data/companions.js?v=111';
-import { ICON_IDS } from '../data/icons.js?v=111';
-import { FACE_IDS } from '../data/faces.js?v=111';
-import { mapPointOf } from '../field/mapcard.js?v=111';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=111';
-import { makeRng } from '../battle/rules.js?v=111';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=111';
-import { buyEquip, partyView } from '../field/game.js?v=111';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=111';
+} from '../field/game.js?v=112';
+import { membersOf } from '../battle/levels.js?v=112';
+import { COMPANIONS } from '../data/companions.js?v=112';
+import { ICON_IDS } from '../data/icons.js?v=112';
+import { FACE_IDS } from '../data/faces.js?v=112';
+import { mapPointOf } from '../field/mapcard.js?v=112';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=112';
+import { makeRng } from '../battle/rules.js?v=112';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=112';
+import { buyEquip, partyView } from '../field/game.js?v=112';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=112';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
