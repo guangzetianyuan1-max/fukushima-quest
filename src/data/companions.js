@@ -43,6 +43,12 @@ export const COMPANIONS = {
 // 仲間の術。verb＝「○○は ～！」の言い方（となえる術ばかりではないので）
 // kind＝heal（生きている全員の HP を戻す）／daze（敵の攻撃が turns ターン半分外れる）／bind（chance の見込みで敵を1回止める）
 export const COMPANION_SPELLS = {
+  // 武士の居合い斬り（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に」「新しい必殺技も」→ 居合い斬り）
+  // 守りを無視して 攻撃力×mult。術の力を使う。昔話の主は 語って明かすまで もやが刃を はばむ（rules の IAI_UNREVEALED）・もやが残る間は抜けない（鉄砲と同じ）
+  iai: {
+    name: '居合い斬り', kind: 'iai', cost: 10, mult: 1.6, verb: '刀の 柄に 手を かけた',
+    text: '一閃！ 抜いた 刀が 光の 筋を えがく！',
+  },
   dokkyo: {
     name: '読経', kind: 'heal', cost: 6, power: 18, verb: '経を 読みはじめた',
     text: '静かな 読経が ひびき、みなの 傷が ふさがっていく。',
@@ -69,3 +75,6 @@ export const COMPANION_SPELLS = {
     hitText: 'の 足に 縄が からみついた！', missText: 'は 縄を ふりはらった！', stuckText: 'は 罠に かかって 動けない！',
   },
 };
+
+// 旅の者が武士になる（本人 10/4・相馬の道場の試し合い＝3本勝負で2本先に取る）。after＝このボスより後の話では武士として試算・試験する
+export const BUSHI = { after: 'sumitora', name: '武士', spell: 'iai' };

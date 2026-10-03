@@ -1,15 +1,15 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=112';
-import { SOMA_ROWS } from './soma_map.js?v=112';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=112';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=112';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=112';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=112';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=112';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=112';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS } from '../data/companions.js?v=112';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=112';
+import { IWAKI_ROWS } from './iwaki_map.js?v=113';
+import { SOMA_ROWS } from './soma_map.js?v=113';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=113';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=113';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=113';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=113';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=113';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=113';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=113';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=113';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -105,8 +105,10 @@ export function terrainAt(map, x, y) {
 }
 
 export function wallOpen(game, ch) {
-  return !!game.cleared[WALL_OPENED_BY[ch]];
+  return !!game.cleared[WALL_OPENED_BY[ch]] && (!WALL_NEEDS_FLAG[ch] || !!game.flags?.[WALL_NEEDS_FLAG[ch]]);
 }
+// ボスのほかに 要る物（10/4 県北への口は、相馬の道場で武士になってから）
+export const WALL_NEEDS_FLAG = { 8: 'bushi' };
 
 // そのマスへ歩けるか（町の人の立つマスは画面の側で見る）
 export function canWalk(game, map, x, y) {
@@ -233,7 +235,10 @@ export function battleData(game, ep) {
   // 加わった昔話の味方を、話のデータの2人の後ろに足す
   const joined = membersOf(game).filter((id) => COMPANIONS[id] && !ep.allies.some((a) => a.id === id))
     .map((id) => ({ id, name: COMPANIONS[id].name, spells: COMPANIONS[id].spells, gun: !!COMPANIONS[id].gun }));
-  const allies = [...ep.allies, ...joined].map((a) => {
+  const bushi = !!game.flags?.bushi;
+  const allies = [...ep.allies, ...joined].map((a0) => {
+    // 武士になった旅の者（10/4）＝名前と 居合い斬り
+    const a = bushi && a0.id === 'tabi' ? { ...a0, name: BUSHI.name, spells: [...(a0.spells ?? []), BUSHI.spell] } : a0;
     const m = statsWithGear(a.id, lvOf(game, a.id), game.equip ?? START_EQUIP);
     const p = game.party[a.id] ?? {};
     // 力つきて幽霊の仲間は戦いに出ない（alive:false・HP 0）
@@ -250,9 +255,9 @@ export function battleData(game, ep) {
       ...ep.enemy, hp: fl.hp, atk: fl.atk, def: fl.def, forcedLose: true, tellBlock: fl.tellBlock,
       introText: fl.introText, loseLines: fl.loseLines, mist: { ...ep.enemy.mist, min: fl.mistMin ?? ep.enemy.mist?.min },
     };
-    return { ...ep, enemy, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
+    return { ...ep, enemy: bushiLines(enemy, bushi), allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
   }
-  return { ...ep, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
+  return { ...ep, enemy: bushiLines(ep.enemy, bushi), allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
 }
 
 // 必ず負ける1回目のあと（2章 鬼婆）：文は減らさず、町（二本松）の宿で目をさます。入れ替わり（SWAP_AFTER_LOSS）があれば 仲間が入れ替わる
@@ -331,7 +336,7 @@ export function afterZako(game, zakoId, state) {
     return [id, { ...p, hp: p.hp + a.hp - b.hp, mp: p.mp + a.mp - b.mp }];
   }));
   g = { ...g, party };
-  if (g.lv > before.tabi) lines.push(`旅の者たちは レベル ${g.lv}に 上がった！`);
+  if (g.lv > before.tabi) lines.push(`${nameOf(g, 'tabi')}たちは レベル ${g.lv}に 上がった！`);
   for (const id of membersOf(g)) if (!PARTY_IDS.includes(id) && lvOf(g, id) > before[id]) lines.push(`${NAME[id]}は レベル ${lvOf(g, id)}に 上がった！`);
   return { game: g, lines };
 }
@@ -450,7 +455,7 @@ export function useItem(game, id) {
   return {
     ok: true,
     game: { ...game, items: { ...game.items, [id]: game.items[id] - 1 }, party: { ...game.party, [who]: { ...game.party[who], [key]: after } } },
-    text: `${NAME[who]}に ${it.name}を 使った！ ${key === 'mp' ? '術の力' : 'HP'}が ${after - before} もどった！`,
+    text: `${nameOf(game, who)}に ${it.name}を 使った！ ${key === 'mp' ? '術の力' : 'HP'}が ${after - before} もどった！`,
   };
 }
 
@@ -485,4 +490,61 @@ export function join(game, id) {
   const g = { ...game, members: [...members, id], expOf: { ...game.expOf, [id]: EXP_TO[lv] } };
   const m = maxOf(g, id);
   return { ok: true, game: { ...g, party: { ...game.party, [id]: { hp: m.hp, mp: m.mp } } } };
+}
+
+// 名前（武士になった旅の者は「武士」・10/4）
+export const nameOf = (game, id) => (id === 'tabi' && game?.flags?.bushi ? BUSHI.name : NAME[id]);
+function bushiLines(enemy, bushi) {
+  if (!bushi || !enemy.loseLines) return enemy;
+  return { ...enemy, loseLines: enemy.loseLines.map((t) => t.replace(/^旅の者/, BUSHI.name)) };
+}
+
+// ---- 相馬の道場（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に変更」・選んだ＝1章 相馬・道場の試し合い・居合い斬り）----
+// 師範と木刀で 3本勝負（2本先に取れば 免状）。旅の者ひとりで戦う。強さは そのときの旅の者に合わせる（いつ来ても勝負になる）
+// 1本ごとに傷は手当てしてもらえる（木刀の試し合い）。2本取られたら「出直してこい」＝数は0へ戻り、また挑める（文は取られない）
+export const DOJO_WIN = 2;
+export const DOJO_ROUNDS = [1.03, 1.03, 1.03]; // 本目ごとの師範の強さ（10/4 測った：本目で上げると 体力の1太刀の差で急に勝てなくなる＝そろえる。1本 約6〜8割・免状まで 約6〜9割＝tests/_tune_dojo.mjs）
+export const DOJO_ART = 'assets/dojo_shihan.png';
+export function duelData(game, round) {
+  const lv = lvOf(game, 'tabi');
+  const m = statsWithGear('tabi', lv, game.equip ?? START_EQUIP);
+  const k = DOJO_ROUNDS[round - 1] ?? 1;
+  const hit = Math.max(1, m.atk * 0.7); // 旅の者の1太刀（師範の守りが 攻撃力の6割）
+  const enemy = {
+    id: `dojo-${round}`, duel: round, name: '道場の師範',
+    hp: Math.round(hit * 5.6 * k), atk: Math.round((m.def / 2 + m.hp / 5.4) * k), def: Math.round(m.atk * 0.6), agi: m.agi,
+    weakness: null, noWeak: true, canFlee: false, trick: null, special: null,
+    bgm: 'somaBattle', biteName: '木刀の 打ちこみ',
+    introText: `${round}本目、はじめ！`,
+    tellLines: ['がんばって！ 相手の 木刀を よく 見て！'],
+    restoreLines: [], loseLines: [`${nameOf(game, 'tabi')}は 一本 取られた……`],
+  };
+  const tabi = { id: 'tabi', name: nameOf(game, 'tabi'), ...m, maxHp: m.hp, maxMp: m.mp, hp: m.hp, mp: m.mp, alive: true, spells: [] };
+  return {
+    art: { dark: DOJO_ART, light: DOJO_ART, bg: ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
+    allies: [tabi], items: {}, spells: {}, enemy,
+  };
+}
+// 1本の勝ち負けのあと。next＝つぎの本目（決まったら null）・bushi＝いま武士になった。HP と術は戦いの前のまま（木刀の試し合いは傷を残さない）
+export function afterDuel(game, round, won) {
+  const d = { wins: 0, losses: 0, ...(game.flags?.dojo ?? {}) };
+  if (won) d.wins += 1; else d.losses += 1;
+  const lines = [won ? `一本！ ${round}本目は ${nameOf(game, 'tabi')}の 勝ち！` : `一本！ ${round}本目は 師範の 勝ち。`];
+  let flags = { ...game.flags, dojo: d };
+  let next = round + 1;
+  let bushi = false;
+  if (d.wins >= DOJO_WIN) {
+    flags = { ...game.flags, dojo: null, bushi: true };
+    next = null;
+    bushi = true;
+    lines.push('師範「見事！ その 太刀筋、まことの 武士と 認めよう。免状を さずける。」',
+      '旅の者は 武士に なった！',
+      '師範「これは わが 流の 奥義、居合い斬り。抜く 一瞬に すべてを こめよ。」',
+      '武士は 居合い斬りを おぼえた！');
+  } else if (d.losses >= DOJO_WIN) {
+    flags = { ...game.flags, dojo: null };
+    next = null;
+    lines.push('師範「まだまだ。腕を みがいて 出直して こい。」');
+  }
+  return { game: { ...game, flags }, lines, next, bushi };
 }

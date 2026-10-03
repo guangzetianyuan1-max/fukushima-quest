@@ -2,31 +2,31 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=112';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=112';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=112';
-import { RIDERS } from '../data/nomaoi_assets.js?v=112';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=112';
-import { TILE } from '../field/tiles.js?v=112';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=112';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=112';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=112';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=112';
+import { EPISODES } from '../data/episodes.js?v=113';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=113';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=113';
+import { RIDERS } from '../data/nomaoi_assets.js?v=113';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=113';
+import { TILE } from '../field/tiles.js?v=113';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=113';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=113';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=113';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=113';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
-  purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=112';
-import { membersOf } from '../battle/levels.js?v=112';
-import { COMPANIONS } from '../data/companions.js?v=112';
-import { ICON_IDS } from '../data/icons.js?v=112';
-import { FACE_IDS } from '../data/faces.js?v=112';
-import { mapPointOf } from '../field/mapcard.js?v=112';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=112';
-import { makeRng } from '../battle/rules.js?v=112';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=112';
-import { buyEquip, partyView } from '../field/game.js?v=112';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=112';
+  purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt,
+} from '../field/game.js?v=113';
+import { membersOf } from '../battle/levels.js?v=113';
+import { COMPANIONS } from '../data/companions.js?v=113';
+import { ICON_IDS } from '../data/icons.js?v=113';
+import { FACE_IDS } from '../data/faces.js?v=113';
+import { mapPointOf } from '../field/mapcard.js?v=113';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=113';
+import { makeRng } from '../battle/rules.js?v=113';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=113';
+import { buyEquip, partyView } from '../field/game.js?v=113';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=113';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -61,7 +61,7 @@ const WALL_HINT = {
   6: '大悲山の 大蛇を 何とか しないと、北へは 行けないわ。',
   7: '鹿狼山の 手長明神さまを 元に もどせば、虎捕山への もやも 晴れるはず。',
   // 2章 県北（10/4）
-  8: '虎捕山の 墨虎を 捕らえれば、西の 県北への 口も 開くはず。',
+  8: '虎捕山の 墨虎を 捕らえて、相馬の 町の 道場で 師範に 認めて もらえば、西の 県北への 口も 開くはず。',
   9: '霊山の 墓地の 母の 霊を しずめたら、福島への もやも 晴れると 思う。',
   0: '信夫山の ご坊狐を 元に もどせば、山の 奥への もやも 晴れるはず。',
   '%': '信夫山の ムカデと オロチを しずめないと、南の 川俣へは 行けないわ。',
@@ -77,7 +77,7 @@ const CLEARED_LINES = {
   zarukaburi: ['大悲山への 入口の もやが 晴れたわ！', '大悲山の 薬師堂の 池に、大蛇が いるそうよ。小高の 町で 支度を しましょう。'],
   daihisan: ['北の 浜街道の もやが 晴れたわ！', '北に 相馬の 町が あるの。その 先の 鹿狼山に、手長明神さまが いらっしゃるわ。'],
   tenaga: ['虎捕山への 山道の もやが 晴れたわ！', '虎捕山には、凶賊 橘墨虎が 隠れているの。相馬の 町で しっかり 支度してね。'],
-  sumitora: ['これで 相馬の 昔話は みんな 元に もどったわ。', '虎捕山の 西の 口の もやが 晴れた！ 山を 越えれば、2章「県北」よ。'],
+  sumitora: ['これで 相馬の 昔話は みんな 元に もどったわ。', '虎捕山の 西の 口の もやが うすく なった……。相馬の 町の 道場で 師範に 腕を 認めて もらえば、西の 県北へ 進めるはずよ。'],
   // 2章 県北（10/4）
   amekai: ['福島への 道の もやが 晴れたわ！', '福島の 町で 支度を しましょう。北の 信夫山に、化け狐が いるそうよ。'],
   gobou: ['信夫山の 奥への もやが 晴れたわ！', '北の 坂と 黒沼に、大きな ムカデと オロチが いるの。どちらも「信夫山の 主」を 名乗っているそうよ。'],
@@ -463,7 +463,7 @@ export class FieldScene extends Phaser.Scene {
     const p = this.g.party;
     // 呪い＝呪・取り憑き＝憑 を名前の後ろに。力つきた仲間は「幽霊」（寺社で生き返る）
     const mark = (id) => (p[id].curse ? '呪' : '') + (p[id].ghost ? '憑' : '');
-    const hp = (id) => (p[id].dead ? `${NAMES[id]} 幽霊` : `${NAMES[id]}${mark(id)} ${p[id].hp}/${maxOf(this.g, id).hp}`);
+    const hp = (id) => (p[id].dead ? `${nameOf(this.g, id)} 幽霊` : `${nameOf(this.g, id)}${mark(id)} ${p[id].hp}/${maxOf(this.g, id).hp}`);
     // 術の力も見せる（本人 10/2「術は温泉で回復しますか？」＝宿で戻るのが見えるように）
     const mp = (id) => (maxOf(this.g, id).mp > 0 && !p[id].dead ? ` 術${p[id].mp}` : '');
     const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬', kenpoku: '県北' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
@@ -726,6 +726,7 @@ export class FieldScene extends Phaser.Scene {
     else if (n.role === 'equip') this.showMessages(lines, () => this.equipShop(n.goods, n.items));
     else if (n.role === 'bansho') this.banshoTalk();
     else if (n.role === 'fishing') this.showMessages(lines, () => this.fishMenu());
+    else if (n.role === 'dojo') this.dojoTalk(n);
     else this.showMessages(lines);
   }
 
@@ -744,6 +745,22 @@ export class FieldScene extends Phaser.Scene {
     const text = r.ok ? `${ITEMS[id].name}を 買った！（${this.g.items[id]}こ 持っている）` : '文が 足りないようだ……';
     if (r.ok) this.showGoods(id);
     this.showMessages([{ text }], () => (n.role === 'equip' ? this.equipShop(n.goods, n.items) : this.shopMenu(n)));
+  }
+
+  // 相馬の道場（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に」）＝師範と木刀で3本勝負。2本取れば免状と居合い斬り
+  dojoTalk(n) {
+    if (this.g.flags?.bushi) {
+      this.showMessages([{ text: '師範「おお、武士どの。居合い斬りは 抜く 一瞬が 命。精進 されよ。」' }]);
+      return;
+    }
+    this.showMessages(n.lines.map((text) => ({ text })), () => this.showMenu('試し合いを 受けますか？（3本勝負・2本 先に 取れば 免状）', [
+      ['受ける', () => this.showMessages([{ text: '師範「よかろう。木刀を 取れ。仲間は 見ておれ。」' }], () => {
+        this.busy = true;
+        this.cameras.main.fadeOut(400, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('battle', { duel: 1, fromField: true }));
+      })],
+      ['やめる', () => this.showMessages([{ text: '師範「腕に 覚えが できたら、いつでも 来い。」' }])],
+    ]));
   }
 
   innMenu(n) {
@@ -796,7 +813,7 @@ export class FieldScene extends Phaser.Scene {
       return;
     }
     const price = revivePrice(this.g) * dead.length;
-    this.showMenu(`${dead.map((id) => NAMES[id]).join('と ')}を 生き返らせますか？ ${price}文 です。（所持金 ${this.g.mon}文）`, [
+    this.showMenu(`${dead.map((id) => nameOf(this.g, id)).join('と ')}を 生き返らせますか？ ${price}文 です。（所持金 ${this.g.mon}文）`, [
       ['はい', () => {
         const r = revive(this.g);
         if (!r.ok) {
@@ -806,7 +823,7 @@ export class FieldScene extends Phaser.Scene {
         this.setGame(r.game);
         sfx('reveal');
         this.cameras.main.flash(600, 255, 255, 230);
-        this.showMessages([{ text: `${r.who.map((id) => NAMES[id]).join('と ')}は 生き返った！` }]);
+        this.showMessages([{ text: `${r.who.map((id) => nameOf(this.g, id)).join('と ')}は 生き返った！` }]);
       }],
       ['いいえ', () => this.closeDialog()],
     ]);
@@ -892,7 +909,7 @@ export class FieldScene extends Phaser.Scene {
       const opts = EQUIP[p.id].who.filter((w) => membersOf(this.g).includes(w)).map((w) => {
         const now = this.g.equip?.[w]?.[EQUIP[p.id].slot];
         const [, fn, note, color] = this.equipOption(p.id, w, () => this.takePrize(pid, w, shopId)); // いまと比べた変わり方（10/3）
-        return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
+        return [`${nameOf(this.g, w)}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
       });
       this.showMenu(`${EQUIP[p.id].name}（${equipNote(p.id)}）。だれが 着ける？`, [...opts, ['もどる', () => this.prizeMenu('equip', shopId)]]);
       return;
@@ -902,7 +919,7 @@ export class FieldScene extends Phaser.Scene {
     this.setGame(r.game);
     sfx('heal');
     this.showGoods(p.id);
-    const lines = [{ text: p.kind === 'item' ? `${this.prizeName(p)}を もらった！` : `${NAMES[who]}は ${EQUIP[p.id].name}を 身に着けた！` }];
+    const lines = [{ text: p.kind === 'item' ? `${this.prizeName(p)}を もらった！` : `${nameOf(this.g, who)}は ${EQUIP[p.id].name}を 身に着けた！` }];
     if (r.old) lines.push({ text: r.refund > 0 ? `（${EQUIP[r.old].name}は ${r.refund}文で 引き取って もらった）` : `（${EQUIP[r.old].name}は ${shop.keeper}に あずけた）` });
     this.showMessages(lines, () => this.prizeMenu(p.kind, shopId));
   }
@@ -1209,11 +1226,11 @@ export class FieldScene extends Phaser.Scene {
       // その人の品：選べば そのまま その人が着ける
       // 右の字＝いまの品と比べて どう変わるか（装備中の品は 灰色で 選べない・下がる物は 赤）
       const opts = forWho(who).map((id) => this.equipOption(id, who, () => this.doBuyEquip(id, who, back), `${EQUIP[id].price}文 `));
-      this.showMenu(`${NAMES[who]}の 品（いまと くらべて）所持金 ${this.g.mon}文`, [...opts, ['もどる', () => this.equipShop(goods, items)]]);
+      this.showMenu(`${nameOf(this.g, who)}の 品（いまと くらべて）所持金 ${this.g.mon}文`, [...opts, ['もどる', () => this.equipShop(goods, items)]]);
       return;
     }
     if (all.length + shelfRow.length > 5) {
-      const people = members.filter((w) => forWho(w).length).map((w) => [`${NAMES[w]}の 得物`, () => this.equipShop(goods, items, w)]);
+      const people = members.filter((w) => forWho(w).length).map((w) => [`${nameOf(this.g, w)}の 得物`, () => this.equipShop(goods, items, w)]);
       this.showMenu(`だれの 品を 見る？（所持金 ${this.g.mon}文）`, [...people, ...shelfRow, ['やめる', () => this.closeDialog()]]);
       return;
     }
@@ -1240,7 +1257,7 @@ export class FieldScene extends Phaser.Scene {
     const opts = e.who.filter((w) => membersOf(this.g).includes(w)).map((w) => { // まだ加わっていない人は出さない
       const now = eq[w]?.[e.slot];
       const [, fn, note, color] = this.equipOption(id, w, () => this.doBuyEquip(id, w, back));
-      return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
+      return [`${nameOf(this.g, w)}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
     });
     this.showMenu(`${e.name}（${equipNote(id).replaceAll('+', '')}）。だれが 着ける？ 右は いまと くらべて（所持金 ${this.g.mon}文）`, [...opts, ['もどる', back]]);
   }
@@ -1261,7 +1278,7 @@ export class FieldScene extends Phaser.Scene {
     this.setGame(r.game);
     sfx('heal');
     this.showGoods(id);
-    const lines = [{ text: `${NAMES[who]}は ${EQUIP[id].name}を 身に着けた！` }];
+    const lines = [{ text: `${nameOf(this.g, who)}は ${EQUIP[id].name}を 身に着けた！` }];
     if (r.old) lines.push({ text: r.refund > 0 ? `（${EQUIP[r.old].name}は ${r.refund}文で 引き取って もらった）` : `（${EQUIP[r.old].name}は 店に 置いていった）` });
     this.showMessages(lines, back);
   }
@@ -1332,7 +1349,7 @@ export class FieldScene extends Phaser.Scene {
 
   showGear() {
     const lines = partyView(this.g).map((p) => ({
-      speaker: `${NAMES[p.id]}　Lv ${p.lv}`, // 仲間ごとのレベル（10/3〜 加わった味方は低めから）
+      speaker: `${nameOf(this.g, p.id)}　Lv ${p.lv}`, // 仲間ごとのレベル（10/3〜 加わった味方は低めから）
       face: p.id === 'shiori' ? 'normal' : p.id, // 本人 10/3「しおり以外顔が無い。みんな顔をつけて」
       text: [`攻 ${p.atk}　守 ${p.def}　速 ${p.agi}`, ...SLOTS.map((s) => `${SLOT_NAME[s]}：${p.gear[s] ? EQUIP[p.gear[s]].name : 'なし'}`)].join('\n'),
     }));

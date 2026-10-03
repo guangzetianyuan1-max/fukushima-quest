@@ -85,6 +85,12 @@ export function chooseCommands(state, data) {
         continue;
       }
     }
+    // 武士（10/4）：弱点が明かされ もやが無ければ、弱点の術を持たないときは 居合い斬り（道中の敵には使わず 術の力を残す）
+    const iai = boss && e.revealed && mist === 0 && !weakSpell && spellOf(a, data, 'iai');
+    if (iai) {
+      cmds[a.id] = { type: 'spell', spellId: iai };
+      continue;
+    }
     // 術が撃てても、もやが残るなら先に たたかって払う
     if (weakSpell && a.mp >= data.spells[weakSpell].cost && mist === 0 && !(state.silence > 0)) {
       cmds[a.id] = { type: 'spell', spellId: weakSpell };

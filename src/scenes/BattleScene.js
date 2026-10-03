@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=112';
-import { revealAt } from '../ui/reveal.js?v=112';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=112';
-import { chooseCommands } from '../battle/auto.js?v=112';
-import { itemNote } from '../data/items.js?v=112';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=112';
-import { STORY_FILES } from '../data/story_assets.js?v=112';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=112';
-import { drawScroll } from '../ui/scroll.js?v=112';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=112';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=112';
+import { EPISODES } from '../data/episodes.js?v=113';
+import { revealAt } from '../ui/reveal.js?v=113';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=113';
+import { chooseCommands } from '../battle/auto.js?v=113';
+import { itemNote } from '../data/items.js?v=113';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=113';
+import { STORY_FILES } from '../data/story_assets.js?v=113';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=113';
+import { drawScroll } from '../ui/scroll.js?v=113';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=113';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=113';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -40,7 +40,10 @@ export class BattleScene extends Phaser.Scene {
     this.fromField = !!data?.fromField && !!this.registry.get('game');
     // data.zako ＝ 道中の敵（歩いていて出会った）。zone で背景が変わる
     this.zakoId = this.fromField ? data?.zako ?? null : null;
-    if (this.zakoId) this.ep = zakoData(this.registry.get('game'), this.zakoId, data.zone);
+    // data.duel ＝ 相馬の道場の試し合い（何本目か・10/4 武士になるクエスト）
+    this.duel = this.fromField ? data?.duel ?? null : null;
+    if (this.duel) this.ep = duelData(this.registry.get('game'), this.duel);
+    else if (this.zakoId) this.ep = zakoData(this.registry.get('game'), this.zakoId, data.zone);
     else this.ep = this.fromField ? battleData(this.registry.get('game'), EPISODES[this.index]) : EPISODES[this.index];
   }
 
@@ -364,6 +367,14 @@ export class BattleScene extends Phaser.Scene {
       // 鉄砲：白く一瞬光って、短く鋭く揺れる
       this.cameras.main.flash(120, 255, 250, 220);
       this.cameras.main.shake(160, 0.016);
+    } else if (fx.kind === 'iai') {
+      // 居合い斬り（武士・10/4）：白い一閃が敵を斜めに横切り、遅れて光る
+      const line = this.add.rectangle(W / 2, ENEMY_Y, 420, 6, 0xffffff).setAngle(-28).setDepth(800).setScale(0, 1);
+      this.tweens.add({ targets: line, scaleX: 1, duration: 110, ease: 'Cubic.Out', onComplete: () => {
+        this.cameras.main.flash(260, 255, 255, 255);
+        this.cameras.main.shake(220, 0.014);
+        this.tweens.add({ targets: line, alpha: 0, scaleY: 0.2, duration: 420, onComplete: () => line.destroy() });
+      } });
     } else if (fx.kind === 'crit') {
       // かいしんの一撃：白く光って大きく揺れる
       this.cameras.main.flash(300, 255, 255, 255);
@@ -706,6 +717,10 @@ export class BattleScene extends Phaser.Scene {
 
   // ---- 勝ち：敵が元の姿に戻る → 語り部の補足 → もらえる力 → つぎの話へ ----
   playWin(opts = {}) {
+    if (this.duel) {
+      this.endDuel(true);
+      return;
+    }
     if (this.zakoId) {
       this.playZakoWin();
       return;
@@ -772,6 +787,22 @@ export class BattleScene extends Phaser.Scene {
     this.time.delayedCall(2000, () => this.showMessages(bl.lines.map((text) => ({ text })), done));
   }
 
+  // ---- 相馬の道場（10/4）：1本ごとに勝ち負けを数え、決まるまで次の本目へ。2本取れば武士・居合い斬り ----
+  endDuel(won) {
+    this.auto = false;
+    this.updateAutoBadge();
+    stopBgm();
+    const { game, lines, next, bushi } = afterDuel(this.registry.get('game'), this.duel, won);
+    this.registry.set('game', game);
+    const list = lines.map((text) => ({ text, sfx: text.includes('武士に なった') || text.includes('おぼえた') ? 'win' : undefined }));
+    list[0].sfx = won ? 'hit' : 'damage';
+    if (won && !bushi) this.tweens.add({ targets: this.dragon, alpha: 0.4, duration: 300, yoyo: true });
+    this.showMessages(list, () => {
+      if (next) this.scene.restart({ duel: next, fromField: true });
+      else this.backToField(game);
+    });
+  }
+
   // ---- 道中の敵：倒すと正気に戻って去る → 経験と文 → 歩く地図へ ----
   playZakoWin() {
     this.auto = false;
@@ -797,6 +828,10 @@ export class BattleScene extends Phaser.Scene {
     this.auto = false;
     this.updateAutoBadge();
     stopBgm();
+    if (this.duel) {
+      this.endDuel(false);
+      return;
+    }
     sfx('lose');
     this.showMessages(this.ep.enemy.loseLines.map((text) => ({ text })), () => this.showRetry('もう一度 いどむ'));
   }

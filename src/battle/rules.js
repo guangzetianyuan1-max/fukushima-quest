@@ -22,6 +22,8 @@ export const GUN_MULT = 1.1;
 export const gunHit = (lv = 1) => Math.min(0.85, 0.05 + 0.1 * lv);
 // 昔話の主に、弱点が明かされる前に撃ったときの割合
 export const GUN_UNREVEALED = 0.15;
+// 居合い斬り（武士・10/4）：昔話の主は、語って弱点が明かされるまで 黒いもやが刃を はばむ（語らずに斬り続けて勝てないように）・もやの間は抜けない
+export const IAI_UNREVEALED = 0.2;
 // 急所（本人 10/3「1/10の確率で敵の急所にあたり、一発でしとめる」）＝当たったうちの1割で一発。道中の敵だけ
 // ボス（昔話の主）には無い＝語って元に戻す話なので、鉄砲一発で終わらせない
 export const GUN_KYUSHO = 0.1;
@@ -103,7 +105,8 @@ function allyAct(state, a, cmd, data, rng, log) {
     log.push({ text: `${a.name}は 呪いで 体が 動かない！` });
     return;
   }
-  if (state.silence > 0 && (cmd.type === 'spell' || cmd.type === 'tell')) {
+  // 爆音で声が届かない（居合い斬りは声を使わないので出せる）
+  if (state.silence > 0 && ((cmd.type === 'spell' && data.spells[cmd.spellId]?.kind !== 'iai') || cmd.type === 'tell')) {
     log.push({ text: `${a.name}は 声を 出したが、爆音で かき消された！` });
     return;
   }
@@ -164,6 +167,32 @@ function allyAct(state, a, cmd, data, rng, log) {
       log.push({ text: '急所に 命中した！ 一発で しとめた！', effect: { kind: 'crit' }, sfx: 'hit' });
     } else {
       log.push({ text: '玉が 命中した！', effect: { kind: 'crit' } });
+    }
+    e.hp = Math.max(0, e.hp - d);
+    log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+  } else if (cmd.type === 'spell' && data.spells[cmd.spellId]?.kind === 'iai') {
+    // 居合い斬り（武士・本人 10/4）：守りを無視した 攻撃力×mult の一太刀
+    const sp = data.spells[cmd.spellId];
+    log.push({ text: `${a.name}は ${sp.verb}……` });
+    // もやが残っている間は 間合いが見えず 抜けない（鉄砲と同じ・術の力は減らない）＝先に たたかって払う（たたかうの役目を残す）
+    if (e.mistLeft > 0) {
+      log.push({ text: 'しかし 黒い もやで 間合いが 見えない！' });
+      return;
+    }
+    if (a.mp < sp.cost) {
+      log.push({ text: 'しかし 術の力が たりない！' });
+      return;
+    }
+    a.mp -= sp.cost;
+    log.push({ text: `居合い斬り！ ${sp.text}`, effect: { kind: 'iai' }, sfx: 'iai' });
+    if (state.blind > 0 && rng() < 0.5) {
+      log.push({ text: '目が くらんで、外れてしまった！' });
+      return;
+    }
+    let d = Math.max(1, Math.round(a.atk * sp.mult * spread(rng)));
+    if (!e.noWeak && !e.revealed) {
+      d = Math.max(1, Math.round(d * IAI_UNREVEALED));
+      log.push({ text: '黒い もやが 刃を はばんだ……' });
     }
     e.hp = Math.max(0, e.hp - d);
     log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });

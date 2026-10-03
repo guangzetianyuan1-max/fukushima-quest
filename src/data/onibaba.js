@@ -7,11 +7,11 @@
 //   1回目＝firstLose（必ず負ける・全滅しても文は減らない）→ 二本松の宿で目をさます → 祐慶が加わり 僧は閼伽井嶽へ（companions.js の SWAP_AFTER_LOSS）
 //   2回目＝弱点は祐慶の「破魔の真弓」。⚠語るのは しおり・術を射るのは祐慶
 // 絵＝まだ（仮に道中の霊の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=112';
+import { BASIC_ITEMS } from './basic_items.js?v=113';
 
 export const ONIBABA = {
   art: {
-    dark: 'assets/zako_rei.png', light: 'assets/zako_rei.png', bg: 'assets/bg_dochu_north.png', // ⏳絵が届くまで仮
+    dark: 'assets/onibaba_dark.png', light: 'assets/onibaba_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 ①が届いた（背景は仮）
     glowDark: 0xff8080, glowLight: 0xffe6a0,
   },
   allies: [
@@ -29,7 +29,7 @@ export const ONIBABA = {
     autoWinTarget: 0.90, // 2章の章ボス（2回目＝祐慶がいる戦い）
     // 強さ＝試算（node tests/_autotune.mjs <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 14,
-    hp: 500, atk: 82, def: 110, agi: 12,
+    hp: 620, atk: 96, def: 110, agi: 12, // 10/4 武士の居合い斬りが加わり HP500→620・攻82→96・必殺技も1.18倍（_autotune）
     bgm: 'onibaba',
     weakness: 'hama', // 祐慶の術（companions.js の COMPANION_SPELLS）
     // ⭐1回目は必ず負ける（本人 10/4）。強さを上書きし、語っても弱点は明かされない
@@ -44,8 +44,8 @@ export const ONIBABA = {
       ],
     },
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '出刃包丁', chance: 0.24, power: 45, flash: [255, 80, 60], sfx: 'flame', cutin: 'assets/cutin/onibaba_deba.png' },
-    special2: { name: '岩屋の 闇', chance: 0.14, power: 51, flash: [120, 40, 60], sfx: 'wave', cutin: 'assets/cutin/onibaba_iwaya.png' },
+    special: { name: '出刃包丁', chance: 0.24, power: 53, flash: [255, 80, 60], sfx: 'flame', cutin: 'assets/cutin/onibaba_deba.png' },
+    special2: { name: '岩屋の 闇', chance: 0.14, power: 60, flash: [120, 40, 60], sfx: 'wave', cutin: 'assets/cutin/onibaba_iwaya.png' },
     biteName: 'つかみかかる',
     introText: '観世寺の 岩屋の 奥から、鬼婆が ふたたび あらわれた。祐慶が 弓を かまえる……！',
     tellLines: [
