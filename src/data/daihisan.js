@@ -5,7 +5,7 @@
 // ゲームでは、忘れの力でよみがえった大蛇。弱点＝「鉄の釘」。助っ人＝玉都（本人 10/3「戦いの中で琵琶を弾く助っ人」）＝語って弱点が明かされると
 // 琵琶が鳴り、大蛇は聞き入って2回動けない。その後も ときどき琵琶で止める
 // ⚠絵は届くまで仮（武士の絵）。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=82';
+import { BASIC_ITEMS } from './basic_items.js?v=83';
 
 export const DAIHISAN = {
   art: {
@@ -39,7 +39,7 @@ export const DAIHISAN = {
     weakness: 'kugi',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝大雨（この地を大沼にしたい＝原典の大蛇のたくらみ）
-    special: { name: '大雨', chance: 0.28, power: 46, flash: [70, 110, 190], sfx: 'flood' },
+    special: { name: '大雨', chance: 0.28, power: 46, flash: [70, 110, 190], sfx: 'flood', cutin: 'assets/cutin/daihisan_ooame.png' },
     helper: {
       name: '玉都',
       revealText: '玉都の 琵琶が 鳴りひびいた！ 大蛇は 聞き入って 動きを 止めた！',

@@ -314,7 +314,8 @@ function enemyAct(state, rng, log) {
   // ⚠special2 の無い敵は rng を引く回数が前と同じ（運の並びを変えない）
   const sp = [e.special2, e.special].find((x) => x && rng() < x.chance);
   if (sp) {
-    log.push({ text: `${e.name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash }, sfx: sp.sfx ?? 'flame' });
+    // cutin＝技の挿絵（本人 10/3「今回から、ボスの必殺技は別のアクション(挿絵)を」）。挿絵のある技は文を長めに止める（hold）
+    log.push({ text: `${e.name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
     for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * spread(rng))), log);
     // 必殺技をくらうと、もやが1つ立ちこめる（最大 max まで・本人 10/1「敵の必殺技をくらうとモヤがかかる」）
     if (e.mist && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive)) {

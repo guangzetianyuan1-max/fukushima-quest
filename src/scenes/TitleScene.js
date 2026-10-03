@@ -1,8 +1,8 @@
-import { EPISODES } from '../data/episodes.js?v=82';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=82';
-import { drawScroll, BRUSH_FONT, smooth } from '../ui/scroll.js?v=82';
-import { newGame, load, SAVE_KEY } from '../field/game.js?v=82';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=82';
+import { EPISODES } from '../data/episodes.js?v=83';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=83';
+import { drawScroll, BRUSH_FONT, smooth } from '../ui/scroll.js?v=83';
+import { newGame, load, SAVE_KEY } from '../field/game.js?v=83';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=83';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）

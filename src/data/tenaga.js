@@ -4,7 +4,7 @@
 // 漁師になった少年 長吉は、海から戻ると海のめぐみと無事に帰れたことへの感謝を忘れなかった
 // ゲームでは、忘れられて黒いもやに呑まれた暮らしの守り神。弱点＝「海の幸への感謝」。倒すと元に戻り、長い腕で虎捕山への もやを払う
 // ⚠絵は届くまで仮（藁人形の絵）。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=82';
+import { BASIC_ITEMS } from './basic_items.js?v=83';
 
 export const TENAGA = {
   art: {
@@ -36,7 +36,7 @@ export const TENAGA = {
     weakness: 'kansha',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝長い腕（山の上から 海まで とどく腕で 全員を なぎはらう）
-    special: { name: '長い腕', chance: 0.28, power: 37, flash: [220, 200, 140], sfx: 'wave' },
+    special: { name: '長い腕', chance: 0.28, power: 37, flash: [220, 200, 140], sfx: 'wave', cutin: 'assets/cutin/tenaga_nagaiude.png' },
     biteName: '長い 手で つかむ',
     introText: '鹿狼山の 上から、長い 長い 腕が のびてきた……',
     tellLines: [

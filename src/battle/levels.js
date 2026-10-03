@@ -1,5 +1,5 @@
 // 仲間のレベルと強さ（道中の敵の回・本人 10/1「本来のドラクエらしく」）。序章は1→6くらい
-import { gearBonus } from '../data/equip.js?v=82';
+import { gearBonus } from '../data/equip.js?v=83';
 
 // EXP_TO[lv]＝そのレベルになるのに要る経験の合計。STATS＝レベル1の強さと、1つ上がるごとの伸び
 export const EXP_TO = [0, 0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660]; // 10/3 1章で Lv12 まで（間は 10・20・30…と広がる）

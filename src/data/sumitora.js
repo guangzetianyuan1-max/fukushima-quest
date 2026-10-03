@@ -5,7 +5,7 @@
 // ゲームでは、忘れの力でよみがえった墨虎。語って弱点が明かされるまでは岩穴の闇に隠れて、たたかう・鉄砲の半分がとどかない（hide）。
 // 明かされると白狼が現れて足跡で隠れ家を暴き、ときどき墨虎に とびかかる（helper）。弱点＝「白狼の足跡」
 // ⚠絵は届くまで仮（やくざの絵）。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=82';
+import { BASIC_ITEMS } from './basic_items.js?v=83';
 
 export const SUMITORA = {
   art: {
@@ -44,8 +44,8 @@ export const SUMITORA = {
       chance: 0.35, dmg: 26,
       text: '白狼が 墨虎に とびかかった！',
     },
-    special: { name: '闇討ち', chance: 0.25, power: 35, flash: [60, 40, 80], sfx: 'damage' },
-    special2: { name: '火矢の雨', chance: 0.12, power: 53, flash: [255, 120, 40], sfx: 'flame' },
+    special: { name: '闇討ち', chance: 0.25, power: 35, flash: [60, 40, 80], sfx: 'damage', cutin: 'assets/cutin/sumitora_yamiuchi.png' },
+    special2: { name: '火矢の雨', chance: 0.12, power: 53, flash: [255, 120, 40], sfx: 'flame', cutin: 'assets/cutin/sumitora_hiya.png' },
     biteName: '山刀',
     introText: '岩穴の 闇から、凶賊 橘墨虎が すがたを あらわした……！',
     tellLines: [

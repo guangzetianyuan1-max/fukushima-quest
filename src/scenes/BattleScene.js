@@ -1,13 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=82';
-import { revealAt } from '../ui/reveal.js?v=82';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=82';
-import { chooseCommands } from '../battle/auto.js?v=82';
-import { itemNote } from '../data/items.js?v=82';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=82';
-import { STORY_FILES } from '../data/story_assets.js?v=82';
-import { drawScroll } from '../ui/scroll.js?v=82';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=82';
-import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=82';
+import { EPISODES } from '../data/episodes.js?v=83';
+import { revealAt } from '../ui/reveal.js?v=83';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=83';
+import { chooseCommands } from '../battle/auto.js?v=83';
+import { itemNote } from '../data/items.js?v=83';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=83';
+import { STORY_FILES } from '../data/story_assets.js?v=83';
+import { CUTIN_FILES } from '../data/cutin_assets.js?v=83';
+import { drawScroll } from '../ui/scroll.js?v=83';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=83';
+import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=83';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -71,6 +72,8 @@ export class BattleScene extends Phaser.Scene {
         if (STORY_FILES.includes(f) && !this.textures.exists(k)) this.load.image(k, f);
       }
     }
+    // 必殺技の挿絵（カットイン・10/3〜）。届いている物だけ読む
+    for (const sp of [this.ep.enemy.special, this.ep.enemy.special2]) if (sp?.cutin && CUTIN_FILES.includes(sp.cutin) && !this.textures.exists(sp.cutin)) this.load.image(sp.cutin, sp.cutin);
     preloadKit(this);
     for (const f of ['normal', 'surprise', 'sad']) if (!this.textures.exists(`face_${f}`)) this.load.image(`face_${f}`, `assets/cards/face_${f}.png`);
   }
@@ -321,6 +324,7 @@ export class BattleScene extends Phaser.Scene {
       this.msgShownAt = this.time.now;
       let delay = Math.max(STEP_MS, [...pages[0]].length * MS_PER_CHAR); // 見せているページの字数で
       if (this.auto) delay = Math.max(600, delay / 2);
+      if (m.hold) delay = Math.max(delay, m.hold); // 必殺技の挿絵を見せるあいだ（自動でも短くしない）
       const timer = this.time.delayedCall(delay, next);
       this.skip = () => {
         timer.remove(false);
@@ -328,6 +332,26 @@ export class BattleScene extends Phaser.Scene {
       };
     };
     next();
+  }
+
+  // 必殺技の挿絵（本人 10/3「今回から、ボスの必殺技は別のアクション(挿絵)を入れて欲しい」）
+  // 横長の挿絵が、黒い帯ごと右から すべりこみ（0.18秒）→ 光って揺れる（hit）→ 約1.3秒見せて 薄れて消える。文の窓とステータスの間（敵の立つ所）に出す
+  showCutin(key, hit) {
+    const y = 250;
+    const box = this.add.container(W, 0).setDepth(900);
+    const img = this.add.image(W / 2, y, key);
+    img.setScale(W / img.width);
+    const h = img.displayHeight + 12; // 帯＝絵より上下6ずつ広い（⚠作ってから height を変えると描く大きさが変わらない＝先に測る）
+    const band = this.add.rectangle(0, y, W, h, 0x000000, 0.85).setOrigin(0, 0.5);
+    const edge = (dy) => this.add.rectangle(0, y + dy, W, 2, 0xffd27a).setOrigin(0, 0.5);
+    box.add([band, img, edge(-h / 2), edge(h / 2)]);
+    this.tweens.add({
+      targets: box, x: 0, duration: 180, ease: 'Cubic.Out',
+      onComplete: () => {
+        hit();
+        this.tweens.add({ targets: box, alpha: 0, delay: 1300, duration: 250, onComplete: () => box.destroy() });
+      },
+    });
   }
 
   playEffect(fx) {
@@ -348,8 +372,12 @@ export class BattleScene extends Phaser.Scene {
     } else if (fx.kind === 'special') {
       // 必殺技：画面が光り（色は敵ごと・既定は炎の赤）、大きく揺れる
       const [r, g, b] = fx.flash ?? [255, 90, 30];
-      this.cameras.main.flash(450, r, g, b);
-      this.cameras.main.shake(500, 0.022);
+      if (fx.cutin && this.textures.exists(fx.cutin)) {
+        this.showCutin(fx.cutin, () => { this.cameras.main.flash(450, r, g, b); this.cameras.main.shake(500, 0.022); });
+      } else {
+        this.cameras.main.flash(450, r, g, b);
+        this.cameras.main.shake(500, 0.022);
+      }
     } else if (fx.kind === 'mist') {
       this.updateMistBadge(fx.mist);
       this.tweens.add({ targets: this.mistBadge, alpha: 0.2, duration: 120, yoyo: true, repeat: 1 });
