@@ -1,8 +1,7 @@
-import { EPISODES } from '../data/episodes.js?v=104';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=104';
-import { drawScroll, BRUSH_FONT, smooth } from '../ui/scroll.js?v=104';
-import { newGame, load, SAVE_KEY } from '../field/game.js?v=104';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=104';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=105';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=105';
+import { newGame, load, SAVE_KEY } from '../field/game.js?v=105';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=105';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -13,6 +12,7 @@ import { preloadKit, makeWindow } from '../ui/kit.js?v=104';
 //    （本人 10/1「もういちどさわって、を押すと同じ画面、また押すと進む。1回余計」＝2回目のさわりを無くした）
 //    暗くなる途中でさわれば、すぐ戦いへ
 const W = 360;
+const TITLE_VIDEO = 'assets/title_dance.mp4?v=1'; // 動画を作り直したら番号を上げる（スマホが前の動画を覚えている）
 const TITLE_FONT = '"Potta One", ' + BRUSH_FONT;
 const DOT = 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
 
@@ -22,38 +22,51 @@ export class TitleScene extends Phaser.Scene {
   }
 
   preload() {
-    // 題の画面の背景は、最初の話の背景（薄く暗くして使う）
-    const first = EPISODES[0];
-    this.bgKey = `${first.enemy.id}-bg`;
-    if (!this.textures.exists(this.bgKey)) this.load.image(this.bgKey, first.art.bg);
-    // 題の一枚絵（Gemini 4組目・序章の昔話たちと語り部）
-    if (!this.textures.exists('card_title')) this.load.image('card_title', 'assets/cards/title.png');
+    // ⭐10/4 表紙＝夜桜の下で しおりが舞う動画（本人「3Dしおりが桜の下で、桜吹雪の中、舞っている動画」）
+    // 動画が出るまで（読み込み中・自動再生できない端末）は1コマ目の止め絵。作り＝art_src/make_title_video.py
+    if (!this.textures.exists('title_still')) this.load.image('title_still', 'assets/title_still.png');
     preloadKit(this); // 札の枠（窓と同じ絵）
   }
 
   create() {
-    this.add.image(0, 0, 'card_title').setOrigin(0);
-    this.add.rectangle(0, 0, W, 640, 0x000000, 0.2).setOrigin(0);
+    this.add.image(0, 0, 'title_still').setOrigin(0);
+    // 舞の動画（8秒でつながる・音なし）。⚠読み込みを preload に入れない＝iPhone で動画の読み込みが終わらず題の画面が出ないことがある
+    try {
+      const v = this.add.video(0, 0).setOrigin(0).setVisible(false);
+      v.loadURL(TITLE_VIDEO, true);
+      v.setLoop(true);
+      // ⚠Phaser の play() は、読み込み前・画面が裏にある時に呼ぶと そのまま止まっていた（10/4 内蔵ブラウザ）＝動画の要素を直接 鳴らす（音なし）
+      //   読み込めた時・画面が表に出た時・最初にさわった時に、止まっていれば始める
+      const el = v.video;
+      const start = () => {
+        if (!el || !el.paused) return;
+        el.muted = true; el.playsInline = true; el.loop = true;
+        const pr = el.play();
+        if (pr) pr.catch(() => {});
+      };
+      if (el) {
+        el.addEventListener('playing', () => v.setVisible(true), { once: true });
+        el.addEventListener('canplay', start, { once: true });
+      }
+      const onVis = () => { if (!document.hidden) start(); };
+      document.addEventListener('visibilitychange', onVis);
+      this.input.once('pointerdown', start);
+      this.events.once('shutdown', () => { document.removeEventListener('visibilitychange', onVis); if (el) el.pause(); });
+      start();
+      this.video = v;
+    } catch {
+      this.video = null; // 動画を使えない端末は止め絵のまま
+    }
+    this.petals(); // 桜吹雪はゲームの中で降らせる（動画に入れない＝つなぎ目が無い）
 
     // 題字は太い毛筆の Potta One（本人 10/1「文字がダサい。習字の太字に」＝Yuji Boku は細くかすれ、RPG の英字も崩れた）
-    // 題字は2行で大きく（本人 10/1「もっと大きく2行に」）
+    // 題字は2行で大きく（本人 10/1「もっと大きく2行に」）。10/4 表紙は題字と下の2つの札だけ（本人「下に、『はじめから』『つづきから』のボタンのみ」）
     const title = (text, y, size) => smooth(this.add.text(W / 2, y, text, {
       fontFamily: TITLE_FONT, fontSize: `${size}px`, color: '#ffffff', resolution: 3,
       stroke: '#1a1008', strokeThickness: 10,
     }).setOrigin(0.5));
     title('福島昔話', 72, 58);
     title('クエストRPG', 136, 46);
-
-    const e = EPISODES[0].enemy;
-    // 巻物は右の端に小さく（真ん中だと一枚絵の龍と語り部を隠した・10/2）
-    drawScroll(this, W - 40, 186, { episode: e.episode, tale: e.tale, epSize: 16, taleSize: 28 });
-    const bottom = 536;
-
-    // 巻物の下に場所（本人 10/1「福島県○○市、まで入れてください」）
-    smooth(this.add.text(W / 2, bottom + 2, e.place, { // 10/3 下に札を置くので少し上へ
-      fontFamily: TITLE_FONT, fontSize: '24px', color: '#f1e4c0', resolution: 3,
-      stroke: '#1a1008', strokeThickness: 6,
-    }).setOrigin(0.5));
 
     // 記録があれば「つづきから」を押せる
     try {
@@ -109,6 +122,28 @@ export class TitleScene extends Phaser.Scene {
     this.events.once('shutdown', () => {
       for (const ev of ['touchend', 'pointerup', 'click']) document.removeEventListener(ev, domPress);
     });
+  }
+
+  // 桜吹雪：淡い桃色の花びらが、上から ゆらゆら回りながら降る
+  petals() {
+    if (!this.textures.exists('petal')) {
+      const g = this.make.graphics({ x: 0, y: 0, add: false });
+      g.fillStyle(0xffd3e2, 1).fillEllipse(4, 3, 8, 5);
+      g.fillStyle(0xffffff, 0.8).fillEllipse(3, 2, 3, 2);
+      g.generateTexture('petal', 8, 6);
+      g.destroy();
+    }
+    const em = this.add.particles(0, 0, 'petal', {
+      x: { min: -40, max: W + 20 }, y: -10,
+      lifespan: 11000, frequency: 140, quantity: 1,
+      speedY: { min: 28, max: 60 }, speedX: { min: -8, max: 30 },
+      accelerationX: { min: -6, max: 6 },
+      rotate: { start: 0, end: 360 }, scale: { min: 0.7, max: 1.5 },
+      alpha: { start: 0.95, end: 0.5 },
+      tint: [0xffffff, 0xffe4ee, 0xffc9dc],
+    });
+    em.fastForward(9000); // 開いた時から画面いっぱいに舞っている
+    return em;
   }
 
   go() {
