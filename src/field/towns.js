@@ -174,7 +174,7 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 小高の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 15, lines: ['いらっしゃいませ。小高の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['tachi', 'naginata', 'kumayari', 'shakujo', 'domaru', 'mino'], items: ['tama'], lines: ['小高の よろず屋だ。太刀も 薙刀も、胴丸も あるぜ。鉄砲の 玉も 置いてある。'] },
+      { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['tachi', 'naginata', 'kumayari', 'shakujo', 'domaru', 'mino'], items: ['yakusou', 'jouyakusou', 'tokujou', 'reisui', 'goshinsui', 'tama'], lines: ['小高の よろず屋だ。太刀も 薙刀も、胴丸も、薬も 鉄砲の 玉も あるぜ。'] }, // 10/3 本人「よろず屋でも採用」＝道具も置く
       { x: 10, y: 11, look: 'musume', role: 'shop', goods: ['yakusou', 'jouyakusou', 'tokujou', 'reisui', 'goshinsui'], lines: ['旅の 薬売りで ございます。相馬の 道は 敵が 強いので、よく 効く 薬を そろえて おります。'] }, // 10/3 本人「道具も強く」
       // 話の手がかり（出どころで確かめた筋だけ）
       { x: 9, y: 12, look: 'ryoshi', lines: [

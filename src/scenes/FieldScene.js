@@ -2,30 +2,30 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=96';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=96';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=96';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=96';
-import { TILE } from '../field/tiles.js?v=96';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=96';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=96';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=96';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=96';
+import { EPISODES } from '../data/episodes.js?v=97';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=97';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=97';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=97';
+import { TILE } from '../field/tiles.js?v=97';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=97';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=97';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=97';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=97';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=96';
-import { membersOf } from '../battle/levels.js?v=96';
-import { COMPANIONS } from '../data/companions.js?v=96';
-import { ICON_IDS } from '../data/icons.js?v=96';
-import { FACE_IDS } from '../data/faces.js?v=96';
-import { mapPointOf } from '../field/mapcard.js?v=96';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=96';
-import { makeRng } from '../battle/rules.js?v=96';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=96';
-import { buyEquip, partyView } from '../field/game.js?v=96';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=96';
+} from '../field/game.js?v=97';
+import { membersOf } from '../battle/levels.js?v=97';
+import { COMPANIONS } from '../data/companions.js?v=97';
+import { ICON_IDS } from '../data/icons.js?v=97';
+import { FACE_IDS } from '../data/faces.js?v=97';
+import { mapPointOf } from '../field/mapcard.js?v=97';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=97';
+import { makeRng } from '../battle/rules.js?v=97';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=97';
+import { buyEquip, partyView } from '../field/game.js?v=97';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=97';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -690,7 +690,8 @@ export class FieldScene extends Phaser.Scene {
 
   shopMenu(n) {
     const opts = n.goods.map((id) => [`${ITEMS[id].name}（${this.g.items[id] ?? 0}）`, () => this.buyOne(n, id), `${PRICE[id]}文 ${itemNote(ITEMS[id])}`]); // 効き目と持っている数も（10/3 道具を強くした）
-    this.showMenu(`何を 買う？（所持金 ${this.g.mon}文）`, [...opts, ['やめる', () => this.closeDialog()]]);
+    // n.back があれば「もどる」（よろず屋・刀屋の中の道具の棚から開いたとき）
+    this.showMenu(`何を 買う？（所持金 ${this.g.mon}文）`, [...opts, n.back ? ['もどる', n.back] : ['やめる', () => this.closeDialog()]]);
   }
 
   buyOne(n, id) {
@@ -1152,7 +1153,10 @@ export class FieldScene extends Phaser.Scene {
     const back = () => this.equipShop(goods, items, who);
     const forWho = (w) => goods.filter((id) => EQUIP[id].who.includes(w));
     const all = goods.filter((id) => EQUIP[id].who.some((w) => members.includes(w)));
-    const ammo = members.includes('kariudo') ? items.map((id) => [`${ITEMS[id].name}（${this.g.items[id] ?? 0}）`, () => this.buyOne({ role: 'equip', goods, items }, id), `${PRICE[id]}文`]) : [];
+    // 道具の棚（本人 10/3「よろず屋でも採用」＝道具屋と同じく 効き目と持っている数を出す）。鉄砲の玉は猟師がいる時だけ
+    const sell = items.filter((id) => ITEMS[id].kind !== 'ammo' || members.includes('kariudo'));
+    const shelf = { goods: sell, back: () => this.equipShop(goods, items) };
+    const shelfRow = sell.length ? [[sell.every((id) => ITEMS[id].kind === 'ammo') ? '鉄砲の 玉を 買う' : '道具を 買う', () => this.shopMenu(shelf)]] : [];
     if (who) {
       // その人の品：選べば そのまま その人が着ける
       // 右の字＝いまの品と比べて どう変わるか（装備中の品は 灰色で 選べない・下がる物は 赤）
@@ -1160,14 +1164,14 @@ export class FieldScene extends Phaser.Scene {
       this.showMenu(`${NAMES[who]}の 品（いまと くらべて）所持金 ${this.g.mon}文`, [...opts, ['もどる', () => this.equipShop(goods, items)]]);
       return;
     }
-    if (all.length + ammo.length > 5) {
+    if (all.length + shelfRow.length > 5) {
       const people = members.filter((w) => forWho(w).length).map((w) => [`${NAMES[w]}の 得物`, () => this.equipShop(goods, items, w)]);
-      this.showMenu(`だれの 品を 見る？（所持金 ${this.g.mon}文）`, [...people, ...ammo, ['やめる', () => this.closeDialog()]]);
+      this.showMenu(`だれの 品を 見る？（所持金 ${this.g.mon}文）`, [...people, ...shelfRow, ['やめる', () => this.closeDialog()]]);
       return;
     }
     // 人を選ぶ前は 品の強さ（＋を付けない＝「上がる・下がる」と取り違えない）。人を選ぶと いまと比べた変わり方（pickWho）
     const opts = all.map((id) => [EQUIP[id].name, () => this.pickWho(id, back), `${EQUIP[id].price}文 ${equipNote(id).replaceAll('+', '')}`]);
-    this.showMenu(`何を 買う？（右は 品の強さ・所持金 ${this.g.mon}文）`, [...opts, ...ammo, ['やめる', () => this.closeDialog()]]);
+    this.showMenu(`何を 買う？（右は 品の強さ・所持金 ${this.g.mon}文）`, [...opts, ...shelfRow, ['やめる', () => this.closeDialog()]]);
   }
 
   // 買った品の絵を、地図の真ん中に少しだけ出す（本人 10/2「買ったときにイラストを添えて」）。絵の無い品は出さない
