@@ -1,8 +1,8 @@
 // 仲間のレベルと強さ（道中の敵の回・本人 10/1「本来のドラクエらしく」）。序章は1→6くらい
-import { gearBonus } from '../data/equip.js?v=106';
+import { gearBonus } from '../data/equip.js?v=107';
 
 // EXP_TO[lv]＝そのレベルになるのに要る経験の合計。STATS＝レベル1の強さと、1つ上がるごとの伸び
-export const EXP_TO = [0, 0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660]; // 10/3 1章で Lv12 まで（間は 10・20・30…と広がる）
+export const EXP_TO = [0, 0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660, 780, 910, 1050, 1200]; // 10/3 1章で Lv12 まで（間は 10・20・30…と広がる）・10/4 2章で Lv16 まで
 export const MAX_LV = EXP_TO.length - 1;
 
 const STATS = {
@@ -11,6 +11,8 @@ const STATS = {
   // 昔話の味方（src/data/companions.js・本人 10/2）。猟師＝力の強い たたかう役／閼伽井嶽の僧＝術が多く守り役
   kariudo: { base: { hp: 70, mp: 0, atk: 15, def: 7, agi: 6 }, grow: { hp: 9, mp: 0, atk: 2.5, def: 1.5, agi: 1 } }, // 術は使わず鉄砲（玉）
   sou: { base: { hp: 50, mp: 24, atk: 8, def: 5, agi: 7 }, grow: { hp: 6, mp: 4, atk: 1.5, def: 1, agi: 1 } },
+  // 東光坊の祐慶（2章・鬼婆の1回目のあと、二本松で 閼伽井嶽の僧と入れ替わる・本人 10/4）＝僧より術の力と弓（攻撃）が強い
+  yukei: { base: { hp: 52, mp: 28, atk: 10, def: 5, agi: 8 }, grow: { hp: 6.5, mp: 4.5, atk: 1.8, def: 1, agi: 1 } },
 };
 // 始めの2人。昔話の味方は加わると game.members に足される（最大4人）
 export const PARTY_IDS = ['tabi', 'shiori'];

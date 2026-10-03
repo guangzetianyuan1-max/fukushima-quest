@@ -10,30 +10,36 @@ export const EQUIP = {
   // 仲間の武器（本人 10/2「猟師、僧侶用の武器、防具はありますか？」）。猟師の武器は鉄砲の威力にも効く（rules.js の shoot は攻撃力から）
   nata: { name: '鉈', slot: 'weapon', who: ['kariudo'], atk: 4, price: 25 },
   yamagatana: { name: '山刀', slot: 'weapon', who: ['kariudo'], atk: 9, price: 90 },
-  kashizue: { name: '樫の杖', slot: 'weapon', who: ['sou'], atk: 3, price: 20 },
-  kongozue: { name: '金剛杖', slot: 'weapon', who: ['sou'], atk: 6, price: 60 },
+  kashizue: { name: '樫の杖', slot: 'weapon', who: ['sou', 'yukei'], atk: 3, price: 20 },
+  kongozue: { name: '金剛杖', slot: 'weapon', who: ['sou', 'yukei'], atk: 6, price: 60 },
   // 1章 相馬の町（中村）の刀屋で買える物（10/3・Claudeの決め）
   tachi: { name: '太刀', slot: 'weapon', who: ['tabi'], atk: 16, price: 220 },
   naginata: { name: '薙刀', slot: 'weapon', who: ['shiori'], atk: 11, price: 160 },
   kumayari: { name: '熊槍', slot: 'weapon', who: ['kariudo'], atk: 14, price: 180 },
-  shakujo: { name: '錫杖', slot: 'weapon', who: ['sou'], atk: 10, price: 130 },
-  domaru: { name: '胴丸', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 10, price: 150 },
+  shakujo: { name: '錫杖', slot: 'weapon', who: ['sou', 'yukei'], atk: 10, price: 130 },
+  domaru: { name: '胴丸', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 10, price: 150 },
   // 相馬の町（中村）の刀屋の新しい品（本人 10/3「武器や防具、道具も、強い敵に合わせて強く」）。太刀・薙刀・熊槍・錫杖・胴丸は 小高の よろず屋へ移した
   nodachi: { name: '野太刀', slot: 'weapon', who: ['tabi'], atk: 24, price: 380 },
   oonaginata: { name: '大薙刀', slot: 'weapon', who: ['shiori'], atk: 17, price: 280 },
   jumonji: { name: '十文字槍', slot: 'weapon', who: ['kariudo'], atk: 21, price: 330 },
-  tetsushakujo: { name: '鉄の錫杖', slot: 'weapon', who: ['sou'], atk: 15, price: 230 },
-  kusari: { name: '鎖帷子', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 15, price: 300 },
+  tetsushakujo: { name: '鉄の錫杖', slot: 'weapon', who: ['sou', 'yukei'], atk: 15, price: 230 },
+  kusari: { name: '鎖帷子', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 15, price: 300 },
   // 防具とお守りは4人とも着けられる（10/2 仲間が加わった）
-  kasa: { name: '旅の笠', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 2, price: 15 },
-  kyahan: { name: '脚絆', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 3, agi: 2, price: 30 },
-  mino: { name: '蓑', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 6, price: 60 },
-  kachimori: { name: '勝守', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou'], atk: 2, price: 25 }, // 八幡さま＝武運の神さまと伝わる
+  kasa: { name: '旅の笠', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 2, price: 15 },
+  kyahan: { name: '脚絆', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 3, agi: 2, price: 30 },
+  mino: { name: '蓑', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 6, price: 60 },
+  kachimori: { name: '勝守', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], atk: 2, price: 25 }, // 八幡さま＝武運の神さまと伝わる
   // 小名浜の釣りの景品だけ（本人 10/2「何か景品付けて」）。えびす様＝漁の神さまと伝わる。店では売らない（price 0＝引き取りも0）
-  ebisu: { name: 'えびす様の守り', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou'], atk: 2, def: 2, agi: 2, price: 0 },
+  ebisu: { name: 'えびす様の守り', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], atk: 2, def: 2, agi: 2, price: 0 },
   // 相馬野馬追の神旗争奪戦の景品だけ（本人 10/3）。店では売らない
-  jinbaori: { name: '陣羽織', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 9, agi: 4, price: 0 },
-  yakuyoke: { name: '厄除け守', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou'], ward: true, price: 25 }, // 呪い・取り憑きを半分はね返す
+  jinbaori: { name: '陣羽織', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 9, agi: 4, price: 0 },
+  // 2章 県北（福島・二本松の刀屋・10/4・Claudeの決め）＝1章より1段強く
+  meito: { name: '名刀', slot: 'weapon', who: ['tabi'], atk: 33, price: 640 },
+  hokonaginata: { name: '鉾', slot: 'weapon', who: ['shiori'], atk: 24, price: 480 },
+  matagiyari: { name: '狩り槍', slot: 'weapon', who: ['kariudo'], atk: 29, price: 560 },
+  ginshakujo: { name: '銀の錫杖', slot: 'weapon', who: ['sou', 'yukei'], atk: 21, price: 400 },
+  yoroi: { name: '大鎧', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 22, price: 520 },
+  yakuyoke: { name: '厄除け守', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], ward: true, price: 25 }, // 呪い・取り憑きを半分はね返す
 };
 
 export const SLOTS = ['weapon', 'armor', 'charm'];
@@ -44,6 +50,7 @@ export const START_EQUIP = {
   shiori: { weapon: null, armor: null, charm: null },
   kariudo: { weapon: null, armor: null, charm: null },
   sou: { weapon: null, armor: null, charm: null },
+  yukei: { weapon: null, armor: null, charm: null },
 };
 
 // 効き目の短い書き方（店の右に出す）：攻+5 守+2 速+2 厄除け
@@ -97,4 +104,10 @@ export const EXPECT_GEAR = {
   7: { tabi: { weapon: 'tachi', armor: 'mino', charm: null }, shiori: { weapon: 'naginata', armor: 'mino', charm: null }, kariudo: { weapon: 'kumayari', armor: 'mino', charm: null }, sou: { weapon: 'shakujo', armor: 'mino', charm: null } },
   8: { tabi: { weapon: 'nodachi', armor: 'domaru', charm: null }, shiori: { weapon: 'naginata', armor: 'mino', charm: null }, kariudo: { weapon: 'jumonji', armor: 'domaru', charm: null }, sou: { weapon: 'shakujo', armor: 'mino', charm: null } },
   9: { tabi: { weapon: 'nodachi', armor: 'kusari', charm: null }, shiori: { weapon: 'oonaginata', armor: 'domaru', charm: null }, kariudo: { weapon: 'jumonji', armor: 'kusari', charm: null }, sou: { weapon: 'tetsushakujo', armor: 'domaru', charm: null } },
+  // 10〜14＝2章 県北（10/4）。10＝飴買い幽霊（相馬の品のまま）・11＝ご坊狐（福島の刀屋の得物）・12＝ムカデとオロチ・13＝へっぴり嫁（大鎧）・14＝鬼婆（祐慶は僧の品を引き継ぐ）
+  10: { tabi: { weapon: 'nodachi', armor: 'kusari', charm: null }, shiori: { weapon: 'oonaginata', armor: 'kusari', charm: null }, kariudo: { weapon: 'jumonji', armor: 'kusari', charm: null }, sou: { weapon: 'tetsushakujo', armor: 'kusari', charm: null } },
+  11: { tabi: { weapon: 'meito', armor: 'kusari', charm: null }, shiori: { weapon: 'oonaginata', armor: 'kusari', charm: null }, kariudo: { weapon: 'jumonji', armor: 'kusari', charm: null }, sou: { weapon: 'tetsushakujo', armor: 'kusari', charm: null } },
+  12: { tabi: { weapon: 'meito', armor: 'kusari', charm: null }, shiori: { weapon: 'hokonaginata', armor: 'kusari', charm: null }, kariudo: { weapon: 'matagiyari', armor: 'kusari', charm: null }, sou: { weapon: 'ginshakujo', armor: 'kusari', charm: null } },
+  13: { tabi: { weapon: 'meito', armor: 'yoroi', charm: null }, shiori: { weapon: 'hokonaginata', armor: 'kusari', charm: null }, kariudo: { weapon: 'matagiyari', armor: 'yoroi', charm: null }, sou: { weapon: 'ginshakujo', armor: 'kusari', charm: null } },
+  14: { tabi: { weapon: 'meito', armor: 'yoroi', charm: null }, shiori: { weapon: 'hokonaginata', armor: 'yoroi', charm: null }, kariudo: { weapon: 'matagiyari', armor: 'yoroi', charm: null }, sou: { weapon: 'ginshakujo', armor: 'yoroi', charm: null }, yukei: { weapon: 'ginshakujo', armor: 'yoroi', charm: null } },
 };

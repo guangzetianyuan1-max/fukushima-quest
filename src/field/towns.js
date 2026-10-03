@@ -242,7 +242,93 @@ export const TOWNS = {
       ] },
     ],
   },
+  // ---- 2章 県北（10/4・本人「順番に制作を」）。町の形は小高・相馬と同じ。話の手がかりは出どころで確かめた筋だけ（vault 日本昔話/2026-10-04-調査-福島昔話クエスト2章県北5話.md）----
+  fukushima: {
+    name: '福島',
+    cardPending: true, // 町の入口の一枚絵が届くまで 名前だけ
+    shrineName: '福島の 神社',
+    shrineLine: '福島の 神社で 旅の 無事を お願いしましょう。北の 信夫山は すぐそこよ。',
+    props: [
+      { img: 'jinja', x: 5, y: 2, w: 3, h: 2 },
+      { img: 'yadoya', x: 0, y: 7, w: 4, h: 2 }, { img: 'counter', x: 1, y: 9, w: 2, h: 1 },
+      { img: 'mise', x: 9, y: 7, w: 4, h: 2 }, { img: 'counter', x: 10, y: 9, w: 2, h: 1 },
+      { img: 'toro', x: 4, y: 5, w: 1, h: 1 }, { img: 'toro', x: 8, y: 5, w: 1, h: 1 },
+    ],
+    rows: [
+      'TTTTTTTTTTTTT',
+      'TTTTTTTTTTTTT',
+      'TTTTTzzzTTTTT',
+      'TTTT.zzz.TTTT',
+      'TTT...=...TTT',
+      'T.....t.....T',
+      'T.....=.....T',
+      '####..=..####',
+      '#__#..=..#__#',
+      '#cc#..=..#cc#',
+      '.===========.',
+      'T.....=.....T',
+      'T.....=.....T',
+      'TTTTTTxTTTTTT',
+    ],
+    npcs: [
+      { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 福島の 神社へ。'] },
+      { x: 1, y: 8, look: 'okami', role: 'inn', price: 22, lines: ['いらっしゃいませ。福島の 宿で ございます。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['nodachi', 'oonaginata', 'jumonji', 'tetsushakujo', 'kusari', 'domaru'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['福島の 刀屋だ。信夫山の 化け物に 負けない 得物を そろえて いけ。'] },
+      { x: 9, y: 12, look: 'shonin', lines: [
+        '信夫山には むかし、ご坊狐という 狐が いてな。お山の 和尚さんに 化けて、木の葉の 小判で 魚を 買って いったそうだ。',
+      ] },
+      { x: 3, y: 11, look: 'toshiyori', lines: [
+        '信夫山の 北の 坂には 大きな ムカデ、南の 黒沼には 大きな オロチが すんで、どちらも「信夫山の 主」を 名乗って おった。',
+        '二匹は 山の 西の はしで 出くわして、たがいに 傷つけあって ほろんだと いう 話じゃ。',
+      ] },
+      { x: 10, y: 5, look: 'musume', lines: [
+        '信夫山の 中ほどには ねこ稲荷が あるの。改心した 狐が、蚕の 守り神として まつられて いるのよ。',
+      ] },
+      { x: 2, y: 5, look: 'kodomo', lines: [
+        '東の 霊山の ほうでは、夜に 飴を 買いに くる 女の 人の 話が あるんだって。',
+      ] },
+    ],
+  },
+  nihonmatsu: {
+    name: '二本松',
+    cardPending: true,
+    shrineName: '二本松の 神社',
+    shrineLine: '二本松の 神社で 旅の 無事を お願いしましょう。安達ヶ原の 観世寺は 町の 西よ。',
+    props: [
+      { img: 'jinja', x: 5, y: 2, w: 3, h: 2 },
+      { img: 'mise', x: 0, y: 7, w: 4, h: 2 }, { img: 'counter', x: 1, y: 9, w: 2, h: 1 },
+      { img: 'yadoya', x: 9, y: 7, w: 4, h: 2 }, { img: 'counter', x: 10, y: 9, w: 2, h: 1 },
+      { img: 'toro', x: 4, y: 5, w: 1, h: 1 }, { img: 'toro', x: 8, y: 5, w: 1, h: 1 },
+    ],
+    rows: [
+      'TTTTTTTTTTTTT',
+      'TTTTTTTTTTTTT',
+      'TTTTTzzzTTTTT',
+      'TTTT.zzz.TTTT',
+      'TTT...=...TTT',
+      'T.....t.....T',
+      'T.....=.....T',
+      '####..=..####',
+      '#__#..=..#__#',
+      '#cc#..=..#cc#',
+      '.===========.',
+      'T.....=.....T',
+      'T.....=.....T',
+      'TTTTTTxTTTTTT',
+    ],
+    npcs: [
+      { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 二本松の 神社へ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['nodachi', 'oonaginata', 'jumonji', 'tetsushakujo', 'kusari', 'domaru'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['二本松の 刀屋だ。'] },
+      { x: 11, y: 8, look: 'okami', role: 'inn', price: 24, lines: ['いらっしゃいませ。二本松の 宿で ございます。'] },
+      { x: 3, y: 11, look: 'toshiyori', lines: [
+        '安達ヶ原の 岩屋には、むかし 鬼婆が すんで おった。熊野の お坊さま 祐慶さまが、観音さまの 弓の 力で しずめたと 伝わる。',
+      ] },
+      { x: 9, y: 12, look: 'ryoshi', lines: [
+        '鬼婆は おそろしく 強いと いう。観世寺へ 行く まえに、宿で しっかり 休んで いきな。',
+      ] },
+    ],
+  },
 };
 
-// 歩く地図の字 → 町（Q＝小高・M＝相馬は 1章の地図「相馬」）
-export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: 'nakamura' };
+// 歩く地図の字 → 町（Q＝小高・M＝相馬は 1章の地図「相馬」・U＝福島・W＝二本松は 2章の地図「県北」）
+export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: 'nakamura', U: 'fukushima', W: 'nihonmatsu' };

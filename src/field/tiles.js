@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=106';
+import { makeRng } from '../battle/rules.js?v=107';
 
 export const TILE = 16;
 
@@ -89,6 +89,10 @@ export const FIELD_TERRAIN = {
   P: ['grass', true], // 雲雀ヶ原の祭場地（相馬野馬追の神旗争奪戦・10/3）
   N: ['gate', true], H: ['town_taira', true], Y: ['town_yumoto', true], O: ['town_onahama', true],
   S: ['boss_sand', true], K: ['boss', true], J: ['boss', true], R: ['boss', true],
+  // 10/4 2章 県北：X＝相馬⇔県北の口・A／F／C／V／B＝飴買い幽霊／ご坊狐／ムカデとオロチ／へっぴり嫁／鬼婆・U＝福島の町・W＝二本松の町・k＝提灯祭り
+  X: ['road', true], A: ['boss', true], F: ['boss', true], C: ['boss', true], V: ['boss', true], B: ['boss', true],
+  U: ['town_taira', true], W: ['town_taira', true], k: ['grass', true],
+  8: ['mist', false], 9: ['mist', false], 0: ['mist', false], '%': ['mist', false], '&': ['mist', false],
 };
 export const TOWN_TERRAIN = {
   '.': ['grass', true], '=': ['stone', true], ',': ['sand', true], '#': ['wall', false], _: ['floor', true],

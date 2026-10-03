@@ -1,28 +1,34 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=106';
-import { SOMA_ROWS } from './soma_map.js?v=106';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=106';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=106';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=106';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=106';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=106';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=106';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=106';
+import { IWAKI_ROWS } from './iwaki_map.js?v=107';
+import { SOMA_ROWS } from './soma_map.js?v=107';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=107';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=107';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=107';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=107';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=107';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=107';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS } from '../data/companions.js?v=107';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=107';
 
 export const SAVE_KEY = 'fq-save-v1';
 
 // 地図の字 → ボス（episodes.js の enemy.id）と、もやの壁 → 晴れる条件
-export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora' };
-export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan', 4: 'ryuto', 5: 'zarukaburi', 6: 'daihisan', 7: 'tenaga' };
+export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora', A: 'amekai', F: 'gobou', C: 'mukade', V: 'heppiri', B: 'onibaba' }; // A〜B＝2章 県北（10/4）
+export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan', 4: 'ryuto', 5: 'zarukaburi', 6: 'daihisan', 7: 'tenaga', 8: 'sumitora', 9: 'amekai', 0: 'gobou', '%': 'mukade', '&': 'heppiri' }; // 8〜＝2章 県北（10/4）
 // 元に戻すと 道が現れるマス（本人 10/3「序章の龍燈の龍を倒したら、相馬への道を繋げて欲しい。現在は草原なので、わかりずらい」）＝それまでは草原・通れるのは同じ
 export const ROAD_OPENED_BY = { r: 'ryuto' };
 
-// 歩く地図は2枚（10/3 1章〜）：field＝いわき（序章）・soma＝相馬（1章）。字 E の口で行き来する
-export const FIELDS = { field: IWAKI_ROWS, soma: SOMA_ROWS };
+// 歩く地図（10/3 1章〜）：field＝いわき（序章）・soma＝相馬（1章）・kenpoku＝県北（2章・10/4）。口の字で行き来する
+export const FIELDS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS };
 export const isField = (map) => Object.hasOwn(FIELDS, map);
-// 口：いわきの北の端の E ⇔ 相馬の南の端の E。出た先は口の1歩内側（いわきへは南・相馬へは北）
-const EXITS = { field: { to: 'soma', dy: -1, dir: 'up' }, soma: { to: 'field', dy: 1, dir: 'down' } };
+// 口：地図ごと・字ごとに、行き先と「出た先は口の1歩内側」の向き
+//   E＝いわきの北の端 ⇔ 相馬の南の端／X＝相馬の西の端（虎捕山の先）⇔ 県北の東の端（霊山）
+const EXITS = {
+  field: { E: { to: 'soma', dx: 0, dy: -1, dir: 'up' } },
+  soma: { E: { to: 'field', dx: 0, dy: 1, dir: 'down' }, X: { to: 'kenpoku', dx: -1, dy: 0, dir: 'left' } },
+  kenpoku: { X: { to: 'soma', dx: 1, dy: 0, dir: 'right' } },
+};
 
 // 仲間の強さ＝レベルで決まる（src/battle/levels.js）。PARTY_BASE はレベル1の強さ
 export const PARTY_BASE = Object.fromEntries(ALL_IDS.map((id) => [id, statsAt(id, 1)]));
@@ -81,12 +87,13 @@ export function mapRows(map) {
 
 // 口（E）を踏んだら、つながる地図の口の1歩内側へ。口でなければ null
 export function crossAt(game, map, x, y) {
-  const ex = EXITS[map];
-  if (!ex || mapRows(map)[y]?.[x] !== 'E') return null;
+  const ch = mapRows(map)[y]?.[x];
+  const ex = EXITS[map]?.[ch];
+  if (!ex) return null;
   const rows = FIELDS[ex.to];
-  const ty = rows.findIndex((r) => r.includes('E'));
-  const tx = rows[ty].indexOf('E');
-  return { ...game, pos: { map: ex.to, x: tx, y: ty + ex.dy, dir: ex.dir } };
+  const ty = rows.findIndex((r) => r.includes(ch));
+  const tx = rows[ty].indexOf(ch);
+  return { ...game, pos: { map: ex.to, x: tx + ex.dx, y: ty + ex.dy, dir: ex.dir } };
 }
 
 export function terrainAt(map, x, y) {
@@ -236,7 +243,36 @@ export function battleData(game, ep) {
       hp: Math.max(1, p.hp ?? m.hp), mp: p.mp ?? m.mp, curse: !!p.curse, ghost: !!p.ghost,
     };
   });
+  // ⭐必ず負ける1回目（2章 鬼婆・本人 10/4「鬼婆は最強なので、一度全滅→町で祐慶と合流し、再トライ」）
+  const fl = ep.enemy.firstLose;
+  if (fl && !game.flags?.[`${ep.enemy.id}Lost`]) {
+    const enemy = {
+      ...ep.enemy, hp: fl.hp, atk: fl.atk, def: fl.def, forcedLose: true, tellBlock: fl.tellBlock,
+      introText: fl.introText, loseLines: fl.loseLines, mist: { ...ep.enemy.mist, min: fl.mistMin ?? ep.enemy.mist?.min },
+    };
+    return { ...ep, enemy, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
+  }
   return { ...ep, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
+}
+
+// 必ず負ける1回目のあと（2章 鬼婆）：文は減らさず、町（二本松）の宿で目をさます。入れ替わり（SWAP_AFTER_LOSS）があれば 仲間が入れ替わる
+// 僧（out）の経験と装備は 祐慶（in）へ。justSwapped＝町に入ったら 加わる台詞を見せる
+export function afterForcedLose(game, enemyId) {
+  const sw = SWAP_AFTER_LOSS[enemyId];
+  let g = { ...game, flags: { ...game.flags, [`${enemyId}Lost`]: true }, steps: 0 };
+  if (sw && membersOf(g).includes(sw.out)) {
+    const members = membersOf(g).map((id) => (id === sw.out ? sw.in : id));
+    const expOf = { ...g.expOf, [sw.in]: g.expOf?.[sw.out] ?? EXP_TO[Math.max(1, (g.lv ?? 1) - 1)] };
+    delete expOf[sw.out];
+    const equip = { ...(g.equip ?? START_EQUIP), [sw.in]: { ...(g.equip?.[sw.out] ?? { weapon: null, armor: null, charm: null }) } };
+    delete equip[sw.out];
+    g = { ...g, members, expOf, equip, justSwapped: sw.in };
+  }
+  g = { ...g, party: fullParty(g) };
+  const town = sw?.town;
+  if (!town) return { ...g, ...afterLose({ ...g, mon: g.mon * 2 }), mon: g.mon };
+  // 町の入口に立つ（町を出ると、ボスの手前の 地図の場所へ）
+  return { ...g, pos: { map: town, ...TOWN_ENTRY, dir: 'up' }, justEntered: null };
 }
 
 // 戦いのあとに持ち帰る物：HP・術・呪い・取り憑き・残りの名物・盗まれた物・取られた文
@@ -255,7 +291,7 @@ function settle(game, state) {
 
 // 勝った：ボスを元に戻した印・残った道具・HP（力つきた仲間は幽霊のまま）
 // ボスを元に戻したお礼の文（本人 10/2「ボスを倒した際は、お金を多めに出して。ここでは50文」＝松川様50・あとは順に増やす＝Claudeの決め）
-export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 150, daihisan: 170, tenaga: 190, sumitora: 240 }; // 1章は順に多め（Claudeの決め）・ザルカブリは10/4から戦う（本人）
+export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 150, daihisan: 170, tenaga: 190, sumitora: 240, amekai: 280, gobou: 300, mukade: 360, heppiri: 380, onibaba: 500 }; // 1章は順に多め（Claudeの決め）・ザルカブリは10/4から戦う（本人）
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
 export function afterWin(game, enemyId, state) {
@@ -318,9 +354,9 @@ export function encounterAt(game, map, x, y, rng) {
   const ch = mapRows(map)[y][x];
   const rate = ENCOUNTER_ON[ch];
   if (!rate || (game.steps ?? 0) < MIN_STEPS || rng() >= rate) return null;
-  // 相馬（1章）は いわきの北の顔ぶれを強めて出す（ZONE_SCALE）
-  const zone = map === 'soma' ? 'soma' : zoneOf(y);
-  const pool = zone === 'soma' ? 'north' : zone;
+  // 相馬（1章）・県北（2章）は いわきの北の顔ぶれを強めて出す（ZONE_SCALE）
+  const zone = map === 'field' ? zoneOf(y) : map;
+  const pool = map === 'field' ? zone : 'north';
   const list = Object.keys(ZAKO).filter((id) => !ZAKO[id].pending && !ZAKO[id].retired).filter((id) => ZAKO[id].zones.includes(pool)
     || (ch === '=' && ZAKO[id].zones.includes('road'))
     || (ch === ',' && ZAKO[id].zones.includes('coast')));
@@ -335,9 +371,9 @@ export function walkStep(game) {
 
 // 道中の戦いの話のデータ（ボスの話と同じ形にして、戦いの画面を使い回す）
 // 帯ごとの専用の背景（Gemini・2026-10-02。それまではボスの背景を借りていた）
-export const ZONE_BG = { ...Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`])), soma: 'assets/bg_dochu_north.png' };
+export const ZONE_BG = { ...Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`])), soma: 'assets/bg_dochu_north.png', kenpoku: 'assets/bg_dochu_north.png' };
 // 帯ごとの強さの倍率（1章の相馬・HP／攻／守を別々に・もらう経験と文も多め）
-export const ZONE_SCALE = { soma: { hp: 6, atk: 3.4, def: 3, reward: 2.5 } }; // 10/3 試算：1.5倍ではLv6の4人が1ターンで倒した＝この倍率で1戦2〜3ターン・HP約1割減（いわきの道中と同じ手ごたえ）
+export const ZONE_SCALE = { soma: { hp: 6, atk: 3.4, def: 3, reward: 2.5 }, kenpoku: { hp: 9, atk: 4.6, def: 4.2, reward: 3.6 } }; // kenpoku＝10/4 仮（2章のボスの試算のあとで合わせる） // 10/3 試算：1.5倍ではLv6の4人が1ターンで倒した＝この倍率で1戦2〜3ターン・HP約1割減（いわきの道中と同じ手ごたえ）
 export const HARAI = {
   name: '祓いの言葉', cost: 4, power: 14, weakMult: 1, plainMult: 1,
   weakText: '祓いの 言葉が もやを 打った！', plainText: '祓いの 言葉が もやを 打った！',
@@ -353,7 +389,7 @@ export function zakoData(game, zakoId, zone) {
     enemy: {
       id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone] ?? {}; return { hp: Math.round(z.hp * (k.hp ?? 1)), atk: Math.round(z.atk * (k.atk ?? 1)), def: Math.round(z.def * (k.def ?? 1)) }; })(), agi: z.agi,
       rewardRate: ZONE_SCALE[zone]?.reward ?? 1,
-      bgm: zone === 'soma' ? 'somaBattle' : undefined, // 1章の道中の曲（10/3「章ごとにBGMは新しく」） // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
+      bgm: { soma: 'somaBattle', kenpoku: 'kenpokuBattle' }[zone], // 1章の道中の曲（10/3「章ごとにBGMは新しく」） // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
       weakness: null, noWeak: true, canFlee: true, trick: z.trick ?? null, special: null,
       biteName: z.biteName, introText: z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,
       loseLines: ['旅の者たちは 力つきた……'],

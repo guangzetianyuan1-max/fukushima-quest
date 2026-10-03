@@ -261,6 +261,11 @@ function allyAct(state, a, cmd, data, rng, log) {
     }
     if (it.desc) log.push({ text: it.desc, speaker: 'しおり' });
   } else if (cmd.type === 'tell') {
+    // 必ず負ける1回目（2章 鬼婆・本人 10/4「一度全滅→町で祐慶と合流し、再トライ」）＝語っても声が出ない
+    if (e.forcedLose) {
+      log.push({ text: e.tellBlock ?? `${a.name}は 語ろうとしたが、声が 出ない！` });
+      return;
+    }
     log.push({ text: `${a.name}は ${e.name}の 昔話を 語りはじめた……`, sfx: 'tell' });
     // 挿絵と語りの声の紙芝居（本人 10/2「挿絵とナレーションを付けて」）。初めて語るときだけ＝画面が紙芝居を見せる
     // 紙芝居で語り終えた話は、2度目に同じ筋を繰り返さない（本人 10/2「この語りと、戦闘中の語りが重なるので、ダブらないように」）
@@ -295,18 +300,36 @@ function allyAct(state, a, cmd, data, rng, log) {
 }
 
 // 敵は毎ターン special.chance の見込みで必殺技（全員に当たる）。それ以外はかみつき（1人）
+// 2体同時（twin・2章 ムカデとオロチ・本人 10/4）＝二匹とも それぞれの名前で動く（体力は ひとつ）
 function enemyAct(state, rng, log) {
   const e = state.enemy;
-  const living = state.allies.filter((a) => a.alive);
   // くくり罠（bind）：1回 動けない
   if (e.bound > 0) {
     e.bound -= 1;
     log.push({ text: `${e.name}${e.boundText}` });
     return;
   }
+  if (e.twin) {
+    e.twin.names.forEach((nm, i) => {
+      if (state.allies.some((a) => a.alive)) enemyStrike(state, rng, log, nm, e.twin.bites?.[i] ?? e.biteName);
+    });
+  } else {
+    enemyStrike(state, rng, log, e.name, e.biteName);
+  }
+  // 必殺技とは別に、毎ターン mist.rise の見込みで もやが ふいに 濃くなる（本人 10/1「もやはランダムに」）
+  if (e.mist?.rise && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive) && rng() < e.mist.rise) {
+    e.mistLeft += 1;
+    log.push({ text: `${e.name}の まわりで、黒い もやが ふいに 濃くなった……`, effect: { kind: 'mist', mist: e.mistLeft } });
+  }
+}
+
+// 1体ぶんの動き（name＝文に出す名前・bite＝かみつきの言い方）
+function enemyStrike(state, rng, log, name, bite) {
+  const e = state.enemy;
+  const living = state.allies.filter((a) => a.alive);
   // 真言（daze）：かみつきも必殺技も 半分は それる
   if (e.dazed > 0 && rng() < 0.5) {
-    log.push({ text: `${e.name}${e.dazeText}` });
+    log.push({ text: `${name}${e.dazeText}` });
     return;
   }
   if (e.trick && rng() < e.trick.chance && doTrick(state, e, living, rng, log)) return;
@@ -315,7 +338,7 @@ function enemyAct(state, rng, log) {
   const sp = [e.special2, e.special].find((x) => x && rng() < x.chance);
   if (sp) {
     // cutin＝技の挿絵（本人 10/3「今回から、ボスの必殺技は別のアクション(挿絵)を」）。挿絵のある技は文を長めに止める（hold）
-    log.push({ text: `${e.name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
+    log.push({ text: `${name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
     for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * spread(rng))), log);
     // 必殺技をくらうと、もやが1つ立ちこめる（最大 max まで・本人 10/1「敵の必殺技をくらうとモヤがかかる」）
     if (e.mist && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive)) {
@@ -324,13 +347,8 @@ function enemyAct(state, rng, log) {
     }
   } else {
     const t = living[Math.floor(rng() * living.length)];
-    log.push({ text: `${e.name}の ${e.biteName}！`, effect: { kind: 'shake' }, sfx: 'bite' });
+    log.push({ text: `${name}の ${bite}！`, effect: { kind: 'shake' }, sfx: 'bite' });
     hurt(t, physicalDamage(e.atk, t.def, rng), log);
-  }
-  // 必殺技とは別に、毎ターン mist.rise の見込みで もやが ふいに 濃くなる（本人 10/1「もやはランダムに」）
-  if (e.mist?.rise && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive) && rng() < e.mist.rise) {
-    e.mistLeft += 1;
-    log.push({ text: `${e.name}の まわりで、黒い もやが ふいに 濃くなった……`, effect: { kind: 'mist', mist: e.mistLeft } });
   }
 }
 

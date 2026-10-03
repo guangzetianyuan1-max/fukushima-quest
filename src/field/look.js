@@ -1,7 +1,7 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY } from './game.js?v=106';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY } from './game.js?v=107';
 
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
@@ -22,8 +22,8 @@ export function fieldLook(game, ch, x, y) {
     return { ground, objs: [game.cleared?.[boss] ? 'icon_torii' : 'vortex'] };
   }
   if (WALL_OPENED_BY[ch]) {
-    // 1・2＝川に架かる橋の上、3〜6＝道の上（4＝いわきから相馬への口・5＝大悲山への入口・6＝相馬の北）。晴れたら橋（道）だけ
-    const onRoad = Number(ch) >= 3;
+    // 1・2＝川に架かる橋の上、ほか（3〜9・0・%・&）＝道の上（4＝いわきから相馬への口・5＝大悲山への入口・6＝相馬の北・8〜＝2章）。晴れたら橋（道）だけ
+    const onRoad = ch !== '1' && ch !== '2';
     const ground = onRoad ? 'road' : 'river';
     const deck = onRoad ? [] : ['plank'];
     return { ground, objs: game.cleared?.[WALL_OPENED_BY[ch]] ? deck : [...deck, 'mistwall'] };
@@ -45,6 +45,10 @@ export function fieldLook(game, ch, x, y) {
     case 'M': return { ground: 'grass', objs: ['shiro'] }; // 相馬の町（中村城の城下・10/3 1章）
     case 'P': return { ground: 'grass', objs: ['hei'] }; // 雲雀ヶ原の祭場地（矢来の囲い＋上に旗の目印・10/3）
     case 'E': return { ground: 'road', objs: ['sekisho'] }; // 地図の口（いわき⇔相馬）＝関所の門
+    case 'X': return { ground: 'road', objs: ['sekisho'] }; // 地図の口（相馬⇔県北・10/4）
+    case 'U': return { ground: 'grass', objs: ['icon_yadoya'] }; // 福島の町（信夫山のふもと・10/4 2章）
+    case 'W': return { ground: 'grass', objs: ['shiro'] }; // 二本松の町（城下・10/4 2章）
+    case 'k': return { ground: 'grass', objs: ['toro'] }; // 二本松の提灯祭り（イベント・10/4）
     default: return { ground: 'grass', objs: [] };
   }
 }

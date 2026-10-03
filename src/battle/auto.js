@@ -27,7 +27,9 @@ export function chooseCommands(state, data) {
   // 和尚：弱った者がいれば読経（全員）。足の速い者が先に道具を使わないよう、ここで先に決める
   const living0 = state.allies.filter((x) => x.alive);
   const needHeal = Math.min(...living0.map((x) => x.hp / x.maxHp)) < 0.5 || living0.filter((x) => x.hp / x.maxHp < 0.7).length >= 2;
-  const healer = needHeal && !(state.silence > 0) && living0.find((x) => !x.stunned && spellOf(x, data, 'heal'));
+  // 弱点の術を持つ者（2章 祐慶）は、明かされたあとは ひどく弱った者が いるときだけ 読経（ふだんは 弱点の術を 射る）
+  const critical = Math.min(...living0.map((x) => x.hp / x.maxHp)) < 0.35;
+  const healer = needHeal && !(state.silence > 0) && living0.find((x) => !x.stunned && spellOf(x, data, 'heal') && (critical || !(e.revealed && (x.spells ?? []).includes(e.weakness))));
   if (healer) {
     cmds[healer.id] = { type: 'spell', spellId: spellOf(healer, data, 'heal') };
     foodUsed = true; // 回復は1ターンに1つ（ほかの者は道具を使わない）
@@ -51,7 +53,9 @@ export function chooseCommands(state, data) {
       dazeCast = true;
       continue;
     }
-    const bind = boss && !bindCast && !(state.silence > 0) && spellOf(a, data, 'bind');
+    // 弱点の術を持つ者（2章 祐慶）は、弱点が明かされたら 足止めより 弱点の術を先に
+    const hasWeak = e.revealed && (a.spells ?? []).includes(e.weakness);
+    const bind = boss && !bindCast && !hasWeak && !(state.silence > 0) && spellOf(a, data, 'bind');
     if (bind) {
       cmds[a.id] = { type: 'spell', spellId: bind };
       bindCast = true;

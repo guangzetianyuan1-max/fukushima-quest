@@ -2,31 +2,31 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=106';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=106';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=106';
-import { RIDERS } from '../data/nomaoi_assets.js?v=106';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=106';
-import { TILE } from '../field/tiles.js?v=106';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=106';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=106';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=106';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=106';
+import { EPISODES } from '../data/episodes.js?v=107';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=107';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=107';
+import { RIDERS } from '../data/nomaoi_assets.js?v=107';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=107';
+import { TILE } from '../field/tiles.js?v=107';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=107';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=107';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=107';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=107';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=106';
-import { membersOf } from '../battle/levels.js?v=106';
-import { COMPANIONS } from '../data/companions.js?v=106';
-import { ICON_IDS } from '../data/icons.js?v=106';
-import { FACE_IDS } from '../data/faces.js?v=106';
-import { mapPointOf } from '../field/mapcard.js?v=106';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=106';
-import { makeRng } from '../battle/rules.js?v=106';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=106';
-import { buyEquip, partyView } from '../field/game.js?v=106';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=106';
+} from '../field/game.js?v=107';
+import { membersOf } from '../battle/levels.js?v=107';
+import { COMPANIONS } from '../data/companions.js?v=107';
+import { ICON_IDS } from '../data/icons.js?v=107';
+import { FACE_IDS } from '../data/faces.js?v=107';
+import { mapPointOf } from '../field/mapcard.js?v=107';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=107';
+import { makeRng } from '../battle/rules.js?v=107';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=107';
+import { buyEquip, partyView } from '../field/game.js?v=107';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=107';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -60,6 +60,12 @@ const WALL_HINT = {
   5: '金谷の 山の 化け物に 会って、獲りすぎないと 誓えば、大悲山への もやも 晴れると 思う。',
   6: '大悲山の 大蛇を 何とか しないと、北へは 行けないわ。',
   7: '鹿狼山の 手長明神さまを 元に もどせば、虎捕山への もやも 晴れるはず。',
+  // 2章 県北（10/4）
+  8: '虎捕山の 墨虎を 捕らえれば、西の 県北への 口も 開くはず。',
+  9: '霊山の 墓地の 母の 霊を しずめたら、福島への もやも 晴れると 思う。',
+  0: '信夫山の ご坊狐を 元に もどせば、山の 奥への もやも 晴れるはず。',
+  '%': '信夫山の ムカデと オロチを しずめないと、南の 川俣へは 行けないわ。',
+  '&': '川俣の へっぴり嫁さんを 迎えて あげたら、二本松への もやも 晴れると 思う。',
 };
 // ボスを元に戻して歩く地図へ帰ったときの、しおりの一言
 const CLEARED_LINES = {
@@ -71,9 +77,20 @@ const CLEARED_LINES = {
   zarukaburi: ['大悲山への 入口の もやが 晴れたわ！', '大悲山の 薬師堂の 池に、大蛇が いるそうよ。小高の 町で 支度を しましょう。'],
   daihisan: ['北の 浜街道の もやが 晴れたわ！', '北に 相馬の 町が あるの。その 先の 鹿狼山に、手長明神さまが いらっしゃるわ。'],
   tenaga: ['虎捕山への 山道の もやが 晴れたわ！', '虎捕山には、凶賊 橘墨虎が 隠れているの。相馬の 町で しっかり 支度してね。'],
-  sumitora: ['これで 相馬の 昔話は みんな 元に もどったわ。', '1章「相馬」の 旅は ここまで。つづきは 準備中です。'],
+  sumitora: ['これで 相馬の 昔話は みんな 元に もどったわ。', '虎捕山の 西の 口の もやが 晴れた！ 山を 越えれば、2章「県北」よ。'],
+  // 2章 県北（10/4）
+  amekai: ['福島への 道の もやが 晴れたわ！', '福島の 町で 支度を しましょう。北の 信夫山に、化け狐が いるそうよ。'],
+  gobou: ['信夫山の 奥への もやが 晴れたわ！', '北の 坂と 黒沼に、大きな ムカデと オロチが いるの。どちらも「信夫山の 主」を 名乗っているそうよ。'],
+  mukade: ['南の 川俣への 道の もやが 晴れたわ！', '川俣の 村に、何かを こらえている お嫁さんが いるそうよ。'],
+  heppiri: ['二本松への 道の もやが 晴れたわ！', '二本松の 町で 支度を しましょう。安達ヶ原の 観世寺の 岩屋に、鬼婆が いるの……おそろしく 強いそうよ。'],
+  onibaba: ['これで 県北の 昔話は みんな 元に もどったわ。', '2章「県北」の 旅は ここまで。つづきは 準備中です。'],
 };
 // いわきの北の口から 相馬へ入ったとき（1章の始まり）
+const CROSS_KENPOKU = [
+  { text: '虎捕山を 越えて 西へ。ここから 2章「県北」。' },
+  { speaker: 'しおり', text: '霊山の ふもとよ。夜に 飴を 買いに くる 女の 人の 話が 伝わっているの。' },
+  { speaker: 'しおり', text: '県北の 敵は 相馬より もっと 強いわ。福島の 町で 支度を ととのえましょう。' },
+];
 const CROSS_SOMA = [
   { text: '浜街道を 北へ。ここから 1章「相馬」。' },
   { speaker: 'しおり', text: '南相馬の 小高よ。金谷の 山に、ざるの ような 頭の 化け物が 出るそうなの。' },
@@ -98,7 +115,7 @@ const NOMAOI_LINES = {
 };
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, CROSS_SOMA, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
@@ -222,11 +239,18 @@ export class FieldScene extends Phaser.Scene {
     } else if (this.g.justEntered === this.mapId) {
       this.setGame({ ...this.g, justEntered: null });
       this.showTownCard();
+    } else if (this.g.justSwapped) {
+      // 必ず負ける1回目のあと（2章 鬼婆）：町の宿で目をさまし、仲間が入れ替わる（本人 10/4「一度全滅→町で祐慶と合流し、再トライ」）
+      const id = this.g.justSwapped;
+      this.setGame({ ...this.g, justSwapped: null });
+      const lines = COMPANIONS[id].joinLines.map((text, k, all) => ({ text, jingle: k === all.length - 1 ? 'join' : undefined }));
+      this.time.delayedCall(350, () => this.showMessages([...lines, { speaker: 'しおり', text: '祐慶さまの 破魔の 真弓なら、鬼婆に とどくはず。宿で 休んでから、もう一度 観世寺へ 行きましょう。' }]));
     } else if (this.g.justCrossed) {
       // 地図の口を通ったとき（10/3 1章）：相馬へ入ると章の始まりの一言
       const to = this.g.justCrossed;
       this.setGame({ ...this.g, justCrossed: null });
-      if (to === 'soma') this.time.delayedCall(350, () => this.showMessages(CROSS_SOMA));
+      if (to === 'soma' && !this.g.cleared.sumitora) this.time.delayedCall(350, () => this.showMessages(CROSS_SOMA));
+      if (to === 'kenpoku') this.time.delayedCall(350, () => this.showMessages(CROSS_KENPOKU));
     } else if (this.g.justCleared) {
       const id = this.g.justCleared;
       // ボスを元に戻したあと、昔話の味方が加わる回はその台詞も続ける（afterWin が justJoined を付ける）
@@ -315,7 +339,7 @@ export class FieldScene extends Phaser.Scene {
   // 歩く地図の曲（本人 10/3「章ごとにBGMは新しく」）＝いわき（序章）は始まりの曲・相馬（1章）は somaField。町の中は その町のある地図の曲
   fieldBgm() {
     const map = isField(this.mapId) ? this.mapId : this.g.fieldMap ?? 'field';
-    return { soma: 'somaField' }[map] ?? 'title';
+    return { soma: 'somaField', kenpoku: 'kenpokuField' }[map] ?? 'title';
   }
 
   // ---- 町に入った瞬間の一枚絵（1.3秒・さわると飛ばす）----
@@ -442,7 +466,7 @@ export class FieldScene extends Phaser.Scene {
     const hp = (id) => (p[id].dead ? `${NAMES[id]} 幽霊` : `${NAMES[id]}${mark(id)} ${p[id].hp}/${maxOf(this.g, id).hp}`);
     // 術の力も見せる（本人 10/2「術は温泉で回復しますか？」＝宿で戻るのが見えるように）
     const mp = (id) => (maxOf(this.g, id).mp > 0 && !p[id].dead ? ` 術${p[id].mp}` : '');
-    const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
+    const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬', kenpoku: '県北' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
     // 2人ずつ1行（4人なら2行）・いちばん下の行に Lv と場所（右に所持金）
     const ids = membersOf(this.g);
     const lines = [];
