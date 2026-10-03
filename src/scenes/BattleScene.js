@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=91';
-import { revealAt } from '../ui/reveal.js?v=91';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=91';
-import { chooseCommands } from '../battle/auto.js?v=91';
-import { itemNote } from '../data/items.js?v=91';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=91';
-import { STORY_FILES } from '../data/story_assets.js?v=91';
-import { CUTIN_FILES } from '../data/cutin_assets.js?v=91';
-import { drawScroll } from '../ui/scroll.js?v=91';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=91';
-import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=91';
+import { EPISODES } from '../data/episodes.js?v=92';
+import { revealAt } from '../ui/reveal.js?v=92';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=92';
+import { chooseCommands } from '../battle/auto.js?v=92';
+import { itemNote } from '../data/items.js?v=92';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=92';
+import { STORY_FILES } from '../data/story_assets.js?v=92';
+import { CUTIN_FILES } from '../data/cutin_assets.js?v=92';
+import { drawScroll } from '../ui/scroll.js?v=92';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=92';
+import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=92';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
