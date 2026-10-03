@@ -174,7 +174,8 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 小高の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 15, lines: ['いらっしゃいませ。小高の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['katana', 'tessen', 'yamagatana', 'kongozue', 'kasa', 'kyahan', 'mino'], items: ['tama'], lines: ['小高の よろず屋だ。得物も 防具も、鉄砲の 玉も あるぜ。'] },
+      { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['tachi', 'naginata', 'kumayari', 'shakujo', 'domaru', 'mino'], items: ['tama'], lines: ['小高の よろず屋だ。太刀も 薙刀も、胴丸も あるぜ。鉄砲の 玉も 置いてある。'] },
+      { x: 10, y: 11, look: 'musume', role: 'shop', goods: ['yakusou', 'jouyakusou', 'tokujou', 'reisui', 'goshinsui'], lines: ['旅の 薬売りで ございます。相馬の 道は 敵が 強いので、よく 効く 薬を そろえて おります。'] }, // 10/3 本人「道具も強く」
       // 話の手がかり（出どころで確かめた筋だけ）
       { x: 9, y: 12, look: 'ryoshi', lines: [
         '金谷の 山には 行くなよ。鹿を 追って 山に 入った 猟師が、ざるの ような 頭の 女の 化け物に 会ったそうだ。',
@@ -222,7 +223,8 @@ export const TOWNS = {
     ],
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 相馬の 神社へ。'] },
-      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['tachi', 'naginata', 'kumayari', 'shakujo', 'domaru', 'mino'], items: ['tama'], lines: ['相馬の 刀屋だ。太刀も 熊槍も、胴丸も あるぜ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['nodachi', 'oonaginata', 'jumonji', 'tetsushakujo', 'kusari', 'domaru'], items: ['tama'], lines: ['相馬の 刀屋だ。野太刀に 十文字槍、鎖帷子も あるぜ。'] },
+      { x: 10, y: 11, look: 'shonin', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['相馬の 道具屋だ。薬箱は 皆の 傷を いっぺんに 手当て できるぜ。'] }, // 10/3 本人「道具も強く」
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 18, lines: ['いらっしゃいませ。相馬の 宿で ございます。'] },
       { x: 9, y: 12, look: 'ryoshi', lines: [
         '海から 帰る 舟は、北の 鹿狼山を 目印に するんだ。',

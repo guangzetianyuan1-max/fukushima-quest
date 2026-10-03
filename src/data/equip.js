@@ -18,6 +18,12 @@ export const EQUIP = {
   kumayari: { name: '熊槍', slot: 'weapon', who: ['kariudo'], atk: 14, price: 180 },
   shakujo: { name: '錫杖', slot: 'weapon', who: ['sou'], atk: 10, price: 130 },
   domaru: { name: '胴丸', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 10, price: 150 },
+  // 相馬の町（中村）の刀屋の新しい品（本人 10/3「武器や防具、道具も、強い敵に合わせて強く」）。太刀・薙刀・熊槍・錫杖・胴丸は 小高の よろず屋へ移した
+  nodachi: { name: '野太刀', slot: 'weapon', who: ['tabi'], atk: 24, price: 380 },
+  oonaginata: { name: '大薙刀', slot: 'weapon', who: ['shiori'], atk: 17, price: 280 },
+  jumonji: { name: '十文字槍', slot: 'weapon', who: ['kariudo'], atk: 21, price: 330 },
+  tetsushakujo: { name: '鉄の錫杖', slot: 'weapon', who: ['sou'], atk: 15, price: 230 },
+  kusari: { name: '鎖帷子', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 15, price: 300 },
   // 防具とお守りは4人とも着けられる（10/2 仲間が加わった）
   kasa: { name: '旅の笠', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 2, price: 15 },
   kyahan: { name: '脚絆', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 3, agi: 2, price: 30 },
@@ -46,6 +52,24 @@ export function equipNote(id) {
   return [e.atk && `攻+${e.atk}`, e.def && `守+${e.def}`, e.agi && `速+${e.agi}`, e.ward && '厄除け'].filter(Boolean).join(' ');
 }
 
+// 着け替えたら どう変わるか（本人 10/3「装備は間違えて買うことが無いように、装備中、-10(着ることによりさがる)など、注記してほしい」）
+// id＝これから着ける品・nowId＝その人が その場所に いま着けている品（無ければ null）
+export function equipDiff(id, nowId) {
+  const a = EQUIP[id];
+  const b = EQUIP[nowId] ?? {};
+  return { atk: (a.atk ?? 0) - (b.atk ?? 0), def: (a.def ?? 0) - (b.def ?? 0), agi: (a.agi ?? 0) - (b.agi ?? 0), ward: Number(!!a.ward) - Number(!!b.ward) };
+}
+// 店の右に出す字：装備中／攻+6 守-4（＋は上がる・－は下がる）／変わらない
+export function diffNote(id, nowId) {
+  if (id === nowId) return '装備中';
+  const d = equipDiff(id, nowId);
+  const sg = (n) => (n > 0 ? `+${n}` : `${n}`);
+  const parts = [d.atk && `攻${sg(d.atk)}`, d.def && `守${sg(d.def)}`, d.agi && `速${sg(d.agi)}`, d.ward > 0 && '厄除け', d.ward < 0 && '厄除け無し'].filter(Boolean);
+  return parts.length ? parts.join(' ') : '変わらない';
+}
+// 着けると どれか1つでも下がるか（字を赤くする）
+export const diffDown = (id, nowId) => id !== nowId && Object.values(equipDiff(id, nowId)).some((n) => n < 0);
+
 // 装備の足し算
 export function gearBonus(equip) {
   const b = { atk: 0, def: 0, agi: 0, ward: false };
@@ -68,9 +92,9 @@ export const EXPECT_GEAR = {
   // 4〜5は加わった仲間の分も（猟師＝賢沼のあと・僧＝蛇岸淵のあと。加わったばかりは安い得物だけ）
   4: { tabi: { weapon: 'bokuto', armor: 'kasa', charm: null }, shiori: { weapon: 'sensu', armor: 'kasa', charm: null }, kariudo: { weapon: 'nata', armor: null, charm: null } },
   5: { tabi: { weapon: 'katana', armor: 'kasa', charm: null }, shiori: { weapon: 'sensu', armor: 'kasa', charm: null }, kariudo: { weapon: 'nata', armor: 'kasa', charm: null }, sou: { weapon: 'kashizue', armor: null, charm: null } },
-  // 6〜9＝1章 相馬（10/3）。6＝ザルカブリ（いわきの2つ目の得物）・7＝大悲山（蓑）・8＝手長明神（相馬の町の太刀と熊槍）・9＝橘墨虎（相馬の得物と胴丸）
+  // 6〜9＝1章 相馬（10/3・同日 本人「強い敵に合わせて強く」で品を1段足した）。6＝ザルカブリ（いわきの品のまま着く）・7＝大悲山（小高の よろず屋の品）・8＝手長明神（相馬の刀屋の得物）・9＝橘墨虎（相馬の得物と鎖帷子）
   6: { tabi: { weapon: 'katana', armor: 'mino', charm: null }, shiori: { weapon: 'tessen', armor: 'kasa', charm: null }, kariudo: { weapon: 'yamagatana', armor: 'kasa', charm: null }, sou: { weapon: 'kongozue', armor: 'kasa', charm: null } },
-  7: { tabi: { weapon: 'katana', armor: 'mino', charm: null }, shiori: { weapon: 'tessen', armor: 'mino', charm: null }, kariudo: { weapon: 'yamagatana', armor: 'mino', charm: null }, sou: { weapon: 'kongozue', armor: 'mino', charm: null } },
-  8: { tabi: { weapon: 'tachi', armor: 'mino', charm: null }, shiori: { weapon: 'tessen', armor: 'mino', charm: null }, kariudo: { weapon: 'kumayari', armor: 'mino', charm: null }, sou: { weapon: 'kongozue', armor: 'mino', charm: null } },
-  9: { tabi: { weapon: 'tachi', armor: 'domaru', charm: null }, shiori: { weapon: 'naginata', armor: 'mino', charm: null }, kariudo: { weapon: 'kumayari', armor: 'domaru', charm: null }, sou: { weapon: 'shakujo', armor: 'mino', charm: null } },
+  7: { tabi: { weapon: 'tachi', armor: 'mino', charm: null }, shiori: { weapon: 'naginata', armor: 'mino', charm: null }, kariudo: { weapon: 'kumayari', armor: 'mino', charm: null }, sou: { weapon: 'shakujo', armor: 'mino', charm: null } },
+  8: { tabi: { weapon: 'nodachi', armor: 'domaru', charm: null }, shiori: { weapon: 'naginata', armor: 'mino', charm: null }, kariudo: { weapon: 'jumonji', armor: 'domaru', charm: null }, sou: { weapon: 'shakujo', armor: 'mino', charm: null } },
+  9: { tabi: { weapon: 'nodachi', armor: 'kusari', charm: null }, shiori: { weapon: 'oonaginata', armor: 'domaru', charm: null }, kariudo: { weapon: 'jumonji', armor: 'kusari', charm: null }, sou: { weapon: 'tetsushakujo', armor: 'domaru', charm: null } },
 };

@@ -5,7 +5,7 @@
 // ゲームでは、忘れの力でよみがえった墨虎。語って弱点が明かされるまでは岩穴の闇に隠れて、たたかう・鉄砲の半分がとどかない（hide）。
 // 明かされると白狼が現れて足跡で隠れ家を暴き、ときどき墨虎に とびかかる（helper）。弱点＝「白狼の足跡」
 // 絵＝10/3 届いた（pbl37p 墨虎・2uh591 捕らえられた姿＝肌が緑に描かれたので prep_art で人の肌へ・9mqri4 闇討ち・achnd8 火矢の雨）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=95';
+import { BASIC_ITEMS } from './basic_items.js?v=96';
 
 export const SUMITORA = {
   art: {
@@ -34,7 +34,8 @@ export const SUMITORA = {
     autoWinTarget: 0.92, // 章の最後のボスは少し手ごわく（序章の龍燈と同じ考え）
     expectLv: 9,
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
-    hp: 420, atk: 72, def: 76, agi: 12,
+    // 10/3 装備を1段強くした（本人「武器や防具、道具も強く」）ので体力 420→520・攻 72→76（試算 自動0.91）
+    hp: 520, atk: 76, def: 76, agi: 12,
     bgm: 'sumitora', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'ashiato',
     mist: { min: 1, max: 3, rise: 0.2 },

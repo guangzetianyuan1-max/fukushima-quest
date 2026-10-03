@@ -2,30 +2,30 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=95';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=95';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=95';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=95';
-import { TILE } from '../field/tiles.js?v=95';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=95';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=95';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=95';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=95';
+import { EPISODES } from '../data/episodes.js?v=96';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=96';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=96';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=96';
+import { TILE } from '../field/tiles.js?v=96';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=96';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=96';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=96';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=96';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=95';
-import { membersOf } from '../battle/levels.js?v=95';
-import { COMPANIONS } from '../data/companions.js?v=95';
-import { ICON_IDS } from '../data/icons.js?v=95';
-import { FACE_IDS } from '../data/faces.js?v=95';
-import { mapPointOf } from '../field/mapcard.js?v=95';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=95';
-import { makeRng } from '../battle/rules.js?v=95';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=95';
-import { buyEquip, partyView } from '../field/game.js?v=95';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=95';
+} from '../field/game.js?v=96';
+import { membersOf } from '../battle/levels.js?v=96';
+import { COMPANIONS } from '../data/companions.js?v=96';
+import { ICON_IDS } from '../data/icons.js?v=96';
+import { FACE_IDS } from '../data/faces.js?v=96';
+import { mapPointOf } from '../field/mapcard.js?v=96';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=96';
+import { makeRng } from '../battle/rules.js?v=96';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=96';
+import { buyEquip, partyView } from '../field/game.js?v=96';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=96';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -97,6 +97,7 @@ const NOMAOI_LINES = {
 
 // 字体の読み込みに渡す、この画面の字
 export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, CROSS_SOMA, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+  + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
 
@@ -531,13 +532,13 @@ export class FieldScene extends Phaser.Scene {
       if (pitch >= minPitch) break;
     }
     this.menuLayout = { top, pitch, fs }; // 試験（重なりの見張り）用
-    options.forEach(([label, fn, note], i) => {
+    options.forEach(([label, fn, note, noteColor], i) => {
       const y = top + i * pitch;
       const t = this.add.text(30, y, `▶ ${label}`, { ...style(fs, fn ? '#ffffff' : '#777777'), wordWrap: null });
       this.dlg.add(t);
       this.menuItems.push(t);
       if (note) {
-        const n = this.add.text(W - 28, y + 2, note, style(16, '#ffd34d')).setOrigin(1, 0);
+        const n = this.add.text(W - 28, y + 2, note, style(16, noteColor ?? '#ffd34d')).setOrigin(1, 0); // 4つ目＝注記の色（装備で下がる品は赤・装備中は灰）
         this.dlg.add(n);
         this.menuItems.push(n);
       }
@@ -688,7 +689,7 @@ export class FieldScene extends Phaser.Scene {
   }
 
   shopMenu(n) {
-    const opts = n.goods.map((id) => [ITEMS[id].name, () => this.buyOne(n, id), `${PRICE[id]}文`]);
+    const opts = n.goods.map((id) => [`${ITEMS[id].name}（${this.g.items[id] ?? 0}）`, () => this.buyOne(n, id), `${PRICE[id]}文 ${itemNote(ITEMS[id])}`]); // 効き目と持っている数も（10/3 道具を強くした）
     this.showMenu(`何を 買う？（所持金 ${this.g.mon}文）`, [...opts, ['やめる', () => this.closeDialog()]]);
   }
 
@@ -848,7 +849,8 @@ export class FieldScene extends Phaser.Scene {
     if (p.kind === 'equip' && !who) {
       const opts = EQUIP[p.id].who.filter((w) => membersOf(this.g).includes(w)).map((w) => {
         const now = this.g.equip?.[w]?.[EQUIP[p.id].slot];
-        return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, () => this.takePrize(pid, w, shopId)];
+        const [, fn, note, color] = this.equipOption(p.id, w, () => this.takePrize(pid, w, shopId)); // いまと比べた変わり方（10/3）
+        return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
       });
       this.showMenu(`${EQUIP[p.id].name}（${equipNote(p.id)}）。だれが 着ける？`, [...opts, ['もどる', () => this.prizeMenu('equip', shopId)]]);
       return;
@@ -1153,8 +1155,9 @@ export class FieldScene extends Phaser.Scene {
     const ammo = members.includes('kariudo') ? items.map((id) => [`${ITEMS[id].name}（${this.g.items[id] ?? 0}）`, () => this.buyOne({ role: 'equip', goods, items }, id), `${PRICE[id]}文`]) : [];
     if (who) {
       // その人の品：選べば そのまま その人が着ける
-      const opts = forWho(who).map((id) => [EQUIP[id].name, () => this.doBuyEquip(id, who, back), `${EQUIP[id].price}文 ${equipNote(id)}`]);
-      this.showMenu(`${NAMES[who]}の 得物（所持金 ${this.g.mon}文）`, [...opts, ['もどる', () => this.equipShop(goods, items)]]);
+      // 右の字＝いまの品と比べて どう変わるか（装備中の品は 灰色で 選べない・下がる物は 赤）
+      const opts = forWho(who).map((id) => this.equipOption(id, who, () => this.doBuyEquip(id, who, back), `${EQUIP[id].price}文 `));
+      this.showMenu(`${NAMES[who]}の 品（いまと くらべて）所持金 ${this.g.mon}文`, [...opts, ['もどる', () => this.equipShop(goods, items)]]);
       return;
     }
     if (all.length + ammo.length > 5) {
@@ -1162,8 +1165,9 @@ export class FieldScene extends Phaser.Scene {
       this.showMenu(`だれの 品を 見る？（所持金 ${this.g.mon}文）`, [...people, ...ammo, ['やめる', () => this.closeDialog()]]);
       return;
     }
-    const opts = all.map((id) => [EQUIP[id].name, () => this.pickWho(id, back), `${EQUIP[id].price}文 ${equipNote(id)}`]);
-    this.showMenu(`何を 買う？（所持金 ${this.g.mon}文）`, [...opts, ...ammo, ['やめる', () => this.closeDialog()]]);
+    // 人を選ぶ前は 品の強さ（＋を付けない＝「上がる・下がる」と取り違えない）。人を選ぶと いまと比べた変わり方（pickWho）
+    const opts = all.map((id) => [EQUIP[id].name, () => this.pickWho(id, back), `${EQUIP[id].price}文 ${equipNote(id).replaceAll('+', '')}`]);
+    this.showMenu(`何を 買う？（右は 品の強さ・所持金 ${this.g.mon}文）`, [...opts, ...ammo, ['やめる', () => this.closeDialog()]]);
   }
 
   // 買った品の絵を、地図の真ん中に少しだけ出す（本人 10/2「買ったときにイラストを添えて」）。絵の無い品は出さない
@@ -1183,9 +1187,17 @@ export class FieldScene extends Phaser.Scene {
     const eq = this.g.equip ?? START_EQUIP;
     const opts = e.who.filter((w) => membersOf(this.g).includes(w)).map((w) => { // まだ加わっていない人は出さない
       const now = eq[w]?.[e.slot];
-      return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, () => this.doBuyEquip(id, w, back)];
+      const [, fn, note, color] = this.equipOption(id, w, () => this.doBuyEquip(id, w, back));
+      return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
     });
-    this.showMenu(`${e.name}（${equipNote(id)}）。だれが 着ける？（所持金 ${this.g.mon}文）`, [...opts, ['もどる', back]]);
+    this.showMenu(`${e.name}（${equipNote(id).replaceAll('+', '')}）。だれが 着ける？ 右は いまと くらべて（所持金 ${this.g.mon}文）`, [...opts, ['もどる', back]]);
+  }
+
+  // 装備の1行：[名前, 選んだとき, 右の字（いまと比べた変わり方）, 字の色]。装備中は選べない（同じ物を買い直さない）
+  equipOption(id, who, onPick, prefix = '') {
+    const now = (this.g.equip ?? START_EQUIP)[who]?.[EQUIP[id].slot] ?? null;
+    if (id === now) return [EQUIP[id].name, null, '装備中', '#9a9a9a'];
+    return [EQUIP[id].name, onPick, `${prefix}${diffNote(id, now)}`, diffDown(id, now) ? '#ff8a7a' : '#ffd34d'];
   }
 
   doBuyEquip(id, who, back) {

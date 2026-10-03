@@ -1,20 +1,22 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=95';
-import { SOMA_ROWS } from './soma_map.js?v=95';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=95';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=95';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=95';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=95';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=95';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=95';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=95';
+import { IWAKI_ROWS } from './iwaki_map.js?v=96';
+import { SOMA_ROWS } from './soma_map.js?v=96';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=96';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=96';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=96';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=96';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=96';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=96';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=96';
 
 export const SAVE_KEY = 'fq-save-v1';
 
 // 地図の字 → ボス（episodes.js の enemy.id）と、もやの壁 → 晴れる条件
 export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora' };
 export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan', 4: 'ryuto', 5: 'zarukaburi', 6: 'daihisan', 7: 'tenaga' };
+// 元に戻すと 道が現れるマス（本人 10/3「序章の龍燈の龍を倒したら、相馬への道を繋げて欲しい。現在は草原なので、わかりずらい」）＝それまでは草原・通れるのは同じ
+export const ROAD_OPENED_BY = { r: 'ryuto' };
 
 // 歩く地図は2枚（10/3 1章〜）：field＝いわき（序章）・soma＝相馬（1章）。字 E の口で行き来する
 export const FIELDS = { field: IWAKI_ROWS, soma: SOMA_ROWS };
@@ -111,6 +113,7 @@ export function tileNameAt(game, map, x, y) {
   const t = terrainAt(map, x, y);
   if (!isField(map)) return t.tile;
   if (WALL_OPENED_BY[t.ch] && wallOpen(game, t.ch)) return 'bridge';
+  if (ROAD_OPENED_BY[t.ch]) return game.cleared?.[ROAD_OPENED_BY[t.ch]] ? 'road' : 'grass';
   if (BOSS_AT[t.ch] && game.cleared[BOSS_AT[t.ch]]) return t.ch === 'S' ? 'cleared_sand' : 'cleared';
   return t.tile;
 }
@@ -273,7 +276,7 @@ export function zoneOf(y) {
   if (y >= 11) return 'midNorth';
   return 'north';
 }
-const ENCOUNTER_ON = { '.': 1 / 20, ',': 1 / 18, '=': 1 / 22, T: 1 / 6 }; // 林は倍（本人 10/2「林は敵に遭遇する確率を倍に」1/12→1/6）
+const ENCOUNTER_ON = { '.': 1 / 20, ',': 1 / 18, '=': 1 / 22, r: 1 / 22, T: 1 / 6 }; // 林は倍（本人 10/2「林は敵に遭遇する確率を倍に」1/12→1/6）
 export const MIN_STEPS = 4; // 戦いのすぐあとは出ない
 // 道中の敵から もらう文の倍率（本人 10/2「お金を増やすペースを倍に」）
 export const MON_RATE = 2;

@@ -4,7 +4,7 @@
 // 漁師になった少年 長吉は、海から戻ると海のめぐみと無事に帰れたことへの感謝を忘れなかった
 // ゲームでは、忘れられて黒いもやに呑まれた暮らしの守り神。弱点＝「海の幸への感謝」。倒すと元に戻り、長い腕で虎捕山への もやを払う
 // 絵＝10/3 届いた（1ukroq 呑まれた・z1hpg6 元の姿・3dcp6z 長い腕。①→挿絵→②の順で頼んで姿がそろった）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=95';
+import { BASIC_ITEMS } from './basic_items.js?v=96';
 
 export const TENAGA = {
   art: {
@@ -32,7 +32,8 @@ export const TENAGA = {
     autoWinTarget: 0.95,
     expectLv: 8,
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
-    hp: 360, atk: 72, def: 72, agi: 9,
+    // 10/3 装備を1段強くした（本人「武器や防具、道具も強く」）ので体力 360→420（試算 自動0.96）
+    hp: 420, atk: 72, def: 72, agi: 9,
     bgm: 'tenaga', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'kansha',
     mist: { min: 1, max: 3, rise: 0.2 },

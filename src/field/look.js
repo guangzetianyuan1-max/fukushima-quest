@@ -1,7 +1,7 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY } from './game.js?v=95';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY } from './game.js?v=96';
 
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
@@ -15,6 +15,7 @@ const vary = (x, y) => (x * 7 + y * 13) % 5;
 
 // 歩く地図：字 → { ground, objs: [名前…] }
 export function fieldLook(game, ch, x, y) {
+  if (ROAD_OPENED_BY[ch]) return { ground: game.cleared?.[ROAD_OPENED_BY[ch]] ? 'road' : 'grass', objs: [] }; // 龍燈を戻すと現れる相馬への道（10/3）
   const boss = BOSS_AT[ch];
   if (boss) {
     const ground = ch === 'S' ? 'sand' : 'grass';
