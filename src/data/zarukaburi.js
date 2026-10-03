@@ -4,7 +4,7 @@
 // ゲームでは、忘れられて黒いもやに呑まれた山の神の使い。⭐10/3 本人「C」＝戦わない：出会って「獲りすぎない」と誓うと元に戻り、大悲山への もやが晴れる
 // （event: 'vow'＝BattleScene.playVow。戦いの数値・術は試験と、自動の試算のために残してある＝戦いには使わない）
 // 絵＝10/3 届いた（qil8fg・13r9vr・必殺技 pgmdxj）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=90';
+import { BASIC_ITEMS } from './basic_items.js?v=91';
 
 export const ZARUKABURI = {
   art: {
