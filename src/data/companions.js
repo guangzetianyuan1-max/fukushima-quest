@@ -46,7 +46,7 @@ export const COMPANION_SPELLS = {
   // 武士の居合い斬り（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に」「新しい必殺技も」→ 居合い斬り）
   // 守りを無視して 攻撃力×mult。術の力を使う。昔話の主は 語って明かすまで もやが刃を はばむ（rules の IAI_UNREVEALED）・もやが残る間は抜けない（鉄砲と同じ）
   iai: {
-    name: '居合い斬り', kind: 'iai', cost: 10, mult: 1.6, verb: '刀の 柄に 手を かけた',
+    name: '居合い斬り', kind: 'iai', cost: 10, mult: 1.6, sfx: 'iai', verb: '刀の 柄に 手を かけた',
     text: '一閃！ 抜いた 刀が 光の 筋を えがく！',
   },
   dokkyo: {
@@ -60,7 +60,7 @@ export const COMPANION_SPELLS = {
   },
   // 祐慶の術（2章・二本松市「安達ヶ原物語」の筋から：熊野那智のお札で山・谷・川を作って逃げた／如意輪観音の破魔の真弓で射た）
   hama: {
-    name: '破魔の真弓', cost: 8, power: 46, weakMult: 3, plainMult: 0.5, verb: '観音さまに 祈り、破魔の真弓を 引きしぼった',
+    name: '破魔の真弓', cost: 8, power: 46, weakMult: 3, plainMult: 0.5, sfx: 'yumi', verb: '観音さまに 祈り、破魔の真弓を 引きしぼった',
     weakText: '金剛の 矢が、黒い もやごと 鬼婆を 射ぬいた！',
     plainText: '矢は 黒い もやに はじかれた……',
   },

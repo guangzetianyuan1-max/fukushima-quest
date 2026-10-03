@@ -184,7 +184,7 @@ function allyAct(state, a, cmd, data, rng, log) {
       return;
     }
     a.mp -= sp.cost;
-    log.push({ text: `居合い斬り！ ${sp.text}`, effect: { kind: 'iai' }, sfx: 'iai' });
+    log.push({ text: `居合い斬り！ ${sp.text}`, effect: { kind: 'iai' }, sfx: sp.sfx });
     if (state.blind > 0 && rng() < 0.5) {
       log.push({ text: '目が くらんで、外れてしまった！' });
       return;
@@ -198,7 +198,7 @@ function allyAct(state, a, cmd, data, rng, log) {
     log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
   } else if (cmd.type === 'spell') {
     const sp = data.spells[cmd.spellId];
-    log.push({ text: sp.verb ? `${a.name}は ${sp.verb}！` : `${a.name}は ${sp.name}を となえた！`, sfx: 'spell' });
+    log.push({ text: sp.verb ? `${a.name}は ${sp.verb}！` : `${a.name}は ${sp.name}を となえた！`, sfx: sp.sfx ?? 'spell' });
     if (a.mp < sp.cost) {
       log.push({ text: 'しかし 術の力が たりない！' });
       return;

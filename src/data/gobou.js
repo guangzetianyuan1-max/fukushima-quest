@@ -4,7 +4,7 @@
 // 真冬の黒沼で尻尾が凍って切れ、神通力を失った。和尚に諭され、蚕を食うネズミを退治して恩を返し、蚕の守り神「ねこ稲荷」に祀られた
 // ゲームでは、忘れられて黒いもやに呑まれた信夫山の狐。弱点＝「尻尾の釣り」（凍った黒沼）。倒すと元に戻り、ムカデとオロチへの もやを払う
 // 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=114';
+import { BASIC_ITEMS } from './basic_items.js?v=115';
 
 export const GOBOU = {
   art: {
@@ -37,7 +37,7 @@ export const GOBOU = {
     weakness: 'shippo',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝木の葉の 小判（化かしの 木の葉が 舞い、全員の 目を くらます）
-    special: { name: '木の葉の 小判', chance: 0.27, power: 44, flash: [255, 220, 120], sfx: 'shock', cutin: 'assets/cutin/gobou_konoha.png' },
+    special: { name: '木の葉の 小判', chance: 0.27, power: 44, flash: [255, 220, 120], sfx: 'koban', cutin: 'assets/cutin/gobou_konoha.png' },
     biteName: '和尚に 化けて ひっかく',
     introText: '信夫山の 坂に、袈裟を 着た 和尚さんが 立っていた。……その 足もとから、ふさふさの 尻尾が のぞいている！',
     tellLines: [

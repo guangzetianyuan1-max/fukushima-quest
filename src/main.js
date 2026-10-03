@@ -1,13 +1,13 @@
-import { TitleScene } from './scenes/TitleScene.js?v=114';
-import { BattleScene } from './scenes/BattleScene.js?v=114';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=114';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=114';
-import { HARAI } from './field/game.js?v=114';
-import { EQUIP } from './data/equip.js?v=114';
-import { EPISODES } from './data/episodes.js?v=114';
-import { unlock, isUnlocked } from './audio/chip.js?v=114';
-import { askTerms } from './ui/terms.js?v=114';
-import { watchUpdates } from './ui/update.js?v=114';
+import { TitleScene } from './scenes/TitleScene.js?v=115';
+import { BattleScene } from './scenes/BattleScene.js?v=115';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=115';
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=115';
+import { HARAI } from './field/game.js?v=115';
+import { EQUIP } from './data/equip.js?v=115';
+import { EPISODES } from './data/episodes.js?v=115';
+import { unlock, isUnlocked } from './audio/chip.js?v=115';
+import { askTerms } from './ui/terms.js?v=115';
+import { watchUpdates } from './ui/update.js?v=115';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
