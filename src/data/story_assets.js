@@ -38,4 +38,8 @@ export const STORY_FILES = [
   'assets/story/shiori3d_mouth1_eye1.png',
   'assets/story/shiori3d_mouth2_eye0.png',
   'assets/story/shiori3d_mouth2_eye1.png',
+  'assets/story/zarukaburi_1.mp3',
+  'assets/story/zarukaburi_2.mp3',
+  'assets/story/zarukaburi_3.mp3',
+  'assets/story/zarukaburi_4.mp3',
 ];
