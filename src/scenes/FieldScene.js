@@ -2,30 +2,30 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=101';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=101';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=101';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=101';
-import { TILE } from '../field/tiles.js?v=101';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=101';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=101';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=101';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=101';
+import { EPISODES } from '../data/episodes.js?v=102';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=102';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=102';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=102';
+import { TILE } from '../field/tiles.js?v=102';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=102';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=102';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=102';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=102';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=101';
-import { membersOf } from '../battle/levels.js?v=101';
-import { COMPANIONS } from '../data/companions.js?v=101';
-import { ICON_IDS } from '../data/icons.js?v=101';
-import { FACE_IDS } from '../data/faces.js?v=101';
-import { mapPointOf } from '../field/mapcard.js?v=101';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=101';
-import { makeRng } from '../battle/rules.js?v=101';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=101';
-import { buyEquip, partyView } from '../field/game.js?v=101';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=101';
+} from '../field/game.js?v=102';
+import { membersOf } from '../battle/levels.js?v=102';
+import { COMPANIONS } from '../data/companions.js?v=102';
+import { ICON_IDS } from '../data/icons.js?v=102';
+import { FACE_IDS } from '../data/faces.js?v=102';
+import { mapPointOf } from '../field/mapcard.js?v=102';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=102';
+import { makeRng } from '../battle/rules.js?v=102';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=102';
+import { buyEquip, partyView } from '../field/game.js?v=102';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=102';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -114,6 +114,7 @@ export class FieldScene extends Phaser.Scene {
     preloadPeople(this);
     for (const id of [...ICON_IDS, ...FISHING_ICON_IDS]) if (!this.textures.exists(`icon_${id}`)) this.load.image(`icon_${id}`, `assets/icons/${id}.png`);
     if (!this.textures.exists('bg_fishing')) this.load.image('bg_fishing', 'assets/bg_fishing.png'); // 小名浜の釣り場（Gemini・夕焼けと灯台と桟橋）
+    if (!this.textures.exists('bg_nomaoi')) this.load.image('bg_nomaoi', 'assets/bg_nomaoi.png'); // 雲雀ヶ原の神旗争奪戦（Gemini・10/4・art_src/prep_nomaoi.py）
     // 一枚絵（町の入口・章の地図＝Gemini 4組目・art_src/prep_cards.py）
     for (const k of [...Object.keys(TOWNS).filter((t) => !TOWNS[t].cardPending).map((t) => `town_${t}`), 'map']) if (!this.textures.exists(`card_${k}`)) this.load.image(`card_${k}`, `assets/cards/${k}.png`);
     for (const f of ['normal', 'surprise', 'sad', ...FACE_IDS]) if (!this.textures.exists(`face_${f}`)) this.load.image(`face_${f}`, `assets/cards/face_${f}.png`);
