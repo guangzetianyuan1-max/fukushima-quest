@@ -3,7 +3,7 @@
 // 乱れ髪を地面に引きずって微笑んで現れ、猟師はそれから殺生をやめた。獲りすぎる猟師を山の神が戒めた姿と伝わる（原典では倒されない）
 // ゲームでは、忘れられて黒いもやに呑まれた山の神の使い。弱点＝「獲りすぎない誓い」。倒すと元に戻り、大悲山への もやが晴れる
 // 絵＝10/3 届いた（qil8fg・13r9vr・必殺技 pgmdxj）。背景はまだ。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=83';
+import { BASIC_ITEMS } from './basic_items.js?v=84';
 
 export const ZARUKABURI = {
   art: {

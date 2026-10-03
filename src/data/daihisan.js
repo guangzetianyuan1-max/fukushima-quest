@@ -4,12 +4,12 @@
 // 殿様の陣営は大蛇の苦手な鉄の釘を山や谷に打った。大蛇は玉都をさらったが、退治された。今は大悲山の石仏（国の史跡）と大悲山大蛇物語公園
 // ゲームでは、忘れの力でよみがえった大蛇。弱点＝「鉄の釘」。助っ人＝玉都（本人 10/3「戦いの中で琵琶を弾く助っ人」）＝語って弱点が明かされると
 // 琵琶が鳴り、大蛇は聞き入って2回動けない。その後も ときどき琵琶で止める
-// ⚠絵は届くまで仮（武士の絵）。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=83';
+// 絵＝10/3 届いた（2noh3h 大蛇・xf4m56 封じられた姿）。必殺技の挿絵＝描き直し（貼り付け・使用済み_絵大悲山_大雨_描き直し_貼り付け.jpg。1回目 vxa4qk は封じられた姿と山高帽で描かれた）。背景はまだ。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
+import { BASIC_ITEMS } from './basic_items.js?v=84';
 
 export const DAIHISAN = {
   art: {
-    dark: 'assets/wakazamurai_dark.png', light: 'assets/wakazamurai_light.png', bg: 'assets/bg_dochu_north.png',
+    dark: 'assets/daihisan_dark.png', light: 'assets/daihisan_light.png', bg: 'assets/bg_dochu_north.png', // 10/3 絵が届いた（背景はまだ道中の北）
     glowDark: 0x9fb4ff, glowLight: 0xd8e2f0,
   },
   allies: [
