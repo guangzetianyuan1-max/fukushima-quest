@@ -1,14 +1,14 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=105';
-import { SOMA_ROWS } from './soma_map.js?v=105';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=105';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=105';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=105';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=105';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=105';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=105';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=105';
+import { IWAKI_ROWS } from './iwaki_map.js?v=106';
+import { SOMA_ROWS } from './soma_map.js?v=106';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=106';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=106';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=106';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=106';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=106';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=106';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=106';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -56,6 +56,7 @@ const fullParty = (game, keepDead = false) => Object.fromEntries(membersOf(game)
 
 export function newGame() {
   return {
+    somaW: 36, // 相馬の地図の幅（10/4 に40→36列へ詰めた）。無い記録は前の幅＝読み込むときに位置を直す
     pos: { ...START },
     fieldPos: { x: START.x, y: START.y }, // 町に入る前に立っていた所（町を出るとここへ）
     mon: 30,
@@ -179,10 +180,41 @@ export function load(text) {
       if (to) items[to] = (items[to] ?? 0) + n;
     }
     const stolen = (g.stolen ?? []).map((id) => (ITEMS[id] ? id : OLD_ITEM[id])).filter(Boolean);
-    return { ...g, items, stolen };
+    return fixSomaWidth({ ...g, items, stolen });
   } catch {
     return null;
   }
+}
+
+// ⭐10/4 相馬の地図を40→36列へ詰めた（本人「右側に海を入れて」＝列21・22・29・30を消した）。前の記録の相馬の位置を、詰めた後の列へ読み替える
+export function somaOldToNewX(x) {
+  if (x <= 20) return x;
+  if (x <= 22) return 21; // 消した列は隣の残った列へ
+  if (x <= 28) return x - 2;
+  if (x <= 30) return 26;
+  return x - 4;
+}
+// 歩けない所に落ちたら、いちばん近い歩ける所へ
+function nearestWalkable(game, map, x, y) {
+  if (canWalk(game, map, x, y)) return { x, y };
+  for (let r = 1; r < 8; r++) {
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        if (Math.max(Math.abs(dx), Math.abs(dy)) === r && canWalk(game, map, x + dx, y + dy)) return { x: x + dx, y: y + dy };
+      }
+    }
+  }
+  return { x, y };
+}
+export function fixSomaWidth(g) {
+  if (g.somaW === 36) return g;
+  const fix = (p) => ({ ...p, ...nearestWalkable(g, 'soma', somaOldToNewX(p.x), p.y) });
+  const out = { ...g, somaW: 36 };
+  if (g.pos?.map === 'soma') out.pos = fix(g.pos);
+  if (g.fieldMap === 'soma' && g.fieldPos) out.fieldPos = fix(g.fieldPos);
+  if (g.savePos?.map === 'soma') out.savePos = fix(g.savePos);
+  if (g.saveFieldMap === 'soma' && g.saveFieldPos) out.saveFieldPos = fix(g.saveFieldPos);
+  return out;
 }
 
 // ---- 戦いとのやりとり ----

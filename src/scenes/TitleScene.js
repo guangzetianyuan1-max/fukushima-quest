@@ -1,7 +1,7 @@
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=105';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=105';
-import { newGame, load, SAVE_KEY } from '../field/game.js?v=105';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=105';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=106';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=106';
+import { newGame, load, SAVE_KEY } from '../field/game.js?v=106';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=106';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -12,7 +12,7 @@ import { preloadKit, makeWindow } from '../ui/kit.js?v=105';
 //    （本人 10/1「もういちどさわって、を押すと同じ画面、また押すと進む。1回余計」＝2回目のさわりを無くした）
 //    暗くなる途中でさわれば、すぐ戦いへ
 const W = 360;
-const TITLE_VIDEO = 'assets/title_dance.mp4?v=1'; // 動画を作り直したら番号を上げる（スマホが前の動画を覚えている）
+const TITLE_VIDEO = 'assets/title_dance.mp4?v=2'; // 動画を作り直したら番号を上げる（スマホが前の動画を覚えている）
 const TITLE_FONT = '"Potta One", ' + BRUSH_FONT;
 const DOT = 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
 
