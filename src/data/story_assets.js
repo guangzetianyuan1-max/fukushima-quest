@@ -51,7 +51,11 @@ export const STORY_FILES = [
   'assets/story/tenaga_3.mp3',
   'assets/story/tenaga_4.mp3',
   'assets/story/zarukaburi_1.mp3',
+  'assets/story/zarukaburi_1.png',
   'assets/story/zarukaburi_2.mp3',
+  'assets/story/zarukaburi_2.png',
   'assets/story/zarukaburi_3.mp3',
+  'assets/story/zarukaburi_3.png',
   'assets/story/zarukaburi_4.mp3',
+  'assets/story/zarukaburi_4.png',
 ];
