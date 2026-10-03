@@ -1,9 +1,13 @@
 // 紙芝居の挿絵と声で、届いている物（art_src/prep_story.py が書く）。無い物は読まない＝文字だけで進む
 export const STORY_FILES = [
   'assets/story/daihisan_1.mp3',
+  'assets/story/daihisan_1.png',
   'assets/story/daihisan_2.mp3',
+  'assets/story/daihisan_2.png',
   'assets/story/daihisan_3.mp3',
+  'assets/story/daihisan_3.png',
   'assets/story/daihisan_4.mp3',
+  'assets/story/daihisan_4.png',
   'assets/story/jagan_1.mp3',
   'assets/story/jagan_1.png',
   'assets/story/jagan_2.mp3',
