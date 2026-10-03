@@ -5,7 +5,7 @@
 // 原典には敵はいない＝ゲームでは、忘れられて黒いもやに呑まれた母の霊。弱点＝「子を守る約束」。原典は紙芝居④で しおりが語る
 // ⚠身ごもった母の死・墓の赤子＝絵と語りは直接見せず、やさしく語る
 // 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=115';
+import { BASIC_ITEMS } from './basic_items.js?v=116';
 
 export const AMEKAI = {
   art: {
@@ -38,7 +38,7 @@ export const AMEKAI = {
     weakness: 'komori',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝夜の 飴売りの 鈴（墓地の 冷たい 風が 全員を 包む）
-    special: { name: '墓地の 夜風', chance: 0.26, power: 43, flash: [170, 190, 255], sfx: 'wave', cutin: 'assets/cutin/amekai_yokaze.png' },
+    special: { name: '墓地の 夜風', chance: 0.26, power: 43, flash: [170, 190, 255], sfx: 'yokaze', cutin: 'assets/cutin/amekai_yokaze.png' },
     biteName: '冷たい 手で ふれる',
     introText: '夜の 墓地に、飴の 包みを 抱いた 女の 人が、ぼうっと 立っていた……',
     tellLines: [

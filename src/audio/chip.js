@@ -269,6 +269,68 @@ const SFX = {
     tone(N(62), t + 0.28, 0.35, { type: 'sawtooth', vol: 0.32, slideTo: N(59) });
     noise(t + 0.3, 0.3, { vol: 0.55, from: 3000, to: 11000 });
   },
+  // ⭐今までのキャラクターにも 技ごとの音（本人 10/4「今までのキャラクターにも効果音を入れて欲しい」）＝どの必殺技も ほかと同じ音を使い回さない
+  // 黒い大波（龍燈）＝低いうねりが ふくらんで 砕ける
+  oonami: (t) => {
+    tone(N(28), t, 0.8, { type: 'triangle', vol: 0.35, slideTo: N(35) });
+    noise(t, 0.7, { vol: 0.3, from: 200, to: 1800 });
+    noise(t + 0.65, 0.7, { vol: 0.45, from: 6000, to: 250 });
+  },
+  // 乱れ髪（ザルカブリ）＝髪が うなって 何度も しなる「ヒュン ヒュン」
+  kami: (t) => {
+    [0, 0.14, 0.26, 0.36].forEach((d, i) => noise(t + d, 0.16, { vol: 0.5, from: 1200 + i * 900, to: 7000 }));
+    tone(N(79), t, 0.5, { type: 'sine', vol: 0.15, slideTo: N(70) });
+  },
+  // 大雨（大悲山）＝ざあっと降る雨と、遠い雷
+  ame: (t) => {
+    noise(t, 1.2, { vol: 0.32, from: 7000, to: 5000 });
+    noise(t + 0.35, 0.9, { vol: 0.4, from: 900, to: 90 });
+    tone(N(26), t + 0.35, 0.8, { type: 'sawtooth', vol: 0.15, slideTo: N(22) });
+  },
+  // 長い腕（手長明神）＝腕が のびる「ぐいーん」→ ずしんと つかむ
+  ude: (t) => {
+    tone(N(45), t, 0.45, { type: 'square', vol: 0.18, slideTo: N(69) });
+    tone(N(33), t + 0.45, 0.35, { type: 'square', vol: 0.4, slideTo: N(24) });
+    noise(t + 0.45, 0.3, { vol: 0.35, from: 1500, to: 120 });
+  },
+  // 闇討ち（墨虎）＝すっと忍び寄る足音 → どすっ
+  yamiuchi: (t) => {
+    [0, 0.1, 0.2].forEach((d) => noise(t + d, 0.04, { vol: 0.12, from: 2500, to: 1500 }));
+    noise(t + 0.32, 0.1, { vol: 0.5, from: 9000, to: 2000 });
+    tone(N(38), t + 0.34, 0.3, { type: 'square', vol: 0.35, slideTo: N(26) });
+  },
+  // 火矢の雨（墨虎）＝何本もの矢が ヒュッ ヒュッと降り、火が ぼうっと燃えあがる
+  hiya: (t) => {
+    [0, 0.08, 0.15, 0.23, 0.3].forEach((d, i) => tone(N(96 - i * 2), t + d, 0.14, { type: 'sine', vol: 0.32, slideTo: N(84 - i * 2) }));
+    noise(t + 0.4, 0.8, { vol: 0.55, from: 500, to: 3500 });
+  },
+  // 墓地の夜風（飴買い幽霊）＝ひゅうう と細く鳴る夜風
+  yokaze: (t) => {
+    tone(N(76), t, 1.0, { type: 'sine', vol: 0.3, slideTo: N(83) });
+    tone(N(77), t + 0.1, 0.9, { type: 'sine', vol: 0.2, slideTo: N(71) });
+    noise(t, 1.1, { vol: 0.5, from: 400, to: 2200 });
+  },
+  // 黒沼の大水（オロチ）＝ごぼごぼ湧き出て、どっと押し寄せる
+  kuronuma: (t) => {
+    [34, 31, 36, 29].forEach((n, i) => tone(N(n), t + i * 0.1, 0.12, { type: 'sine', vol: 0.3, slideTo: N(n + 9) }));
+    noise(t + 0.4, 0.9, { vol: 0.45, from: 300, to: 2500 });
+  },
+  // 仲間の術（10/4）：読経＝鈴の「チーン」と低い読経／真言＝きらめく光／お札＝紙が舞い 光が立つ／くくり罠＝縄が ぴしっと締まる
+  kyo: (t) => {
+    tone(N(88), t, 1.2, { type: 'sine', vol: 0.2 });
+    tone(N(100), t, 0.8, { type: 'sine', vol: 0.06 });
+    [43, 43, 45, 43].forEach((n, i) => tone(N(n), t + 0.3 + i * 0.22, 0.2, { type: 'triangle', vol: 0.16 }));
+  },
+  shingon: (t) => arp([84, 91, 96, 103, 108], t, 0.05, 0.4, { type: 'sine', vol: 0.18 }),
+  ofuda: (t) => {
+    [0, 0.06, 0.12].forEach((d) => noise(t + d, 0.08, { vol: 0.15, from: 3000, to: 6000 }));
+    arp([67, 74, 79], t + 0.2, 0.08, 0.3, { type: 'triangle', vol: 0.2 });
+  },
+  wana: (t) => {
+    noise(t, 0.15, { vol: 0.2, from: 800, to: 4000 });
+    tone(N(55), t + 0.15, 0.08, { type: 'square', vol: 0.3, slideTo: N(43) });
+    noise(t + 0.15, 0.06, { vol: 0.4, from: 8000, to: 3000 });
+  },
   // 居合い斬り（武士・本人 10/4）＝鍔の「チャキッ」→ 鋭い風切り「シュッ」→ 斬った「ザン」
   iai: (t) => {
     tone(N(96), t, 0.04, { type: 'square', vol: 0.18 });

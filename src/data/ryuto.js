@@ -1,5 +1,5 @@
 // 龍燈の龍と戦う1場面のデータ。数値は試算（500戦）で決めた：自動＝498勝（必殺技は運なので、まれに負ける）・語らないと0勝。
-import { BASIC_ITEMS } from './basic_items.js?v=115';
+import { BASIC_ITEMS } from './basic_items.js?v=116';
 
 export const RYUTO = {
   // 絵（art_src/prep_art.py ryuto で整えた物）と、敵の後ろの光：呑まれた間は月明かり／戻ったら金色
@@ -39,7 +39,7 @@ export const RYUTO = {
     mist: { min: 1, max: 3, rise: 0.2 },
     special: { name: '黒い炎', chance: 0.3, power: 20, flash: [255, 90, 30], sfx: 'flame' }, // 必殺技：毎ターン3割で全員に（本人 10/1「龍なら炎」）・10/3 威力12→20
     // 2つ目の必殺技（本人 10/3「4話の龍に必殺技を増やしてほしい。全員に大ダメージをくらわすもの」）＝龍は沖から川をさかのぼってきた主＝海の大波。先に見る
-    special2: { name: '黒い大波', chance: 0.18, power: 38, flash: [60, 110, 200], sfx: 'flood' },
+    special2: { name: '黒い大波', chance: 0.18, power: 38, flash: [60, 110, 200], sfx: 'oonami' },
     biteName: 'かみつき',
     introText: '黒く 濁った 灯が、龍の まわりで ゆれている……',
     tellLines: [

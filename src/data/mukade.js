@@ -6,7 +6,7 @@
 // 弱点＝「主の名乗り」（どちらが主かと問うと、二匹は にらみあって ぶつかる）。明かされたあとは ときどき二匹が かみつきあう（helper の作りを使う）
 // 原典では人は関わらず相打ち＝紙芝居④で しおりが語る
 // 絵＝まだ（仮に道中のムカデの絵）。二匹を1枚に描く。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=115';
+import { BASIC_ITEMS } from './basic_items.js?v=116';
 
 export const MUKADE = {
   art: {
@@ -47,7 +47,7 @@ export const MUKADE = {
     },
     mist: { min: 1, max: 3, rise: 0.2 },
     special: { name: '七曲りの 毒', chance: 0.22, power: 27, flash: [170, 120, 255], sfx: 'doku', cutin: 'assets/cutin/mukade_doku.png' },
-    special2: { name: '黒沼の 大水', chance: 0.14, power: 32, flash: [90, 140, 255], sfx: 'wave', cutin: 'assets/cutin/mukade_oomizu.png' },
+    special2: { name: '黒沼の 大水', chance: 0.14, power: 32, flash: [90, 140, 255], sfx: 'kuronuma', cutin: 'assets/cutin/mukade_oomizu.png' },
     biteName: 'かみつき',
     introText: '信夫山の 北の 坂から 大ムカデが、南の 黒沼から 大オロチが、同時に あらわれた！',
     tellLines: [

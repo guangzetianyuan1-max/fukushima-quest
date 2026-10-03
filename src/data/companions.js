@@ -50,11 +50,11 @@ export const COMPANION_SPELLS = {
     text: '一閃！ 抜いた 刀が 光の 筋を えがく！',
   },
   dokkyo: {
-    name: '読経', kind: 'heal', cost: 6, power: 18, verb: '経を 読みはじめた',
+    name: '読経', sfx: 'kyo', kind: 'heal', cost: 6, power: 18, verb: '経を 読みはじめた',
     text: '静かな 読経が ひびき、みなの 傷が ふさがっていく。',
   },
   shingon: {
-    name: '真言', kind: 'daze', cost: 4, turns: 3, verb: '真言を となえた',
+    name: '真言', sfx: 'shingon', kind: 'daze', cost: 4, turns: 3, verb: '真言を となえた',
     text: '薬師さまの 真言に、まばゆい 光が 立ちのぼった！',
     hitText: 'は 光に 目が くらんだ！ しばらく 攻撃が 当たりにくい。', missText: 'は まばゆい 光に 目が くらみ、攻撃が それた！',
   },
@@ -65,12 +65,12 @@ export const COMPANION_SPELLS = {
     plainText: '矢は 黒い もやに はじかれた……',
   },
   ofuda: {
-    name: '那智のお札', kind: 'bind', cost: 5, chance: 0.6, verb: '熊野那智の お札を 投げた',
+    name: '那智のお札', sfx: 'ofuda', kind: 'bind', cost: 5, chance: 0.6, verb: '熊野那智の お札を 投げた',
     text: 'お札が 光り、山と 谷と 川が 立ちはだかる！',
     hitText: 'は お札の 山と 川に 足を とられた！', missText: 'は 山も 川も 越えてきた！', stuckText: 'は お札の 川を 越えられない！',
   },
   kukuriwana: {
-    name: 'くくり罠', kind: 'bind', cost: 4, chance: 0.7, verb: '罠を しかけた',
+    name: 'くくり罠', sfx: 'wana', kind: 'bind', cost: 4, chance: 0.7, verb: '罠を しかけた',
     text: '猟師の 縄が、ひゅっと 足もとに のびる！',
     hitText: 'の 足に 縄が からみついた！', missText: 'は 縄を ふりはらった！', stuckText: 'は 罠に かかって 動けない！',
   },
