@@ -3,8 +3,8 @@
 // 乱れ髪を地面に引きずって微笑んで現れ、猟師はそれから殺生をやめた。獲りすぎる猟師を山の神が戒めた姿と伝わる（原典では倒されない）
 // ゲームでは、忘れられて黒いもやに呑まれた山の神の使い。⭐10/4 本人「敵と戦う形にして欲しい」＝戦う（10/3「C」の誓いの出会いは取りやめ）
 // 原典で倒されない所は、勝った後の紙芝居④と hosoku で しおりが補う。見た目は ざるのまま描き直す（本人 10/4・名前もそのまま）
-// 絵＝10/3 届いた（qil8fg・13r9vr・必殺技 pgmdxj）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=103';
+// 絵＝10/4 描き直し（sd30b3・czv1hg・必殺技 38x7zb＝ざるが頭をまるごと覆う）。旧＝10/3 qil8fg・13r9vr・pgmdxj。背景は10/3のまま。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
+import { BASIC_ITEMS } from './basic_items.js?v=104';
 
 export const ZARUKABURI = {
   art: {
