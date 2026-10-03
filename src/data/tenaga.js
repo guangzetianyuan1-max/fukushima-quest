@@ -3,12 +3,12 @@
 // 生きものや人々の暮らしを見守っていた。鹿狼山は海から岸へ戻る舟の目印。新地貝塚は食べた貝を捨てた跡と伝わる。
 // 漁師になった少年 長吉は、海から戻ると海のめぐみと無事に帰れたことへの感謝を忘れなかった
 // ゲームでは、忘れられて黒いもやに呑まれた暮らしの守り神。弱点＝「海の幸への感謝」。倒すと元に戻り、長い腕で虎捕山への もやを払う
-// 絵＝10/3 届いた（1ukroq 呑まれた・z1hpg6 元の姿・3dcp6z 長い腕。①→挿絵→②の順で頼んで姿がそろった）。背景はまだ。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=86';
+// 絵＝10/3 届いた（1ukroq 呑まれた・z1hpg6 元の姿・3dcp6z 長い腕。①→挿絵→②の順で頼んで姿がそろった）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
+import { BASIC_ITEMS } from './basic_items.js?v=87';
 
 export const TENAGA = {
   art: {
-    dark: 'assets/tenaga_dark.png', light: 'assets/tenaga_light.png', bg: 'assets/bg_dochu_north.png', // 10/3 絵が届いた（背景はまだ道中の北）
+    dark: 'assets/tenaga_dark.png', light: 'assets/tenaga_light.png', bg: 'assets/bg_tenaga.png', // 10/3 絵と背景が届いた
     glowDark: 0x9fb4ff, glowLight: 0xffe6a0,
   },
   allies: [
@@ -33,6 +33,7 @@ export const TENAGA = {
     expectLv: 8,
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
     hp: 360, atk: 72, def: 72, agi: 9,
+    bgm: 'tenaga', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'kansha',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝長い腕（山の上から 海まで とどく腕で 全員を なぎはらう）

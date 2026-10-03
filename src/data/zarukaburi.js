@@ -2,12 +2,12 @@
 // 話（南相馬市の民俗の頁で確かめた所だけ）：小高区金谷の山中。鹿を追って山に入った猟師の前に、竹のざる（笊籬）のような頭の女の化け物が
 // 乱れ髪を地面に引きずって微笑んで現れ、猟師はそれから殺生をやめた。獲りすぎる猟師を山の神が戒めた姿と伝わる（原典では倒されない）
 // ゲームでは、忘れられて黒いもやに呑まれた山の神の使い。弱点＝「獲りすぎない誓い」。倒すと元に戻り、大悲山への もやが晴れる
-// 絵＝10/3 届いた（qil8fg・13r9vr・必殺技 pgmdxj）。背景はまだ。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=86';
+// 絵＝10/3 届いた（qil8fg・13r9vr・必殺技 pgmdxj）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
+import { BASIC_ITEMS } from './basic_items.js?v=87';
 
 export const ZARUKABURI = {
   art: {
-    dark: 'assets/zarukaburi_dark.png', light: 'assets/zarukaburi_light.png', bg: 'assets/bg_dochu_north.png', // 10/3 絵が届いた（背景はまだ道中の北）
+    dark: 'assets/zarukaburi_dark.png', light: 'assets/zarukaburi_light.png', bg: 'assets/bg_zarukaburi.png', // 10/3 絵と背景が届いた
     glowDark: 0x9fb4ff, glowLight: 0xb8f0c0, // 山の月明かり → 戻ったら 山の 緑の 光
   },
   allies: [
@@ -32,6 +32,7 @@ export const ZARUKABURI = {
     expectLv: 6,
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
     hp: 260, atk: 62, def: 60, agi: 11,
+    bgm: 'zarukaburi', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'chikai',
     mist: { min: 1, max: 2, rise: 0.2 },
     // 必殺技＝乱れ髪（地面を引きずる髪が 全員に からみつく）

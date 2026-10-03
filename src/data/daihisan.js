@@ -4,12 +4,12 @@
 // 殿様の陣営は大蛇の苦手な鉄の釘を山や谷に打った。大蛇は玉都をさらったが、退治された。今は大悲山の石仏（国の史跡）と大悲山大蛇物語公園
 // ゲームでは、忘れの力でよみがえった大蛇。弱点＝「鉄の釘」。助っ人＝玉都（本人 10/3「戦いの中で琵琶を弾く助っ人」）＝語って弱点が明かされると
 // 琵琶が鳴り、大蛇は聞き入って2回動けない。その後も ときどき琵琶で止める
-// 絵＝10/3 届いた（2noh3h 大蛇・xf4m56 封じられた姿）。必殺技の挿絵＝描き直し（貼り付け・使用済み_絵／大悲山_大雨_描き直し_貼り付け.jpg。1回目 vxa4qk は封じられた姿と山高帽で描かれた）。背景はまだ。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=86';
+// 絵＝10/3 届いた（2noh3h 大蛇・xf4m56 封じられた姿）。必殺技の挿絵＝描き直し（貼り付け・使用済み_絵／大悲山_大雨_描き直し_貼り付け.jpg。1回目 vxa4qk は封じられた姿と山高帽で描かれた）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
+import { BASIC_ITEMS } from './basic_items.js?v=87';
 
 export const DAIHISAN = {
   art: {
-    dark: 'assets/daihisan_dark.png', light: 'assets/daihisan_light.png', bg: 'assets/bg_dochu_north.png', // 10/3 絵が届いた（背景はまだ道中の北）
+    dark: 'assets/daihisan_dark.png', light: 'assets/daihisan_light.png', bg: 'assets/bg_daihisan.png', // 10/3 絵と背景が届いた
     glowDark: 0x9fb4ff, glowLight: 0xd8e2f0,
   },
   allies: [
@@ -36,6 +36,7 @@ export const DAIHISAN = {
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
     //   玉都の琵琶が効きすぎた（攻1.8倍でも自動97%）＝琵琶の見込み 0.25→0.2・攻を上げた
     hp: 320, atk: 88, def: 66, agi: 10,
+    bgm: 'daihisan', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'kugi',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝大雨（この地を大沼にしたい＝原典の大蛇のたくらみ）

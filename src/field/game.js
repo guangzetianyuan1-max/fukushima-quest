@@ -1,14 +1,14 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=86';
-import { SOMA_ROWS } from './soma_map.js?v=86';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=86';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=86';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=86';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=86';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=86';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=86';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=86';
+import { IWAKI_ROWS } from './iwaki_map.js?v=87';
+import { SOMA_ROWS } from './soma_map.js?v=87';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=87';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=87';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=87';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=87';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=87';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=87';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=87';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -317,7 +317,8 @@ export function zakoData(game, zakoId, zone) {
     spells: { harai: HARAI },
     enemy: {
       id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone] ?? {}; return { hp: Math.round(z.hp * (k.hp ?? 1)), atk: Math.round(z.atk * (k.atk ?? 1)), def: Math.round(z.def * (k.def ?? 1)) }; })(), agi: z.agi,
-      rewardRate: ZONE_SCALE[zone]?.reward ?? 1, // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
+      rewardRate: ZONE_SCALE[zone]?.reward ?? 1,
+      bgm: zone === 'soma' ? 'somaBattle' : undefined, // 1章の道中の曲（10/3「章ごとにBGMは新しく」） // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
       weakness: null, noWeak: true, canFlee: true, trick: z.trick ?? null, special: null,
       biteName: z.biteName, introText: z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,
       loseLines: ['旅の者たちは 力つきた……'],

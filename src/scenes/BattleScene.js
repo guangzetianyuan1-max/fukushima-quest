@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=86';
-import { revealAt } from '../ui/reveal.js?v=86';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=86';
-import { chooseCommands } from '../battle/auto.js?v=86';
-import { itemNote } from '../data/items.js?v=86';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=86';
-import { STORY_FILES } from '../data/story_assets.js?v=86';
-import { CUTIN_FILES } from '../data/cutin_assets.js?v=86';
-import { drawScroll } from '../ui/scroll.js?v=86';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=86';
-import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=86';
+import { EPISODES } from '../data/episodes.js?v=87';
+import { revealAt } from '../ui/reveal.js?v=87';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=87';
+import { chooseCommands } from '../battle/auto.js?v=87';
+import { itemNote } from '../data/items.js?v=87';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=87';
+import { STORY_FILES } from '../data/story_assets.js?v=87';
+import { CUTIN_FILES } from '../data/cutin_assets.js?v=87';
+import { drawScroll } from '../ui/scroll.js?v=87';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=87';
+import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=87';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -153,7 +153,7 @@ export class BattleScene extends Phaser.Scene {
 
     // 音はさわったあとでないと鳴らせない＝初回だけ「さわって はじめる」を出す
     const begin = () => {
-      startBgm('battle');
+      startBgm(this.ep.enemy.bgm ?? 'battle'); // 1章からは話ごとの曲（10/3）
       this.showMessages(
         [{ text: `${this.ep.enemy.name}が あらわれた！` }, { text: this.ep.enemy.introText }],
         () => this.beginInput(),
@@ -462,7 +462,7 @@ export class BattleScene extends Phaser.Scene {
       ended = true;
       timer?.remove(false);
       stopVoice();
-      if (part === 'tell') startBgm('battle'); else stopBgm(); // 語る＝戦いへ戻る／勝った後＝静かに
+      if (part === 'tell') startBgm(this.ep.enemy.bgm ?? 'battle'); else stopBgm(); // 語る＝戦いへ戻る／勝った後＝静かに
       this.events.off('update', tick);
       this.tweens.add({ targets: box, alpha: 0, duration: 250, onComplete: () => { box.destroy(); done(); } });
     };

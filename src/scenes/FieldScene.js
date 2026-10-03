@@ -2,29 +2,29 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=86';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=86';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=86';
-import { TILE } from '../field/tiles.js?v=86';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=86';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=86';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=86';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=86';
+import { EPISODES } from '../data/episodes.js?v=87';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=87';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=87';
+import { TILE } from '../field/tiles.js?v=87';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=87';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=87';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=87';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=87';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=86';
-import { membersOf } from '../battle/levels.js?v=86';
-import { COMPANIONS } from '../data/companions.js?v=86';
-import { ICON_IDS } from '../data/icons.js?v=86';
-import { FACE_IDS } from '../data/faces.js?v=86';
-import { mapPointOf } from '../field/mapcard.js?v=86';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=86';
-import { makeRng } from '../battle/rules.js?v=86';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=86';
-import { buyEquip, partyView } from '../field/game.js?v=86';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=86';
+} from '../field/game.js?v=87';
+import { membersOf } from '../battle/levels.js?v=87';
+import { COMPANIONS } from '../data/companions.js?v=87';
+import { ICON_IDS } from '../data/icons.js?v=87';
+import { FACE_IDS } from '../data/faces.js?v=87';
+import { mapPointOf } from '../field/mapcard.js?v=87';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=87';
+import { makeRng } from '../battle/rules.js?v=87';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=87';
+import { buyEquip, partyView } from '../field/game.js?v=87';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=87';
 
 const W = 360;
 const MAP_H = 420; // 地図の見える高さ
@@ -185,7 +185,7 @@ export class FieldScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ENTER', () => (this.busy && this.advance ? (this.time.now >= this.msgReadyAt && this.advance()) : this.pressTalk()));
     this.input.keyboard?.on('keydown-X', () => this.pressItems());
 
-    startBgm('title');
+    startBgm(this.fieldBgm());
     cam.fadeIn(300, 0, 0, 0);
 
     // 旅の始まり／ボスを元に戻して帰ってきたとき
@@ -268,6 +268,12 @@ export class FieldScene extends Phaser.Scene {
       arrows.push(a);
     }));
     return arrows;
+  }
+
+  // 歩く地図の曲（本人 10/3「章ごとにBGMは新しく」）＝いわき（序章）は始まりの曲・相馬（1章）は somaField。町の中は その町のある地図の曲
+  fieldBgm() {
+    const map = isField(this.mapId) ? this.mapId : this.g.fieldMap ?? 'field';
+    return { soma: 'somaField' }[map] ?? 'title';
   }
 
   // ---- 町に入った瞬間の一枚絵（1.3秒・さわると飛ばす）----
@@ -448,7 +454,7 @@ export class FieldScene extends Phaser.Scene {
         const ms = jingleSeconds(m.jingle) * 1000 + 400;
         this.dlgMore.setVisible(false);
         this.msgReadyAt = this.time.now + ms;
-        this.time.delayedCall(ms, () => { this.dlgMore.setVisible(true); startBgm('title'); });
+        this.time.delayedCall(ms, () => { this.dlgMore.setVisible(true); startBgm(this.fieldBgm()); });
       }
       this.advance = next;
     };
