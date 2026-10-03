@@ -4,7 +4,7 @@
 // ゲームでは、忘れられて黒いもやに呑まれた山の神の使い。⭐10/4 本人「敵と戦う形にして欲しい」＝戦う（10/3「C」の誓いの出会いは取りやめ）
 // 原典で倒されない所は、勝った後の紙芝居④と hosoku で しおりが補う。見た目は ざるのまま描き直す（本人 10/4・名前もそのまま）
 // 絵＝10/3 届いた（qil8fg・13r9vr・必殺技 pgmdxj）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=102';
+import { BASIC_ITEMS } from './basic_items.js?v=103';
 
 export const ZARUKABURI = {
   art: {

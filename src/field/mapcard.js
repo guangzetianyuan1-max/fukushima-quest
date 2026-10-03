@@ -4,7 +4,7 @@
 //   いわき（field）＝右下（北の端 好間・閼伽井嶽 y≈400 〜 南の端 勿来 y≈545）
 //   相馬（soma・10/3 1章）＝右上（北の端 新地 y≈65 〜 南の端 小高 y≈235。中村城の絵は y≈125）
 const ROWS = 50;
-const COAST_COL = 31;
+const COAST_COL = { field: 31, soma: 27 }; // 相馬は10/4に東の空きを詰めて海岸が x=27
 const AREA = {
   field: { north: 400, south: 545, coast: [[400, 272], [440, 270], [480, 265], [500, 252], [520, 237], [545, 228]] },
   soma: { north: 65, south: 235, coast: [[65, 270], [100, 266], [140, 270], [160, 278], [200, 282], [235, 280]] },
@@ -28,6 +28,6 @@ export function mapPointOf(game) {
   const a = AREA[map];
   const cell = (a.south - a.north) / (ROWS - 1);
   const py = a.north + p.y * cell;
-  const px = coastX(a.coast, py) - (COAST_COL - p.x) * cell;
+  const px = coastX(a.coast, py) - (COAST_COL[map] - p.x) * cell;
   return { x: Math.round(px), y: Math.round(py) };
 }
