@@ -3,12 +3,12 @@
 // 信夫山の三狐の一匹 ご坊狐が、御山の和尚に化けて木の葉の小判で魚を買って悪さをした。仲間の鴨左衛門に「尻尾で釣りを」とだまされ、
 // 真冬の黒沼で尻尾が凍って切れ、神通力を失った。和尚に諭され、蚕を食うネズミを退治して恩を返し、蚕の守り神「ねこ稲荷」に祀られた
 // ゲームでは、忘れられて黒いもやに呑まれた信夫山の狐。弱点＝「尻尾の釣り」（凍った黒沼）。倒すと元に戻り、ムカデとオロチへの もやを払う
-// 絵＝まだ（仮に道中の狐火の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=108';
+// 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
+import { BASIC_ITEMS } from './basic_items.js?v=109';
 
 export const GOBOU = {
   art: {
-    dark: 'assets/zako_kitsunebi.png', light: 'assets/zako_kitsunebi.png', bg: 'assets/bg_dochu_north.png', // ⏳絵が届くまで仮
+    dark: 'assets/gobou_dark.png', light: 'assets/gobou_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 絵が届いた（ukupff・nzgnh9・挿絵 j24ni1）。⏳背景はまだ
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
   allies: [
