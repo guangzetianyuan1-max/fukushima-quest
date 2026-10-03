@@ -3,7 +3,7 @@
 // 釣りの手順（画面は FieldScene の fishing*）：①うきが沈んで「！」が出たら さわる（早すぎ・遅すぎは逃げる）
 //                                          ②左右に動く針が緑の帯に入ったら さわる（帯の幅と針の速さは魚しだい）
 // 画面と切り離す＝Node で試験する。ここの関数は game を書き換えずに新しい game を返す
-import { EQUIP } from '../data/equip.js?v=88';
+import { EQUIP } from '../data/equip.js?v=89';
 
 export const ROD_PRICE = 5;
 // 「！」が出てから さわれる長さ（ミリ秒）と、「！」が出るまでの待ち
@@ -63,10 +63,12 @@ export const PRIZES = {
 };
 
 // 景品と換える。お守り・防具は who に着ける（前の品は店と同じく半値で引き取り）
-export function exchange(game, prizeId, who = null) {
-  const p = PRIZES[prizeId];
-  if ((game.fishPts ?? 0) < p.pts) return { ok: false, reason: 'pts', game };
-  let g = { ...game, fishPts: game.fishPts - p.pts };
+export const exchange = (game, prizeId, who = null) => exchangePrize(game, PRIZES[prizeId], 'fishPts', who);
+
+// 景品の換え方（釣り点＝fishPts・野馬追の旗点＝flagPts で共通）
+export function exchangePrize(game, p, key, who = null) {
+  if ((game[key] ?? 0) < p.pts) return { ok: false, reason: 'pts', game };
+  let g = { ...game, [key]: game[key] - p.pts };
   if (p.kind === 'item') {
     g = { ...g, items: { ...g.items, [p.id]: (g.items[p.id] ?? 0) + p.n } };
     return { ok: true, game: g };

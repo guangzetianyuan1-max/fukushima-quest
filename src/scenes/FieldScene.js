@@ -2,29 +2,36 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=88';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=88';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=88';
-import { TILE } from '../field/tiles.js?v=88';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=88';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=88';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=88';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=88';
+import { EPISODES } from '../data/episodes.js?v=89';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=89';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=89';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=89';
+import { TILE } from '../field/tiles.js?v=89';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=89';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=89';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=89';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=89';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=88';
-import { membersOf } from '../battle/levels.js?v=88';
-import { COMPANIONS } from '../data/companions.js?v=88';
-import { ICON_IDS } from '../data/icons.js?v=88';
-import { FACE_IDS } from '../data/faces.js?v=88';
-import { mapPointOf } from '../field/mapcard.js?v=88';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=88';
-import { makeRng } from '../battle/rules.js?v=88';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=88';
-import { buyEquip, partyView } from '../field/game.js?v=88';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=88';
+} from '../field/game.js?v=89';
+import { membersOf } from '../battle/levels.js?v=89';
+import { COMPANIONS } from '../data/companions.js?v=89';
+import { ICON_IDS } from '../data/icons.js?v=89';
+import { FACE_IDS } from '../data/faces.js?v=89';
+import { mapPointOf } from '../field/mapcard.js?v=89';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=89';
+import { makeRng } from '../battle/rules.js?v=89';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=89';
+import { buyEquip, partyView } from '../field/game.js?v=89';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=89';
+
+// 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
+const PRIZE_SHOPS = {
+  fish: { key: 'fishPts', label: '釣り点', prizes: PRIZES, exchange, back: 'fishMenu', keeper: '釣り番' },
+  flag: { key: 'flagPts', label: '旗点', prizes: FLAG_PRIZES, exchange: exchangeFlag, back: 'nomaoiMenu', keeper: '世話役' },
+};
 
 const W = 360;
 const MAP_H = 420; // 地図の見える高さ
@@ -48,7 +55,7 @@ const WALL_HINT = {
   2: '賢沼の ぬしを しずめたら、この もやも 晴れると 思う。',
   3: '好間川の 淵の ぬしを しずめましょう。峠の もやは それからね。',
   4: '閼伽井嶽の 龍の 灯を 取りもどせば、北の 相馬への 道も 開くはず。',
-  5: '金谷の 山の 化け物を しずめれば、大悲山への もやも 晴れると 思う。',
+  5: '金谷の 山の 化け物に 会って、獲りすぎないと 誓えば、大悲山への もやも 晴れると 思う。',
   6: '大悲山の 大蛇を 何とか しないと、北へは 行けないわ。',
   7: '鹿狼山の 手長明神さまを 元に もどせば、虎捕山への もやも 晴れるはず。',
 };
@@ -77,8 +84,20 @@ const INTRO = [
   { speaker: 'しおり', text: 'まずは すぐ 東の 鮫川の 河口へ。もやの うずを しずめに 行きましょう。' },
 ];
 
+// 雲雀ヶ原の世話役としおりの言葉（確かめた事だけ：会場＝雲雀ヶ原祭場地・甲冑競馬・花火で打ち上げた神旗を騎馬武者が奪い合う。日取りは書かない）
+const NOMAOI_LINES = {
+  intro: [
+    'ここは 雲雀ヶ原の 祭場地。相馬野馬追では、甲冑を 着た 騎馬武者が ここに 集まるんだ。',
+    '花火で 打ち上げた 神旗を、馬で 追って 奪い合う。神旗争奪戦だ。馬は 貸して やろう。',
+    '取った 旗は 旗点に なる。点は 景品と 換えて やるぞ。',
+  ],
+  after: '相馬野馬追の 雲雀ヶ原では、甲冑競馬と 神旗争奪戦が 行われるのよ。',
+  none: '……ほかの 騎馬武者は 手ごわいわね。花火が 上がったら すぐ、旗の 真下へ 走るのが こつよ。',
+};
+
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, CROSS_SOMA, TOWNS, ITEMS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, CROSS_SOMA, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+  + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
 
 export class FieldScene extends Phaser.Scene {
@@ -265,6 +284,21 @@ export class FieldScene extends Phaser.Scene {
       if (!wall && !boss) return;
       const a = this.add.image(x * CELL + CELL / 2, y * CELL - 6, 'mist_arrow').setScale(1.4).setDepth(5); // スマホでも見える大きさ
       this.tweens.add({ targets: a, y: a.y - 8, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+      arrows.push(a);
+    }));
+    // 雲雀ヶ原の祭場地（P）の上に 赤い旗の目印（10/3）
+    if (!this.textures.exists('nomaoi_mark')) {
+      const gr = this.make.graphics({ x: 0, y: 0, add: false });
+      gr.fillStyle(0x3a2a1a, 1).fillRect(2, 0, 2, 22);
+      gr.fillStyle(0xd83030, 1).fillRect(4, 1, 13, 9);
+      gr.fillStyle(0xffffff, 1).fillCircle(10, 5, 2.5);
+      gr.generateTexture('nomaoi_mark', 18, 22);
+      gr.destroy();
+    }
+    this.rows.forEach((r, y) => [...r].forEach((ch, x) => {
+      if (ch !== 'P') return;
+      const a = this.add.image(x * CELL + CELL / 2, y * CELL - 4, 'nomaoi_mark').setScale(1.4).setDepth(5).setOrigin(0.2, 0.5);
+      this.tweens.add({ targets: a, angle: 6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
       arrows.push(a);
     }));
     return arrows;
@@ -588,6 +622,9 @@ export class FieldScene extends Phaser.Scene {
       } else if (TOWN_OF[ch]) {
         sfx('select');
         this.goto(enterTown(this.g, TOWN_OF[ch]));
+      } else if (ch === 'P') {
+        sfx('select');
+        this.nomaoiTalk();
       } else if (this.meet(x, y)) {
         // 道中の敵に出会った（meet の中で戦いへ）
       } else if (BOSS_AT[ch] && !this.g.cleared[BOSS_AT[ch]]) {
@@ -772,7 +809,7 @@ export class FieldScene extends Phaser.Scene {
   fishMenu() {
     this.showMenu(`釣り点 ${this.g.fishPts ?? 0}点（所持金 ${this.g.mon}文）`, [
       [`竿を 借りる（${ROD_PRICE}文）`, () => this.startFishing()],
-      ['景品と 換える', () => this.prizeMenu()],
+      ['景品と 換える', () => this.prizeMenu(null, 'fish')],
       ['やめる', () => this.closeDialog()],
     ]);
   }
@@ -782,44 +819,48 @@ export class FieldScene extends Phaser.Scene {
   }
 
   // 景品は「使う品」と「着ける品」に分ける（全部並べると窓に入らない）
-  prizeMenu(kind = null) {
+  prizeMenu(kind = null, shopId = 'fish') {
+    const shop = PRIZE_SHOPS[shopId];
+    const pts = this.g[shop.key] ?? 0;
     if (!kind) {
-      this.showMenu(`どちらの 景品に する？（釣り点 ${this.g.fishPts ?? 0}点）`, [
-        ['戦いで 使う品', () => this.prizeMenu('item')],
-        ['身に 着ける品', () => this.prizeMenu('equip')],
-        ['もどる', () => this.fishMenu()],
+      this.showMenu(`どちらの 景品に する？（${shop.label} ${pts}点）`, [
+        ['戦いで 使う品', () => this.prizeMenu('item', shopId)],
+        ['身に 着ける品', () => this.prizeMenu('equip', shopId)],
+        ['もどる', () => this[shop.back]()],
       ]);
       return;
     }
-    const opts = Object.entries(PRIZES).filter(([, p]) => p.kind === kind).map(([pid, p]) => {
+    const opts = Object.entries(shop.prizes).filter(([, p]) => p.kind === kind).map(([pid, p]) => {
       const note = p.kind === 'item' ? `${p.pts}点 ${itemNote(ITEMS[p.id])}` : `${p.pts}点 ${equipNote(p.id)}`;
-      return [this.prizeName(p), () => this.takePrize(pid), note];
+      return [this.prizeName(p), () => this.takePrize(pid, null, shopId), note];
     });
-    this.showMenu(`景品（釣り点 ${this.g.fishPts ?? 0}点）`, [...opts, ['もどる', () => this.prizeMenu()]]);
+    this.showMenu(`景品（${shop.label} ${pts}点）`, [...opts, ['もどる', () => this.prizeMenu(null, shopId)]]);
   }
 
-  takePrize(pid, who = null) {
-    const p = PRIZES[pid];
-    if ((this.g.fishPts ?? 0) < p.pts) {
-      this.showMessages([{ text: `釣り点が 足りないな。あと ${p.pts - (this.g.fishPts ?? 0)}点 だ。` }], () => this.prizeMenu(p.kind));
+  takePrize(pid, who = null, shopId = 'fish') {
+    const shop = PRIZE_SHOPS[shopId];
+    const p = shop.prizes[pid];
+    const pts = this.g[shop.key] ?? 0;
+    if (pts < p.pts) {
+      this.showMessages([{ text: `${shop.label}が 足りないな。あと ${p.pts - pts}点 だ。` }], () => this.prizeMenu(p.kind, shopId));
       return;
     }
     if (p.kind === 'equip' && !who) {
       const opts = EQUIP[p.id].who.filter((w) => membersOf(this.g).includes(w)).map((w) => {
         const now = this.g.equip?.[w]?.[EQUIP[p.id].slot];
-        return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, () => this.takePrize(pid, w)];
+        return [`${NAMES[w]}（今：${now ? EQUIP[now].name : 'なし'}）`, () => this.takePrize(pid, w, shopId)];
       });
-      this.showMenu(`${EQUIP[p.id].name}（${equipNote(p.id)}）。だれが 着ける？`, [...opts, ['もどる', () => this.prizeMenu('equip')]]);
+      this.showMenu(`${EQUIP[p.id].name}（${equipNote(p.id)}）。だれが 着ける？`, [...opts, ['もどる', () => this.prizeMenu('equip', shopId)]]);
       return;
     }
-    const r = exchange(this.g, pid, who);
+    const r = shop.exchange(this.g, pid, who);
     if (!r.ok) return;
     this.setGame(r.game);
     sfx('heal');
     this.showGoods(p.id);
     const lines = [{ text: p.kind === 'item' ? `${this.prizeName(p)}を もらった！` : `${NAMES[who]}は ${EQUIP[p.id].name}を 身に着けた！` }];
-    if (r.old) lines.push({ text: r.refund > 0 ? `（${EQUIP[r.old].name}は ${r.refund}文で 引き取って もらった）` : `（${EQUIP[r.old].name}は 釣り番に あずけた）` });
-    this.showMessages(lines, () => this.prizeMenu(p.kind));
+    if (r.old) lines.push({ text: r.refund > 0 ? `（${EQUIP[r.old].name}は ${r.refund}文で 引き取って もらった）` : `（${EQUIP[r.old].name}は ${shop.keeper}に あずけた）` });
+    this.showMessages(lines, () => this.prizeMenu(p.kind, shopId));
   }
 
   // 釣りの画面：海と桟橋とうき。①「！」でさわる ②針が緑の帯に入ったらさわる
@@ -922,6 +963,182 @@ export class FieldScene extends Phaser.Scene {
           end([{ text: 'ああっ、糸が 切れて しまった……' }]);
         }
       }
+    });
+  }
+
+  // ---- 雲雀ヶ原の祭場地：相馬野馬追の神旗争奪戦（本人 10/3「小名浜の釣りのような」）----
+  // 確かめた事だけ語る：本祭りの会場は雲雀ヶ原祭場地・甲冑競馬と、花火で打ち上げた神旗を騎馬武者が奪い合う神旗争奪戦（日取りは書かない）
+  nomaoiTalk() {
+    this.showMessages(NOMAOI_LINES.intro.map((text) => ({ speaker: '世話役', text })), () => this.nomaoiMenu());
+  }
+
+  nomaoiMenu() {
+    this.showMenu(`旗点 ${this.g.flagPts ?? 0}点（所持金 ${this.g.mon}文）`, [
+      [`神旗を 追う（${ENTRY_PRICE}文）`, () => this.startNomaoi()],
+      ['景品と 換える', () => this.prizeMenu(null, 'flag')],
+      ['やめる', () => this.closeDialog()],
+    ]);
+  }
+
+  // 争奪戦の画面：花火で上がった旗が ゆらゆら落ちる → 画面を おさえた方へ 馬が走る → 旗の真下で受け取る
+  startNomaoi() {
+    const r = enterRace(this.g);
+    if (!r.ok) {
+      this.showMessages([{ text: '文が 足りないようだ……' }], () => this.nomaoiMenu());
+      return;
+    }
+    this.setGame(r.game);
+    this.closeDialog();
+    this.busy = true;
+    startBgm('nomaoi');
+    let race = newRace(makeRng((Date.now() & 0x7fffffff) || 1));
+    const X = (x) => 30 + x * 300;
+    const GROUND = 560;
+    const Y = (p) => 90 + p * (GROUND - 90); // 旗が騎馬の高さ（CATCH_P）に来るのは y 約475
+    const box = this.add.container(0, 0);
+    this.addUi(box);
+    // 背景（Gemini の絵が届くまでは 描いた空と原）
+    if (this.textures.exists('bg_nomaoi')) box.add(this.add.image(0, 0, 'bg_nomaoi').setOrigin(0));
+    else {
+      const bg = this.add.graphics();
+      bg.fillGradientStyle(0x2a3a78, 0x2a3a78, 0xf0a868, 0xf0a868, 1).fillRect(0, 0, W, 340);
+      bg.fillStyle(0x3d5a2a, 1).fillTriangle(-40, 340, 90, 285, 220, 340).fillTriangle(140, 340, 290, 270, 420, 340);
+      bg.fillStyle(0x6a9a40, 1).fillRect(0, 335, W, 305);
+      bg.fillStyle(0x7aa84a, 1).fillRect(0, 400, W, 4).fillRect(0, 470, W, 3);
+      bg.fillStyle(0x5a3a1a, 1);
+      for (let x = 6; x < W; x += 22) bg.fillRect(x, 580, 4, 26);
+      bg.fillRect(0, 588, W, 3);
+      box.add(bg);
+    }
+    // 騎馬（馬＋武者＋背中の旗）。旅の者は金の旗と▼
+    if (!this.textures.exists('nomaoi_uma')) {
+      const g = this.make.graphics({ x: 0, y: 0, add: false });
+      g.fillStyle(0x6b3e1e, 1).fillEllipse(24, 24, 34, 14);
+      g.fillRect(34, 10, 6, 14).fillEllipse(42, 11, 12, 7);
+      g.lineStyle(3, 0x4a2a12, 1);
+      for (const lx of [12, 17, 31, 36]) g.lineBetween(lx, 28, lx + (lx % 2 ? 2 : -2), 44);
+      g.lineBetween(7, 22, 2, 32);
+      g.generateTexture('nomaoi_uma', 50, 46);
+      g.clear();
+      g.fillStyle(0xffffff, 1).fillRect(6, 10, 12, 14).fillCircle(12, 6, 5);
+      g.generateTexture('nomaoi_bushi', 24, 26);
+      g.clear();
+      g.fillStyle(0x3a2a1a, 1).fillRect(0, 0, 2, 30);
+      g.fillStyle(0xffffff, 1).fillRect(2, 0, 9, 14);
+      g.generateTexture('nomaoi_sashi', 12, 30);
+      g.clear();
+      g.fillStyle(0x3a2a1a, 1).fillRect(0, 0, 2, 26);
+      g.fillStyle(0xffffff, 1).fillRect(2, 0, 16, 12);
+      g.generateTexture('nomaoi_flag', 18, 26);
+      g.destroy();
+    }
+    const rider = (armor, sashi) => {
+      const c = this.add.container(0, GROUND);
+      c.add(this.add.image(0, -24, 'nomaoi_uma'));
+      c.add(this.add.image(-4, -50, 'nomaoi_bushi').setTint(armor));
+      c.add(this.add.image(-10, -72, 'nomaoi_sashi').setTint(sashi));
+      return c;
+    };
+    const rivalViews = [[0x3a3a46, 0x2e6bd8], [0x5a2a2a, 0xf0f0f0], [0x2a4a3a, 0x9a3ad0]].map(([a, b]) => rider(a, b));
+    const me = rider(0xd8c8a0, 0xffd34d);
+    const meMark = this.add.text(0, GROUND - 104, '▼', style(18, '#ffd34d')).setOrigin(0.5).setStroke('#1a1030', 4);
+    box.add([...rivalViews, me, meMark]);
+    const say = this.add.text(W / 2, 22, '花火が 上がったら、旗の 下へ！', { ...style(18), align: 'center' }).setOrigin(0.5, 0).setStroke('#1a1030', 5);
+    const score = this.add.text(W / 2, 52, '', style(16, '#ffe9b0')).setOrigin(0.5, 0).setStroke('#1a1030', 5);
+    const hint = this.add.text(W / 2, 620, '画面を おさえた 方へ 馬が 走る', style(14, '#ffffff')).setOrigin(0.5).setStroke('#1a1030', 4);
+    box.add([say, score, hint]);
+    // 画面の下の窓・十字キーへ さわりが抜けないように、上を覆う
+    const cover = this.add.rectangle(0, 0, W, 640, 0x000000, 0.001).setOrigin(0).setInteractive();
+    box.add(cover);
+    const flagViews = new Map();
+    const whistled = new Set();
+    let forced = null; // 確かめ用（自動の試験が 馬を動かす）
+    const showScore = () => score.setText(`のこり ${Math.ceil((ROUND_MS - race.t) / 1000)}　旗 ${race.mine.length}本　${racePts(race)}点`);
+    const burst = (x, y, color) => {
+      for (let i = 0; i < 14; i++) {
+        const a = (i / 14) * Math.PI * 2;
+        const dot = this.add.circle(x, y, 3, i % 2 ? color : 0xfff4c0);
+        box.add(dot);
+        this.tweens.add({ targets: dot, x: x + Math.cos(a) * 46, y: y + Math.sin(a) * 46, alpha: 0, duration: 700, ease: 'Quad.Out', onComplete: () => dot.destroy() });
+      }
+    };
+    const place = (view, x) => {
+      const nx = X(x);
+      if (Math.abs(nx - view.x) > 0.5) view.list[0].setFlipX(nx < view.x);
+      view.x = nx;
+    };
+    const tick = () => {
+      let move = 0;
+      const p = this.input.activePointer;
+      if (forced !== null) move = forced;
+      else if (this.keys?.left.isDown) move = -1;
+      else if (this.keys?.right.isDown) move = 1;
+      else if (p.isDown && Math.abs(p.x - X(race.horse)) > 4) move = Math.sign(p.x - X(race.horse));
+      for (const f of race.flags) {
+        if (f.state === 'wait' && race.t >= f.t0 - 360 && !whistled.has(f.id)) {
+          whistled.add(f.id);
+          sfx('hanabi');
+        }
+      }
+      const step = stepRace(race, 16, move);
+      race = step.race;
+      for (const e of step.events) {
+        const f = race.flags[e.flag];
+        if (e.type === 'launch') {
+          const v = this.add.image(X(f.x0), Y(0), 'nomaoi_flag').setTint(FLAGS[f.kind].color).setOrigin(0.1, 1);
+          box.add(v);
+          box.bringToTop(cover);
+          flagViews.set(f.id, v);
+          burst(X(f.x0), Y(0), FLAGS[f.kind].color);
+        } else {
+          const v = flagViews.get(f.id);
+          flagViews.delete(f.id);
+          if (e.type === 'catch') {
+            const to = e.who === 'me' ? me : rivalViews[e.who];
+            if (e.who === 'me') sfx(f.kind === 'kin' ? 'win' : 'heal');
+            this.tweens.add({ targets: v, x: to.x, y: to.y - 70, alpha: 0, duration: 380, onComplete: () => v.destroy() });
+          } else {
+            this.tweens.add({ targets: v, y: GROUND + 10, alpha: 0, duration: 400, onComplete: () => v.destroy() });
+          }
+        }
+      }
+      for (const [id, v] of flagViews) {
+        const f = race.flags[id];
+        v.setPosition(X(flagX(f, race.t)), Y(Math.min(1, fallP(f, race.t))));
+        v.angle = 12 * Math.sin(race.t / 300 + f.phase);
+      }
+      place(me, race.horse);
+      meMark.x = me.x;
+      race.rivals.forEach((x, i) => place(rivalViews[i], x));
+      showScore();
+      if (race.done) finish();
+    };
+    let loop = null;
+    const finish = () => {
+      loop?.remove(false);
+      loop = null;
+      const pts = racePts(race);
+      const n = race.mine.length;
+      const kin = race.mine.filter((k) => k === 'kin').length;
+      this.setGame(addFlags(this.g, race.mine));
+      say.setText('そこまで！');
+      sfx(n ? 'win' : 'down');
+      this.time.delayedCall(900, () => {
+        box.destroy();
+        this.busy = false;
+        startBgm(this.fieldBgm());
+        const lines = [{ text: n ? `神旗を ${n}本 取った！（旗点 +${pts}　いま ${this.g.flagPts}点）` : '神旗は 1本も 取れなかった……' }];
+        if (kin) lines.push({ text: `金の 神旗も ${kin}本 あった！` });
+        lines.push({ speaker: 'しおり', text: n ? NOMAOI_LINES.after : NOMAOI_LINES.none });
+        this.showMessages(lines, () => this.nomaoiMenu());
+      });
+    };
+    showScore();
+    // 確かめ用の取っ手（遊ぶ人には見えない）
+    this.nomaoi = { race: () => race, hold: (m) => { forced = m; }, x: (v) => X(v), tick };
+    this.time.delayedCall(900, () => {
+      say.setText('');
+      loop = this.time.addEvent({ delay: 16, loop: true, callback: tick });
     });
   }
 

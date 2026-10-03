@@ -25,6 +25,8 @@ export const EQUIP = {
   kachimori: { name: '勝守', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou'], atk: 2, price: 25 }, // 八幡さま＝武運の神さまと伝わる
   // 小名浜の釣りの景品だけ（本人 10/2「何か景品付けて」）。えびす様＝漁の神さまと伝わる。店では売らない（price 0＝引き取りも0）
   ebisu: { name: 'えびす様の守り', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou'], atk: 2, def: 2, agi: 2, price: 0 },
+  // 相馬野馬追の神旗争奪戦の景品だけ（本人 10/3）。店では売らない
+  jinbaori: { name: '陣羽織', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou'], def: 9, agi: 4, price: 0 },
   yakuyoke: { name: '厄除け守', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou'], ward: true, price: 25 }, // 呪い・取り憑きを半分はね返す
 };
 

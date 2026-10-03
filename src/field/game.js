@@ -1,14 +1,14 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=88';
-import { SOMA_ROWS } from './soma_map.js?v=88';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=88';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=88';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=88';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=88';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=88';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=88';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=88';
+import { IWAKI_ROWS } from './iwaki_map.js?v=89';
+import { SOMA_ROWS } from './soma_map.js?v=89';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=89';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=89';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=89';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=89';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=89';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER } from '../data/companions.js?v=89';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=89';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -220,7 +220,7 @@ function settle(game, state) {
 
 // 勝った：ボスを元に戻した印・残った道具・HP（力つきた仲間は幽霊のまま）
 // ボスを元に戻したお礼の文（本人 10/2「ボスを倒した際は、お金を多めに出して。ここでは50文」＝松川様50・あとは順に増やす＝Claudeの決め）
-export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 140, daihisan: 170, tenaga: 190, sumitora: 240 }; // 1章は順に多め（Claudeの決め）
+export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, daihisan: 170, tenaga: 190, sumitora: 240 }; // 1章は順に多め（Claudeの決め）・ザルカブリは戦わない（10/3 本人「C」）のでお礼の文は無し
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
 export function afterWin(game, enemyId, state) {

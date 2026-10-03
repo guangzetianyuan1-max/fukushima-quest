@@ -1,7 +1,7 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY } from './game.js?v=88';
+import { BOSS_AT, WALL_OPENED_BY } from './game.js?v=89';
 
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
@@ -42,6 +42,7 @@ export function fieldLook(game, ch, x, y) {
     case 'O': return { ground: 'sand', objs: ['icon_mise'] };
     case 'Q': return { ground: 'grass', objs: ['icon_yadoya'] }; // 小高の町（10/3 1章）
     case 'M': return { ground: 'grass', objs: ['shiro'] }; // 相馬の町（中村城の城下・10/3 1章）
+    case 'P': return { ground: 'grass', objs: ['hei'] }; // 雲雀ヶ原の祭場地（矢来の囲い＋上に旗の目印・10/3）
     case 'E': return { ground: 'road', objs: ['sekisho'] }; // 地図の口（いわき⇔相馬）＝関所の門
     default: return { ground: 'grass', objs: [] };
   }

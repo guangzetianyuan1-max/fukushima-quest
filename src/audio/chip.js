@@ -161,6 +161,8 @@ const arp = (notes, t, step, dur, opts) => notes.forEach((m, i) => tone(N(m), t 
 
 // 効果音。名前は rules.js の log の sfx と、画面の effect から呼ぶ
 const SFX = {
+  // 花火：ヒューッと上がって、パン
+  hanabi: (t) => { tone(N(84), t, 0.35, { type: 'sine', vol: 0.08, slideTo: N(96) }); noise(t + 0.36, 0.3, { vol: 0.4, from: 7000, to: 600 }); },
   select: (t) => tone(N(84), t, 0.05, { vol: 0.18 }),
   attack: (t) => noise(t, 0.12, { vol: 0.35, from: 6000, to: 800 }),
   hit: (t) => tone(N(52), t, 0.16, { vol: 0.35, slideTo: N(40) }),
@@ -315,6 +317,18 @@ const SUMITORA_LEAD = [
   [81, 6], [null, 2],
 ];
 
+// 相馬野馬追の神旗争奪戦（10/3）：民謡の音階（レ・ミ・ソ・ラ・シ）・勇ましく速く・低音は太鼓
+const NOMAOI_LEAD = [
+  [74, 2], [76, 2], [79, 2], [81, 2],
+  [83, 3], [81, 1], [79, 2], [76, 2],
+  [74, 2], [79, 2], [81, 2], [83, 2],
+  [81, 6], [null, 2],
+  [86, 2], [83, 2], [81, 2], [83, 2],
+  [86, 3], [88, 1], [86, 2], [83, 2],
+  [81, 2], [79, 2], [76, 2], [79, 2],
+  [74, 6], [null, 2],
+];
+
 const TRACKS = {
   battle: {
     lead: BATTLE_LEAD, tempo: 132, leadType: 'square', leadVol: 0.1,
@@ -412,6 +426,20 @@ const TRACKS = {
           if (i % 2 === 0) noise(s, 0.03, { vol: 0.07, from: 9000, to: 5000 });
         });
       });
+    },
+  },
+  nomaoi: {
+    lead: NOMAOI_LEAD, tempo: 150, leadType: 'square', leadVol: 0.09,
+    // 低音は ドン・ドン・ドドン（太鼓）＋レとラ
+    bass(t0, eighth) {
+      for (let bar = 0; bar < 8; bar++) {
+        [0, 2, 4, 5].forEach((k) => {
+          const s = t0 + (bar * 8 + k) * eighth;
+          tone(N(31), s, eighth * 0.9, { type: 'triangle', vol: 0.3, slideTo: N(24) });
+          noise(s, 0.06, { vol: 0.08, from: 900, to: 200 });
+        });
+        tone(N(bar % 2 ? 45 : 50), t0 + bar * 8 * eighth, eighth * 7.5, { type: 'triangle', vol: 0.12 });
+      }
     },
   },
 };

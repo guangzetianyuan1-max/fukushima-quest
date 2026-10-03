@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=88';
-import { revealAt } from '../ui/reveal.js?v=88';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=88';
-import { chooseCommands } from '../battle/auto.js?v=88';
-import { itemNote } from '../data/items.js?v=88';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=88';
-import { STORY_FILES } from '../data/story_assets.js?v=88';
-import { CUTIN_FILES } from '../data/cutin_assets.js?v=88';
-import { drawScroll } from '../ui/scroll.js?v=88';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=88';
-import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=88';
+import { EPISODES } from '../data/episodes.js?v=89';
+import { revealAt } from '../ui/reveal.js?v=89';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=89';
+import { chooseCommands } from '../battle/auto.js?v=89';
+import { itemNote } from '../data/items.js?v=89';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=89';
+import { STORY_FILES } from '../data/story_assets.js?v=89';
+import { CUTIN_FILES } from '../data/cutin_assets.js?v=89';
+import { drawScroll } from '../ui/scroll.js?v=89';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=89';
+import { battleData, afterWin, afterLose, zakoData, afterZako, BOSS_MON } from '../field/game.js?v=89';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -154,6 +154,7 @@ export class BattleScene extends Phaser.Scene {
     // 音はさわったあとでないと鳴らせない＝初回だけ「さわって はじめる」を出す
     const begin = () => {
       startBgm(this.ep.enemy.bgm ?? 'battle'); // 1章からは話ごとの曲（10/3）
+      if (this.ep.enemy.event === 'vow') { this.playVow(); return; } // 戦わない出会い（ザルカブリ山・本人 10/3「C」）
       this.showMessages(
         [{ text: `${this.ep.enemy.name}が あらわれた！` }, { text: this.ep.enemy.introText }],
         () => this.beginInput(),
@@ -684,7 +685,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   // ---- 勝ち：敵が元の姿に戻る → 語り部の補足 → もらえる力 → つぎの話へ ----
-  playWin() {
+  playWin(opts = {}) {
     if (this.zakoId) {
       this.playZakoWin();
       return;
@@ -696,7 +697,7 @@ export class BattleScene extends Phaser.Scene {
     this.setFog(0);
     const e = this.ep.enemy;
     stopBgm();
-    this.showMessages([{ text: `${e.name}を しずめた！`, sfx: 'win' }], () => {
+    this.showMessages([{ text: opts.vow ? e.vowDone : `${e.name}を しずめた！`, sfx: 'win' }], () => {
       this.cameras.main.flash(600, 255, 255, 255);
       this.dragon.setAlpha(1);
       this.tweens.add({ targets: this.dragon, alpha: 0, duration: 2000 });
@@ -718,6 +719,25 @@ export class BattleScene extends Phaser.Scene {
           ], () => this.showAfterWin());
         this.showMessages(e.restoreLines.map((text) => ({ text })), () => (e.blessing ? this.playBlessing(tail) : tail()));
       });
+    });
+  }
+
+  // ---- 戦わない出会い（本人 10/3 ザルカブリ山「C」＝原典では化け物は倒されない。獲りすぎない誓いで しずまる）----
+  // あらわれる → 必殺技の挿絵（乱れ髪）→ 紙芝居①②③ → 「誓う／山を下りる」→ 誓えば 元の すがたへ（勝ちと同じ流れ・お礼の文と経験は無し）
+  playVow() {
+    const e = this.ep.enemy;
+    const ask = () => this.showMenu(e.vowAsk, [
+      [e.vowLabel, () => { this.clearMenu(); this.showMessages(e.vowLines.map((text) => ({ text })), () => this.playWin({ vow: true })); }],
+      ['山を 下りる', () => { this.clearMenu(); this.showMessages(e.leaveLines.map((text) => ({ text })), () => this.backToField(this.registry.get('game'))); }],
+    ]);
+    const tell = () => {
+      if (e.story) this.playStory('tell', ask);
+      else this.showMessages(e.tellLines.map((text) => ({ text, speaker: 'しおり', face: 'normal' })), ask);
+    };
+    this.showMessages([{ text: `${e.name}が あらわれた！` }, { text: e.introText }], () => {
+      const cut = e.special?.cutin;
+      if (cut && this.textures.exists(cut)) this.showCutin(cut, () => this.time.delayedCall(1650, tell));
+      else tell();
     });
   }
 

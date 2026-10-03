@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=88';
+import { makeRng } from '../battle/rules.js?v=89';
 
 export const TILE = 16;
 
@@ -85,6 +85,7 @@ export const FIELD_TERRAIN = {
   w: ['river', false], o: ['pond', false], '=': ['road', true], b: ['bridge', true],
   1: ['mist', false], 2: ['mist', false], 3: ['mist', false], 4: ['mist', false], 5: ['mist', false], 6: ['mist', false], 7: ['mist', false],
   E: ['road', true], Q: ['town_yumoto', true], Z: ['boss', true], D: ['boss', true], L: ['boss', true], G: ['boss', true], M: ['town_taira', true], // 10/3 1章：E＝地図の口（いわき⇔相馬）・Q＝小高の町・Z／D＝ザルカブリ山／大悲山
+  P: ['grass', true], // 雲雀ヶ原の祭場地（相馬野馬追の神旗争奪戦・10/3）
   N: ['gate', true], H: ['town_taira', true], Y: ['town_yumoto', true], O: ['town_onahama', true],
   S: ['boss_sand', true], K: ['boss', true], J: ['boss', true], R: ['boss', true],
 };
