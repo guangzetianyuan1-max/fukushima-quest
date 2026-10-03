@@ -147,7 +147,6 @@ export const TOWNS = {
   // ---- 1章 相馬（10/3・本人「4話分進めて」）。町の形は平と同じ（神社・左右の店）。shrineName／shrineLine＝お参りの名と、しおりの一言 ----
   odaka: {
     name: '小高',
-    cardPending: true, // 町の入口の一枚絵は まだ（Gemini 待ち）
     shrineName: '小高の 神社',
     shrineLine: '小高の 神社で 旅の 無事を お願いしましょう。大悲山は この 町の 西よ。',
     props: [
@@ -197,7 +196,6 @@ export const TOWNS = {
   },
   nakamura: {
     name: '相馬',
-    cardPending: true,
     shrineName: '相馬の 神社',
     shrineLine: '相馬の 神社で 旅の 無事を お願いしましょう。北の 鹿狼山と、西の 虎捕山へ 行けるわ。',
     props: [
