@@ -2,29 +2,29 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=85';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=85';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=85';
-import { TILE } from '../field/tiles.js?v=85';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=85';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=85';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=85';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=85';
+import { EPISODES } from '../data/episodes.js?v=86';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=86';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=86';
+import { TILE } from '../field/tiles.js?v=86';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=86';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=86';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=86';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=86';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, isField, crossAt,
-} from '../field/game.js?v=85';
-import { membersOf } from '../battle/levels.js?v=85';
-import { COMPANIONS } from '../data/companions.js?v=85';
-import { ICON_IDS } from '../data/icons.js?v=85';
-import { FACE_IDS } from '../data/faces.js?v=85';
-import { mapPointOf } from '../field/mapcard.js?v=85';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=85';
-import { makeRng } from '../battle/rules.js?v=85';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=85';
-import { buyEquip, partyView } from '../field/game.js?v=85';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=85';
+} from '../field/game.js?v=86';
+import { membersOf } from '../battle/levels.js?v=86';
+import { COMPANIONS } from '../data/companions.js?v=86';
+import { ICON_IDS } from '../data/icons.js?v=86';
+import { FACE_IDS } from '../data/faces.js?v=86';
+import { mapPointOf } from '../field/mapcard.js?v=86';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=86';
+import { makeRng } from '../battle/rules.js?v=86';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP } from '../data/equip.js?v=86';
+import { buyEquip, partyView } from '../field/game.js?v=86';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=86';
 
 const W = 360;
 const MAP_H = 420; // 地図の見える高さ
