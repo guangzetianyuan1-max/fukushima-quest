@@ -33,6 +33,8 @@ export const EQUIP = {
   ebisu: { name: 'えびす様の守り', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], atk: 2, def: 2, agi: 2, price: 0 },
   // 相馬野馬追の神旗争奪戦の景品だけ（本人 10/3）。店では売らない
   jinbaori: { name: '陣羽織', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 9, agi: 4, price: 0 },
+  // 二本松の提灯祭りの景品（10/4）＝宵祭りで提灯に灯す 二本松神社の御神火にちなむ お守り（ゲームの作り）。ここでしか手に入らない
+  gojinka: { name: '御神火の守り', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], atk: 4, def: 3, agi: 2, price: 0 },
   // 2章 県北（福島・二本松の刀屋・10/4・Claudeの決め）＝1章より1段強く
   meito: { name: '名刀', slot: 'weapon', who: ['tabi'], atk: 33, price: 640 },
   hokonaginata: { name: '鉾', slot: 'weapon', who: ['shiori'], atk: 24, price: 480 },

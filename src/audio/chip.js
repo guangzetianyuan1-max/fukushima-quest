@@ -331,6 +331,10 @@ const SFX = {
     tone(N(55), t + 0.15, 0.08, { type: 'square', vol: 0.3, slideTo: N(43) });
     noise(t + 0.15, 0.06, { vol: 0.4, from: 8000, to: 3000 });
   },
+  // 二本松の提灯祭りの太鼓（10/4）＝拍の合図「ドン」・大太鼓「ドドン」・灯った「チャン」（鉦）
+  taiko: (t) => { tone(N(36), t, 0.22, { type: 'sine', vol: 0.5, slideTo: N(30) }); noise(t, 0.06, { vol: 0.2, from: 900, to: 200 }); },
+  ootaiko: (t) => { tone(N(31), t, 0.4, { type: 'sine', vol: 0.6, slideTo: N(26) }); tone(N(31), t + 0.12, 0.35, { type: 'sine', vol: 0.45, slideTo: N(26) }); noise(t, 0.1, { vol: 0.3, from: 700, to: 150 }); },
+  kane: (t) => { tone(N(91), t, 0.18, { type: 'square', vol: 0.1 }); tone(N(98), t, 0.12, { type: 'triangle', vol: 0.08 }); },
   // 居合い斬り（武士・本人 10/4）＝鍔の「チャキッ」→ 鋭い風切り「シュッ」→ 斬った「ザン」
   iai: (t) => {
     tone(N(96), t, 0.04, { type: 'square', vol: 0.18 });

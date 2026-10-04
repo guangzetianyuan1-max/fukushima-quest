@@ -2,35 +2,37 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=135';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=135';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=135';
-import { RIDERS } from '../data/nomaoi_assets.js?v=135';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=135';
-import { TILE } from '../field/tiles.js?v=135';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=135';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=135';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=135';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=135';
+import { EPISODES } from '../data/episodes.js?v=136';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=136';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=136';
+import { RIDERS } from '../data/nomaoi_assets.js?v=136';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=136';
+import { TILE } from '../field/tiles.js?v=136';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=136';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=136';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=136';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=136';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=135';
-import { membersOf } from '../battle/levels.js?v=135';
-import { COMPANIONS } from '../data/companions.js?v=135';
-import { ICON_IDS } from '../data/icons.js?v=135';
-import { FACE_IDS } from '../data/faces.js?v=135';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=135';
-import { mapPointOf } from '../field/mapcard.js?v=135';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=135';
-import { makeRng } from '../battle/rules.js?v=135';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=135';
-import { buyEquip, partyView } from '../field/game.js?v=135';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=135';
+} from '../field/game.js?v=136';
+import { membersOf } from '../battle/levels.js?v=136';
+import { COMPANIONS } from '../data/companions.js?v=136';
+import { ICON_IDS } from '../data/icons.js?v=136';
+import { FACE_IDS } from '../data/faces.js?v=136';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=136';
+import { mapPointOf } from '../field/mapcard.js?v=136';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=136';
+import { makeRng } from '../battle/rules.js?v=136';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=136';
+import { buyEquip, partyView } from '../field/game.js?v=136';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=136';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=136';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
+  chochin: { key: 'chochinPts', label: '提灯点', prizes: CHOCHIN_PRIZES, exchange: exchangeChochin, back: 'chochinMenu', keeper: '世話役' },
   fish: { key: 'fishPts', label: '釣り点', prizes: PRIZES, exchange, back: 'fishMenu', keeper: '釣り番' },
   flag: { key: 'flagPts', label: '旗点', prizes: FLAG_PRIZES, exchange: exchangeFlag, back: 'nomaoiMenu', keeper: '世話役' },
 };
@@ -106,6 +108,16 @@ const INTRO = [
 ];
 
 // 雲雀ヶ原の世話役としおりの言葉（確かめた事だけ：会場＝雲雀ヶ原祭場地・甲冑競馬・花火で打ち上げた神旗を騎馬武者が奪い合う。日取りは書かない）
+// 二本松の提灯祭り（10/4・2章のイベント）＝確かめた事だけ語る（二本松神社の例大祭・宵祭りに7つの町の太鼓台・御神火を提灯に灯す・1台に約300の提灯）
+const CHOCHIN_LINES = {
+  intro: [
+    'ここは 二本松の 提灯祭り。二本松神社の 例大祭で、もう 三百五十年あまり 続いて いるんだ。',
+    '宵祭りには 七つの 町の 太鼓台が 集まって、神社の 御神火を 紅い 提灯に 灯す。一台に 三百もの 提灯だ。',
+    '太鼓に 合わせて さわれば、提灯が 灯る。灯した 十個で 提灯点 一点。点は 景品と 換えて やるぞ。',
+  ],
+  after: '二本松の 提灯祭りは、日本三大 提灯祭りの 一つにも 数えられて いるのよ。',
+  none: '……輪が 太鼓に 重なる 瞬間に さわるのが こつよ。大太鼓の 拍は 二倍 灯るわ。',
+};
 const NOMAOI_LINES = {
   intro: [
     'ここは 雲雀ヶ原の 祭場地。相馬野馬追では、甲冑を 着た 騎馬武者が ここに 集まるんだ。',
@@ -117,7 +129,7 @@ const NOMAOI_LINES = {
 };
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, WALL_QUEST_LINES, CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
@@ -674,6 +686,9 @@ export class FieldScene extends Phaser.Scene {
       } else if (ch === 'P') {
         sfx('select');
         this.nomaoiTalk();
+      } else if (ch === 'k') {
+        sfx('select');
+        this.chochinTalk(); // 二本松の提灯祭り（10/4）
       } else if (this.meet(x, y)) {
         // 道中の敵に出会った（meet の中で戦いへ）
       } else if (BOSS_AT[ch] && !this.g.cleared[BOSS_AT[ch]]) {
@@ -1032,6 +1047,119 @@ export class FieldScene extends Phaser.Scene {
         }
       }
     });
+  }
+
+  // ---- 二本松の提灯祭り（本人 10/4「各章1つ、イベントを」→ 2章＝二本松の提灯祭り）----
+  chochinTalk() {
+    this.showMessages(CHOCHIN_LINES.intro.map((text) => ({ speaker: '世話役', text })), () => this.chochinMenu());
+  }
+
+  chochinMenu() {
+    this.showMenu(`提灯点 ${this.g.chochinPts ?? 0}点（所持金 ${this.g.mon}文）`, [
+      [`太鼓台に 乗る（${CHOCHIN_PRICE}文）`, () => this.startChochin()],
+      ['景品と 換える', () => this.prizeMenu(null, 'chochin')],
+      ['やめる', () => this.closeDialog()],
+    ]);
+  }
+
+  // 提灯祭りの画面：夜の町に太鼓台（提灯100個）。拍の輪が太鼓に重なる瞬間に さわると提灯が灯る
+  startChochin() {
+    const r = enterRound(this.g);
+    if (!r.ok) {
+      this.showMessages([{ text: '文が 足りないようだ……' }], () => this.chochinMenu());
+      return;
+    }
+    this.setGame(r.game);
+    this.closeDialog();
+    this.busy = true;
+    stopBgm();
+    let round = newRound(makeRng((Date.now() & 0x7fffffff) || 1));
+    const box = this.add.container(0, 0);
+    this.addUi(box);
+    const bg = this.add.graphics();
+    bg.fillGradientStyle(0x0b0a24, 0x0b0a24, 0x2a1838, 0x2a1838, 1).fillRect(0, 0, W, 640);
+    // 町の屋根の影
+    bg.fillStyle(0x120d1c, 1);
+    for (let x = -20; x < W; x += 70) bg.fillTriangle(x, 470, x + 35, 440, x + 70, 470).fillRect(x, 470, 70, 60);
+    bg.fillStyle(0x1a1410, 1).fillRect(0, 530, W, 110);
+    box.add(bg);
+    // 太鼓台：上が細い ピラミッドに提灯を並べる（下から 14・13・…）
+    const spots = [];
+    for (let row = 0, n = 14; spots.length < CHOCHIN_LANTERNS; row++, n = Math.max(4, n - 1)) {
+      for (let i = 0; i < n && spots.length < CHOCHIN_LANTERNS; i++) spots.push({ x: W / 2 + (i - (n - 1) / 2) * 17, y: 420 - row * 22 });
+    }
+    const frame = this.add.graphics();
+    frame.fillStyle(0x3a2412, 1).fillRect(W / 2 - 130, 430, 260, 34);
+    frame.fillStyle(0xc9a24a, 1).fillRect(W / 2 - 130, 430, 260, 4);
+    frame.lineStyle(2, 0x5a3a1a, 1);
+    for (const s of spots) frame.lineBetween(s.x, s.y - 9, s.x, s.y - 14);
+    box.add(frame);
+    const lamps = spots.map((s) => this.add.ellipse(s.x, s.y, 13, 16, 0x4a1a1a).setStrokeStyle(1, 0x2a0a0a));
+    box.add(lamps);
+    // 太鼓と拍の輪（輪が縮んで太鼓に重なる瞬間に さわる）
+    const DRUM = { x: W / 2, y: 560 };
+    const drum = this.add.circle(DRUM.x, DRUM.y, 30, 0x8a4a1a).setStrokeStyle(4, 0xe8d0a0);
+    const ringG = this.add.graphics();
+    const say = this.add.text(W / 2, 70, '太鼓に 合わせて さわれ！', { fontFamily: 'DotGothic16', fontSize: '20px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
+    const score = this.add.text(W / 2, 110, '', { fontFamily: 'DotGothic16', fontSize: '18px', color: '#ffffff' }).setOrigin(0.5).setStroke('#120a04', 4);
+    const grade = this.add.text(W / 2, 505, '', { fontFamily: 'DotGothic16', fontSize: '22px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
+    box.add([drum, ringG, say, score, grade]);
+    const showScore = () => score.setText(`提灯 ${round.lit} / ${CHOCHIN_LANTERNS}`);
+    const relight = () => lamps.forEach((l, i) => l.setFillStyle(i < round.lit ? 0xff4a2a : 0x4a1a1a).setStrokeStyle(1, i < round.lit ? 0xffd27a : 0x2a0a0a));
+    let t0 = this.time.now;
+    let cued = 0;
+    let loop = null;
+    const now = () => this.time.now - t0;
+    const tick = () => {
+      const t = now();
+      // 拍の合図の音（打つ拍の ちょうどの時刻に鳴る）
+      while (cued < round.beats.length && round.beats[cued].t <= t) { sfx(round.beats[cued].big ? 'ootaiko' : 'taiko'); cued += 1; }
+      // 次の拍の輪：拍の 1拍前から 縮む
+      ringG.clear();
+      const next = round.beats.find((b, i) => !round.hit.includes(i) && b.t + CHOCHIN_OK > t);
+      if (next) {
+        const k = Math.max(0, Math.min(1, (next.t - t) / CHOCHIN_BEAT));
+        ringG.lineStyle(next.big ? 6 : 4, next.big ? 0xff4a2a : 0xffd27a, 1).strokeCircle(DRUM.x, DRUM.y, 30 + k * 70);
+      }
+      if (t > roundEndAt(round)) finish();
+    };
+    const tap = () => {
+      if (!loop) return;
+      const res = tapAt(round, now());
+      round = res.round;
+      if (res.grade === 'miss') { grade.setText(''); return; }
+      grade.setText(res.grade === 'yoi' ? 'よい！' : 'まあ');
+      sfx('kane');
+      this.tweens.add({ targets: drum, scale: 1.15, duration: 60, yoyo: true });
+      relight();
+      showScore();
+    };
+    const hit = this.add.zone(0, 0, W, 640).setOrigin(0).setInteractive();
+    hit.on('pointerdown', tap);
+    box.add(hit);
+    const finish = () => {
+      loop?.remove(false);
+      loop = null;
+      hit.removeAllListeners();
+      const pts = chochinPts(round);
+      this.setGame(addLanterns(this.g, round.lit));
+      say.setText('そこまで！');
+      sfx(pts ? 'win' : 'down');
+      this.time.delayedCall(1000, () => {
+        box.destroy();
+        this.busy = false;
+        startBgm(this.fieldBgm());
+        const lines = [{ text: round.lit ? `提灯を ${round.lit}個 灯した！（提灯点 +${pts}　いま ${this.g.chochinPts}点）` : '提灯は 1つも 灯らなかった……' }];
+        if (round.lit >= CHOCHIN_LANTERNS) lines.push({ text: '太鼓台の 提灯が すべて 灯った！ 見事な 宵祭りだ。' });
+        lines.push({ speaker: 'しおり', text: pts ? CHOCHIN_LINES.after : CHOCHIN_LINES.none });
+        this.showMessages(lines, () => this.chochinMenu());
+      });
+    };
+    showScore();
+    // 確かめ用の取っ手（遊ぶ人には見えない）
+    this.chochin = { round: () => round, tap, now, tick };
+    t0 = this.time.now;
+    loop = this.time.addEvent({ delay: 16, loop: true, callback: tick });
   }
 
   // ---- 雲雀ヶ原の祭場地：相馬野馬追の神旗争奪戦（本人 10/3「小名浜の釣りのような」）----
