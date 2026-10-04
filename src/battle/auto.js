@@ -3,7 +3,7 @@
 // それ以外：弱った味方（HP4割未満）がいれば HP の道具 → 術の力が足りなければ術の道具 → もやが無ければ明かされた弱点の術 → たたかう（もやを払う）。
 // 道具は1ターンに1つだけ使う。
 // 10/5 職業の技（jobs.js の JOB_SPELLS）：起こす・回復・お祓い・守り・かばう・弱らせる・封じる・毒・かわす・もや払い・殴る技・術を 場面で選ぶ
-import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK } from './rules.js?v=160';
+import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK } from './rules.js?v=161';
 
 const WEAK = 0.4;
 const VERY_WEAK = 0.25;
@@ -33,7 +33,10 @@ function estimate(a, sp, e, mist, buff) {
     if (a.dual) return 2 * Math.max(1, a.atk * 0.7 * buff - (e.def * 0.7) / 2);
     return Math.max(1, a.atk * (a.atkMult ?? 1) * buff - (e.def * (a.pierce ?? 1)) / 2);
   }
-  if (sp.kind === 'magic') {
+  if (sp.kind === 'hpstrike') {
+    d = a.maxHp * sp.mult * buff;
+    if (sp.big && closed) d *= BIG_UNREVEALED;
+  } else if (sp.kind === 'magic') {
     d = (a.int ?? a.atk) * sp.mult * MAGIC_K * buff;
     if (sp.big && closed) d *= BIG_UNREVEALED;
     else if (mist > 0) d *= MIST_BLOCK;
@@ -127,6 +130,17 @@ export function chooseCommands(state, data) {
       if (!silent && pick('guard', lowest < 0.75 && !(state.guard?.turns > 0))) continue;
       // もや払い（四股踏み）：もやが2つ以上
       if (pick('mistall', mist >= 2)) { mist = 0; continue; }
+      // 3章の奥義（10/5 職業ごとに別の仕組み）
+      if (pick('lifeguard', lowest < 0.6 && !living.some((x) => x.enmei))) continue; // 泰山府君：一度だけ踏みとどまる
+      if (pick('decoy', lowest < 0.7 && !(state.decoy?.count > 0))) continue; // 分身
+      if (pick('medAll', !state.medAll && foods(state, data, 'hp').length > 0 && lowest < 0.6)) continue; // 秘薬
+      const mpLow = living.filter((x) => x.maxMp > 0 && x.mp / x.maxMp < 0.35).length >= 2;
+      if (pick('mpall', mpLow)) continue; // 火渡り
+      if (e.revealed && !(a.spells ?? []).includes(e.weakness)) {
+        if (pick('counter', !(state.counter?.turns > 0))) continue; // 燕返しの構え
+        if (pick('summon', !(state.summon?.turns > 0))) continue; // 大蝦蟇
+        if (pick('charge', mist === 0 && !a.charged)) continue; // 満月の一矢
+      }
       // 弱らせる・封じる・毒（弱点の術を持つ者は そちらが先）
       if (!hasWeak0 && !silent) {
         if (pick('seal', !!(e.special || e.special2) && !(e.sealed > 0))) continue;
@@ -195,7 +209,7 @@ export function chooseCommands(state, data) {
     const wk = boss && (a.spells ?? []).includes(e.weakness) ? (data.spells[e.weakness]?.cost ?? 0) * 3 : 0;
     for (const id of a.spells ?? []) {
       const sp = data.spells[id];
-      if (!sp || !['strike', 'magic', 'yojutsu', 'iai'].includes(sp.kind) || !ready(a, data, id, Math.max(reserve, wk))) continue;
+      if (!sp || !['strike', 'magic', 'yojutsu', 'iai', 'hpstrike'].includes(sp.kind) || !ready(a, data, id, Math.max(reserve, wk))) continue;
       // ボスの もやが残る間は、もやを払う技か たたかう（払わないと 弱点の術が届かない）
       if (boss && mist > 0 && !sp.clearMist) continue;
       if (sp.kind === 'yojutsu' || sp.kind === 'iai') continue; // 前の形の技（試験の古い仲間）は使わない

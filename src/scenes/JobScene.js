@@ -2,12 +2,12 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=160';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=160';
-import { sfx } from '../audio/chip.js?v=160';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES } from '../data/jobs.js?v=160';
-import { newGame, validPick } from '../field/game.js?v=160';
-import { choose, pickOf } from '../data/jobs.js?v=160';
+import { GAME_FONT } from '../ui/fonts.js?v=161';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=161';
+import { sfx } from '../audio/chip.js?v=161';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES } from '../data/jobs.js?v=161';
+import { newGame, validPick } from '../field/game.js?v=161';
+import { choose, pickOf } from '../data/jobs.js?v=161';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -132,8 +132,10 @@ export class JobScene extends Phaser.Scene {
     });
     txt(W - 14, top + 30 + 4 * 19, `計${POINT_TOTAL}`, 12, '#8a8fa8', 1);
     const basic = j.basic ? `${JOB_SPELLS[j.basic].name}` : j.basicText;
-    txt(14, top + 128, `はじめから：${basic}`, 14, '#ffffff');
-    j.skills.forEach((s, c) => txt(14, top + 148 + c * 18, `${c + 1}章で習う：${JOB_SPELLS[s].name}`, 14, '#e6e6f0'));
+    // 長い持ち味の文（弓矢使い・忍者など）は 窓の幅で折り返し、章の技を その下へ（10/5 はみ出していた）
+    const bt = txt(14, top + 126, `はじめから：${basic}`, 14, '#ffffff').setWordWrapWidth(W - 36, true);
+    const y0 = bt.y + bt.height + 2;
+    j.skills.forEach((s, c) => txt(14, y0 + c * 17, `${c + 1}章で習う：${JOB_SPELLS[s].name}`, 14, '#e6e6f0'));
   }
 
   start() {
