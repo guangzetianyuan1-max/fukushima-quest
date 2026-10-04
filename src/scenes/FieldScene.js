@@ -2,44 +2,44 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=165';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=165';
-import { EPISODES } from '../data/episodes.js?v=165';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=165';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=165';
-import { RIDERS } from '../data/nomaoi_assets.js?v=165';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=165';
-import { TILE } from '../field/tiles.js?v=165';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=165';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=165';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=165';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=165';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=165';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=165';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=165';
+import { collection, PER_PAGE } from '../field/collection.js?v=166';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=166';
+import { EPISODES } from '../data/episodes.js?v=166';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=166';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=166';
+import { RIDERS } from '../data/nomaoi_assets.js?v=166';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=166';
+import { TILE } from '../field/tiles.js?v=166';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=166';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=166';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=166';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=166';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=166';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=166';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=166';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=165';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=165';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=165';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=165';
-import { membersOf } from '../battle/levels.js?v=165';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=165';
-import { ICON_IDS } from '../data/icons.js?v=165';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=165';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=165';
-import { mapPointOf } from '../field/mapcard.js?v=165';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=165';
-import { makeRng } from '../battle/rules.js?v=165';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=165';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=165';
+} from '../field/game.js?v=166';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=166';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=166';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=166';
+import { membersOf } from '../battle/levels.js?v=166';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=166';
+import { ICON_IDS } from '../data/icons.js?v=166';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=166';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=166';
+import { mapPointOf } from '../field/mapcard.js?v=166';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=166';
+import { makeRng } from '../battle/rules.js?v=166';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=166';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=166';
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=165';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=165';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=165';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=166';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=166';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=166';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -1992,7 +1992,9 @@ export class FieldScene extends Phaser.Scene {
       return;
     }
     if (all.length + shelfRow.length > 5) {
-      const people = members.filter((w) => forWho(w).length).map((w) => [`${nameOf(this.g, w)}の 品`, () => this.equipShop(goods, items, w)]);
+      // 10/5 武器と防具は職業ごと＝あなたと しおりは 職業も 添える（仲間は 名前が職業）
+      const who = (w) => (w === 'tabi' || w === 'shiori') && jobOf(this.g, w) ? `${nameOf(this.g, w)}（${JOBS[jobOf(this.g, w)].name}）` : nameOf(this.g, w);
+      const people = members.filter((w) => forWho(w).length).map((w) => [`${who(w)}の 品`, () => this.equipShop(goods, items, w)]);
       this.showMenu(`だれの 品を 見る？（所持金 ${this.g.mon}文）`, [...people, ...shelfRow, ['やめる', () => this.closeDialog()]]);
       return;
     }
@@ -2002,7 +2004,8 @@ export class FieldScene extends Phaser.Scene {
   }
 
   // 買った品の絵を、地図の真ん中に少しだけ出す（本人 10/2「買ったときにイラストを添えて」）。絵の無い品は出さない
-  showGoods(id) {
+  showGoods(id0) {
+    const id = EQUIP[id0]?.icon ?? id0; // 職業ごとの品は 前の品の絵を使い回す（10/5）
     if (!this.textures.exists(`icon_${id}`)) return;
     const box = this.add.container(W / 2, 200);
     box.add(makeWindow(this, -64, -64, 128, 128));

@@ -9,7 +9,7 @@ export const JOB_IDS = ['bushi', 'sou', 'yojutsu', 'ninja', 'rikishi', 'yumi', '
 
 export const POINT_TOTAL = 30;
 // 武器の系統の名前（equip.js の line）
-export const WEAPON_NAMES = { katana: '刀', ougi: '扇・薙刀', blade: '短剣', yari: '棒・槍', tsue: '杖', bow: '弓' };
+export const WEAPON_NAMES = { katana: '刀', tsue: '杖', ougi: '扇', blade: '短剣', bou: '棒・金棒', bow: '弓', naginata: '幣・薙刀', shaku: '笏・剣', hari: '針・杖', shakujo: '錫杖' }; // 10/5 武器と防具は職業ごと
 export const POINT_NAMES = { chikara: '力', tairyoku: '体力', chiryoku: '知力', seishin: '精神力', hayasa: '素早さ' };
 // 点 → 強さ（base＝Lv1・grow＝1つごとの伸び）。値を変えたら ボスの強さ合わせをやり直す
 export const POINT_RULE = {
@@ -54,7 +54,7 @@ export const JOBS = {
     skills: ['kemuridama', 'kagenui', 'bunshin'],
   },
   rikishi: {
-    name: '力士', sex: 'm', role: '体力で受ける', weapon: 'yari',
+    name: '力士', sex: 'm', role: '体力で受ける', weapon: 'bou',
     points: { chikara: 15, tairyoku: 15, chiryoku: 0, seishin: 0, hayasa: 0 },
     passive: { atkMult: 1.2 }, basicText: 'たたかう＝つっぱり（強い 一撃）',
     skills: ['shiko', 'kabau', 'uwatenage'],
@@ -66,23 +66,23 @@ export const JOBS = {
     skills: ['kaburaya', 'hiya', 'mangetsu'],
   },
   miko: {
-    name: '巫女', sex: 'f', role: '守り・お祓い', weapon: 'ougi',
+    name: '巫女', sex: 'f', role: '守り・お祓い', weapon: 'naginata',
     points: { chikara: 2, tairyoku: 6, chiryoku: 8, seishin: 11, hayasa: 3 },
     basic: 'oharai', skills: ['kagura', 'omiki', 'iwato'],
   },
   onmyo: {
-    name: '陰陽師', sex: 'm', role: '敵を弱らせる', weapon: 'tsue',
+    name: '陰陽師', sex: 'm', role: '敵を弱らせる', weapon: 'shaku',
     points: { chikara: 2, tairyoku: 5, chiryoku: 11, seishin: 10, hayasa: 2 },
     basic: 'shikigami', skills: ['jufu', 'kekkai', 'taizan'],
   },
   kusushi: {
-    name: '薬師', sex: 'f', role: '道具と回復', weapon: 'tsue',
+    name: '薬師', sex: 'f', role: '道具と回復', weapon: 'hari',
     points: { chikara: 4, tairyoku: 7, chiryoku: 7, seishin: 8, hayasa: 4 },
     passive: { itemMult: 1.5 }, basicText: '調合＝道具の 効き目が 1.5倍',
     skills: ['gedoku', 'fukiya', 'hiyaku'],
   },
   yamabushi: {
-    name: '山伏', sex: 'm', role: '力と術の両方', weapon: 'tsue',
+    name: '山伏', sex: 'm', role: '力と術の両方', weapon: 'shakujo',
     points: { chikara: 8, tairyoku: 8, chiryoku: 5, seishin: 6, hayasa: 3 },
     basic: 'shakujo_uchi', skills: ['horagai', 'kuji', 'hiwatari'],
   },

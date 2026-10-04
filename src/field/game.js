@@ -1,19 +1,19 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=165';
-import { kanbanAt } from './kanban.js?v=165';
-import { SOMA_ROWS } from './soma_map.js?v=165';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=165';
-import { KENCHU_ROWS } from './kenchu_map.js?v=165';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=165';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=165';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=165';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=165';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=165';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=165';
-import { EQUIP, canWear, startEquip } from '../data/equip.js?v=165';
-import { becomeKunoichi } from './kagewatari.js?v=165';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=165';
+import { IWAKI_ROWS } from './iwaki_map.js?v=166';
+import { kanbanAt } from './kanban.js?v=166';
+import { SOMA_ROWS } from './soma_map.js?v=166';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=166';
+import { KENCHU_ROWS } from './kenchu_map.js?v=166';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=166';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=166';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=166';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=166';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=166';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=166';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=166';
+import { becomeKunoichi } from './kagewatari.js?v=166';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=166';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -237,7 +237,7 @@ export function load(text) {
     }
     const stolen = (g.stolen ?? []).map((id) => (ITEMS[id] ? id : OLD_ITEM[id])).filter(Boolean);
     if (!g.jobs || !validPick({ tabi: g.jobs.tabi, shiori: g.jobs.shiori, mates: (g.members ?? []).slice(2) })) return null; // 職業の無い記録（v1）は読まない
-    return fixSomaWidth({ ...g, items, stolen, skills: g.skills ?? {} });
+    return migrateEquip(fixSomaWidth({ ...g, items, stolen, skills: g.skills ?? {} })); // 10/5 武器と防具は職業ごと＝前の品を同じ段の品へ
   } catch {
     return null;
   }
