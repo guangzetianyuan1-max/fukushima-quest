@@ -422,7 +422,7 @@ function doTrick(state, e, living, rng, log) {
   if (k === 'noise') {
     if (state.silence > 0) return false;
     state.silence = 3;
-    log.push({ text: `${e.name}の 爆音！ 耳が キーンと 鳴って、声が とどかない！`, effect: { kind: 'shake' }, sfx: 'flame' });
+    log.push({ text: e.trick.text ?? `${e.name}の 爆音！ 耳が キーンと 鳴って、声が とどかない！`, effect: { kind: 'shake' }, sfx: 'flame' }); // text＝昔話の敵の言い回し（10/4）
     return true;
   }
   if (k === 'extort') {
@@ -434,7 +434,7 @@ function doTrick(state, e, living, rng, log) {
     if (e.hp >= e.maxHp) return false;
     const before = e.hp;
     e.hp = Math.min(e.maxHp, e.hp + e.trick.amount);
-    log.push({ text: `${e.name}は 栄養ドリンクを 飲みほした！ HPが ${e.hp - before} もどった！`, sfx: 'heal' });
+    log.push({ text: `${e.trick.text ?? `${e.name}は 栄養ドリンクを 飲みほした！`} HPが ${e.hp - before} もどった！`, sfx: 'heal' });
     return true;
   }
   if (k === 'boil') {
@@ -452,7 +452,7 @@ function doTrick(state, e, living, rng, log) {
   if (k === 'blind') {
     if (state.blind > 0) return false;
     state.blind = 2;
-    log.push({ text: `${e.name}の 自撮り！ まぶしい フラッシュで 目が くらんだ！`, effect: { kind: 'special', flash: [255, 255, 255] } });
+    log.push({ text: e.trick.text ?? `${e.name}の 自撮り！ まぶしい フラッシュで 目が くらんだ！`, effect: { kind: 'special', flash: [255, 255, 255] } });
     return true;
   }
   if (k === 'runaway') {

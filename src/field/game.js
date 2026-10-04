@@ -1,15 +1,15 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=140';
-import { SOMA_ROWS } from './soma_map.js?v=140';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=140';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=140';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=140';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=140';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=140';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=140';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=140';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=140';
+import { IWAKI_ROWS } from './iwaki_map.js?v=141';
+import { SOMA_ROWS } from './soma_map.js?v=141';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=141';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=141';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=141';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=141';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=141';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=141';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=141';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=141';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -364,13 +364,28 @@ export function encounterAt(game, map, x, y, rng) {
   const ch = mapRows(map)[y][x];
   const rate = ENCOUNTER_ON[ch];
   if (!rate || (game.steps ?? 0) < MIN_STEPS || rng() >= rate) return null;
-  // 相馬（1章）・県北（2章）は いわきの北の顔ぶれを強めて出す（ZONE_SCALE）
   const zone = map === 'field' ? zoneOf(y) : map;
+  // 相馬（1章）・県北（2章）＝その章の10体（10/4 本人「章ごとで、雑魚キャラを変えて」）。章のボスを元に戻すほど強い顔ぶれ（chapterPool）
+  // 絵が届いていない間（pending）は いわきの北の顔ぶれを強めて出す（ZONE_SCALE）
+  const chapterList = CHAPTER_OF_MAP[map] ? chapterPool(game, CHAPTER_OF_MAP[map]) : [];
   const pool = map === 'field' ? zone : 'north';
-  const list = Object.keys(ZAKO).filter((id) => !ZAKO[id].pending && !ZAKO[id].retired).filter((id) => ZAKO[id].zones.includes(pool)
+  const list = chapterList.length ? chapterList : Object.keys(ZAKO).filter((id) => !ZAKO[id].pending && !ZAKO[id].retired).filter((id) => ZAKO[id].zones.includes(pool)
     || (ch === '=' && ZAKO[id].zones.includes('road'))
     || (ch === ',' && ZAKO[id].zones.includes('coast')));
   return list.length ? { id: list[Math.floor(rng() * list.length)], zone } : null;
+}
+
+// 章の地図と、その章のボス（元に戻した数で 出てくる雑魚の強さの上限が上がる）
+export const CHAPTER_OF_MAP = { soma: 1, kenpoku: 2 };
+export const CHAPTER_BOSSES = { 1: ['zarukaburi', 'daihisan', 'tenaga', 'sumitora'], 2: ['amekai', 'gobou', 'mukade', 'heppiri', 'onibaba'] };
+// 出てくる雑魚：tier が 上限（はじめ4・ボス1体ごとに+2・最大10）以下で、上限より7つ以上は下でない物＝弱い物は だんだん出なくなる
+export function chapterPool(game, chapter) {
+  const done = (CHAPTER_BOSSES[chapter] ?? []).filter((id) => game.cleared?.[id]).length;
+  const cap = Math.min(10, 4 + 2 * done);
+  return Object.keys(ZAKO).filter((id) => {
+    const z = ZAKO[id];
+    return z.chapter === chapter && !z.pending && !z.retired && z.tier <= cap && z.tier > cap - 7;
+  });
 }
 
 // 1歩：歩数を数え、取り憑かれた仲間は HP が1減る（1で止まる）
