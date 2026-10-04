@@ -1,11 +1,11 @@
-// 名所の立て看板（本人 10/4「お城や地域、名所にドットの立て看板が欲しい。相馬城や三春桜など」）
+// 名所の名前（本人 10/4「お城や地域、名所にドットの立て看板が欲しい。相馬城や三春桜など」→ 10/5 板は消して 字だけ）
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=164';
-import { SOMA_ROWS } from './soma_map.js?v=164';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=164';
-import { KENCHU_ROWS } from './kenchu_map.js?v=164';
+import { IWAKI_ROWS } from './iwaki_map.js?v=165';
+import { SOMA_ROWS } from './soma_map.js?v=165';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=165';
+import { KENCHU_ROWS } from './kenchu_map.js?v=165';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
@@ -35,36 +35,18 @@ export const KANBAN_DEFS = [
   { map: 'kenchu', near: 'v', kind: 'shiro', name: '白河小峰城跡', lines: ['白河藩の 城あと。石垣と 三重櫓が ある。'] },
 ];
 
-// 近い順（1マス先の8方向 → 2マス先）。置ける字は 草地（.）を先に、なければ林（T）・山（^）＝道・浜・川はふさがない
-const RING1 = [[-1, 0], [1, 0], [-1, 1], [1, 1], [0, 1], [-1, -1], [1, -1], [0, -1]];
-const RING2 = [];
-for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) if (Math.max(Math.abs(dx), Math.abs(dy)) === 2) RING2.push([dx, dy]);
-const OK_CHARS = ['.', 'T', '^'];
-
 function anchorOf(rows, d) {
   if (d.at) return d.at;
   const y = rows.findIndex((r) => r.includes(d.near));
   return y < 0 ? null : [rows[y].indexOf(d.near), y];
 }
 
-// 置き場を決める（同じマスに2つ置かない）
+// ⭐10/5 本人「城などの脇の看板は消して。城や名所の上に『平城』などの文字表記のみ。文字はひとまわり大きく」
+//   ＝板は描かない・通れなくしない。名前は 目印（町・城・地図の出口・灯台）の そのマスの上に字だけで出す
 function place() {
-  const used = new Set();
   return KANBAN_DEFS.map((d) => {
-    const rows = ROWS[d.map];
-    const a = anchorOf(rows, d);
-    if (!a) return { ...d, x: -1, y: -1 };
-    for (const ring of [RING1, RING2]) {
-      for (const ch of OK_CHARS) {
-        for (const [dx, dy] of ring) {
-          const x = a[0] + dx;
-          const y = a[1] + dy;
-          const k = `${d.map}:${x},${y}`;
-          if (rows[y]?.[x] === ch && !used.has(k)) { used.add(k); return { ...d, x, y }; }
-        }
-      }
-    }
-    return { ...d, x: -1, y: -1 };
+    const a = anchorOf(ROWS[d.map], d);
+    return a ? { ...d, x: a[0], y: a[1] } : { ...d, x: -1, y: -1 };
   });
 }
 export const KANBAN = place();

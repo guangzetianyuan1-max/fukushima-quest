@@ -1,8 +1,8 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=164';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=164';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=165';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=165';
 
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
@@ -72,8 +72,7 @@ export function mountainPiece(map, x, y) {
 
 // 歩く地図：字 → { ground, objs: [名前…] }
 export function fieldLook(game, ch, x, y, map = 'field') {
-  const kb = kanbanAt(map, x, y); // 名所の立て看板（林・山の上に置いた物も 地面は草）
-  if (kb) return { ground: 'grass', objs: [`kanban_${kb.kind}`] };
+  // 名所の立て看板は 10/5 に消した（名前は 字だけ＝FieldScene.makeKanbanLabels）
   if (ROAD_OPENED_BY[ch]) return { ground: game.cleared?.[ROAD_OPENED_BY[ch]] ? 'road' : 'grass', objs: [] }; // 龍燈を戻すと現れる相馬への道（10/3）
   const boss = BOSS_AT[ch];
   if (boss) {
