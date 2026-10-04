@@ -1,15 +1,15 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=128';
-import { SOMA_ROWS } from './soma_map.js?v=128';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=128';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=128';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=128';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=128';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=128';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=128';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=128';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=128';
+import { IWAKI_ROWS } from './iwaki_map.js?v=129';
+import { SOMA_ROWS } from './soma_map.js?v=129';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=129';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=129';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=129';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=129';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=129';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=129';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=129';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=129';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -508,7 +508,7 @@ function bushiLines(enemy, bushi) {
 // 1本ごとに傷は手当てしてもらえる（木刀の試し合い）。2本取られたら「出直してこい」＝数は0へ戻り、また挑める（文は取られない）
 export const DOJO_WIN = 2;
 export const DOJO_ROUNDS = [1.03, 1.03, 1.03]; // 本目ごとの師範の強さ（10/4 測った：本目で上げると 体力の1太刀の差で急に勝てなくなる＝そろえる。1本 約6〜8割・免状まで 約6〜9割＝tests/_tune_dojo.mjs）
-export const DOJO_ART = 'assets/dojo_shihan.png';
+export const DOJO_ART = 'assets/dojo_shihan.png'; // 10/4 師範の絵が届いた（294zkl・art_src/prep_dojo.py）
 export function duelData(game, round) {
   const lv = lvOf(game, 'tabi');
   const m = statsWithGear('tabi', lv, game.equip ?? START_EQUIP);
