@@ -2,33 +2,33 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=139';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=139';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=139';
-import { RIDERS } from '../data/nomaoi_assets.js?v=139';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=139';
-import { TILE } from '../field/tiles.js?v=139';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=139';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=139';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=139';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=139';
+import { EPISODES } from '../data/episodes.js?v=140';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=140';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=140';
+import { RIDERS } from '../data/nomaoi_assets.js?v=140';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=140';
+import { TILE } from '../field/tiles.js?v=140';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=140';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=140';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=140';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=140';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=139';
-import { membersOf } from '../battle/levels.js?v=139';
-import { COMPANIONS } from '../data/companions.js?v=139';
-import { ICON_IDS } from '../data/icons.js?v=139';
-import { FACE_IDS } from '../data/faces.js?v=139';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=139';
-import { mapPointOf } from '../field/mapcard.js?v=139';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=139';
-import { makeRng } from '../battle/rules.js?v=139';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=139';
-import { buyEquip, partyView } from '../field/game.js?v=139';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=139';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=139';
+} from '../field/game.js?v=140';
+import { membersOf } from '../battle/levels.js?v=140';
+import { COMPANIONS } from '../data/companions.js?v=140';
+import { ICON_IDS } from '../data/icons.js?v=140';
+import { FACE_IDS } from '../data/faces.js?v=140';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=140';
+import { mapPointOf } from '../field/mapcard.js?v=140';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=140';
+import { makeRng } from '../battle/rules.js?v=140';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=140';
+import { buyEquip, partyView } from '../field/game.js?v=140';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=140';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=140';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -42,6 +42,12 @@ const MAP_H = 420; // 地図の見える高さ
 const CELL = TILE * 2;
 const SEA_SHIFT = 96; // 相馬でカメラを右へずらす量（3マス）＝道（x=20）から海（x=28〜）が見える
 const PANEL_Y = 426;
+// 選びの1行の高さと字（本人 10/4「文字が小さく、他のコマンドを押してしまう」）。窓を伸ばすのは上の札（HP・文）の下まで
+// 歩く地図の倍率（本人 10/4「拡大縮小のカーソル」）。小さいほど広く見渡せる
+export const FIELD_ZOOMS = [0.35, 0.6, 1];
+export const MENU_ROW = 46;
+export const MENU_FS = 22;
+const MENU_TOP = 176;
 const STEP_MS = 170; // 1歩の速さ
 const FONT = 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
 const style = (size = 20, color = '#ffffff') => ({
@@ -129,7 +135,7 @@ const NOMAOI_LINES = {
 };
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
@@ -157,6 +163,7 @@ export class FieldScene extends Phaser.Scene {
   create() {
     // ⚠町に入る・出る・戦いから帰るたびに作り直す＝前の部品（消えた字）を忘れてから作る
     this.statusText = null;
+    this.zoomLabel = null; // 倍率の字（歩く地図だけ・前の回の字は消えている）
     this.moneyText = null;
     this.g = this.registry.get('game');
     this.mapId = this.g.pos.map;
@@ -221,10 +228,16 @@ export class FieldScene extends Phaser.Scene {
     cam.setFollowOffset(this.camShift, 0);
     cam.setRoundPixels(true);
     cam.setBackgroundColor(isField(this.mapId) ? '#2f5fb3' : '#000000');
+    // 拡大・縮小（本人 10/4「移動画面で、拡大縮小のカーソルを入れて欲しい。現在地が分かるように」）＝歩く地図だけ。町は いつもの大きさ
+    // 縮小しているあいだは、旅の者の頭の上に赤い矢印（いま ここ）
+    this.hereMark = this.add.container(0, 0).setDepth(20).setVisible(false);
+    this.hereMark.add(this.add.triangle(0, 0, -12, -24, 12, -24, 0, 0, 0xe02020).setOrigin(0, 0).setStrokeStyle(3, 0xffffff));
+    this.hereRing = this.add.circle(0, 0, 18).setStrokeStyle(4, 0xff3030).setDepth(19).setVisible(false);
+    this.applyZoom(isField(this.mapId) ? this.registry.get('fieldZoom') ?? 1 : 1);
     this.ui = this.add.container(0, 0);
     this.uiCam = this.cameras.add(0, 0, W, 640);
     cam.ignore(this.ui);
-    this.uiCam.ignore([this.layer, this.player, ...this.followers.map((f) => f.sprite), ...this.npcs.map((n) => n.sprite), ...this.makeMistArrows()]);
+    this.uiCam.ignore([this.layer, this.hereMark, this.hereRing, this.player, ...this.followers.map((f) => f.sprite), ...this.npcs.map((n) => n.sprite), ...this.makeMistArrows()]);
 
     this.buildUi();
     this.refreshStatus();
@@ -358,13 +371,12 @@ export class FieldScene extends Phaser.Scene {
 
   // ---- 町に入った瞬間の一枚絵（1.3秒・さわると飛ばす）----
   showTownCard() {
-    const NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港', odaka: '小高の町', nakamura: '相馬の城下町' };
     this.busy = true;
     const box = this.add.container(0, 0).setAlpha(0);
     box.add(this.add.rectangle(0, 0, W, MAP_H, 0x000000, 0.7).setOrigin(0));
     // 町の入口の一枚絵（Gemini）。まだ届いていない町（1章）は名前だけ
     if (this.textures.exists(`card_town_${this.mapId}`)) box.add(this.add.image(W / 2, 190, `card_town_${this.mapId}`));
-    box.add(this.add.text(W / 2, 318, NAME[this.mapId], {
+    box.add(this.add.text(W / 2, 318, townCardName(this.mapId), {
       fontFamily: '"Potta One", "Yuji Boku", serif', fontSize: '30px', color: '#ffffff', resolution: 3, stroke: '#1a1008', strokeThickness: 6,
     }).setOrigin(0.5));
     this.addUi(box);
@@ -457,9 +469,16 @@ export class FieldScene extends Phaser.Scene {
     this.pad.add(makePad(this, 102, 530, (dir) => { this.held = dir; }, 1.25));
     this.pad.add(makeButton(this, 280, 488, 'orange', 'はなす', () => this.pressTalk(), { size: 84, fontSize: 18, below: false }));
     this.pad.add(makeButton(this, 280, 584, 'green', 'どうぐ', () => this.pressItems(), { size: 70, fontSize: 16, below: false }));
+    // 拡大・縮小のボタン（歩く地図の右上・上の札の下）。いまの倍率を小さく下に
+    if (isField(this.mapId)) {
+      const zy = 16 + Math.ceil(membersOf(this.g).length / 2 + 1) * 23 + 34;
+      this.addUi(makeButton(this, W - 30, zy, 'blue', '＋', () => this.stepZoom(+1), { size: 46, fontSize: 24, below: false }));
+      this.addUi(makeButton(this, W - 30, zy + 56, 'blue', '－', () => this.stepZoom(-1), { size: 46, fontSize: 24, below: false }));
+      this.zoomLabel = this.addUi(this.add.text(W - 30, zy + 84, `${Math.round((this.zoom ?? 1) * 100)}%`, style(14, '#ffffff')).setOrigin(0.5, 0).setStroke('#1a1030', 4));
+    }
 
     // 文の窓（下の窓を使う）
-    this.dlg = this.add.container(0, 0).setVisible(false);
+    this.dlg = this.add.container(0, 0).setVisible(false).setDepth(50); // 伸ばした選びの窓が 下の窓の枠より手前に来るように
     this.addUi(this.dlg);
     this.dlgSpeaker = this.add.text(38, PANEL_Y + 18, '', style(16, '#ffd98a'));
     this.dlgText = this.add.text(26, PANEL_Y + 44, '', style(20));
@@ -469,6 +488,7 @@ export class FieldScene extends Phaser.Scene {
     this.dlgFace = this.add.image(72, PANEL_Y + 92, 'face_normal').setVisible(false);
     this.dlg.add([this.dlgSpeaker, this.dlgText, this.dlgMore, this.dlgFace]);
     this.menuItems = [];
+    this.menuExtras = [];
   }
 
   refreshStatus() {
@@ -555,7 +575,10 @@ export class FieldScene extends Phaser.Scene {
 
 
   // options＝[[文字, 押したとき, 右の小さな注記]]
-  showMenu(title, options) {
+  // 選び（本人 10/4「UIが使いずらい。文字が小さく、他のコマンドを押してしまう」）
+  // ＝1行 ROW（46ドット＝スマホで約50px）・字22px。入りきらなければ字を縮めず、窓を地図の上へ伸ばし（上の札の下まで）、それでも入らなければページに分ける
+  // 決まるのは「指を離したとき、押した行の上にいる」とき（指を置くと行が光る・ずらして離すと取り消し）
+  showMenu(title, options, page = 0) {
     this.openDialog();
     this.clearMenu();
     this.setFace(null);
@@ -563,34 +586,55 @@ export class FieldScene extends Phaser.Scene {
     this.dlgSpeaker.setText('');
     this.dlgMore.setVisible(false);
     const readyAt = this.time.now + 200;
-    // 選びは文の下の端から（本人 10/2「文字とコマンドが重なっている」＝長い文が3行になると決め打ちの位置と重なった）
-    // それでも窓（下の端 y 約620）に収まらないとき（文が長い・項目が多い）は、字をひとまわり小さくして詰める（10/2 2度目「今だ重なるときがある」）
-    const BOTTOM = 620;
-    let fs = 19;
-    let top = 0;
-    let pitch = 32;
-    for (const [tfs, ofs, minPitch] of [[20, 19, 32], [17, 17, 28], [15, 16, 25]]) {
-      this.dlgText.setFontSize(tfs).setText(title);
-      fs = ofs;
-      top = title ? Math.max(PANEL_Y + 72, this.dlgText.y + this.dlgText.height + 8) : PANEL_Y + 30;
-      pitch = Math.min(32, (BOTTOM - top) / options.length);
-      if (pitch >= minPitch) break;
+    const ROW = MENU_ROW;
+    const BOTTOM = 624; // 行の当たりの下の端（窓の金の線の内側）
+    this.dlgText.setFontSize(20).setText(title);
+    const titleH = title ? this.dlgText.height + 12 : 0;
+    // いちばん上まで伸ばした窓に入る行の数
+    const maxRows = Math.max(3, Math.floor((BOTTOM - MENU_TOP - 18 - titleH) / ROW));
+    let list = options;
+    if (options.length > maxRows) {
+      // ページ：最後の行を「つぎへ／はじめへ」に使う
+      const per = maxRows - 1;
+      const pages = Math.ceil(options.length / per);
+      const p = page % pages;
+      list = [...options.slice(p * per, p * per + per), [p + 1 < pages ? `つぎへ ▶（${p + 1}/${pages}）` : `はじめへ ▶（${p + 1}/${pages}）`, () => this.showMenu(title, options, p + 1)]];
     }
-    this.menuLayout = { top, pitch, fs }; // 試験（重なりの見張り）用
-    options.forEach(([label, fn, note, noteColor], i) => {
-      const y = top + i * pitch;
-      const t = this.add.text(30, y, `▶ ${label}`, { ...style(fs, fn ? '#ffffff' : '#777777'), wordWrap: null });
+    const top = Math.min(PANEL_Y, BOTTOM - list.length * ROW - titleH - 18);
+    // 下の窓に入りきらないときは、地図の上へ伸ばした窓を重ねる
+    if (top < PANEL_Y) {
+      const sheet = makeWindow(this, 0, top - 8, W, 640 - top + 8); // 下の窓（x0・幅いっぱい）と同じ幅＝角が横からのぞかない
+      this.dlg.addAt(sheet, 0);
+      this.menuExtras.push(sheet);
+    }
+    this.dlgText.setY(top + 14);
+    const y0 = top + 14 + titleH;
+    this.menuLayout = { top: y0, pitch: ROW, fs: MENU_FS }; // 試験（重なりの見張り）用
+    let pressed = null;
+    const glow = this.add.rectangle(16, 0, W - 32, ROW - 6, 0xffd98a, 0.22).setOrigin(0).setVisible(false);
+    this.dlg.add(glow);
+    this.menuExtras.push(glow);
+    const release = () => { pressed = null; glow.setVisible(false); };
+    list.forEach(([label, fn, note, noteColor], i) => {
+      const y = y0 + i * ROW; // 行の上の端
+      const t = this.add.text(30, y + (ROW - 6) / 2, `▶ ${label}`, { ...style(MENU_FS, fn ? '#ffffff' : '#777777'), wordWrap: null }).setOrigin(0, 0.5);
       this.dlg.add(t);
       this.menuItems.push(t);
       if (note) {
-        const n = this.add.text(W - 28, y + 2, note, style(16, noteColor ?? '#ffd34d')).setOrigin(1, 0); // 4つ目＝注記の色（装備で下がる品は赤・装備中は灰）
+        const n = this.add.text(W - 28, y + (ROW - 6) / 2, note, style(17, noteColor ?? '#ffd34d')).setOrigin(1, 0.5); // 4つ目＝注記の色（装備で下がる品は赤・装備中は灰）
         this.dlg.add(n);
         this.menuItems.push(n);
+        // 長い項目（旅の者（今：旅の笠）など）が右の注記とぶつかるときは、その行の字だけ縮める（10/4 試運転）
+        for (let fs = MENU_FS; t.x + t.width > n.x - n.width - 8 && fs > 15; fs--) t.setFontSize(fs - 1);
       }
       if (fn) {
-        t.setInteractive(new Phaser.Geom.Rectangle(-10, -6, 320, 32), Phaser.Geom.Rectangle.Contains);
-        t.on('pointerdown', () => {
-          if (this.time.now < readyAt) return;
+        // 当たり＝行の幅いっぱい・高さ ROW−6（行と行のあいだ6ドットは どちらも効かない）
+        t.setInteractive(new Phaser.Geom.Rectangle(-14, (t.height - (ROW - 6)) / 2, W - 32, ROW - 6), Phaser.Geom.Rectangle.Contains);
+        t.on('pointerdown', () => { if (this.time.now < readyAt) return; pressed = t; glow.setY(y).setVisible(true); });
+        t.on('pointerout', () => { if (pressed === t) release(); });
+        t.on('pointerup', () => {
+          if (pressed !== t) return;
+          release();
           sfx('select');
           fn();
         });
@@ -599,17 +643,42 @@ export class FieldScene extends Phaser.Scene {
   }
 
   clearMenu() {
-    for (const t of this.menuItems) t.destroy();
+    for (const t of [...this.menuItems, ...(this.menuExtras ?? [])]) t.destroy();
     this.menuItems = [];
+    this.menuExtras = [];
+    this.dlgText?.setY(PANEL_Y + 44).setFontSize(20); // 選びで上へ動かした文を、いつもの所へ戻す
   }
 
   // ---- 歩く ----
   // 相馬で 浜街道より東（x≥16）にいる間は −SEA_SHIFT（＝画面を右へ3マス）・西の山の中では 0
+  // 地図の倍率：FIELD_ZOOMS の中で1段ずつ。印は倍率が小さいほど大きく描いて、同じ大きさに見せる
+  applyZoom(z) {
+    this.zoom = z;
+    this.cameras.main.setZoom(z);
+    this.hereMark?.setVisible(z < 1).setScale(1 / z);
+    this.hereRing?.setVisible(z < 1).setScale(1 / z);
+    this.zoomLabel?.setText(`${Math.round(z * 100)}%`);
+  }
+
+  stepZoom(d) {
+    const i = FIELD_ZOOMS.indexOf(this.zoom ?? 1);
+    const z = FIELD_ZOOMS[Math.max(0, Math.min(FIELD_ZOOMS.length - 1, (i < 0 ? FIELD_ZOOMS.indexOf(1) : i) + d))];
+    this.registry.set('fieldZoom', z);
+    this.applyZoom(z);
+  }
+
   seaShiftTarget() {
     return this.mapId === 'soma' && this.px >= 16 ? -SEA_SHIFT : 0;
   }
 
   update() {
+    // いま ここ の印は旅の者について回る（矢印は上下にゆれる・輪は脈打つ）
+    if (this.hereMark?.visible) {
+      const k = 1 / (this.zoom ?? 1);
+      const bob = Math.sin(this.time.now / 220) * 5 * k;
+      this.hereMark.setPosition(this.player.x, this.player.y - 40 * k + bob);
+      this.hereRing.setPosition(this.player.x, this.player.y - 4).setAlpha(0.55 + 0.45 * Math.sin(this.time.now / 300));
+    }
     const want = this.seaShiftTarget();
     if (this.camShift !== undefined && this.camShift !== want) {
       this.camShift += Math.sign(want - this.camShift) * Math.min(4, Math.abs(want - this.camShift));

@@ -3,7 +3,7 @@
 // ・窓＝四隅の飾りはそのまま、辺と中だけを伸ばす（9つに分けて並べる。NineSlice は WebGL だけなので使わない）
 // ・丸いボタン＝押すと凹んだ絵に替わり2ドット沈む。離す・指が外れると戻る
 // ・十字キー＝押したキーだけ凹む。当たりはキーより広め（親指で外さない）
-import { KEY_POS } from './kit_layout.js?v=139';
+import { KEY_POS } from './kit_layout.js?v=140';
 
 export const BTN_COLORS = ['orange', 'purple', 'red', 'green', 'blue', 'gray']; // gray＝戦いの「戻る」（art_src/make_btn_gray.py）
 const DIRS = ['up', 'down', 'left', 'right'];
@@ -64,14 +64,21 @@ export function makeButton(scene, x, y, color, label, onPress, { size = 62, font
   const up = () => { img.setTexture(`ui_btn_${color}`); face.y = 0; };
   img.setInteractive(new Phaser.Geom.Circle(img.width / 2, img.height / 2, img.width / 2), Phaser.Geom.Circle.Contains);
   img.input.cursor = 'pointer';
+  // 押すと凹み、離したときに そのボタンの上なら決まる（本人 10/4「他のコマンドを押してしまう」＝指がずれて離れたら取り消し）
+  let pressed = false;
   img.on('pointerdown', () => {
     img.setTexture(`ui_btn_${color}_down`);
     face.y = 2; // 凹む
-    onPress?.();
+    pressed = true;
   });
-  img.on('pointerup', up);
-  img.on('pointerout', up);
-  scene.input.on('pointerup', up);
+  img.on('pointerup', () => {
+    const go = pressed;
+    pressed = false;
+    up();
+    if (go) onPress?.();
+  });
+  img.on('pointerout', () => { pressed = false; up(); });
+  scene.input.on('pointerup', () => { pressed = false; up(); });
   return box;
 }
 

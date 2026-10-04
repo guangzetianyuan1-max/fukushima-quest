@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=139';
-import { revealAt } from '../ui/reveal.js?v=139';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=139';
-import { chooseCommands } from '../battle/auto.js?v=139';
-import { itemNote } from '../data/items.js?v=139';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=139';
-import { STORY_FILES } from '../data/story_assets.js?v=139';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=139';
-import { drawScroll, fitScroll } from '../ui/scroll.js?v=139';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=139';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=139';
+import { EPISODES } from '../data/episodes.js?v=140';
+import { revealAt } from '../ui/reveal.js?v=140';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=140';
+import { chooseCommands } from '../battle/auto.js?v=140';
+import { itemNote } from '../data/items.js?v=140';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=140';
+import { STORY_FILES } from '../data/story_assets.js?v=140';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=140';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=140';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=140';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=140';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -22,7 +22,11 @@ const STEP_MS = 900; // 1行を見せる最短の時間
 const MS_PER_CHAR = 90; // 長い文は字数に合わせて長く見せる（さわると先へ進む）
 // 字の大きさ（本人 10/1「文字が小さい」で約1.3倍に）
 const SIZE = { body: 21, speaker: 16, menu: 21, name: 20, stat: 18, badge: 17 };
-const MSG_Y = 420; // 下の窓の上端（窓は y 420〜632）
+// 選びの1行の高さ（本人 10/4「文字が小さく、他のコマンドを押してしまう」）・窓を伸ばすのは上の札の下まで
+const MENU_ROW = 46;
+const MENU_TOP_B = 112;
+const MSG_Y = 420;
+const TALE_BAND_Y = MSG_Y - 16; // 話の題の帯（敵の足もと・下の窓のすぐ上） // 下の窓の上端（窓は y 420〜632）
 // 紙芝居の3Dしおりを下げる量（本人 10/4「しおりを下に下げるもありですね。手が隠れるくらい」）＝下の部分は文の窓の後ろに隠れる
 export const SHIORI_DROP = 44;
 // 3Dしおり（下の端が MSG_Y+2+SHIORI_DROP・高さ 400×0.5）の頭の上の端。巻物はここより上で止める（10/4）
@@ -124,7 +128,7 @@ export class BattleScene extends Phaser.Scene {
     this.drawStatus();
     if (this.ep.enemy.tale) this.drawTalePlaque(); // 道中の敵には題の巻物が無い
     // 自動の札は下の窓のすぐ上の右（窓の中だと文の最後の行と重なった）。さわると手動に戻る＝止められるのはここだけ
-    this.autoBadge = this.add.text(W - 14, MSG_Y - 6, '', style(SIZE.speaker, '#ffd34d')).setOrigin(1, 1).setStroke('#1a1030', 5).setDepth(5);
+    this.autoBadge = this.add.text(W - 14, MSG_Y - 32, '', style(SIZE.speaker, '#ffd34d')).setOrigin(1, 1).setStroke('#1a1030', 5).setDepth(5);
     this.autoBadge.setInteractive(new Phaser.Geom.Rectangle(-20, -14, 260, 52), Phaser.Geom.Rectangle.Contains);
     this.autoBadge.on('pointerdown', () => {
       if (!this.auto) return;
@@ -185,10 +189,25 @@ export class BattleScene extends Phaser.Scene {
   }
 
   // ---- 題の巻物「第○話 ﹁話の名﹂」（本人 10/1「画面右上に、縦書きで」「習字で背景巻物」）----
+  // 話の題（本人 10/4「ムカデとオロチの顔が巻物で隠れる。第○○話の表示方法を、根本的に変えて欲しい」）
+  // ＝敵の横に縦の巻物を置き続けるのをやめた。①始めに大きな巻物を真ん中に出して 約2秒で消す ②戦いの間は 敵の足もと（下の窓のすぐ上）に横書きの細い帯
   drawTalePlaque() {
     const e = this.ep.enemy;
-    // 長い題名は 文の窓（MSG_Y）の上で止まるよう 小さく・2列に（10/4）
-    drawScroll(this, W - 30, 146, fitScroll(146, MSG_Y - 10, { episode: e.episode, tale: e.tale, epSize: 15, taleSize: 24 })); // 右上の所持金の下
+    const label = `${e.episode}「${e.tale}」`;
+    const band = this.add.rectangle(W / 2, TALE_BAND_Y, W, 26, 0x0a0614, 0.62).setDepth(3);
+    const txt = smooth(this.add.text(W / 2, TALE_BAND_Y, label, {
+      fontFamily: BRUSH_FONT, fontSize: '18px', color: '#ffe9b0', resolution: 3, stroke: '#1a1008', strokeThickness: 4,
+    }).setOrigin(0.5).setDepth(3));
+    for (let fs = 18; txt.width > W - 24 && fs > 12; fs--) txt.setFontSize(fs - 1); // 長い題は帯に収まるまで小さく
+    this.taleBand = [band, txt];
+    // 始めの大きな巻物（真ん中・敵の前）。2.2秒で消える
+    const before = this.children.list.length;
+    const shade = this.add.rectangle(0, 0, W, MSG_Y, 0x05030c, 0.55).setOrigin(0);
+    drawScroll(this, W / 2, 128, fitScroll(128, MSG_Y - 16, { episode: e.episode, tale: e.tale, epSize: 20, taleSize: 38 }));
+    const card = this.add.container(0, 0, this.children.list.slice(before)).setDepth(900);
+    this.taleCard = card;
+    this.tweens.add({ targets: card, alpha: { from: 0, to: 1 }, duration: 300 });
+    this.time.delayedCall(2200, () => this.tweens.add({ targets: card, alpha: 0, duration: 500, onComplete: () => card.destroy() }));
   }
 
   // ---- 光の輪：中心が白く、外へ透明になる丸（色は tint で付ける） ----
@@ -625,15 +644,22 @@ export class BattleScene extends Phaser.Scene {
     this.msgText.setText(title);
     this.menuReadyAt = this.time.now + 200;
     const all = back ? [...options, ['戻る', back, 'gray']] : options;
-    const pitch = (W - 40) / all.length;
+    // 本人 10/4「文字が小さく、他のコマンドを押してしまう」＝横一列（間 約14ドット・大きさ50）をやめ、2段に（上の段が多め）・大きさ66・字はボタンの上
+    const top = Math.ceil(all.length / 2);
     all.forEach(([label, fn, color], i) => {
-      const b = makeButton(this, 20 + pitch * (i + 0.5), MSG_Y + 112, color, label, () => {
+      const row = i < top ? 0 : 1;
+      const n = row === 0 ? top : all.length - top;
+      const k = row === 0 ? i : i - top;
+      const pitch = n >= 3 ? 108 : 120;
+      const x = W / 2 + (k - (n - 1) / 2) * pitch;
+      const y = MSG_Y + (row === 0 ? 102 : 174);
+      const b = makeButton(this, x, y, color, label, () => {
         if (this.time.now < this.menuReadyAt) return;
         this.menuReadyAt = Infinity; // 凹んでいる間の二度押しで、次の人のコマンドまで決めない
         sfx('select');
         // 凹んだ絵を一瞬見せてから次へ
         this.time.delayedCall(90, fn);
-      }, { size: 50, fontSize: 15 });
+      }, { size: 66, fontSize: [...label].length >= 4 ? 14 : 17, below: false });
       this.menu.push(b);
     });
   }
@@ -671,32 +697,61 @@ export class BattleScene extends Phaser.Scene {
     this.runTurn(chooseCommands(this.state, this.ep));
   }
 
-  showMenu(title, options) {
+  // 選び（本人 10/4「UIが使いずらい。文字が小さく、他のコマンドを押してしまう」）＝地図の選びと同じ作り
+  // 1行 MENU_ROW（46）・字21。入りきらなければ窓を上へ伸ばし（敵の上に重ねる）、それでも入らなければページ。決まるのは指を離したとき
+  showMenu(title, options, page = 0) {
     this.clearMenu();
     this.setFace(null);
     this.msgSpeaker.setText('');
     this.msgText.setText(title);
     this.menuReadyAt = this.time.now + 200;
+    const ROW = MENU_ROW;
+    const BOTTOM = MSG_Y + 204;
     // 2列に並べる。6字を超える項目があるときは1列（字が大きいので2列だとはみ出す）
     const cols = options.some(([label, , note]) => [...label].length > 6 || note) ? 1 : 2; // 効き目の字があれば1列（10/2 重なっていた）
-    const colW = cols === 1 ? 320 : 165;
-    const rows = Math.ceil(options.length / cols);
-    const top = MSG_Y + (rows >= 4 ? 66 : 72);
-    const pitch = Math.min(44, (MSG_Y + 204 - top) / rows); // 段が多いほど詰めて、窓の下（y 約624）に収める
-    options.forEach(([label, fn, note], i) => {
+    const colW = cols === 1 ? 320 : 160;
+    const titleH = title ? this.msgText.height + 10 : 0;
+    const maxRows = Math.max(3, Math.floor((BOTTOM - MENU_TOP_B - 16 - titleH) / ROW));
+    let list = options;
+    if (Math.ceil(options.length / cols) > maxRows) {
+      const per = maxRows * cols - 1;
+      const pages = Math.ceil(options.length / per);
+      const p = page % pages;
+      list = [...options.slice(p * per, p * per + per), [p + 1 < pages ? `つぎへ ▶` : `はじめへ ▶`, () => this.showMenu(title, options, p + 1)]];
+    }
+    const rows = Math.ceil(list.length / cols);
+    const top = Math.min(MSG_Y, BOTTOM - rows * ROW - titleH - 16);
+    if (top < MSG_Y) {
+      const sheet = this.windowBox(8, top - 6, W - 16, MSG_Y + 212 - top + 6).setDepth(4);
+      this.menu.push(sheet);
+      this.msgText.setDepth(5);
+    }
+    this.msgText.setY(top + 16);
+    const y0 = top + 16 + titleH;
+    const glow = this.add.rectangle(0, 0, colW - 8, ROW - 6, 0xffd98a, 0.22).setOrigin(0).setVisible(false).setDepth(5);
+    this.menu.push(glow);
+    let pressed = null;
+    const release = () => { pressed = null; glow.setVisible(false); };
+    list.forEach(([label, fn, note], i) => {
       const x = 26 + (i % cols) * colW;
-      const y = top + Math.floor(i / cols) * pitch;
-      const t = this.add.text(x, y, `▶ ${label}`, style(SIZE.menu, fn ? '#ffffff' : '#777777'));
+      const y = y0 + Math.floor(i / cols) * ROW; // 行の上の端
+      const t = this.add.text(x, y + (ROW - 6) / 2, `▶ ${label}`, { ...style(SIZE.menu, fn ? '#ffffff' : '#777777'), wordWrap: null }).setOrigin(0, 0.5).setDepth(5);
       if (note) {
         // 効き目は右端にそろえて、小さめの黄色で（無くなった物は灰色）
-        const n = this.add.text(W - 28, y + 3, note, style(SIZE.badge, fn ? '#ffd34d' : '#777777')).setOrigin(1, 0);
+        const n = this.add.text(W - 28, y + (ROW - 6) / 2, note, style(SIZE.badge, fn ? '#ffd34d' : '#777777')).setOrigin(1, 0.5).setDepth(5);
         this.menu.push(n);
+        // 長い項目が右の効き目とぶつかるときは、その行の字だけ縮める（10/4）
+        for (let fs = SIZE.menu; t.x + t.width > n.x - n.width - 8 && fs > 15; fs--) t.setFontSize(fs - 1);
       }
       if (fn) {
-        t.setInteractive(new Phaser.Geom.Rectangle(-10, -8, colW - 4, pitch), Phaser.Geom.Rectangle.Contains);
+        // 当たり＝列の幅・高さ ROW−6（行と行のあいだ6ドットは どちらも効かない）
+        t.setInteractive(new Phaser.Geom.Rectangle(-10, (t.height - (ROW - 6)) / 2, colW - 8, ROW - 6), Phaser.Geom.Rectangle.Contains);
         t.input.cursor = 'pointer';
-        t.on('pointerdown', () => {
-          if (this.time.now < this.menuReadyAt) return;
+        t.on('pointerdown', () => { if (this.time.now < this.menuReadyAt) return; pressed = t; glow.setPosition(x - 10, y).setVisible(true); });
+        t.on('pointerout', () => { if (pressed === t) release(); });
+        t.on('pointerup', () => {
+          if (pressed !== t) return;
+          release();
           sfx('select');
           fn();
         });
@@ -708,6 +763,7 @@ export class BattleScene extends Phaser.Scene {
   clearMenu() {
     for (const t of this.menu) t.destroy();
     this.menu = [];
+    this.msgText?.setY(MSG_Y + 42).setDepth(0); // 選びで上へ動かした文を、いつもの所へ戻す
   }
 
   // ---- 1ターンを解決して見せる ----
