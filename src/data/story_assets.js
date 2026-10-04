@@ -72,6 +72,7 @@ export const STORY_FILES = [
   'assets/story/onibaba_3.png',
   'assets/story/onibaba_4.mp3',
   'assets/story/onibaba_4.png',
+  'assets/story/onibaba_5.mp3',
   'assets/story/onibaba_5.png',
   'assets/story/ryuto_1.mp3',
   'assets/story/ryuto_1.png',
