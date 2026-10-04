@@ -1,15 +1,16 @@
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=149';
-import { EPISODES } from '../data/episodes.js?v=149';
-import { revealAt } from '../ui/reveal.js?v=149';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=149';
-import { chooseCommands } from '../battle/auto.js?v=149';
-import { itemNote } from '../data/items.js?v=149';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=149';
-import { STORY_FILES } from '../data/story_assets.js?v=149';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=149';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=149';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=149';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=149';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=150';
+import { EPISODES } from '../data/episodes.js?v=150';
+import { revealAt } from '../ui/reveal.js?v=150';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=150';
+import { chooseCommands } from '../battle/auto.js?v=150';
+import { itemNote } from '../data/items.js?v=150';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=150';
+import { STORY_FILES } from '../data/story_assets.js?v=150';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=150';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=150';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=150';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=150';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=150';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -486,7 +487,8 @@ export class BattleScene extends Phaser.Scene {
     const before = this.children.list.length;
     // ⭐長い題名は しおりの頭（3Dしおりの絵の上の端 SHIORI_TOP）より上で止める＝小さく・2列に（本人 10/4「題名が長いと、しおりの顔が隠れる」）
     drawScroll(this, W - 46, 32, fitScroll(32, STORY_SCROLL_MAX, { episode: this.ep.enemy.episode, tale: this.ep.enemy.tale, epSize: 14, taleSize: 25 }));
-    box.addAt(this.children.list.slice(before), box.list.indexOf(win)); // 巻物は窓と3Dしおりの後ろ（しおりは この後で窓の前に入る＝巻物より手前）
+    const smallScroll = this.children.list.slice(before);
+    box.addAt(smallScroll, box.list.indexOf(win)); // 巻物は窓と3Dしおりの後ろ（しおりは この後で窓の前に入る＝巻物より手前）
     // 3Dしおり：挿絵の右下に半身で立ち（影絵も右下を空けて描かせている）、声の大きさで口を動かし、ときどき まばたき
     const has3d = this.textures.exists('shiori3d_m0_e0');
     let talking = false;
@@ -499,13 +501,16 @@ export class BattleScene extends Phaser.Scene {
       box.addAt(sh, box.list.indexOf(win)); // 窓の後ろ・挿絵の前
       this.tweens.add({ targets: sh, y: MSG_Y + 4 + SHIORI_DROP, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.InOut' }); // ゆっくり息をする
     }
+    let titling = false; // 始めの題の巻物を出している間
+    let titleEnd = null;
     const animate = () => {
       if (!sh?.scene) return; // 紙芝居の途中で場面が閉じたら（窓ごと消えた後）何もしない
       const now = this.time.now;
       // 声があれば その大きさで／声が無い間（文字だけ）は、語っている間だけ口をぱくぱく
       const lv = voiceLevel();
       let want = 0;
-      if (lv > 0) want = lv > 0.14 ? 2 : lv > 0.05 ? 1 : 0; // 声の大きさ（Gemini の声で最大0.3くらい）
+      if (titling) want = 0; // 題の読み上げは しおりでなく大人の語り手＝口は閉じたまま
+      else if (lv > 0) want = lv > 0.14 ? 2 : lv > 0.05 ? 1 : 0; // 声の大きさ（Gemini の声で最大0.3くらい）
       else if (talking) want = Math.floor(now / 110) % 3 === 0 ? 0 : (Math.floor(now / 110) % 2) + 1;
       mouth = want;
       if (now > nextBlink) { blinkUntil = now + 120; nextBlink = now + 2500 + Math.random() * 3500; }
@@ -583,11 +588,47 @@ export class BattleScene extends Phaser.Scene {
         timer = this.time.delayedCall(fallback + hold - 500, show);
       }
     };
-    shade.on('pointerdown', () => show());
+    // ⭐始めの題（本人 10/4「昔話の初め、真ん中に巻物出現時『だいじゅうよんわ、じゃこつじぞう』とナレーションを。前後0.5秒のフリーズ。他の話も統一で」）
+    // 挿絵の枠の真ん中に大きな巻物 → 0.5秒止める → 題の声（assets/story/title_<id>.mp3・しおりより大人の語り手）→ 0.5秒止める → 消えて①の絵へ
+    // 声が届いていない・鳴らない端末では 1.6秒見せる。さわると すぐ①へ／とばすで紙芝居ごと抜ける
+    const startTitle = () => {
+      const e = this.ep.enemy;
+      if (part !== 'tell' || !e.episode || !e.tale) { show(); return; }
+      titling = true;
+      pic.setVisible(false);
+      for (const o of smallScroll) o.setAlpha(0); // 右上の小さな巻物は 題を読み終えてから出す（2つ並ばない）
+      who.setText('');
+      text.setText('');
+      const before = this.children.list.length;
+      drawScroll(this, W / 2, 44, fitScroll(44, W - 30, { episode: e.episode, tale: e.tale, epSize: 22, taleSize: 42 }));
+      const card = this.add.container(0, 0, this.children.list.slice(before)).setAlpha(0);
+      box.addAt(card, box.list.indexOf(win)); // 窓としおりの後ろ・挿絵の枠の前
+      let done = false;
+      titleEnd = () => {
+        if (done) return;
+        done = true;
+        titling = false;
+        stopVoice();
+        this.tweens.add({ targets: card, alpha: 0, duration: 250, onComplete: () => { card.destroy(); if (!ended) show(); } });
+        this.tweens.add({ targets: smallScroll, alpha: 1, duration: 400 });
+      };
+      this.tweens.add({ targets: card, alpha: 1, duration: 300 });
+      const url = `assets/story/title_${e.id}.mp3`;
+      this.time.delayedCall(300 + TITLE_HOLD, () => {
+        if (done || ended) return;
+        if (!STORY_FILES.includes(url)) { this.time.delayedCall(TITLE_NO_VOICE, titleEnd); return; }
+        const safety = this.time.delayedCall(8000, titleEnd); // 音の出口が開いていない端末でも止まらない
+        playVoice(url).then((sec) => {
+          safety.remove(false);
+          if (!done && !ended) this.time.delayedCall(sec > 0 ? TITLE_HOLD : TITLE_NO_VOICE, titleEnd);
+        });
+      });
+    };
+    shade.on('pointerdown', () => (titling ? titleEnd() : show()));
     skip.on('pointerdown', () => { this.uiTapAt = this.time.now; finish(); });
     box.setAlpha(0);
     this.tweens.add({ targets: box, alpha: 1, duration: 300 });
-    show();
+    startTitle();
   }
 
   // ---- コマンド ----
