@@ -1,15 +1,16 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=141';
-import { SOMA_ROWS } from './soma_map.js?v=141';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=141';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=141';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=141';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=141';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=141';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=141';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=141';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=141';
+import { IWAKI_ROWS } from './iwaki_map.js?v=142';
+import { kanbanAt } from './kanban.js?v=142';
+import { SOMA_ROWS } from './soma_map.js?v=142';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=142';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=142';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=142';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=142';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=142';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=142';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=142';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=142';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -119,6 +120,7 @@ export function canWalk(game, map, x, y) {
   const t = terrainAt(map, x, y);
   if (!t) return false;
   if (isField(map) && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch);
+  if (isField(map) && kanbanAt(map, x, y)) return false; // 名所の立て看板（10/4）＝通れない・向いて「はなす」と読める
   return t.walk;
 }
 

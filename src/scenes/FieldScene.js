@@ -2,33 +2,35 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=141';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=141';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=141';
-import { RIDERS } from '../data/nomaoi_assets.js?v=141';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=141';
-import { TILE } from '../field/tiles.js?v=141';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=141';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=141';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=141';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=141';
+import { EPISODES } from '../data/episodes.js?v=142';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=142';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=142';
+import { RIDERS } from '../data/nomaoi_assets.js?v=142';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=142';
+import { TILE } from '../field/tiles.js?v=142';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=142';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=142';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=142';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=142';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=142';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=142';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=141';
-import { membersOf } from '../battle/levels.js?v=141';
-import { COMPANIONS } from '../data/companions.js?v=141';
-import { ICON_IDS } from '../data/icons.js?v=141';
-import { FACE_IDS } from '../data/faces.js?v=141';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=141';
-import { mapPointOf } from '../field/mapcard.js?v=141';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=141';
-import { makeRng } from '../battle/rules.js?v=141';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=141';
-import { buyEquip, partyView } from '../field/game.js?v=141';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=141';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=141';
+} from '../field/game.js?v=142';
+import { membersOf } from '../battle/levels.js?v=142';
+import { COMPANIONS } from '../data/companions.js?v=142';
+import { ICON_IDS } from '../data/icons.js?v=142';
+import { FACE_IDS } from '../data/faces.js?v=142';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=142';
+import { mapPointOf } from '../field/mapcard.js?v=142';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=142';
+import { makeRng } from '../battle/rules.js?v=142';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=142';
+import { buyEquip, partyView } from '../field/game.js?v=142';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=142';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=142';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -135,7 +137,7 @@ const NOMAOI_LINES = {
 };
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, KANBAN.map((k) => [k.name, k.lines]), '立て札', WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
@@ -237,7 +239,7 @@ export class FieldScene extends Phaser.Scene {
     this.ui = this.add.container(0, 0);
     this.uiCam = this.cameras.add(0, 0, W, 640);
     cam.ignore(this.ui);
-    this.uiCam.ignore([this.layer, this.hereMark, this.hereRing, this.player, ...this.followers.map((f) => f.sprite), ...this.npcs.map((n) => n.sprite), ...this.makeMistArrows()]);
+    this.uiCam.ignore([this.layer, this.hereMark, this.hereRing, this.player, ...this.followers.map((f) => f.sprite), ...this.npcs.map((n) => n.sprite), ...this.makeMistArrows(), ...this.makeKanbanLabels()]);
 
     this.buildUi();
     this.refreshStatus();
@@ -314,6 +316,17 @@ export class FieldScene extends Phaser.Scene {
 
   // ---- 黒いもや（道をふさぐ壁・ボスの渦）の上に赤い矢印（本人 10/2「移動画面で、モヤが分かりにくい。上部に赤の矢印を付けて欲しい」）----
   // 晴れた壁・元に戻したボスの場所には出さない。上下にゆっくり揺らす
+  // 立て看板の名前を、看板の上に毛筆の字で（地図のカメラだけに映す）
+  makeKanbanLabels() {
+    if (!isField(this.mapId)) return [];
+    return KANBAN.filter((k) => k.map === this.mapId && k.x >= 0).map((k) => {
+      const [cx, cy] = this.center(k.x, k.y);
+      return smooth(this.add.text(cx, cy - 26, k.name, {
+        fontFamily: BRUSH_FONT, fontSize: '13px', color: '#fff4d6', resolution: 3, stroke: '#2a1a08', strokeThickness: 4,
+      }).setOrigin(0.5, 1).setDepth(15));
+    });
+  }
+
   makeMistArrows() {
     if (!isField(this.mapId)) return [];
     if (!this.textures.exists('mist_arrow')) {
@@ -803,6 +816,12 @@ export class FieldScene extends Phaser.Scene {
     let n = this.npcAt(this.px + dx, this.py + dy);
     // カウンター越し
     if (!n && terrainAt(this.mapId, this.px + dx, this.py + dy)?.ch === 'c') n = this.npcAt(this.px + 2 * dx, this.py + 2 * dy);
+    // 名所の立て看板（10/4）＝向いて「はなす」と、看板の名と短い説明
+    const kb = !n && isField(this.mapId) ? kanbanAt(this.mapId, this.px + dx, this.py + dy) : null;
+    if (kb) {
+      this.showMessages([{ text: `立て札「${kb.name}」` }, ...kb.lines.map((text) => ({ text }))]);
+      return;
+    }
     if (!n) {
       this.showMessages([{ speaker: 'しおり', text: 'とくに 何も ないみたい。' }]);
       return;

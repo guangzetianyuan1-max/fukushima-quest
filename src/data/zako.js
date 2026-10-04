@@ -188,7 +188,7 @@ export const ZAKO = {
   // tier＝章の中の強さの順（1〜10）。強さの数字は いわきの物差し（相馬・県北は ZONE_SCALE で倍にする）。pending＝絵がまだ（出会いに入れない）
   // 序章いわきの追加2体
   umibozu: {
-    chapter: 0, tier: 8, pending: true,
+    chapter: 0, tier: 8, // 10/4 絵が届いた（mcn8jl）
     name: '海坊主', hp: 32, atk: 12, def: 6, agi: 6, exp: 10, mon: 7,
     biteName: '大きな 手', zones: ['coast', 'south', 'midSouth'],
     trick: { kind: 'boil', chance: 0.25, power: 9, text: '海坊主が 大波を 起こした！' },
