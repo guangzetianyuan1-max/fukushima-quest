@@ -4,7 +4,7 @@
 // 白河の大清水には花の咲かない「咲かずのフジ」が生えた。⭐白河では安珍を故郷の若い僧として、命日（3月27日）に根田の安珍堂の前で念仏踊りを奉納して弔う（県の重要無形民俗文化財）
 // ⭐清姫を罰する敵にしない＝「蛇の姿から戻す」。原典では戻らない＝紙芝居⑤で しおりが補う。⚠道成寺の能・歌舞伎の筋や台詞は借りない
 // 弱点＝白河の「安珍念仏踊り」（安珍を弔う念仏の声）
-import { BASIC_ITEMS } from './basic_items.js?v=158';
+import { BASIC_ITEMS } from './basic_items.js?v=159';
 
 export const KIYOHIME = {
   art: {
@@ -32,12 +32,12 @@ export const KIYOHIME = {
     autoWinTarget: 0.85, // 3章の章ボス
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 19,
-    hp: 577, atk: 157, def: 146, agi: 14, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp820 atk112）
+    hp: 923, atk: 169, def: 146, agi: 14, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp820 atk112） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp577 atk157）
     bgm: 'kiyohime',
     weakness: 'nenbutsu',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '恋の 炎', chance: 0.24, power: 85, flash: [255, 110, 50], sfx: 'honoo', cutin: 'assets/cutin/kiyohime_honoo.png' },
-    special2: { name: '鐘に 巻きつく', chance: 0.14, power: 94, flash: [255, 200, 120], sfx: 'tsurigane', cutin: 'assets/cutin/kiyohime_kane.png' },
+    special: { name: '恋の 炎', chance: 0.24, power: 91, flash: [255, 110, 50], sfx: 'honoo', cutin: 'assets/cutin/kiyohime_honoo.png' },
+    special2: { name: '鐘に 巻きつく', chance: 0.14, power: 101, flash: [255, 200, 120], sfx: 'tsurigane', cutin: 'assets/cutin/kiyohime_kane.png' },
     biteName: '炎の 牙で かみつく',
     introText: '安珍堂の 前に、炎を まとった 大蛇が とぐろを 巻いていた。……その 目は、だれかを さがしている。',
     tellLines: [

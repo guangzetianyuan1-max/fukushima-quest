@@ -1,18 +1,18 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=158';
-import { kanbanAt } from './kanban.js?v=158';
-import { SOMA_ROWS } from './soma_map.js?v=158';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=158';
-import { KENCHU_ROWS } from './kenchu_map.js?v=158';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=158';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=158';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=158';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=158';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=158';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, RETIRED_COMPANIONS, BUSHI, KUNOICHI } from '../data/companions.js?v=158';
-import { EQUIP, START_EQUIP, canWear } from '../data/equip.js?v=158';
-import { becomeKunoichi } from './kagewatari.js?v=158';
+import { IWAKI_ROWS } from './iwaki_map.js?v=159';
+import { kanbanAt } from './kanban.js?v=159';
+import { SOMA_ROWS } from './soma_map.js?v=159';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=159';
+import { KENCHU_ROWS } from './kenchu_map.js?v=159';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=159';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=159';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=159';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=159';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=159';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, RETIRED_COMPANIONS, BUSHI, KUNOICHI } from '../data/companions.js?v=159';
+import { EQUIP, START_EQUIP, canWear } from '../data/equip.js?v=159';
+import { becomeKunoichi } from './kagewatari.js?v=159';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -282,6 +282,11 @@ export function battleData(game, ep0) {
     ep = { ...ep, spells: { ...ep.spells, [w]: { ...ep.spells[w], power: Math.round(ep.spells[w].power * hint.mult) } }, enemy: { ...ep.enemy, hintText: hint.text } };
   }
   // ⭐必ず負ける1回目（2章 鬼婆・本人 10/4「鬼婆は最強なので、一度全滅→町で祐慶と合流し、再トライ」）
+  // 猟師がいて 玉が0発のまま ボスに来たら、しおりが知らせる（10/4 夜 通しの調整：ボスの強さは 玉3発を持つ見込みで合わせてある）
+  const gunner = membersOf(game).some((id) => COMPANIONS[id]?.gun && !game.party?.[id]?.dead);
+  if (gunner && !ep.enemy.noWeak && !(game.items?.tama > 0) && !ep.enemy.hintText) {
+    ep = { ...ep, enemy: { ...ep.enemy, hintText: '鉄砲の 玉が 一発も ないわ……。町の 刀屋や よろず屋で 買っておくと、猟師さんが 頼りに なるのに。' } };
+  }
   const fl = ep.enemy.firstLose;
   if (fl && !game.flags?.[fl.until ?? `${ep.enemy.id}Lost`]) { // until＝その印が付くまで必ず負ける（鬼婆＝僧が如意輪の経を学ぶまで・10/4 夜）
     const enemy = {
@@ -441,7 +446,7 @@ export function walkStep(game) {
 // 帯ごとの専用の背景（Gemini・2026-10-02。それまではボスの背景を借りていた）
 export const ZONE_BG = { ...Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`])), soma: 'assets/bg_dochu_north.png', kenpoku: 'assets/bg_dochu_north.png', kenchu: 'assets/bg_dochu_midNorth.png' };
 // 帯ごとの強さの倍率（1章の相馬・HP／攻／守を別々に・もらう経験と文も多め）
-export const ZONE_SCALE = { soma: { hp: 6, atk: 3.4, def: 3, reward: 2.5 }, kenpoku: { hp: 9, atk: 4.6, def: 4.2, reward: 3.6 }, kenchu: { hp: 12, atk: 5.8, def: 5.4, reward: 4.7 } }; // kenchu＝10/4 仮（zako_roster の SCALE の3章） // kenpoku＝10/4 仮（2章のボスの試算のあとで合わせる） // 10/3 試算：1.5倍ではLv6の4人が1ターンで倒した＝この倍率で1戦2〜3ターン・HP約1割減（いわきの道中と同じ手ごたえ）
+export const ZONE_SCALE = { soma: { hp: 6, atk: 3.4, def: 3, reward: 2.5 }, kenpoku: { hp: 9, atk: 4.6, def: 4.2, reward: 3.6 }, kenchu: { hp: 15, atk: 7.0, def: 5.4, reward: 4.7 } }; // kenchu＝10/4 夜 通しの調整で 12/5.8/5.4→15/7.0/5.4（くノ一が加わり Lv15で1戦1.9T・HP減4%と易しすぎた→2.3T・9%＝tests/_zako_chapter.mjs） // kenpoku＝10/4 仮（2章のボスの試算のあとで合わせる） // 10/3 試算：1.5倍ではLv6の4人が1ターンで倒した＝この倍率で1戦2〜3ターン・HP約1割減（いわきの道中と同じ手ごたえ）
 export const HARAI = {
   name: '祓いの言葉', cost: 4, power: 14, weakMult: 1, plainMult: 1,
   weakText: '祓いの 言葉が もやを 打った！', plainText: '祓いの 言葉が もやを 打った！',
@@ -562,12 +567,15 @@ export function partyView(game) {
 }
 
 // ---- 昔話の味方が仲間に加わる（本人 10/2）。最大4人・加わるとそのレベルの満タン ----
+export const GUN_JOIN_TAMA = 5;
 export function join(game, id) {
   const members = membersOf(game);
   if (!COMPANIONS[id] || members.includes(id) || members.length >= MAX_PARTY) return { ok: false, game };
   // 始めの2人より JOIN_LV_BELOW 下のレベルで加わる（Lv1 より下にはならない）
   const lv = Math.max(1, (game.lv ?? 1) - JOIN_LV_BELOW);
-  const g = { ...game, members: [...members, id], expOf: { ...game.expOf, [id]: EXP_TO[lv] } };
+  // 鉄砲を使う仲間（猟師）は 玉を持って加わる（10/4 夜 通しの調整：玉を持たないと ボスの勝率が6割前後まで下がる）
+  const items = COMPANIONS[id].gun ? { ...game.items, tama: (game.items?.tama ?? 0) + GUN_JOIN_TAMA } : game.items;
+  const g = { ...game, items, members: [...members, id], expOf: { ...game.expOf, [id]: EXP_TO[lv] } };
   const m = maxOf(g, id);
   return { ok: true, game: { ...g, party: { ...game.party, [id]: { hp: m.hp, mp: m.mp } } } };
 }

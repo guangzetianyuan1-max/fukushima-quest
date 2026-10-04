@@ -7,7 +7,7 @@
 //   1回目＝firstLose（必ず負ける・全滅しても文は減らない）→ 二本松の宿で目をさます → 祐慶が 僧に 如意輪の経を教えて 熊野へ帰る（companions.js の LEARN_AFTER_LOSS）
 //   2回目＝弱点は僧の「如意輪の経」（観音さまが 破魔の真弓で射る）。⚠語るのは しおり・経を となえるのは僧。学ぶまでは 何度でも 必ず負ける（firstLose.until）
 // 絵＝まだ（仮に道中の霊の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=158';
+import { BASIC_ITEMS } from './basic_items.js?v=159';
 
 export const ONIBABA = {
   art: {
@@ -29,7 +29,7 @@ export const ONIBABA = {
     autoWinTarget: 0.90, // 2章の章ボス（2回目＝僧が如意輪の経を おぼえた戦い）
     // 強さ＝試算（node tests/_autotune.mjs <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 14,
-    hp: 620, atk: 106, def: 110, agi: 12, // 10/4 武士の居合い斬りが加わり HP500→620・攻82→96・必殺技も1.18倍（_autotune） // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp620 atk96）
+    hp: 775, atk: 126, def: 110, agi: 12, // 10/4 武士の居合い斬りが加わり HP500→620・攻82→96・必殺技も1.18倍（_autotune） // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp620 atk96） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp620 atk106）
     bgm: 'onibaba',
     weakness: 'hama', // 如意輪の経＝僧が 祐慶に 教わる術（companions.js の COMPANION_SPELLS・LEARN_AFTER_LOSS）
     // ⭐1回目は必ず負ける（本人 10/4）。強さを上書きし、語っても弱点は明かされない
@@ -45,8 +45,8 @@ export const ONIBABA = {
       ],
     },
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '出刃包丁', chance: 0.24, power: 59, flash: [255, 80, 60], sfx: 'slash', cutin: 'assets/cutin/onibaba_deba.png' },
-    special2: { name: '岩屋の 闇', chance: 0.14, power: 66, flash: [120, 40, 60], sfx: 'yami', cutin: 'assets/cutin/onibaba_iwaya.png' },
+    special: { name: '出刃包丁', chance: 0.24, power: 70, flash: [255, 80, 60], sfx: 'slash', cutin: 'assets/cutin/onibaba_deba.png' },
+    special2: { name: '岩屋の 闇', chance: 0.14, power: 79, flash: [120, 40, 60], sfx: 'yami', cutin: 'assets/cutin/onibaba_iwaya.png' },
     biteName: 'つかみかかる',
     introText: '観世寺の 岩屋の 奥から、鬼婆が ふたたび あらわれた。僧が 数珠を にぎり、祐慶に 教わった 経を 胸に 刻む……！',
     tellLines: [

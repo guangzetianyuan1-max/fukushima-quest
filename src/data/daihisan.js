@@ -5,7 +5,7 @@
 // ゲームでは、忘れの力でよみがえった大蛇。弱点＝「鉄の釘」。助っ人＝玉都（本人 10/3「戦いの中で琵琶を弾く助っ人」）＝語って弱点が明かされると
 // 琵琶が鳴り、大蛇は聞き入って2回動けない。その後も ときどき琵琶で止める
 // 絵＝10/3 届いた（2noh3h 大蛇・xf4m56 封じられた姿）。必殺技の挿絵＝描き直し（貼り付け・使用済み_絵／大悲山_大雨_描き直し_貼り付け.jpg。1回目 vxa4qk は封じられた姿と山高帽で描かれた）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=158';
+import { BASIC_ITEMS } from './basic_items.js?v=159';
 
 export const DAIHISAN = {
   art: {
@@ -36,12 +36,12 @@ export const DAIHISAN = {
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
     //   玉都の琵琶が効きすぎた（攻1.8倍でも自動97%）＝琵琶の見込み 0.25→0.2・攻を上げた
     // 10/3 装備を1段強くした（本人「武器や防具、道具も強く」）ので体力 320→350（試算 自動0.96）
-    hp: 350, atk: 88, def: 66, agi: 10,
+    hp: 402, atk: 114, def: 66, agi: 10, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp350 atk88）
     bgm: 'daihisan', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'kugi',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝大雨（この地を大沼にしたい＝原典の大蛇のたくらみ）
-    special: { name: '大雨', chance: 0.28, power: 46, flash: [70, 110, 190], sfx: 'ame', cutin: 'assets/cutin/daihisan_ooame.png' },
+    special: { name: '大雨', chance: 0.28, power: 60, flash: [70, 110, 190], sfx: 'ame', cutin: 'assets/cutin/daihisan_ooame.png' },
     helper: {
       name: '玉都',
       revealText: '玉都の 琵琶が 鳴りひびいた！ 大蛇は 聞き入って 動きを 止めた！',

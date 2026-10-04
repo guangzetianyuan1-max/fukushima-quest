@@ -4,7 +4,7 @@
 // ゲームでは、忘れられて黒いもやに呑まれた山の神の使い。⭐10/4 本人「敵と戦う形にして欲しい」＝戦う（10/3「C」の誓いの出会いは取りやめ）
 // 原典で倒されない所は、勝った後の紙芝居④と hosoku で しおりが補う。見た目は ざるのまま描き直す（本人 10/4・名前もそのまま）
 // 絵＝10/4 描き直し（sd30b3・czv1hg・必殺技 38x7zb＝ざるが頭をまるごと覆う）。旧＝10/3 qil8fg・13r9vr・pgmdxj。背景は10/3のまま。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=158';
+import { BASIC_ITEMS } from './basic_items.js?v=159';
 
 export const ZARUKABURI = {
   art: {
@@ -32,12 +32,12 @@ export const ZARUKABURI = {
     autoWinTarget: 0.95, // 1章の目安（本人 10/1「章が進むほど勝ちにくく」＝序章99→1章95）
     expectLv: 6,
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
-    hp: 260, atk: 62, def: 60, agi: 11,
+    hp: 299, atk: 61, def: 60, agi: 11, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp260 atk62）
     bgm: 'zarukaburi', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'chikai',
     mist: { min: 1, max: 2, rise: 0.2 },
     // 必殺技＝乱れ髪（地面を引きずる髪が 全員に からみつく）
-    special: { name: '乱れ髪', chance: 0.25, power: 34, flash: [150, 90, 200], sfx: 'kami', cutin: 'assets/cutin/zarukaburi_midaregami.png' },
+    special: { name: '乱れ髪', chance: 0.25, power: 33, flash: [150, 90, 200], sfx: 'kami', cutin: 'assets/cutin/zarukaburi_midaregami.png' },
     biteName: 'ざるの 頭突き',
     introText: '山の 奥から、ざるの ような 頭の 女が、髪を 引きずって あらわれた……',
     tellLines: [

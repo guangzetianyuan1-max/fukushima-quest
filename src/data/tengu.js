@@ -3,7 +3,7 @@
 // 湯が止まり「十一の男の子を天狗様にいけにえに出せば湯が戻る」と言われる。夜明け、母がうとうとした間に子は消え、湯はまた湧いた。母は「十一、十一」と叫び続けて鳥になった
 // ⭐原典では天狗は姿も見せず、戦わず、子は戻らない（10/4 の決まり＝原典で倒されない相手も戦う）＝勝った後の紙芝居④で しおりが「昔話では戻らなかった」と語る
 // ゲームでは、忘れられて黒いもやに呑まれ、湯を止めた天狗。弱点＝母の呼び声「十一」
-import { BASIC_ITEMS } from './basic_items.js?v=158';
+import { BASIC_ITEMS } from './basic_items.js?v=159';
 
 export const TENGU = {
   art: {
@@ -31,11 +31,11 @@ export const TENGU = {
     autoWinTarget: 0.86,
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 17,
-    hp: 563, atk: 166, def: 132, agi: 14, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp800 atk113）
+    hp: 901, atk: 168, def: 132, agi: 14, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp800 atk113） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp563 atk166）
     bgm: 'tengu',
     weakness: 'juichi',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '天狗の 羽うちわ', chance: 0.25, power: 90, flash: [200, 230, 255], sfx: 'hauchiwa', cutin: 'assets/cutin/tengu_uchiwa.png' },
+    special: { name: '天狗の 羽うちわ', chance: 0.25, power: 91, flash: [200, 230, 255], sfx: 'hauchiwa', cutin: 'assets/cutin/tengu_uchiwa.png' },
     biteName: '高下駄で 蹴りつける',
     introText: '一枚岩の 橋の 上に、羽うちわを 持った 天狗が 舞いおりた。……黒い もやが、谷を おおっていく！',
     tellLines: [

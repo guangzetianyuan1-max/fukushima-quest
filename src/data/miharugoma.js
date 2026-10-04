@@ -3,7 +3,7 @@
 // 大滝根山の大多鬼丸との戦で押されたとき、どこからか百頭の馬が駆けこんで勝たせ、消えた。箱の木馬は どれも汗でぬれていた。村人が偲んで彫ったのが三春駒
 // ⚠原典には寺の名も僧の名も無い（清水寺・延鎮は工房の由来書き）＝「りっぱな お寺の お坊さま」。⚠田村麻呂がこの地へ来た文献は無い（田村市）＝伝説として語る
 // ゲームでは、忘れられて黒いもやに呑まれ、三春の野を暴れまわる木の馬の群れ。弱点＝「お坊さまの木箱」（馬たちの帰る所）。勝つと三春駒の術（大多鬼丸の弱点）を授かり、大滝根山への もやが晴れる
-import { BASIC_ITEMS } from './basic_items.js?v=158';
+import { BASIC_ITEMS } from './basic_items.js?v=159';
 
 export const MIHARUGOMA = {
   art: {
@@ -31,11 +31,11 @@ export const MIHARUGOMA = {
     autoWinTarget: 0.89,
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 15,
-    hp: 544, atk: 134, def: 118, agi: 15, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp680 atk99）
+    hp: 870, atk: 137, def: 118, agi: 15, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp680 atk99） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp544 atk134）
     bgm: 'miharugoma',
     weakness: 'kibako',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '百頭の 駆けぬけ', chance: 0.25, power: 75, flash: [255, 220, 150], sfx: 'hizume', cutin: 'assets/cutin/miharugoma_kakenuke.png' },
+    special: { name: '百頭の 駆けぬけ', chance: 0.25, power: 77, flash: [255, 220, 150], sfx: 'hizume', cutin: 'assets/cutin/miharugoma_kakenuke.png' },
     biteName: 'ひづめで 蹴りあげる',
     introText: '三春の 野を、黒い もやを まとった 馬の 群れが 駆けてきた。……よく 見ると、どれも 木で できている！',
     tellLines: [

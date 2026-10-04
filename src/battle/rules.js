@@ -30,8 +30,10 @@ export const DUAL_DEF = 0.7;
 // 狐火の術：居合い斬りと同じく 明かす前の昔話の主には2割。もやの間は 術と同じく半分（MIST_BLOCK）
 export const YOJUTSU_UNREVEALED = 0.2;
 // 急所（本人 10/3「1/10の確率で敵の急所にあたり、一発でしとめる」→ 10/4 夜「10回に1回ランダムに急所に一発で当たり、敵が倒れる」）
-// ＝撃った10発に1発は 急所に当たって一発で倒れる。昔話の主（ボス）にも効く（前は道中の敵だけ）。ただし語って弱点を明かしたあと（明かす前は 黒いもやが玉を呑む）
+// ＝撃った10発に1発は 急所。道中の敵は一発で倒れる。昔話の主（ボス）は 体力の GUN_KYUSHO_BOSS（2割）の大きな傷（10/4 夜 本人「道中の敵だけ一発」
+//   ＝ボスにも一発を効かせたら 玉3発で ボス戦の勝率が約98%になった）。ボスは語って弱点を明かしたあとだけ（明かす前は 黒いもやが玉を呑む）
 export const GUN_KYUSHO = 0.1;
+export const GUN_KYUSHO_BOSS = 0.2;
 // 投網（釣りの景品）が ぬし（ボス）に かかる見込み。道中の敵には必ず かかる
 export const NET_BOSS = 0.6;
 
@@ -171,9 +173,9 @@ function allyAct(state, a, cmd, data, rng, log) {
     const opened = e.noWeak || e.revealed; // 昔話の主は 語って明かしたあと
     // 急所：撃った10発に1発（当たるかどうかの前に決める＝レベルが低くても 1割は急所）
     if (opened && rng() < GUN_KYUSHO) {
-      const d = e.hp;
-      e.hp = 0;
-      log.push({ text: '急所に 命中した！ 一発で しとめた！', effect: { kind: 'crit' }, sfx: 'hit' });
+      const d = e.noWeak ? e.hp : Math.min(e.hp, Math.max(1, Math.round(e.maxHp * GUN_KYUSHO_BOSS)));
+      e.hp -= d;
+      log.push({ text: e.noWeak ? '急所に 命中した！ 一発で しとめた！' : '急所に 命中した！ 大きな 手ごたえ！', effect: { kind: 'crit' }, sfx: 'hit' });
       log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
       return;
     }
