@@ -2,32 +2,32 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=127';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=127';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=127';
-import { RIDERS } from '../data/nomaoi_assets.js?v=127';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=127';
-import { TILE } from '../field/tiles.js?v=127';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=127';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=127';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=127';
-import { TOWNS, TOWN_OF } from '../field/towns.js?v=127';
+import { EPISODES } from '../data/episodes.js?v=128';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=128';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=128';
+import { RIDERS } from '../data/nomaoi_assets.js?v=128';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=128';
+import { TILE } from '../field/tiles.js?v=128';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=128';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=128';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=128';
+import { TOWNS, TOWN_OF } from '../field/towns.js?v=128';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
-  purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt,
-} from '../field/game.js?v=127';
-import { membersOf } from '../battle/levels.js?v=127';
-import { COMPANIONS } from '../data/companions.js?v=127';
-import { ICON_IDS } from '../data/icons.js?v=127';
-import { FACE_IDS } from '../data/faces.js?v=127';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=127';
-import { mapPointOf } from '../field/mapcard.js?v=127';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=127';
-import { makeRng } from '../battle/rules.js?v=127';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=127';
-import { buyEquip, partyView } from '../field/game.js?v=127';
-import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=127';
+  purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
+} from '../field/game.js?v=128';
+import { membersOf } from '../battle/levels.js?v=128';
+import { COMPANIONS } from '../data/companions.js?v=128';
+import { ICON_IDS } from '../data/icons.js?v=128';
+import { FACE_IDS } from '../data/faces.js?v=128';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=128';
+import { mapPointOf } from '../field/mapcard.js?v=128';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=128';
+import { makeRng } from '../battle/rules.js?v=128';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=128';
+import { buyEquip, partyView } from '../field/game.js?v=128';
+import { sfx, startBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=128';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -117,7 +117,7 @@ const NOMAOI_LINES = {
 };
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, WALL_QUEST_LINES, CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
@@ -653,6 +653,11 @@ export class FieldScene extends Phaser.Scene {
     if (!isField(this.mapId) || !t || !WALL_OPENED_BY[t.ch]) return;
     if (this.time.now - this.lastBump < 1200) return;
     this.lastBump = this.time.now;
+    // ボスは戻したが その章のクエストが残っている（10/4 本人「クエストが終わっていない場合、進めないように」）
+    if (this.g.cleared?.[WALL_OPENED_BY[t.ch]] && WALL_QUEST_LINES[t.ch]) {
+      this.showMessages(WALL_QUEST_LINES[t.ch].map((text) => ({ text })));
+      return;
+    }
     this.showMessages([{ text: '黒い もやが 道を ふさいでいる……' }, { speaker: 'しおり', text: WALL_HINT[t.ch] }]);
   }
 

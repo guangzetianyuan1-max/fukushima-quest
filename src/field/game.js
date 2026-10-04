@@ -1,15 +1,15 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=127';
-import { SOMA_ROWS } from './soma_map.js?v=127';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=127';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=127';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=127';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=127';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=127';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=127';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=127';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=127';
+import { IWAKI_ROWS } from './iwaki_map.js?v=128';
+import { SOMA_ROWS } from './soma_map.js?v=128';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=128';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=128';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=128';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=128';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=128';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=128';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=128';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=128';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -109,6 +109,10 @@ export function wallOpen(game, ch) {
 }
 // ボスのほかに 要る物（10/4 県北への口は、相馬の道場で武士になってから）
 export const WALL_NEEDS_FLAG = { 8: 'bushi' };
+// ボスは戻したが、その章のクエストが残っているときに ぶつかると出る言葉（関所の番人）
+export const WALL_QUEST_LINES = {
+  8: ['西の 口の 番人「待たれよ。武士の 免状の 無い 者は、県北へは 通せぬ。」', 'しおり「相馬の 町の 道場で、師範に 腕を 認めて もらいましょう。」'],
+};
 
 // そのマスへ歩けるか（町の人の立つマスは画面の側で見る）
 export function canWalk(game, map, x, y) {
