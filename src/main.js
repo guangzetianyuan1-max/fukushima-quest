@@ -1,13 +1,15 @@
-import { TitleScene } from './scenes/TitleScene.js?v=124';
-import { BattleScene } from './scenes/BattleScene.js?v=124';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=124';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=124';
-import { HARAI } from './field/game.js?v=124';
-import { EQUIP } from './data/equip.js?v=124';
-import { EPISODES } from './data/episodes.js?v=124';
-import { unlock, isUnlocked } from './audio/chip.js?v=124';
-import { askTerms } from './ui/terms.js?v=124';
-import { watchUpdates } from './ui/update.js?v=124';
+import { TitleScene } from './scenes/TitleScene.js?v=125';
+import { BattleScene } from './scenes/BattleScene.js?v=125';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=125';
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=125';
+import { HARAI } from './field/game.js?v=125';
+import { EQUIP } from './data/equip.js?v=125';
+import { EPISODES } from './data/episodes.js?v=125';
+import { unlock, isUnlocked } from './audio/chip.js?v=125';
+import { askTerms } from './ui/terms.js?v=125';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=125';
+import { showLoading, preloadImages } from './ui/loading.js?v=125';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=125';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
@@ -25,10 +27,16 @@ const DOJO_TEXT = '武士道場の師範一本取られた勝ち見事その太�
 const ALL_TEXT = DOJO_TEXT + UI_TEXT + JSON.stringify(EPISODES) + FIELD_TEXT + JSON.stringify([ZAKO, ZAKO_TELL, HARAI, EQUIP]) + '攻守速武器防具お守りなし今だれが着ける？身に着けた引き取ってもらった名物を食べるそうびを見るどうする？ゲームを終わる所持金仲間を生き返らせますか？生き返った人はおらぬようじゃ幽霊憑かいしんのいちげき授かる勝守厄除け守湯本の寺でたのむもどる店に置いていったちずを見るさわるととじる平の城下町湯本の湯の町小名浜の港腕に合った得物を選びな旅の支度ならまかせておくれその人は着けられないつづきからはじめから［］旅をつづける記録した所からやり直す経験手に入れた！お礼にもらったレベルに上がった！もやをはらった逃げきったLv呪霊お祓い供養受ける八幡さまで何をしますか？いたしましょうか？です安らかに去っていった体が軽くなった呪いがとけた自由に動く番屋届いておるぞ返してもらった' + 'まだ旅の記録がありません旅のつづきへ小高の町相馬の城下町セーブして終わる旅を記録してゲームを終わりますか？おつかれさまいまここ急所に命中した一発でしとめた'; // 10/3 足した画面の字
 
 async function start() {
-  // アプリの自動更新（本人 10/4「スマホ電源OFFにして、再起動でないとアプリ更新ができない」）。表紙と始まる前は すぐ読み直す・遊んでいる途中は知らせだけ
-  watchUpdates(() => !window.fqGame || window.fqGame.scene.isActive('title'));
-  // 遊ぶ前の利用規約（本人 10/4「こちらに責任が被らない書面チェック機構」）＝同意するまで ゲームを始めない
-  await askTerms();
+  // ⭐起動のローディングバー（本人 10/4「はじめの画面にローディングバーを表示し、毎回データ更新を」）＝最新の版を確かめる → 字 → よく使う絵
+  const bar = showLoading();
+  bar.set(0.03, '最新の版を 確かめています');
+  const nv = await newerOnLaunch();
+  if (nv) {
+    bar.set(0.1, `新しい版（版${nv}）に 更新しています`);
+    reloadTo(nv);
+    return;
+  }
+  bar.set(0.1, '字を 読み込んでいます');
   try {
     await Promise.race([
       Promise.all([
@@ -41,6 +49,12 @@ async function start() {
   } catch (e) {
     // 字が読めなくても遊べるようにする（端末の字で出る）
   }
+  await preloadImages(PRELOAD_ASSETS, (k, n) => bar.set(0.15 + 0.85 * (k / n), `絵を 読み込んでいます ${Math.round((100 * k) / n)}%`));
+  bar.done();
+  // 遊ぶ前の利用規約（本人 10/4「こちらに責任が被らない書面チェック機構」）＝同意するまで ゲームを始めない
+  await askTerms();
+  // 遊んでいる間の自動更新（裏から戻った時など・表紙ならすぐ読み直し、途中は知らせだけ）
+  watchUpdates(() => !window.fqGame || window.fqGame.scene.isActive('title'));
   // 確かめ用の取っ手：ブラウザから window.fqGame で場面を動かせる（遊ぶ人には見えない）
   window.fqGame = new Phaser.Game({
     type: Phaser.AUTO,

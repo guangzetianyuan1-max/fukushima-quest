@@ -49,7 +49,18 @@ async function latestVersion() {
   return (await r.json())?.v ?? null;
 }
 
-function reloadTo(ver) {
+// 起動のとき（ローディングバーの最初）：新しい版があれば その版の番号、無ければ null（読み直しを繰り返さない）
+export async function newerOnLaunch() {
+  if (!CURRENT) return null;
+  try {
+    const v = await latestVersion();
+    return isNewer(v, CURRENT) && !alreadyTried(window.location.href, v) ? v : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export function reloadTo(ver) {
   window.location.replace(freshUrl(window.location, ver));
 }
 
