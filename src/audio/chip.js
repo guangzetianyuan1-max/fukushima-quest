@@ -335,6 +335,55 @@ const SFX = {
   taiko: (t) => { tone(N(36), t, 0.22, { type: 'sine', vol: 0.5, slideTo: N(30) }); noise(t, 0.06, { vol: 0.2, from: 900, to: 200 }); },
   ootaiko: (t) => { tone(N(31), t, 0.4, { type: 'sine', vol: 0.6, slideTo: N(26) }); tone(N(31), t + 0.12, 0.35, { type: 'sine', vol: 0.45, slideTo: N(26) }); noise(t, 0.1, { vol: 0.3, from: 700, to: 150 }); },
   kane: (t) => { tone(N(91), t, 0.18, { type: 'square', vol: 0.1 }); tone(N(98), t, 0.12, { type: 'triangle', vol: 0.08 }); },
+  // ---- 3章 県中・県南の必殺技（10/4・技ごとに別の音）----
+  // 安積沼の大波（蛇骨地蔵）＝低く うねって 水が 割れる
+  hebinami: (t) => {
+    tone(N(26), t, 1.0, { type: 'triangle', vol: 0.35, slideTo: N(31) });
+    noise(t + 0.2, 0.9, { vol: 0.32, from: 400, to: 2600 });
+    noise(t + 0.9, 0.5, { vol: 0.4, from: 5000, to: 300 });
+  },
+  // 百頭の駆けぬけ（三春駒）＝ひづめの 連打が 近づいて 去る
+  hizume: (t) => {
+    for (let i = 0; i < 12; i++) noise(t + i * 0.075, 0.05, { vol: 0.25 + 0.25 * Math.sin((i / 11) * Math.PI), from: 1400, to: 500 });
+    tone(N(40), t, 0.9, { type: 'triangle', vol: 0.15 });
+  },
+  // 鬼穴の岩落とし（大多鬼丸）＝ゴロゴロと 転がって ドン
+  iwaotoshi: (t) => {
+    noise(t, 0.6, { vol: 0.3, from: 300, to: 150 });
+    tone(N(24), t + 0.55, 0.5, { type: 'triangle', vol: 0.5, slideTo: N(17) });
+    noise(t + 0.55, 0.3, { vol: 0.45, from: 1200, to: 100 });
+  },
+  // 慕い鳴き（和泉式部と猫）＝高く 長く 尾を 引く 鳴き声
+  shitainaki: (t) => {
+    tone(N(76), t, 0.35, { type: 'triangle', vol: 0.18, slideTo: N(83) });
+    tone(N(83), t + 0.33, 0.6, { type: 'triangle', vol: 0.16, slideTo: N(71) });
+  },
+  // 天狗の羽うちわ（天狗）＝大きく あおぐ 風が 2度
+  hauchiwa: (t) => {
+    noise(t, 0.45, { vol: 0.45, from: 400, to: 4000 });
+    noise(t + 0.4, 0.6, { vol: 0.5, from: 600, to: 6000 });
+  },
+  // 涅槃のまぼろし（託善和尚）＝澄んだ りんの音が 重なる
+  nehan: (t) => {
+    [0, 0.25, 0.5].forEach((d, i) => tone(N(84 + i * 3), t + d, 1.0, { type: 'sine', vol: 0.12 }));
+  },
+  // 釈迦堂川の大水（カッパ）＝水かさが 増して どっと 押し寄せる
+  oomizu: (t) => {
+    noise(t, 1.1, { vol: 0.25, from: 300, to: 900 });
+    noise(t + 0.7, 0.6, { vol: 0.5, from: 3000, to: 200 });
+    tone(N(31), t + 0.7, 0.5, { type: 'triangle', vol: 0.25 });
+  },
+  // 恋の炎（清姫）＝ごうっと 燃え上がる
+  honoo: (t) => {
+    noise(t, 0.9, { vol: 0.38, from: 300, to: 4500 });
+    tone(N(36), t, 0.9, { type: 'triangle', vol: 0.2, slideTo: N(48) });
+  },
+  // 鐘に巻きつく（清姫）＝大きな 釣鐘が 低く 鳴る
+  tsurigane: (t) => {
+    tone(N(43), t, 1.6, { type: 'sine', vol: 0.3 });
+    tone(N(55), t, 1.2, { type: 'triangle', vol: 0.12 });
+    noise(t, 0.08, { vol: 0.3, from: 2000, to: 800 });
+  },
   // 居合い斬り（武士・本人 10/4）＝鍔の「チャキッ」→ 鋭い風切り「シュッ」→ 斬った「ザン」
   iai: (t) => {
     tone(N(96), t, 0.04, { type: 'square', vol: 0.18 });
@@ -509,6 +558,46 @@ const KENPOKU_BATTLE_LEAD = [
   [74, 1], [77, 1], [79, 1], [81, 1], [79, 2], [77, 2],
   [79, 6], [null, 2],
 ];
+// ---- 3章「県中・県南」（10/4）----
+// 県中の道中：ト長調の陽音階（ソ・ラ・シ・レ・ミ）でゆったり。奥州街道を南へ歩く
+const KENCHU_FIELD_LEAD = [
+  [67, 2], [69, 2], [71, 2], [74, 2],
+  [76, 4], [74, 2], [71, 2],
+  [69, 2], [71, 2], [69, 2], [67, 2],
+  [69, 8],
+  [74, 2], [76, 2], [79, 2], [76, 2],
+  [74, 4], [71, 2], [69, 2],
+  [71, 2], [69, 2], [67, 2], [64, 2],
+  [67, 8],
+];
+// 県中の道中の戦い：同じ音階で速く、高い所まで駆け上がる
+const KENCHU_BATTLE_LEAD = [
+  [74, 1], [76, 1], [79, 2], [76, 1], [74, 1], [71, 2],
+  [69, 2], [71, 1], [74, 1], [76, 4],
+  [79, 1], [81, 1], [83, 2], [81, 1], [79, 1], [76, 2],
+  [74, 2], [76, 2], [79, 4],
+  [81, 1], [79, 1], [76, 2], [74, 1], [76, 1], [79, 2],
+  [81, 2], [83, 2], [86, 4],
+  [83, 1], [81, 1], [79, 2], [76, 1], [74, 1], [71, 2],
+  [74, 8],
+];
+// 3章のボス8曲（10/4・art_src では作らず ここに直接）
+// 蛇骨地蔵：都節（ミ・ファ・ラ・シ・ド）で沼の底から うねる
+const JAKOTSU_LEAD = [[64, 2], [65, 2], [69, 4], [71, 2], [72, 2], [71, 2], [69, 2], [65, 4], [64, 4], [64, 8], [76, 2], [77, 2], [76, 2], [72, 2], [71, 4], [69, 2], [71, 2], [72, 2], [71, 2], [69, 2], [65, 2], [64, 8]];
+// 三春駒：陽音階で 駆ける 馬（ひづめの 3連の 刻み）
+const MIHARUGOMA_LEAD = [[74, 1], [76, 1], [79, 2], [81, 2], [79, 2], [76, 2], [74, 2], [71, 4], [74, 1], [76, 1], [79, 2], [83, 2], [81, 2], [79, 8], [81, 1], [83, 1], [86, 2], [83, 2], [81, 2], [79, 2], [76, 2], [74, 4], [76, 2], [79, 2], [76, 2], [71, 2], [74, 8]];
+// 大多鬼丸：律音階で 太く 重く（山の 主）
+const OTAKIMARU_LEAD = [[62, 4], [64, 2], [67, 2], [69, 4], [67, 2], [64, 2], [62, 2], [64, 2], [67, 2], [69, 2], [67, 8], [74, 4], [72, 2], [69, 2], [67, 4], [69, 2], [72, 2], [74, 2], [72, 2], [69, 2], [67, 2], [62, 8]];
+// 和泉式部と猫：都節で さびしく 呼ぶ
+const NEKONAKI_LEAD = [[76, 4], [77, 2], [76, 2], [72, 8], [71, 2], [72, 2], [71, 2], [69, 2], [64, 8], [69, 2], [71, 2], [72, 2], [76, 2], [77, 4], [76, 4], [72, 2], [71, 2], [69, 2], [71, 2], [64, 8]];
+// 天狗のいけにえ：陰音階で 速く 舞う 風
+const TENGU_LEAD = [[81, 1], [82, 1], [81, 1], [77, 1], [76, 2], [74, 2], [76, 1], [77, 1], [81, 2], [82, 4], [86, 1], [84, 1], [82, 1], [81, 1], [77, 2], [76, 2], [74, 8], [69, 1], [70, 1], [74, 2], [76, 2], [77, 2], [81, 2], [82, 2], [81, 4], [77, 1], [76, 1], [74, 2], [70, 2], [69, 2], [74, 8]];
+// 託善和尚：木魚の 刻みに 読経の ような 長い 音
+const TAKUZEN_LEAD = [[67, 4], [69, 4], [72, 4], [69, 4], [67, 2], [69, 2], [72, 2], [74, 2], [72, 8], [76, 4], [74, 4], [72, 4], [74, 4], [72, 2], [69, 2], [67, 2], [64, 2], [67, 8]];
+// カッパのわび証文：陽音階で とぼけて 跳ねる
+const KAPPA_LEAD = [[72, 1], [72, 1], [74, 2], [76, 1], [79, 1], [76, 2], [74, 2], [72, 2], [69, 4], [72, 1], [74, 1], [76, 2], [79, 2], [81, 2], [79, 8], [81, 1], [79, 1], [76, 2], [74, 1], [76, 1], [79, 2], [76, 2], [74, 2], [72, 4], [69, 2], [72, 2], [74, 2], [69, 2], [72, 8]];
+// 安珍と清姫：都節で 激しく 燃え上がる（章ボス）
+const KIYOHIME_LEAD = [[76, 1], [77, 1], [81, 2], [83, 1], [84, 1], [83, 2], [81, 2], [77, 2], [76, 4], [88, 1], [89, 1], [88, 2], [84, 1], [83, 1], [81, 2], [83, 8], [84, 2], [83, 2], [81, 2], [77, 2], [76, 2], [77, 2], [81, 4], [83, 1], [81, 1], [77, 2], [76, 2], [71, 2], [76, 8]];
 // 第九話 飴買い幽霊：都節（ミ・ファ・ラ・シ・ド）・夜の 墓地を 静かに・もの悲しく
 const AMEKAI_LEAD = [
   [76, 3], [77, 1], [81, 4],
@@ -682,6 +771,113 @@ const TRACKS = {
           const s = t0 + (bar * 8 + i) * eighth;
           tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
           if (i % 4 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  // ---- 3章「県中・県南」（10/4）ボス8曲 ----
+  jakotsu: {
+    lead: JAKOTSU_LEAD, tempo: 112, leadType: 'triangle', leadVol: 0.17,
+    bass(t0, eighth) {
+      const ROOTS = [40, 41, 45, 40, 45, 41, 40, 40];
+      ROOTS.forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 3.8, { type: 'triangle', vol: 0.2 });
+        tone(N(r - 5), t0 + (bar * 8 + 4) * eighth, eighth * 3.8, { type: 'triangle', vol: 0.13 });
+      });
+    },
+  },
+  miharugoma: {
+    lead: MIHARUGOMA_LEAD, tempo: 156, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      const ROOTS = [43, 43, 40, 43, 45, 43, 40, 43];
+      ROOTS.forEach((r, bar) => {
+        [0, 1, 2, 4, 5, 6].forEach((k, i) => tone(N(i % 3 === 0 ? r - 12 : r), t0 + (bar * 8 + k) * eighth, eighth * 0.6, { type: 'triangle', vol: 0.2 }));
+      });
+    },
+  },
+  otakimaru: {
+    lead: OTAKIMARU_LEAD, tempo: 128, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      const ROOTS = [38, 38, 43, 38, 45, 43, 38, 38];
+      ROOTS.forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.21 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.06, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  nekonaki: {
+    lead: NEKONAKI_LEAD, tempo: 96, leadType: 'triangle', leadVol: 0.17,
+    bass(t0, eighth) {
+      const ROOTS = [45, 41, 45, 40, 45, 41, 40, 40];
+      ROOTS.forEach((r, bar) => tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 7.5, { type: 'triangle', vol: 0.16 }));
+    },
+  },
+  tengu: {
+    lead: TENGU_LEAD, tempo: 148, leadType: 'square', leadVol: 0.09,
+    bass(t0, eighth) {
+      const ROOTS = [38, 34, 38, 41, 38, 34, 33, 38];
+      ROOTS.forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.21 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.06, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  takuzen: {
+    lead: TAKUZEN_LEAD, tempo: 100, leadType: 'triangle', leadVol: 0.16,
+    bass(t0, eighth) {
+      const ROOTS = [43, 43, 48, 43, 45, 43, 40, 43];
+      ROOTS.forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 7.5, { type: 'triangle', vol: 0.15 });
+        [0, 2, 4, 6].forEach((k) => noise(t0 + (bar * 8 + k) * eighth, 0.04, { vol: 0.12, from: 900, to: 600 }));
+      });
+    },
+  },
+  kappa: {
+    lead: KAPPA_LEAD, tempo: 136, leadType: 'square', leadVol: 0.09,
+    bass(t0, eighth) {
+      const ROOTS = [48, 45, 48, 43, 48, 45, 43, 48];
+      ROOTS.forEach((r, bar) => {
+        [0, 1, 2, 4, 5, 6].forEach((k, i) => tone(N(i % 3 === 0 ? r - 12 : r), t0 + (bar * 8 + k) * eighth, eighth * 0.6, { type: 'triangle', vol: 0.2 }));
+      });
+    },
+  },
+  kiyohime: {
+    lead: KIYOHIME_LEAD, tempo: 158, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      const ROOTS = [40, 41, 40, 45, 40, 41, 47, 40];
+      ROOTS.forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.21 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.06, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  // ---- 3章「県中・県南」（10/4）----
+  kenchuField: {
+    lead: KENCHU_FIELD_LEAD, tempo: 92, leadType: 'triangle', leadVol: 0.16,
+    bass(t0, eighth) {
+      [43, 45, 47, 45, 50, 47, 45, 43].forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 3.8, { type: 'triangle', vol: 0.18 });
+        tone(N(r - 5), t0 + (bar * 8 + 4) * eighth, eighth * 3.8, { type: 'triangle', vol: 0.12 });
+      });
+    },
+  },
+  kenchuBattle: {
+    lead: KENCHU_BATTLE_LEAD, tempo: 150, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [43, 45, 47, 43, 45, 50, 47, 43].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
         });
       });
     },

@@ -41,6 +41,12 @@ export const EQUIP = {
   matagiyari: { name: '狩り槍', slot: 'weapon', who: ['kariudo'], atk: 29, price: 560 },
   ginshakujo: { name: '銀の錫杖', slot: 'weapon', who: ['sou', 'yukei'], atk: 21, price: 400 },
   yoroi: { name: '大鎧', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 22, price: 520 },
+  // 3章 県中・県南（10/4）＝郡山・須賀川・白河の刀屋
+  ootachi: { name: '大太刀', slot: 'weapon', who: ['tabi'], atk: 44, price: 1000 },
+  nagamaki: { name: '長巻', slot: 'weapon', who: ['shiori'], atk: 32, price: 760 },
+  oomiyari: { name: '大身槍', slot: 'weapon', who: ['kariudo'], atk: 38, price: 880 },
+  kinshakujo: { name: '金の錫杖', slot: 'weapon', who: ['sou', 'yukei'], atk: 28, price: 640 },
+  gusoku: { name: '当世具足', slot: 'armor', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], def: 30, price: 820 },
   yakuyoke: { name: '厄除け守', slot: 'charm', who: ['tabi', 'shiori', 'kariudo', 'sou', 'yukei'], ward: true, price: 25 }, // 呪い・取り憑きを半分はね返す
 };
 
@@ -112,4 +118,10 @@ export const EXPECT_GEAR = {
   12: { tabi: { weapon: 'meito', armor: 'kusari', charm: null }, shiori: { weapon: 'hokonaginata', armor: 'kusari', charm: null }, kariudo: { weapon: 'matagiyari', armor: 'kusari', charm: null }, sou: { weapon: 'ginshakujo', armor: 'kusari', charm: null } },
   13: { tabi: { weapon: 'meito', armor: 'yoroi', charm: null }, shiori: { weapon: 'hokonaginata', armor: 'kusari', charm: null }, kariudo: { weapon: 'matagiyari', armor: 'yoroi', charm: null }, sou: { weapon: 'ginshakujo', armor: 'kusari', charm: null } },
   14: { tabi: { weapon: 'meito', armor: 'yoroi', charm: null }, shiori: { weapon: 'hokonaginata', armor: 'yoroi', charm: null }, kariudo: { weapon: 'matagiyari', armor: 'yoroi', charm: null }, sou: { weapon: 'ginshakujo', armor: 'yoroi', charm: null }, yukei: { weapon: 'ginshakujo', armor: 'yoroi', charm: null } },
+  // 15〜19＝3章 県中・県南（10/4・仲間は 武士・しおり・猟師・祐慶）。15＝蛇骨地蔵と三春駒（県北の品のまま）・16＝大多鬼丸と猫（郡山の得物）・17＝天狗と託善（具足を2人）・18〜19＝カッパと清姫（具足を4人）
+  15: { tabi: { weapon: 'meito', armor: 'yoroi', charm: null }, shiori: { weapon: 'hokonaginata', armor: 'yoroi', charm: null }, kariudo: { weapon: 'matagiyari', armor: 'yoroi', charm: null }, yukei: { weapon: 'ginshakujo', armor: 'yoroi', charm: null } },
+  16: { tabi: { weapon: 'ootachi', armor: 'yoroi', charm: null }, shiori: { weapon: 'nagamaki', armor: 'yoroi', charm: null }, kariudo: { weapon: 'oomiyari', armor: 'yoroi', charm: null }, yukei: { weapon: 'kinshakujo', armor: 'yoroi', charm: null } },
+  17: { tabi: { weapon: 'ootachi', armor: 'gusoku', charm: null }, shiori: { weapon: 'nagamaki', armor: 'yoroi', charm: null }, kariudo: { weapon: 'oomiyari', armor: 'gusoku', charm: null }, yukei: { weapon: 'kinshakujo', armor: 'yoroi', charm: null } },
+  18: { tabi: { weapon: 'ootachi', armor: 'gusoku', charm: null }, shiori: { weapon: 'nagamaki', armor: 'gusoku', charm: null }, kariudo: { weapon: 'oomiyari', armor: 'gusoku', charm: null }, yukei: { weapon: 'kinshakujo', armor: 'gusoku', charm: null } },
+  19: { tabi: { weapon: 'ootachi', armor: 'gusoku', charm: null }, shiori: { weapon: 'nagamaki', armor: 'gusoku', charm: null }, kariudo: { weapon: 'oomiyari', armor: 'gusoku', charm: null }, yukei: { weapon: 'kinshakujo', armor: 'gusoku', charm: null } },
 };

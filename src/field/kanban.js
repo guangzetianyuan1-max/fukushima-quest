@@ -2,11 +2,12 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=148';
-import { SOMA_ROWS } from './soma_map.js?v=148';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=148';
+import { IWAKI_ROWS } from './iwaki_map.js?v=149';
+import { SOMA_ROWS } from './soma_map.js?v=149';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=149';
+import { KENCHU_ROWS } from './kenchu_map.js?v=149';
 
-const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS };
+const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
 
 // near＝目印の字（地図に1つだけの字）／at＝目印の座標（灯台など）
@@ -27,6 +28,11 @@ export const KANBAN_DEFS = [
   { map: 'kenpoku', near: 'U', kind: 'meisho', name: '信夫山', lines: ['福島の 町の なかに ある 山。'] },
   { map: 'kenpoku', near: 'W', kind: 'shiro', name: '二本松城跡（霞ヶ城）', lines: ['石垣の 残る 城あと。いまは 霞ヶ城公園。', '春は 桜の 名所。'] },
   { map: 'kenpoku', near: 'X', kind: 'michi', name: 'この先 相馬', lines: ['東へ 山を こえれば 相馬の 里。'] },
+  { map: 'kenpoku', near: 'I', kind: 'michi', name: 'この先 郡山', lines: ['南へ 行けば 郡山・須賀川・白河。'] },
+  // 3章 県中・県南（10/4）
+  { map: 'kenchu', near: 'I', kind: 'michi', name: 'この先 二本松', lines: ['北へ 行けば 二本松の 城下。'] },
+  { map: 'kenchu', near: 'm', kind: 'hana', name: '三春滝桜', lines: ['樹齢 千年を こえると いわれる しだれ桜。国の 天然記念物。'] },
+  { map: 'kenchu', near: 'v', kind: 'shiro', name: '白河小峰城跡', lines: ['白河藩の 城あと。石垣と 三重櫓が ある。'] },
 ];
 
 // 近い順（1マス先の8方向 → 2マス先）。置ける字は 草地（.）を先に、なければ林（T）・山（^）＝道・浜・川はふさがない

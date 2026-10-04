@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=148';
+import { makeRng } from '../battle/rules.js?v=149';
 
 export const TILE = 16;
 
@@ -93,6 +93,11 @@ export const FIELD_TERRAIN = {
   X: ['road', true], A: ['boss', true], F: ['boss', true], C: ['boss', true], V: ['boss', true], B: ['boss', true],
   U: ['town_taira', true], W: ['town_taira', true], k: ['grass', true],
   8: ['mist', false], 9: ['mist', false], 0: ['mist', false], '%': ['mist', false], '&': ['mist', false],
+  // 10/4 3章 県中・県南：I＝県北⇔県中の口・h／d／t／p／z＝蛇骨地蔵／大多鬼丸／天狗／カッパ／清姫・g／s／v＝郡山／須賀川／白河の町
+  //   m／n／q＝三春駒／和泉式部の猫（猫啼温泉）／託善和尚もボス（10/4 本人「戦う形で」）・a＝松明あかし・( ) [ ] {＝もやの壁
+  I: ['road', true], h: ['boss', true], d: ['boss', true], t: ['boss', true], p: ['boss', true], z: ['boss', true],
+  g: ['town_taira', true], s: ['town_taira', true], v: ['town_taira', true], m: ['boss', true], n: ['boss', true], q: ['boss', true], a: ['grass', true],
+  '(': ['mist', false], ')': ['mist', false], '[': ['mist', false], ']': ['mist', false], '{': ['mist', false], '}': ['mist', false], '<': ['mist', false], '>': ['mist', false],
 };
 export const TOWN_TERRAIN = {
   '.': ['grass', true], '=': ['stone', true], ',': ['sand', true], '#': ['wall', false], _: ['floor', true],

@@ -331,13 +331,140 @@ export const TOWNS = {
       ] },
     ],
   },
+  // ---- 3章 県中・県南（10/4）。町の人の話＝vault 日本昔話/2026-10-04-調査-福島昔話クエスト3章県中県南.md の「町で話せる事実」（確かめた物だけ）----
+  koriyama: {
+    name: '郡山',
+    shrineName: '郡山の 神社',
+    shrineLine: '郡山の 神社で 旅の 無事を お願いしましょう。東の 三春に、木の 馬の 話が 伝わっているの。',
+    props: [
+      { img: 'jinja', x: 5, y: 2, w: 3, h: 2 },
+      { img: 'yadoya', x: 0, y: 7, w: 4, h: 2 }, { img: 'counter', x: 1, y: 9, w: 2, h: 1 },
+      { img: 'mise', x: 9, y: 7, w: 4, h: 2 }, { img: 'counter', x: 10, y: 9, w: 2, h: 1 },
+      { img: 'toro', x: 4, y: 5, w: 1, h: 1 }, { img: 'toro', x: 8, y: 5, w: 1, h: 1 },
+    ],
+    rows: [
+      'TTTTTTTTTTTTT',
+      'TTTTTTTTTTTTT',
+      'TTTTTzzzTTTTT',
+      'TTTT.zzz.TTTT',
+      'TTT...=...TTT',
+      'T.....t.....T',
+      'T.....=.....T',
+      '####..=..####',
+      '#__#..=..#__#',
+      '#cc#..=..#cc#',
+      '.===========.',
+      'T.....=.....T',
+      'T.....=.....T',
+      'TTTTTTxTTTTTT',
+    ],
+    npcs: [
+      { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 郡山の 神社へ。'] },
+      { x: 1, y: 8, look: 'okami', role: 'inn', price: 26, lines: ['いらっしゃいませ。郡山の 宿で ございます。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['郡山の 刀屋だ。大滝根山の 主に 負けない 得物を そろえて いけ。'] },
+      { x: 9, y: 12, look: 'shonin', lines: [
+        '郡山は 鯉の 町さ。鯉を 育てる 量は、全国の 市町村で いちばんと 言われて いる。',
+        '使われなく なった ため池と、糸を とる 蚕の さなぎを 餌に して、鯉を 育てて きたんだ。',
+      ] },
+      { x: 3, y: 11, look: 'toshiyori', lines: [
+        '猪苗代湖の 水を 引いた 安積疏水は、国が はじめて 手がけた 疏水じゃ。いまは 日本遺産に なって おる。',
+      ] },
+      { x: 10, y: 5, look: 'musume', lines: [
+        '北の 日和田の 西方寺には、大蛇の 骨で 作った お地蔵さまが あるそうよ。蛇骨地蔵と いうの。',
+      ] },
+    ],
+  },
+  sukagawa: {
+    name: '須賀川',
+    shrineName: '須賀川の 神社',
+    shrineLine: '須賀川の 神社で 旅の 無事を お願いしましょう。町の 東の 狸森に、ふしぎな お坊さまの 話が あるの。',
+    props: [
+      { img: 'jinja', x: 5, y: 2, w: 3, h: 2 },
+      { img: 'mise', x: 0, y: 7, w: 4, h: 2 }, { img: 'counter', x: 1, y: 9, w: 2, h: 1 },
+      { img: 'yadoya', x: 9, y: 7, w: 4, h: 2 }, { img: 'counter', x: 10, y: 9, w: 2, h: 1 },
+      { img: 'toro', x: 4, y: 5, w: 1, h: 1 }, { img: 'toro', x: 8, y: 5, w: 1, h: 1 },
+    ],
+    rows: [
+      'TTTTTTTTTTTTT',
+      'TTTTTTTTTTTTT',
+      'TTTTTzzzTTTTT',
+      'TTTT.zzz.TTTT',
+      'TTT...=...TTT',
+      'T.....t.....T',
+      'T.....=.....T',
+      '####..=..####',
+      '#__#..=..#__#',
+      '#cc#..=..#cc#',
+      '.===========.',
+      'T.....=.....T',
+      'T.....=.....T',
+      'TTTTTTxTTTTTT',
+    ],
+    npcs: [
+      { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 須賀川の 神社へ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、具足を そろえて いけ。'] },
+      { x: 11, y: 8, look: 'okami', role: 'inn', price: 28, lines: ['いらっしゃいませ。須賀川の 宿で ございます。'] },
+      { x: 3, y: 11, look: 'toshiyori', lines: [
+        '須賀川の 松明あかしは、四百年 あまり 続く 火祭りじゃ。',
+        'むかし 須賀川城が 攻め落とされた ときに 亡くなった 人たちを、松明の 火で とむらうのじゃよ。',
+      ] },
+      { x: 9, y: 12, look: 'shonin', lines: [
+        '須賀川の 牡丹園は 国の 名勝さ。二百五十年 あまり 前、薬に するため 牡丹を 植えたのが はじまりなんだ。',
+      ] },
+      { x: 10, y: 5, look: 'musume', lines: [
+        '狸森の 託善和尚さまは、とても かしこい お坊さまだったそうよ。……でも、その 正体は。',
+      ] },
+    ],
+  },
+  shirakawa: {
+    name: '白河',
+    shrineName: '白河の 神社',
+    shrineLine: '白河の 神社で 旅の 無事を お願いしましょう。安珍堂は 町の 南東よ。',
+    props: [
+      { img: 'jinja', x: 5, y: 2, w: 3, h: 2 },
+      { img: 'yadoya', x: 0, y: 7, w: 4, h: 2 }, { img: 'counter', x: 1, y: 9, w: 2, h: 1 },
+      { img: 'mise', x: 9, y: 7, w: 4, h: 2 }, { img: 'counter', x: 10, y: 9, w: 2, h: 1 },
+      { img: 'toro', x: 4, y: 5, w: 1, h: 1 }, { img: 'toro', x: 8, y: 5, w: 1, h: 1 },
+    ],
+    rows: [
+      'TTTTTTTTTTTTT',
+      'TTTTTTTTTTTTT',
+      'TTTTTzzzTTTTT',
+      'TTTT.zzz.TTTT',
+      'TTT...=...TTT',
+      'T.....t.....T',
+      'T.....=.....T',
+      '####..=..####',
+      '#__#..=..#__#',
+      '#cc#..=..#cc#',
+      '.===========.',
+      'T.....=.....T',
+      'T.....=.....T',
+      'TTTTTTxTTTTTT',
+    ],
+    npcs: [
+      { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 白河の 神社へ。'] },
+      { x: 1, y: 8, look: 'okami', role: 'inn', price: 30, lines: ['いらっしゃいませ。白河の 宿で ございます。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['白河の 刀屋だ。安珍堂の 炎に 負けるなよ。'] },
+      { x: 3, y: 11, look: 'toshiyori', lines: [
+        '小峰城は、南北朝の ころに 結城親朝が 築き、江戸の はじめに 白河藩の 城として 仕上がった 城じゃ。',
+        '南の 南湖は、白河藩主 松平定信が 造った 公園。日本で いちばん 古い 公園とも 言われて おる。',
+      ] },
+      { x: 9, y: 12, look: 'shonin', lines: [
+        '白河の 関は、むかしの 奥州の 三つの 関の ひとつ。芭蕉ほか、たくさんの 旅人が 訪れた 所さ。',
+      ] },
+      { x: 10, y: 5, look: 'musume', lines: [
+        '安珍さまは この 白河の 生まれと 言われて いるの。命日には、安珍堂の 前で 念仏踊りを 奉納して とむらうのよ。',
+      ] },
+    ],
+  },
 };
 
 // 歩く地図の字 → 町（Q＝小高・M＝相馬は 1章の地図「相馬」・U＝福島・W＝二本松は 2章の地図「県北」）
-export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: 'nakamura', U: 'fukushima', W: 'nihonmatsu' };
+export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: 'nakamura', U: 'fukushima', W: 'nihonmatsu', g: 'koriyama', s: 'sukagawa', v: 'shirakawa' }; // g／s／v＝3章 県中・県南（10/4）
 
 // 町に入った瞬間の毛筆の名前（10/4 本人「二本松に入るとイラストに『二本松』の文字が無い」＝表が1章の5つで止まっていた）
 // 表に無い町も「○○の町」で必ず出す（試験 tests/look.test.js）
-export const TOWN_CARD_NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港', odaka: '小高の町', nakamura: '相馬の城下町', fukushima: '福島の城下町', nihonmatsu: '二本松の城下町' };
+export const TOWN_CARD_NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港', odaka: '小高の町', nakamura: '相馬の城下町', fukushima: '福島の城下町', nihonmatsu: '二本松の城下町', koriyama: '郡山の町', sukagawa: '須賀川の町', shirakawa: '白河の城下町' };
 export const townCardName = (id) => TOWN_CARD_NAME[id] ?? `${TOWNS[id]?.name ?? ''}の町`;
 

@@ -1,8 +1,8 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=148';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=148';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=149';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=149';
 
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
@@ -109,6 +109,12 @@ export function fieldLook(game, ch, x, y, map = 'field') {
     case 'U': return { ground: 'grass', objs: ['icon_yadoya'] }; // 福島の町（信夫山のふもと・10/4 2章）
     case 'W': return { ground: 'grass', objs: ['shiro'] }; // 二本松の町（城下・10/4 2章）
     case 'k': return { ground: 'grass', objs: ['toro'] }; // 二本松の提灯祭り（イベント・10/4）
+    // 3章 県中・県南（10/4）
+    case 'I': return { ground: 'road', objs: ['sekisho'] }; // 地図の口（県北⇔県中）
+    case 'g': return { ground: 'grass', objs: ['icon_yadoya'] }; // 郡山の町（奥州街道の宿場）
+    case 's': return { ground: 'grass', objs: ['icon_mise'] }; // 須賀川の町
+    case 'v': return { ground: 'grass', objs: ['shiro'] }; // 白河の町（小峰城の城下）
+    case 'a': return { ground: 'grass', objs: ['toro'] }; // 須賀川の松明あかし（イベント）
     default: return { ground: 'grass', objs: [] };
   }
 }

@@ -9,7 +9,9 @@ const AREA = {
   field: { north: 400, south: 545, coast: [[400, 272], [440, 270], [480, 265], [500, 252], [520, 237], [545, 228]] },
   soma: { north: 65, south: 235, coast: [[65, 270], [100, 266], [140, 270], [160, 278], [200, 282], [235, 280]] },
   // 県北（kenpoku・10/4 2章）＝海の無い内陸。猪苗代湖の北東・阿武隈高地の西の谷（福島〜二本松）を箱で置く（36×50 → x150〜215・y95〜250）
-  kenpoku: { box: [150, 95, 215, 250] },
+  kenpoku: { box: [150, 95, 215, 250], w: 36, h: 50 },
+  // 県中・県南（kenchu・10/4 3章）＝県北の南。阿武隈高地の西の谷を 郡山〜白河へ下る（40×58 → x125〜225・y255〜470）
+  kenchu: { box: [125, 255, 225, 470], w: 40, h: 58 },
 };
 
 function coastX(coast, py) {
@@ -30,7 +32,7 @@ export function mapPointOf(game) {
   const a = AREA[map];
   if (a.box) {
     const [x0, y0, x1, y1] = a.box;
-    return { x: Math.round(x0 + (x1 - x0) * p.x / 35), y: Math.round(y0 + (y1 - y0) * p.y / (ROWS - 1)) };
+    return { x: Math.round(x0 + (x1 - x0) * p.x / (a.w - 1)), y: Math.round(y0 + (y1 - y0) * p.y / (a.h - 1)) };
   }
   const cell = (a.south - a.north) / (ROWS - 1);
   const py = a.north + p.y * cell;

@@ -2,36 +2,36 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=148';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=148';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=148';
-import { RIDERS } from '../data/nomaoi_assets.js?v=148';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=148';
-import { TILE } from '../field/tiles.js?v=148';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=148';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=148';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=148';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=148';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=148';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=148';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=148';
+import { EPISODES } from '../data/episodes.js?v=149';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=149';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=149';
+import { RIDERS } from '../data/nomaoi_assets.js?v=149';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=149';
+import { TILE } from '../field/tiles.js?v=149';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=149';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=149';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=149';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=149';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=149';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=149';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=149';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=148';
-import { membersOf } from '../battle/levels.js?v=148';
-import { COMPANIONS } from '../data/companions.js?v=148';
-import { ICON_IDS } from '../data/icons.js?v=148';
-import { FACE_IDS } from '../data/faces.js?v=148';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=148';
-import { mapPointOf } from '../field/mapcard.js?v=148';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=148';
-import { makeRng } from '../battle/rules.js?v=148';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=148';
-import { buyEquip, partyView } from '../field/game.js?v=148';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=148';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=148';
+} from '../field/game.js?v=149';
+import { membersOf } from '../battle/levels.js?v=149';
+import { COMPANIONS } from '../data/companions.js?v=149';
+import { ICON_IDS } from '../data/icons.js?v=149';
+import { FACE_IDS } from '../data/faces.js?v=149';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=149';
+import { mapPointOf } from '../field/mapcard.js?v=149';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=149';
+import { makeRng } from '../battle/rules.js?v=149';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=149';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka } from '../field/game.js?v=149';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=149';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=149';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -79,6 +79,15 @@ const WALL_HINT = {
   0: '信夫山の ご坊狐を 元に もどせば、山の 奥への もやも 晴れるはず。',
   '%': '信夫山の ムカデと オロチを しずめないと、南の 川俣へは 行けないわ。',
   '&': '川俣の へっぴり嫁さんを 迎えて あげたら、二本松への もやも 晴れると 思う。',
+  // 3章 県中・県南（10/4）
+  '(': '安達ヶ原の 鬼婆を しずめないと、南の 郡山へは 行けないわ。',
+  ')': '日和田の 西方寺の 大蛇を しずめたら、郡山への もやも 晴れると 思う。',
+  '}': '三春の 木の 馬たちを 元に もどせば、大滝根山への もやも 晴れるはず。',
+  '[': '大滝根山の 大多鬼丸を 元に もどせば、南の 石川への もやも 晴れるはず。',
+  '<': '猫啼の 泉の 猫を 元に もどしたら、東の 鮫川への もやも 晴れると 思う。',
+  ']': '鮫川の 天狗を しずめないと、西の 須賀川へは 行けないわ。',
+  '>': '狸森の 託善和尚さまを 元に もどせば、天栄の 谷への もやも 晴れるはず。',
+  '{': '天栄の カッパを 元に もどしたら、白河への もやも 晴れると 思う。',
 };
 // ボスを元に戻して歩く地図へ帰ったときの、しおりの一言
 const CLEARED_LINES = {
@@ -96,13 +105,27 @@ const CLEARED_LINES = {
   gobou: ['信夫山の 奥への もやが 晴れたわ！', '北の 坂と 黒沼に、大きな ムカデと オロチが いるの。どちらも「信夫山の 主」を 名乗っているそうよ。'],
   mukade: ['南の 川俣への 道の もやが 晴れたわ！', '川俣の 村に、何かを こらえている お嫁さんが いるそうよ。'],
   heppiri: ['二本松への 道の もやが 晴れたわ！', '二本松の 町で 支度を しましょう。安達ヶ原の 観世寺の 岩屋に、鬼婆が いるの……おそろしく 強いそうよ。'],
-  onibaba: ['これで 県北の 昔話は みんな 元に もどったわ。', '2章「県北」の 旅は ここまで。つづきは 準備中です。'],
+  onibaba: ['これで 県北の 昔話は みんな 元に もどったわ。', '二本松の 南の 口の もやが 晴れた！ 3章「県中・県南」へ 行けるわ。'],
+  // 3章 県中・県南（10/4）
+  jakotsu: ['郡山への 街道の もやが 晴れたわ！', '郡山の 町で 支度を しましょう。東の 三春に、木の 馬の 話が 伝わっているの。'],
+  miharugoma: ['大滝根山への 山道の もやが 晴れたわ！', '三春駒の 術を 授かったわ。この 木の 馬たちが、大多鬼丸の 弱みに なるの。'],
+  otakimaru: ['南の 石川への 道の もやが 晴れたわ！', '石川の 猫啼の 泉に、鳴きつづける 猫が いるそうよ。'],
+  nekonaki: ['東の 鮫川への もやが 晴れたわ！', '猫啼の 湯に つかれるように なったわ。鮫川の 山奥には、天狗が 出るそうよ。'],
+  tengu: ['西の 須賀川への 道の もやが 晴れたわ！', '須賀川の 町で 支度を しましょう。町の 東の 狸森に、ふしぎな お坊さまの 話が あるの。'],
+  takuzen: ['天栄の 谷への もやが 晴れたわ！', '託善和尚さまが 教えてくれたわ。天栄の カッパは、石の 証文を いちばん こわがるって。'],
+  kappa: ['南の 白河への 道の もやが 晴れたわ！', '白河の 町で 支度を しましょう。安珍堂に……おそろしい ものが 待っているの。'],
+  kiyohime: ['これで 県中と 県南の 昔話は みんな 元に もどったわ。', '3章「県中・県南」の 旅は ここまで。つづきは 準備中です。'],
 };
 // いわきの北の口から 相馬へ入ったとき（1章の始まり）
 const CROSS_KENPOKU = [
   { text: '虎捕山を 越えて 西へ。ここから 2章「県北」。' },
   { speaker: 'しおり', text: '霊山の ふもとよ。夜に 飴を 買いに くる 女の 人の 話が 伝わっているの。' },
   { speaker: 'しおり', text: '県北の 敵は 相馬より もっと 強いわ。福島の 町で 支度を ととのえましょう。' },
+];
+const CROSS_KENCHU = [
+  { text: '二本松を 南へ。ここから 3章「県中・県南」。' },
+  { speaker: 'しおり', text: '日和田の 西方寺には、大蛇の 骨で 作った お地蔵さまの 話が 伝わっているの。' },
+  { speaker: 'しおり', text: 'ここの 敵は 県北より もっと 強いわ。郡山の 町で 支度を ととのえましょう。' },
 ];
 const CROSS_SOMA = [
   { text: '浜街道を 北へ。ここから 1章「相馬」。' },
@@ -138,7 +161,7 @@ const NOMAOI_LINES = {
 };
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, KANBAN.map((k) => [k.name, k.lines]), '立て札', WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, KANBAN.map((k) => [k.name, k.lines]), '立て札', WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, CROSS_KENCHU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
@@ -281,7 +304,8 @@ export class FieldScene extends Phaser.Scene {
       const to = this.g.justCrossed;
       this.setGame({ ...this.g, justCrossed: null });
       if (to === 'soma' && !this.g.cleared.sumitora) this.time.delayedCall(350, () => this.showMessages(CROSS_SOMA));
-      if (to === 'kenpoku') this.time.delayedCall(350, () => this.showMessages(CROSS_KENPOKU));
+      if (to === 'kenpoku' && !this.g.cleared.onibaba) this.time.delayedCall(350, () => this.showMessages(CROSS_KENPOKU));
+      if (to === 'kenchu' && !this.g.cleared.kiyohime) this.time.delayedCall(350, () => this.showMessages(CROSS_KENCHU));
     } else if (this.g.justCleared) {
       const id = this.g.justCleared;
       // ボスを元に戻したあと、昔話の味方が加わる回はその台詞も続ける（afterWin が justJoined を付ける）
@@ -381,7 +405,7 @@ export class FieldScene extends Phaser.Scene {
   // 歩く地図の曲（本人 10/3「章ごとにBGMは新しく」）＝いわき（序章）は始まりの曲・相馬（1章）は somaField。町の中は その町のある地図の曲
   fieldBgm() {
     const map = isField(this.mapId) ? this.mapId : this.g.fieldMap ?? 'field';
-    return { soma: 'somaField', kenpoku: 'kenpokuField' }[map] ?? 'title';
+    return { soma: 'somaField', kenpoku: 'kenpokuField', kenchu: 'kenchuField' }[map] ?? 'title';
   }
 
   // ---- 町に入った瞬間の一枚絵（1.3秒・さわると飛ばす）----
@@ -510,7 +534,7 @@ export class FieldScene extends Phaser.Scene {
     // 作り直しで消えた札の字（scene が無い）には触らない。⛔isActive() で見ると、場面を始め直した直後（create の中）も止まって見えて札が空のままだった（10/2）
     if (!this.statusText?.scene) return;
     const p = this.g.party;
-    const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬', kenpoku: '県北' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
+    const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬', kenpoku: '県北', kenchu: '県中' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
     // 2人ずつ1行（4人なら2行）・いちばん下の行に Lv と場所（右に所持金）
     // ⭐本人 10/4「憑依されると…分かりにくい。HPを赤字に」＝1人ずつ 名前（白）・印（色つき：憑＝赤／呪＝紫／霊＝水色）・HP（憑依は赤）・術 を別の字で並べる
     const ids = membersOf(this.g);
@@ -808,6 +832,12 @@ export class FieldScene extends Phaser.Scene {
           this.cameras.main.fadeOut(400, 0, 0, 0);
           this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('battle', { index, fromField: true }));
         });
+      } else if (ch === 'a') {
+        sfx('select');
+        this.taimatsuTalk(); // 須賀川の松明あかし（3章・10/4）
+      } else if (ch === 'n' && this.g.cleared.nekonaki) {
+        sfx('select');
+        this.onsenMenu(); // 猫啼温泉（3章・和泉式部の猫を元に戻すと湯につかれる）
       }
     } else if (ch === 'x') {
       this.goto(leaveTown(this.g));
@@ -899,6 +929,40 @@ export class FieldScene extends Phaser.Scene {
       })],
       ['やめる', () => this.showMessages([{ text: '師範「腕に 覚えが できたら、いつでも 来い。」' }])],
     ]));
+  }
+
+  // 須賀川の松明あかし（3章・10/4）。由来＝vault 調査ノートの6（須賀川市・福島県の公式）。⚠滅ぼした側・滅ぼされた側を 善し悪しで語らない
+  taimatsuTalk() {
+    const lines = [
+      '五老山の 世話役「ここは 松明あかしの 山だ。毎年 十一月の 第二土曜に、大きな 松明に 火を つける。」',
+      '世話役「むかし 須賀川城が 攻め落とされた ときに 亡くなった 人たちを、松明の 火で とむらうんだ。四百年 あまり 続いて いる。」',
+    ];
+    this.showMessages(lines.map((text) => ({ text })), () => this.showMenu('御神火に 手を 合わせますか？', [
+      ['手を 合わせる', () => {
+        this.setGame(prayGojinka(this.g));
+        sfx('heal');
+        this.showMessages([{ text: '御神火に 手を 合わせた。みなの 術の 力が 満ちた！' }]);
+      }],
+      ['立ち去る', () => this.closeDialog()],
+    ]));
+  }
+
+  // 猫啼温泉（3章・10/4）：HP・術が満タン＋呪い・取り憑きも落ちる（猫の病が治った湯）。力つきた仲間は戻らない
+  onsenMenu() {
+    this.showMenu(`猫啼の 湯に つかりますか？ ${ONSEN_PRICE}文（所持金 ${this.g.mon}文）`, [
+      ['つかる', () => {
+        const r = soakOnsen(this.g);
+        if (!r.ok) { this.showMessages([{ text: '文が 足りないようだ……' }]); return; }
+        this.setGame(r.game);
+        this.cameras.main.fadeOut(600, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          sfx('heal');
+          this.cameras.main.fadeIn(600, 0, 0, 0);
+          this.showMessages([{ text: '猫啼の 湯に ゆっくり つかった。つかれも 呪いも、すっかり 落ちた！' }]);
+        });
+      }],
+      ['やめる', () => this.closeDialog()],
+    ]);
   }
 
   innMenu(n) {

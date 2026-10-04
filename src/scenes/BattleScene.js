@@ -1,15 +1,15 @@
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=148';
-import { EPISODES } from '../data/episodes.js?v=148';
-import { revealAt } from '../ui/reveal.js?v=148';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=148';
-import { chooseCommands } from '../battle/auto.js?v=148';
-import { itemNote } from '../data/items.js?v=148';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=148';
-import { STORY_FILES } from '../data/story_assets.js?v=148';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=148';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=148';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=148';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=148';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=149';
+import { EPISODES } from '../data/episodes.js?v=149';
+import { revealAt } from '../ui/reveal.js?v=149';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=149';
+import { chooseCommands } from '../battle/auto.js?v=149';
+import { itemNote } from '../data/items.js?v=149';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=149';
+import { STORY_FILES } from '../data/story_assets.js?v=149';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=149';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=149';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=149';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=149';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -172,7 +172,8 @@ export class BattleScene extends Phaser.Scene {
       startBgm(this.ep.enemy.bgm ?? 'battle'); // 1章からは話ごとの曲（10/3）
       if (this.ep.enemy.event === 'vow') { this.playVow(); return; } // 戦わない出会い（ザルカブリ山・本人 10/3「C」）
       this.showMessages(
-        [{ text: `${this.ep.enemy.name}が あらわれた！` }, { text: this.ep.enemy.introText }],
+        [{ text: `${this.ep.enemy.name}が あらわれた！` }, { text: this.ep.enemy.introText },
+          ...(this.ep.enemy.hintText ? [{ speaker: 'しおり', text: this.ep.enemy.hintText, face: 'normal' }] : [])], // 託善和尚の助言（3章）
         () => this.beginInput(),
       );
     };
