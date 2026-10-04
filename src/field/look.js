@@ -1,7 +1,7 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY } from './game.js?v=125';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY } from './game.js?v=126';
 
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
@@ -10,6 +10,8 @@ export const OBJECTS = [
   'icon_minka', 'icon_yadoya', 'icon_mise', 'icon_torii',
   // 福島らしい景色（10/4・art_src/prep_scenery.py）
   'sakura', 'shidare', 'sakura2', 'momo_hana', 'momo_mi', 'kuwa', 'kuwa2', 'yukisugi', 'yuki', 'yuki2', 'kaki', 'kaki2',
+  // 浜の景色（10/4・art_src/prep_beach.py）
+  'toudai', 'gyosen', 'katsuo', 'tetra', 'hamamatsu', 'hoshidana', 'kobune', 'kamome', 'ami',
 ];
 
 // 同じ物ばかり並ぶと単調＝マスの場所で少し散らす
@@ -42,6 +44,20 @@ export function grovePiece(map, x, y) {
   return h < 16 ? 'sakura' : h < 22 ? 'sakura2' : base; // いわき
 }
 
+// ⭐浜の景色（本人 10/4「浜はカツオ、灯台など、現代のものもOK」）
+// 灯台は実在の岬に1本ずつ：いわき＝塩屋埼（平と小名浜のあいだ）／相馬＝松川浦の鵜ノ尾埼
+export const TOUDAI_AT = { field: [31, 26], soma: [27, 4] };
+// 砂浜（,）：浜の黒松・干物の干し棚・網と浮き玉・消波ブロックを ところどころ（3割）
+export function sandPiece(map, x, y) {
+  const t = TOUDAI_AT[map];
+  if (t && t[0] === x && t[1] === y) return ['toudai'];
+  return hash100(x, y) < 30 ? [pick(['hamamatsu', 'hoshidana', 'ami', 'tetra', 'hamamatsu'], x, y)] : [];
+}
+// 海（~）：漁船・小舟・跳ねるカツオ・カモメを まばらに（5%）
+export function seaPiece(map, x, y) {
+  return hash100(x + 11, y + 7) < 5 ? [pick(['gyosen', 'kobune', 'katsuo', 'kamome'], x, y)] : [];
+}
+
 // 山（^）のマスに置く物。県北の西の山すそ（吾妻）は雪をかぶった杉と雪の小山
 export function mountainPiece(map, x, y) {
   if (map === 'kenpoku' && x <= 4) {
@@ -67,8 +83,8 @@ export function fieldLook(game, ch, x, y, map = 'field') {
     return { ground, objs: game.cleared?.[WALL_OPENED_BY[ch]] ? deck : [...deck, 'mistwall'] };
   }
   switch (ch) {
-    case '~': return { ground: 'sea', objs: [] };
-    case ',': return { ground: 'sand', objs: [] };
+    case '~': return { ground: 'sea', objs: seaPiece(map, x, y) };
+    case ',': return { ground: 'sand', objs: sandPiece(map, x, y) };
     case 'w': return { ground: 'river', objs: [] };
     case 'o': return { ground: 'pond', objs: [] };
     case '=': return { ground: 'road', objs: [] };
