@@ -188,7 +188,7 @@ export const ZAKO = {
   // ⚠この部分は art_src/zako_roster.py が書く（手で直さない）。各章10体＝ふつう2体＋8種の癖を1体ずつ。tier＝章の中の強さの順
   // 強さの数字は いわきの物差し（章の地図ごとに ZONE_SCALE で倍）。pending＝絵がまだ（出会いに入れない）
   yosuzume: {
-    chapter: 0, tier: 10, pending: true,
+    chapter: 0, tier: 10,
     name: '夜雀', hp: 36, atk: 13, def: 7, agi: 15, exp: 11, mon: 8,
     biteName: 'くちばし', zones: ['north', 'midNorth'],
     trick: {kind: "noise", chance: 0.3, text: "夜雀の 群れが チュン チュンと 鳴きたてる！ 耳が ふさがって、声が とどかない！"},
