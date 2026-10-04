@@ -27,7 +27,7 @@ export function chooseCommands(state, data) {
   // 和尚：弱った者がいれば読経（全員）。足の速い者が先に道具を使わないよう、ここで先に決める
   const living0 = state.allies.filter((x) => x.alive);
   const needHeal = Math.min(...living0.map((x) => x.hp / x.maxHp)) < 0.5 || living0.filter((x) => x.hp / x.maxHp < 0.7).length >= 2;
-  // 弱点の術を持つ者（2章 祐慶）は、明かされたあとは ひどく弱った者が いるときだけ 読経（ふだんは 弱点の術を 射る）
+  // 弱点の術を持つ者（2章 鬼婆＝如意輪の経を おぼえた僧）は、明かされたあとは ひどく弱った者が いるときだけ 読経（ふだんは 弱点の術を 射る）
   const critical = Math.min(...living0.map((x) => x.hp / x.maxHp)) < 0.35;
   const healer = needHeal && !(state.silence > 0) && living0.find((x) => !x.stunned && spellOf(x, data, 'heal') && (critical || !(e.revealed && (x.spells ?? []).includes(e.weakness))));
   if (healer) {
@@ -47,13 +47,14 @@ export function chooseCommands(state, data) {
     const lowest = Math.min(...living.map((x) => x.hp / x.maxHp));
     // ボスには、化け術（読経の分の術を残す）・糸車の糸を 切らさないように
     const healCost = Math.min(...(a.spells ?? []).map((id) => (data.spells[id]?.kind === 'heal' ? data.spells[id].cost : Infinity)));
-    const daze = boss && !dazeCast && !(state.silence > 0) && spellOf(a, data, 'daze', Number.isFinite(healCost) ? healCost : 0);
+    const daze0 = boss && !dazeCast && !(state.silence > 0) && spellOf(a, data, 'daze', Number.isFinite(healCost) ? healCost : 0);
+    const daze = daze0 && !(data.spells[daze0].autoHurt && lowest >= data.spells[daze0].autoHurt) ? daze0 : null; // 幻の術（くノ一）は 弱った者がいるときだけ
     if (daze) {
       cmds[a.id] = { type: 'spell', spellId: daze };
       dazeCast = true;
       continue;
     }
-    // 弱点の術を持つ者（2章 祐慶）は、弱点が明かされたら 足止めより 弱点の術を先に
+    // 弱点の術を持つ者（2章 鬼婆＝如意輪の経を おぼえた僧）は、弱点が明かされたら 足止めより 弱点の術を先に
     const hasWeak = e.revealed && (a.spells ?? []).includes(e.weakness);
     const bind = boss && !bindCast && !hasWeak && !(state.silence > 0) && spellOf(a, data, 'bind');
     if (bind) {
@@ -89,6 +90,12 @@ export function chooseCommands(state, data) {
     const iai = boss && e.revealed && mist === 0 && !weakSpell && spellOf(a, data, 'iai');
     if (iai) {
       cmds[a.id] = { type: 'spell', spellId: iai };
+      continue;
+    }
+    // くノ一（10/4 夜）：狐火の術も同じ（もやが晴れて 明かされてから・ボスだけ）
+    const yoj = boss && e.revealed && mist === 0 && !weakSpell && !(state.silence > 0) && spellOf(a, data, 'yojutsu');
+    if (yoj) {
+      cmds[a.id] = { type: 'spell', spellId: yoj };
       continue;
     }
     // 術が撃てても、もやが残るなら先に たたかって払う

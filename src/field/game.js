@@ -1,17 +1,18 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=152';
-import { kanbanAt } from './kanban.js?v=152';
-import { SOMA_ROWS } from './soma_map.js?v=152';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=152';
-import { KENCHU_ROWS } from './kenchu_map.js?v=152';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=152';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=152';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=152';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=152';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=152';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=152';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=152';
+import { IWAKI_ROWS } from './iwaki_map.js?v=153';
+import { kanbanAt } from './kanban.js?v=153';
+import { SOMA_ROWS } from './soma_map.js?v=153';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=153';
+import { KENCHU_ROWS } from './kenchu_map.js?v=153';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=153';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=153';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=153';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=153';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=153';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, RETIRED_COMPANIONS, BUSHI, KUNOICHI } from '../data/companions.js?v=153';
+import { EQUIP, START_EQUIP, canWear } from '../data/equip.js?v=153';
+import { becomeKunoichi } from './kagewatari.js?v=153';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -43,7 +44,9 @@ export function lvOf(game, id) {
   if (PARTY_IDS.includes(id) || game?.expOf?.[id] == null) return game?.lv ?? 1; // 前の記録には expOf が無い＝今のレベルのまま
   return levelFor(game.expOf[id]);
 }
-export const maxOf = (game, id) => statsAt(id, lvOf(game, id));
+// 強さの表の名前（くノ一になった しおりは 'kunoichi'・10/4 夜）
+export const statKey = (game, id) => (id === 'shiori' && game?.flags?.[KUNOICHI.flag] ? KUNOICHI.form : id);
+export const maxOf = (game, id) => statsAt(statKey(game, id), lvOf(game, id));
 
 function findChar(rows, ch) {
   for (let y = 0; y < rows.length; y++) {
@@ -111,10 +114,11 @@ export function wallOpen(game, ch) {
   return !!game.cleared[WALL_OPENED_BY[ch]] && (!WALL_NEEDS_FLAG[ch] || !!game.flags?.[WALL_NEEDS_FLAG[ch]]);
 }
 // ボスのほかに 要る物（10/4 県北への口は、相馬の道場で武士になってから）
-export const WALL_NEEDS_FLAG = { 8: 'bushi' };
+export const WALL_NEEDS_FLAG = { 8: 'bushi', '(': 'kunoichi' }; // (＝2章の出口（鬼婆の南）は しおりが くノ一になってから（10/4 夜）
 // ボスは戻したが、その章のクエストが残っているときに ぶつかると出る言葉（関所の番人）
 export const WALL_QUEST_LINES = {
   8: ['西の 口の 番人「待たれよ。武士の 免状の 無い 者は、県北へは 通せぬ。」', 'しおり「相馬の 町の 道場で、師範に 腕を 認めて もらいましょう。」'],
+  '(': ['南の 口の 番人「待たれよ。この 先の 郡山へは、忍びの 心得 なくしては 抜けられぬ。」', 'しおり「福島の 町に、黒脛巾組の 頭が いると 聞いたわ。わたしが 試しを 受けてみる。」'],
 };
 
 // そのマスへ歩けるか（町の人の立つマスは画面の側で見る）
@@ -197,10 +201,25 @@ export function load(text) {
       if (to) items[to] = (items[to] ?? 0) + n;
     }
     const stolen = (g.stolen ?? []).map((id) => (ITEMS[id] ? id : OLD_ITEM[id])).filter(Boolean);
-    return fixSomaWidth({ ...g, items, stolen });
+    return retireCompanions(fixSomaWidth({ ...g, items, stolen }));
   } catch {
     return null;
   }
+}
+
+// 前の版（〜v152）で祐慶が仲間になった記録＝僧へ戻す（経験・装備・HP はそのまま・お経は学んだことに）（10/4 夜 本人「祐慶に替わるは無し」）
+export function retireCompanions(g) {
+  let out = g;
+  for (const [old, to] of Object.entries(RETIRED_COMPANIONS)) {
+    if (!(out.members ?? []).includes(old)) continue;
+    const swap = (o) => { if (!o || !(old in o)) return o; const n = { ...o, [to]: o[old] }; delete n[old]; return n; };
+    out = {
+      ...out, members: out.members.map((id) => (id === old ? to : id)),
+      expOf: swap(out.expOf), equip: swap(out.equip), party: swap(out.party),
+      flags: { ...out.flags, nyoirin: true },
+    };
+  }
+  return out;
 }
 
 // ⭐10/4 相馬の地図を40→36列へ詰めた（本人「右側に海を入れて」＝列21・22・29・30を消した）。前の記録の相馬の位置を、詰めた後の列へ読み替える
@@ -246,9 +265,8 @@ export function battleData(game, ep0) {
     .map((id) => ({ id, name: COMPANIONS[id].name, spells: COMPANIONS[id].spells, gun: !!COMPANIONS[id].gun }));
   const bushi = !!game.flags?.bushi;
   const allies = [...ep.allies, ...joined].map((a0) => {
-    // 武士になった旅の者（10/4）＝名前と 居合い斬り
-    const a = bushi && a0.id === 'tabi' ? { ...a0, name: BUSHI.name, spells: [...(a0.spells ?? []), BUSHI.spell] } : a0;
-    const m = statsWithGear(a.id, lvOf(game, a.id), game.equip ?? START_EQUIP);
+    const a = formOf(game, a0);
+    const m = statsWithGear(a.id, lvOf(game, a.id), game.equip ?? START_EQUIP, statKey(game, a.id));
     const p = game.party[a.id] ?? {};
     // 力つきて幽霊の仲間は戦いに出ない（alive:false・HP 0）
     if (p.dead) return { ...a, ...m, maxHp: m.hp, maxMp: m.mp, hp: 0, mp: p.mp ?? 0, alive: false };
@@ -265,7 +283,7 @@ export function battleData(game, ep0) {
   }
   // ⭐必ず負ける1回目（2章 鬼婆・本人 10/4「鬼婆は最強なので、一度全滅→町で祐慶と合流し、再トライ」）
   const fl = ep.enemy.firstLose;
-  if (fl && !game.flags?.[`${ep.enemy.id}Lost`]) {
+  if (fl && !game.flags?.[fl.until ?? `${ep.enemy.id}Lost`]) { // until＝その印が付くまで必ず負ける（鬼婆＝僧が如意輪の経を学ぶまで・10/4 夜）
     const enemy = {
       ...ep.enemy, hp: fl.hp, atk: fl.atk, def: fl.def, forcedLose: true, tellBlock: fl.tellBlock,
       introText: fl.introText, loseLines: fl.loseLines, mist: { ...ep.enemy.mist, min: fl.mistMin ?? ep.enemy.mist?.min },
@@ -275,24 +293,35 @@ export function battleData(game, ep0) {
   return { ...ep, enemy: bushiLines(ep.enemy, bushi), allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
 }
 
-// 必ず負ける1回目のあと（2章 鬼婆）：文は減らさず、町（二本松）の宿で目をさます。入れ替わり（SWAP_AFTER_LOSS）があれば 仲間が入れ替わる
-// 僧（out）の経験と装備は 祐慶（in）へ。justSwapped＝町に入ったら 加わる台詞を見せる
+// 必ず負ける1回目のあと（2章 鬼婆）：文は減らさず、町（二本松）の宿で目をさます
+// 学び（LEARN_AFTER_LOSS）があれば、その仲間が術を おぼえる（10/4 夜 本人「祐慶に替わるは無しで、赤井岳の僧のまま、祐慶にお経を教わる形で」）。justLearned＝町に入ったら 教わる台詞を見せる
 export function afterForcedLose(game, enemyId) {
-  const sw = SWAP_AFTER_LOSS[enemyId];
+  const le = LEARN_AFTER_LOSS[enemyId];
   let g = { ...game, flags: { ...game.flags, [`${enemyId}Lost`]: true }, steps: 0 };
-  if (sw && membersOf(g).includes(sw.out)) {
-    const members = membersOf(g).map((id) => (id === sw.out ? sw.in : id));
-    const expOf = { ...g.expOf, [sw.in]: g.expOf?.[sw.out] ?? EXP_TO[Math.max(1, (g.lv ?? 1) - 1)] };
-    delete expOf[sw.out];
-    const equip = { ...(g.equip ?? START_EQUIP), [sw.in]: { ...(g.equip?.[sw.out] ?? { weapon: null, armor: null, charm: null }) } };
-    delete equip[sw.out];
-    g = { ...g, members, expOf, equip, justSwapped: sw.in };
-  }
+  if (le) g = { ...g, flags: { ...g.flags, [le.flag]: true }, justLearned: enemyId };
   g = { ...g, party: fullParty(g) };
-  const town = sw?.town;
+  const town = le?.town;
   if (!town) return { ...g, ...afterLose({ ...g, mon: g.mon * 2 }), mon: g.mon };
   // 町の入口に立つ（町を出ると、ボスの手前の 地図の場所へ）
   return { ...g, pos: { map: town, ...TOWN_ENTRY, dir: 'up' }, justEntered: null };
+}
+
+// 影渡りに受かった（10/4 夜）：くノ一になり、しおりの HP と術の力を くノ一の満タンへ（しおりの術の力は 0 だった）
+export function afterKagewatari(game) {
+  const r = becomeKunoichi(game, EQUIP);
+  const m = maxOf(r.game, 'shiori');
+  const p = r.game.party?.shiori ?? {};
+  return { ...r, game: { ...r.game, party: { ...r.game.party, shiori: { ...p, hp: m.hp, mp: m.mp, dead: false } } } };
+}
+
+// 着替え・学びを 戦いの味方に映す：武士（名前と居合い斬り）・くノ一（妖術と 短剣の二連撃）・僧の如意輪の経
+export function formOf(game, a) {
+  const f = game?.flags ?? {};
+  if (a.id === 'tabi' && f.bushi) return { ...a, name: BUSHI.name, spells: [...(a.spells ?? []), BUSHI.spell] };
+  if (a.id === 'shiori' && f[KUNOICHI.flag]) return { ...a, spells: [...(a.spells ?? []), ...KUNOICHI.spells], dual: true, form: KUNOICHI.form };
+  const le = Object.values(LEARN_AFTER_LOSS).find((x) => x.who === a.id && f[x.flag]);
+  if (le) return { ...a, spells: [...(a.spells ?? []).filter((id) => id !== le.spell), le.spell] };
+  return a;
 }
 
 // 戦いのあとに持ち帰る物：HP・術・呪い・取り憑き・残りの名物・盗まれた物・取られた文
@@ -514,7 +543,7 @@ export function useItem(game, id) {
 // 買うと その場で着ける。前の品は半値で引き取り。着けられない人・文が足りないときは買えない
 export function buyEquip(game, id, who) {
   const e = EQUIP[id];
-  if (!e.who.includes(who)) return { ok: false, reason: 'who', game };
+  if (!canWear(game.flags, id, who)) return { ok: false, reason: 'who', game }; // くノ一は 薙刀の系統を着けない・短剣は くノ一だけ（10/4 夜）
   if (game.mon < e.price) return { ok: false, reason: 'money', game };
   const equip = structuredClone(game.equip ?? START_EQUIP);
   equip[who] ??= { weapon: null, armor: null, charm: null }; // 仲間が加わる前の記録には その人の欄が無い
@@ -527,7 +556,7 @@ export function buyEquip(game, id, who) {
 // 強さを見る（どうぐ → そうび）
 export function partyView(game) {
   return membersOf(game).map((id) => ({
-    id, ...statsWithGear(id, lvOf(game, id), game.equip ?? START_EQUIP),
+    id, ...statsWithGear(id, lvOf(game, id), game.equip ?? START_EQUIP, statKey(game, id)),
     gear: game.equip?.[id] ?? START_EQUIP[id] ?? {}, // 昔話の味方は装備なし（いまは）
   }));
 }

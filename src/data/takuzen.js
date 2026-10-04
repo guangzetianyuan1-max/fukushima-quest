@@ -5,7 +5,7 @@
 // ⚠悪い狸ではない（修行したい一心）・最期は直接見せない（碑で語る）・「狸」と書いて「むじな」・子ども向けの たぬきの絵柄にしない
 // ゲームでは、忘れられて黒いもやに呑まれ、化けたまま正体を失った託善。弱点＝「手さぐりの歌」（目の見えない僧が触れて正体を知り、歌に書き残した）
 // 勝つと、託善が カッパの弱みを教えてくれる（kappa.js の hint）・天栄の谷への もやが晴れる
-import { BASIC_ITEMS } from './basic_items.js?v=152';
+import { BASIC_ITEMS } from './basic_items.js?v=153';
 
 export const TAKUZEN = {
   art: {
@@ -33,11 +33,11 @@ export const TAKUZEN = {
     autoWinTarget: 0.88,
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 17,
-    hp: 780, atk: 112, def: 130, agi: 13,
+    hp: 624, atk: 153, def: 130, agi: 13, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp780 atk112）
     bgm: 'takuzen',
     weakness: 'tesaguri',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '涅槃の まぼろし', chance: 0.25, power: 61, flash: [210, 220, 255], sfx: 'nehan', cutin: 'assets/cutin/takuzen_nehan.png' },
+    special: { name: '涅槃の まぼろし', chance: 0.25, power: 83, flash: [210, 220, 255], sfx: 'nehan', cutin: 'assets/cutin/takuzen_nehan.png' },
     biteName: '錫杖で 打ちすえる',
     introText: '狸森の 山道に、袈裟を 着た お坊さまが 立っていた。……黒い もやの 中で、衣の すそが ふさふさと ゆれている。',
     tellLines: [

@@ -1,19 +1,23 @@
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=152';
-import { EPISODES } from '../data/episodes.js?v=152';
-import { revealAt } from '../ui/reveal.js?v=152';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=152';
-import { chooseCommands } from '../battle/auto.js?v=152';
-import { itemNote } from '../data/items.js?v=152';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=152';
-import { STORY_FILES } from '../data/story_assets.js?v=152';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=152';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=152';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=152';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=152';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=152';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=153';
+import { EPISODES } from '../data/episodes.js?v=153';
+import { revealAt } from '../ui/reveal.js?v=153';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=153';
+import { chooseCommands } from '../battle/auto.js?v=153';
+import { itemNote } from '../data/items.js?v=153';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=153';
+import { STORY_FILES } from '../data/story_assets.js?v=153';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=153';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=153';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=153';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=153';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=153';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
+// 紙芝居の声・絵を同じ名前のまま作り直したとき、スマホが前の物を覚えていないよう ?r=番号 を付けて読む（10/4 夜〜）
+// onibaba_4＝最後の「祐慶さま、観音さまの弓を！」を切った（本人「祐慶に替わるは無しで、僧のまま」）
+const STORY_REV = { 'assets/story/onibaba_4.mp3': 2 };
+const revUrl = (url) => (STORY_REV[url] ? `${url}?r=${STORY_REV[url]}` : url);
 const ENEMY_Y = 262; // 敵の中心（上の窓の下〜下の窓の上）
 const FOG_ALPHA = 0.75; // もやが満ちているときの煙の濃さ（もやの残りに比例して薄くなる）。0.95 だと敵がほぼ消えた
 const key = (ep, part) => `${ep.enemy.id}-${part}`; // 絵の名前：<敵のid>-dark／-light／-bg
@@ -430,6 +434,23 @@ export class BattleScene extends Phaser.Scene {
         this.cameras.main.shake(220, 0.014);
         this.tweens.add({ targets: line, alpha: 0, scaleY: 0.2, duration: 420, onComplete: () => line.destroy() });
       } });
+    } else if (fx.kind === 'dual') {
+      // くノ一の 短剣の二連撃（10/4 夜）：細い 白い筋が ×の字に 2本 走る
+      [-35, 35].forEach((ang, i) => {
+        const line = this.add.rectangle(W / 2, ENEMY_Y, 300, 4, 0xe8f4ff).setAngle(ang).setDepth(800).setScale(0, 1);
+        this.time.delayedCall(i * 120, () => this.tweens.add({ targets: line, scaleX: 1, duration: 80, ease: 'Cubic.Out', onComplete: () => {
+          this.cameras.main.shake(90, 0.006);
+          this.tweens.add({ targets: line, alpha: 0, duration: 260, onComplete: () => line.destroy() });
+        } }));
+      });
+    } else if (fx.kind === 'kitsunebi') {
+      // 狐火の術：青白い 火の玉が 敵のまわりに 灯って 寄っていく
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const f = this.add.circle(W / 2 + Math.cos(a) * 120, ENEMY_Y + Math.sin(a) * 90, 10, 0x9fd8ff, 0.9).setDepth(800).setBlendMode(Phaser.BlendModes.ADD);
+        this.tweens.add({ targets: f, x: W / 2, y: ENEMY_Y, scale: 1.8, alpha: 0, duration: 520, delay: i * 40, ease: 'Sine.In', onComplete: () => f.destroy() });
+      }
+      this.time.delayedCall(520, () => this.cameras.main.flash(240, 140, 200, 255));
     } else if (fx.kind === 'crit') {
       // かいしんの一撃：白く光って大きく揺れる
       this.cameras.main.flash(300, 255, 255, 255);
@@ -573,7 +594,7 @@ export class BattleScene extends Phaser.Scene {
           timer = this.time.delayedCall(sec * 1000 + 3000, show);
           startReveal(sec * 1000 * 0.97); // 声の終わりの少し前に出し切る
         };
-        playVoice(c.voice, onStart).then((sec) => {
+        playVoice(revUrl(c.voice), onStart).then((sec) => {
           if (ended || shown !== i) return;
           timer?.remove(false);
           timer = this.time.delayedCall(sec > 0 ? hold : fallback, show);

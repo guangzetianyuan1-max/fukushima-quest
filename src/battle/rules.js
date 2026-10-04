@@ -18,14 +18,19 @@ export const MIST_BLOCK = 0.5;
 export const CRIT_CHANCE = 1 / 16;
 // 鉄砲（本人 10/2「当たらないことも。レベルが低いときは中々当たらないが、当たると大ダメージ、かいしんのいちげきくらい」）
 // 当たる見込み＝レベルで上がる（猟師が加わる Lv3 で35%・Lv5 で55%・上は85%）。当たれば守りを無視して 攻撃力×GUN_MULT
-export const GUN_MULT = 1.1;
+export const GUN_MULT = 2.2; // 10/4 夜 本人「猟師の鉄砲が弱い、当たったら今の2倍のダメージ」＝1.1→2.2
 export const gunHit = (lv = 1) => Math.min(0.85, 0.05 + 0.1 * lv);
 // 昔話の主に、弱点が明かされる前に撃ったときの割合
-export const GUN_UNREVEALED = 0.15;
+export const GUN_UNREVEALED = 0.075; // 2倍にしたぶん半分に＝明かす前の玉の勢いは前と同じ（語らずに撃って勝てない決まりを残す）
 // 居合い斬り（武士・10/4）：昔話の主は、語って弱点が明かされるまで 黒いもやが刃を はばむ（語らずに斬り続けて勝てないように）・もやの間は抜けない
 export const IAI_UNREVEALED = 0.2;
-// 急所（本人 10/3「1/10の確率で敵の急所にあたり、一発でしとめる」）＝当たったうちの1割で一発。道中の敵だけ
-// ボス（昔話の主）には無い＝語って元に戻す話なので、鉄砲一発で終わらせない
+// くノ一（10/4 夜 本人「短剣と妖術使い」）：たたかう＝短剣の二連撃（1太刀は 攻撃力×DUAL_ATK で、守りの すきまを突く＝守りは DUAL_DEF 倍だけ効く）
+export const DUAL_ATK = 0.7;
+export const DUAL_DEF = 0.7;
+// 狐火の術：居合い斬りと同じく 明かす前の昔話の主には2割。もやの間は 術と同じく半分（MIST_BLOCK）
+export const YOJUTSU_UNREVEALED = 0.2;
+// 急所（本人 10/3「1/10の確率で敵の急所にあたり、一発でしとめる」→ 10/4 夜「10回に1回ランダムに急所に一発で当たり、敵が倒れる」）
+// ＝撃った10発に1発は 急所に当たって一発で倒れる。昔話の主（ボス）にも効く（前は道中の敵だけ）。ただし語って弱点を明かしたあと（明かす前は 黒いもやが玉を呑む）
 export const GUN_KYUSHO = 0.1;
 // 投網（釣りの景品）が ぬし（ボス）に かかる見込み。道中の敵には必ず かかる
 export const NET_BOSS = 0.6;
@@ -122,12 +127,22 @@ function allyAct(state, a, cmd, data, rng, log) {
       log.push({ text: '目が くらんで、外れてしまった！' });
       return;
     }
-    const crit = a.id === 'tabi' && rng() < CRIT_CHANCE;
-    const d = crit ? Math.max(1, Math.round(a.atk * spread(rng))) : physicalDamage(a.atk, e.def, rng);
-    e.hp = Math.max(0, e.hp - d);
-    log.push({ text: `${a.name}の こうげき！`, sfx: 'attack' });
-    if (crit) log.push({ text: 'かいしんの いちげき！', effect: { kind: 'crit' }, sfx: 'hit' });
-    log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+    if (a.dual) {
+      // くノ一の 短剣の二連撃（10/4 夜）
+      log.push({ text: `${a.name}の 短剣！ 二連撃！`, effect: { kind: 'dual' }, sfx: 'tanken' });
+      for (let k = 0; k < 2 && e.hp > 0; k++) {
+        const d = physicalDamage(a.atk * DUAL_ATK, e.def * DUAL_DEF, rng);
+        e.hp = Math.max(0, e.hp - d);
+        log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+      }
+    } else {
+      const crit = a.id === 'tabi' && rng() < CRIT_CHANCE;
+      const d = crit ? Math.max(1, Math.round(a.atk * spread(rng))) : physicalDamage(a.atk, e.def, rng);
+      e.hp = Math.max(0, e.hp - d);
+      log.push({ text: `${a.name}の こうげき！`, sfx: 'attack' });
+      if (crit) log.push({ text: 'かいしんの いちげき！', effect: { kind: 'crit' }, sfx: 'hit' });
+      log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+    }
     // たたかうと、黒いもやが1つ晴れる
     if (e.mistLeft > 0 && e.hp > 0) {
       e.mistLeft -= 1;
@@ -153,20 +168,46 @@ function allyAct(state, a, cmd, data, rng, log) {
       log.push({ text: '目が くらんで、外れてしまった！' });
       return;
     }
+    const opened = e.noWeak || e.revealed; // 昔話の主は 語って明かしたあと
+    // 急所：撃った10発に1発（当たるかどうかの前に決める＝レベルが低くても 1割は急所）
+    if (opened && rng() < GUN_KYUSHO) {
+      const d = e.hp;
+      e.hp = 0;
+      log.push({ text: '急所に 命中した！ 一発で しとめた！', effect: { kind: 'crit' }, sfx: 'hit' });
+      log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+      return;
+    }
     if (rng() >= gunHit(a.lv)) {
       log.push({ text: '……玉は それて しまった！' });
       return;
     }
     let d = Math.max(1, Math.round(a.atk * GUN_MULT * spread(rng)));
     // 昔話の主（ボス）は、語って弱点が明かされるまで 黒いもやが玉を呑みこむ＝語らずに撃ち続けても勝てない（10/2 試算：玉10発で200戦200勝した）
-    if (!e.noWeak && !e.revealed) {
+    if (!opened) {
       d = Math.max(1, Math.round(d * GUN_UNREVEALED));
       log.push({ text: '黒い もやが 玉の 勢いを 呑みこんだ……' });
-    } else if (e.noWeak && rng() < GUN_KYUSHO) {
-      d = e.hp;
-      log.push({ text: '急所に 命中した！ 一発で しとめた！', effect: { kind: 'crit' }, sfx: 'hit' });
     } else {
       log.push({ text: '玉が 命中した！', effect: { kind: 'crit' } });
+    }
+    e.hp = Math.max(0, e.hp - d);
+    log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+  } else if (cmd.type === 'spell' && data.spells[cmd.spellId]?.kind === 'yojutsu') {
+    // くノ一の 狐火の術（10/4 夜）：守りを無視した 攻撃力×mult。もやの間は半分・明かす前の昔話の主には2割
+    const sp = data.spells[cmd.spellId];
+    log.push({ text: `${a.name}は ${sp.verb}！`, sfx: sp.sfx });
+    if (a.mp < sp.cost) {
+      log.push({ text: 'しかし 術の力が たりない！' });
+      return;
+    }
+    a.mp -= sp.cost;
+    log.push({ text: sp.text, effect: { kind: 'kitsunebi' } });
+    let d = Math.max(1, Math.round(a.atk * sp.mult * spread(rng)));
+    if (!e.noWeak && !e.revealed) {
+      d = Math.max(1, Math.round(d * YOJUTSU_UNREVEALED));
+      log.push({ text: '黒い もやが 狐火を 吸いこんだ……' });
+    } else if (e.mistLeft > 0) {
+      d = Math.max(1, Math.round(d * MIST_BLOCK));
+      log.push({ text: '黒い もやに さえぎられて、術が 弱まった……' });
     }
     e.hp = Math.max(0, e.hp - d);
     log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });

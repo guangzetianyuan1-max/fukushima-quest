@@ -291,6 +291,12 @@ export const TOWNS = {
       { x: 2, y: 5, look: 'kodomo', lines: [
         '東の 霊山の ほうでは、夜に 飴を 買いに くる 女の 人の 話が あるんだって。',
       ] },
+      // 黒脛巾組の頭（本人 10/4 夜「しおりが弱すぎる。女くノ一として、途中クエストを受け変身」→ 2章・黒脛巾組・忍びの試し）
+      // 黒脛巾組＝伊達政宗の忍びの組。信夫郡 鳥谷野城の城主 安部対馬が 腕の立つ者50人を選んだと伝わる（実在には異説＝「伝わる」で語る）
+      { x: 11, y: 11, look: 'yakunin', role: 'shinobi', lines: [
+        '黒い 脛巾（はばき）の 男「……わしらは 黒脛巾組と 呼ばれて おる。伊達の 殿さまの 忍びよ。」',
+        '男「信夫郡の 鳥谷野の 城主さまが、腕の 立つ 者を 五十人 選んだのが 始まりと 伝わる。」',
+      ] },
     ],
   },
   nihonmatsu: {
@@ -361,7 +367,7 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 郡山の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 26, lines: ['いらっしゃいませ。郡山の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['郡山の 刀屋だ。大滝根山の 主に 負けない 得物を そろえて いけ。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'yoroidoshi', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['郡山の 刀屋だ。大滝根山の 主に 負けない 得物を そろえて いけ。'] },
       { x: 9, y: 12, look: 'shonin', lines: [
         '郡山は 鯉の 町さ。鯉を 育てる 量は、全国の 市町村で いちばんと 言われて いる。',
         '使われなく なった ため池と、糸を とる 蚕の さなぎを 餌に して、鯉を 育てて きたんだ。',
@@ -402,7 +408,7 @@ export const TOWNS = {
     ],
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 須賀川の 神社へ。'] },
-      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、具足を そろえて いけ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'yoroidoshi', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、具足を そろえて いけ。'] },
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 28, lines: ['いらっしゃいませ。須賀川の 宿で ございます。'] },
       { x: 3, y: 11, look: 'toshiyori', lines: [
         '須賀川の 松明あかしは、四百年 あまり 続く 火祭りじゃ。',
@@ -445,7 +451,7 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 白河の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 30, lines: ['いらっしゃいませ。白河の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['白河の 刀屋だ。安珍堂の 炎に 負けるなよ。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'yoroidoshi', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['白河の 刀屋だ。安珍堂の 炎に 負けるなよ。'] },
       { x: 3, y: 11, look: 'toshiyori', lines: [
         '小峰城は、南北朝の ころに 結城親朝が 築き、江戸の はじめに 白河藩の 城として 仕上がった 城じゃ。',
         '南の 南湖は、白河藩主 松平定信が 造った 公園。日本で いちばん 古い 公園とも 言われて おる。',

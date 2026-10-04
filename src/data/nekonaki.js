@@ -4,7 +4,7 @@
 // ⚠式部の生まれは「石川と 言い伝えられている」まで・宿の実名は出さない・式部との再会は どの出どころにも無い
 // ⚠化け猫にしない（後の章に化け猫のボスがある見込み・猫は「慕って鳴きつづける猫」のまま）
 // ゲームでは、忘れられて黒いもやに呑まれ、泉のほとりで鳴きつづける猫。弱点＝「猫啼の湯」（病が治った泉）。勝つと湯につかれる（温泉）・鮫川への もやが晴れる
-import { BASIC_ITEMS } from './basic_items.js?v=152';
+import { BASIC_ITEMS } from './basic_items.js?v=153';
 
 export const NEKONAKI = {
   art: {
@@ -32,11 +32,11 @@ export const NEKONAKI = {
     autoWinTarget: 0.88,
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 16,
-    hp: 720, atk: 108, def: 124, agi: 16,
+    hp: 576, atk: 149, def: 124, agi: 16, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp720 atk108）
     bgm: 'nekonaki',
     weakness: 'yu',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '慕い鳴き', chance: 0.25, power: 59, flash: [200, 180, 255], sfx: 'shitainaki', cutin: 'assets/cutin/nekonaki_naki.png' },
+    special: { name: '慕い鳴き', chance: 0.25, power: 81, flash: [200, 180, 255], sfx: 'shitainaki', cutin: 'assets/cutin/nekonaki_naki.png' },
     biteName: '爪で ひっかく',
     introText: '泉の ほとりで、黒い もやを まとった 猫が 鳴いていた。……その 声は、だれかを 呼んでいる。',
     tellLines: [

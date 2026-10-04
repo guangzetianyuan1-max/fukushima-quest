@@ -4,7 +4,7 @@
 // 三十三人目に、大和国から来た佐世姫が身代わりを申し出て、沼のほとりで法華経を唱える。大蛇は天女の姿に変わって成仏し、残った骨で地蔵が作られた＝西方寺の蛇骨地蔵
 // ゲームでは、忘れられて黒いもやに呑まれた あやめ姫の大蛇。弱点＝佐世姫の「法華経」。倒すと天女の姿に戻り（blessing）、郡山への もやを払う
 // ⚠出どころは地域メディア1本・記事自身が「諸説あり」
-import { BASIC_ITEMS } from './basic_items.js?v=152';
+import { BASIC_ITEMS } from './basic_items.js?v=153';
 
 export const JAKOTSU = {
   art: {
@@ -32,11 +32,11 @@ export const JAKOTSU = {
     autoWinTarget: 0.88, // 3章の目安（章ボス0.85・中ボスは少し高め）
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 15,
-    hp: 640, atk: 103, def: 120, agi: 11,
+    hp: 512, atk: 141, def: 120, agi: 11, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp640 atk103）
     bgm: 'jakotsu',
     weakness: 'hokekyo',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '安積沼の 大波', chance: 0.25, power: 57, flash: [120, 180, 255], sfx: 'hebinami', cutin: 'assets/cutin/jakotsu_oonami.png' },
+    special: { name: '安積沼の 大波', chance: 0.25, power: 78, flash: [120, 180, 255], sfx: 'hebinami', cutin: 'assets/cutin/jakotsu_oonami.png' },
     biteName: '巻きついて しめつける',
     introText: '日和田の 沼の 水が、とつぜん もりあがった。……黒い もやを まとった 大蛇が、こちらを 見下ろしている！',
     tellLines: [

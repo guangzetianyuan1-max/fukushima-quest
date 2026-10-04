@@ -3,13 +3,27 @@
 // 加わる時（Claude の決め・本人に伝えた）：猟師＝賢沼の大うなぎを元に戻したあと／僧＝蛇岸淵を元に戻したあと、龍燈の前に閼伽井嶽から迎えに来る
 // 役目（本人 10/2「この案でよい」を2人に置き直した）：僧＝読経で全員を少し回復・真言で ぬしの目をくらます（守り役・術が多い）
 //                                                猟師＝力の強い たたかう役・鉄砲（玉を1発使う・守りの固い相手にも効く）。どちらも戦いには出るが語らない
-export const COMPANION_IDS = ['kariudo', 'sou', 'yukei'];
+export const COMPANION_IDS = ['kariudo', 'sou']; // 祐慶は仲間にしない（10/4 夜 本人）＝COMPANIONS.yukei は前の記録を読むためだけに残す
 
 // どのボスを元に戻すと、誰が加わるか（順路の順）
 export const JOIN_AFTER = { kashinuma: 'kariudo', jagan: 'sou' };
-// 入れ替わり（本人 10/4「鬼婆は最強なので、一度全滅→町で祐慶と合流し、再トライ」「誰かと入れ替えて仲間に」→ 閼伽井嶽の僧）
-// 鬼婆の1回目の戦い（必ず負ける）のあと、二本松の町で 祐慶が現れ、僧は閼伽井嶽へ帰る。僧の経験と装備は祐慶へ
-export const SWAP_AFTER_LOSS = { onibaba: { out: 'sou', in: 'yukei', town: 'nihonmatsu' } };
+// ⛔入れ替わりはやめた（本人 10/4 夜「祐慶に替わるは無しで、赤井岳の僧のまま、祐慶にお経を教わる形で。そのお経を学ばないと鬼婆を倒せない」）
+// 鬼婆の1回目（必ず負ける）のあと、二本松の宿で 祐慶が 僧に 如意輪観音の経（hama）を教えて 熊野へ帰る。学ぶまで 鬼婆は必ず負ける（onibaba.js の firstLose.until）
+export const LEARN_AFTER_LOSS = {
+  onibaba: {
+    who: 'sou', spell: 'hama', flag: 'nyoirin', town: 'nihonmatsu',
+    lines: [
+      '目を さますと、二本松の 宿だった。',
+      '「熊野 那智の 東光坊、祐慶と 申す。あの 鬼婆に 挑まれたと 聞き、駆けつけました」',
+      '祐慶「鬼婆の 闇は、刀や 矢では 晴れませぬ。如意輪観音さまの お力を 借りる 経を、お坊さまに お伝えしましょう」',
+      '祐慶は 夜を 徹して、僧に 経を 教えた……',
+      '僧は 如意輪の経を おぼえた！',
+      '祐慶「この 経を となえれば、観音さまが 破魔の 真弓を 引いて くださる。わたしは 熊野へ 帰り、無事を 祈っております」',
+    ],
+  },
+};
+// 前の版（〜v152）で祐慶が仲間になった記録は、読み込みで僧へ戻す（game.js の load）
+export const RETIRED_COMPANIONS = { yukei: 'sou' };
 
 export const COMPANIONS = {
   kariudo: {
@@ -21,7 +35,7 @@ export const COMPANIONS = {
     ],
   },
   yukei: {
-    name: '祐慶', spells: ['hama', 'ofuda', 'dokkyo'], look: 'yukei', // 10/4 歩く絵が届いた（白い浄衣・結袈裟・弓と矢筒・錫杖）// 東光坊の阿闍梨 祐慶（熊野那智・二本松市「安達ヶ原物語」）。破魔の真弓が 鬼婆の弱点
+    name: '祐慶', spells: ['hama', 'ofuda', 'dokkyo'], look: 'sou', // ⛔10/4 夜 仲間にしない＝前の記録を読むためだけ // 10/4 歩く絵が届いた（白い浄衣・結袈裟・弓と矢筒・錫杖）// 東光坊の阿闍梨 祐慶（熊野那智・二本松市「安達ヶ原物語」）。破魔の真弓が 鬼婆の弱点
     joinLines: [
       '目を さますと、二本松の 宿だった。',
       '「熊野 那智の 東光坊、祐慶と 申す。あの 鬼婆に 挑まれたと 聞き、駆けつけました」',
@@ -49,6 +63,17 @@ export const COMPANION_SPELLS = {
     name: '居合い斬り', kind: 'iai', cost: 10, mult: 1.6, sfx: 'iai', verb: '刀の 柄に 手を かけた',
     text: '一閃！ 抜いた 刀が 光の 筋を えがく！',
   },
+  // くノ一の妖術（本人 10/4 夜「短剣と妖術使い」）。狐火＝守りを無視した 攻撃力×mult・もやで半分・明かす前の昔話の主には2割（rules の YOJUTSU_UNREVEALED）
+  kitsunebi: {
+    name: '狐火の術', kind: 'yojutsu', cost: 8, mult: 1.4, sfx: 'kitsunebi', verb: '印を 結んだ',
+    text: '青白い 狐火が いくつも 燃えあがり、敵を つつみこむ！',
+  },
+  // 幻の術＝敵の攻撃が それる（真言と同じ daze・ターンは短め）
+  maboroshi: {
+    name: '幻の術', sfx: 'maboroshi', kind: 'daze', cost: 6, turns: 2, autoHurt: 0.5, // 自動では だれかが HP5割を切ったときだけ（毎ターン唱えて 長引いた・10/4 夜） verb: '印を 結び、すうっと 姿を ゆらがせた',
+    text: 'しおりの 姿が いくつにも 分かれて 見える！',
+    hitText: 'は 幻の しおりを 追いはじめた！', missText: 'は 幻を 斬りつけた！ 攻撃が それた！',
+  },
   dokkyo: {
     name: '読経', sfx: 'kyo', kind: 'heal', cost: 6, power: 18, verb: '経を 読みはじめた',
     text: '静かな 読経が ひびき、みなの 傷が ふさがっていく。',
@@ -58,11 +83,12 @@ export const COMPANION_SPELLS = {
     text: '薬師さまの 真言に、まばゆい 光が 立ちのぼった！',
     hitText: 'は 光に 目が くらんだ！ しばらく 攻撃が 当たりにくい。', missText: 'は まばゆい 光に 目が くらみ、攻撃が それた！',
   },
-  // 祐慶の術（2章・二本松市「安達ヶ原物語」の筋から：熊野那智のお札で山・谷・川を作って逃げた／如意輪観音の破魔の真弓で射た）
+  // 如意輪の経（2章・本人 10/4 夜「祐慶にお経を教わる形で」）＝僧が 祐慶に 教わる。二本松市「安達ヶ原物語」：祐慶が祈ると 如意輪観音が 破魔の真弓で 鬼婆を射た
+  // id は hama のまま（鬼婆の weakness）。僧が flags.nyoirin のときだけ持つ（game.js の battleData）
   hama: {
-    name: '破魔の真弓', cost: 8, power: 46, weakMult: 3, plainMult: 0.5, sfx: 'yumi', verb: '観音さまに 祈り、破魔の真弓を 引きしぼった',
-    weakText: '金剛の 矢が、黒い もやごと 鬼婆を 射ぬいた！',
-    plainText: '矢は 黒い もやに はじかれた……',
+    name: '如意輪の経', cost: 8, power: 46, weakMult: 3, plainMult: 0.5, sfx: 'yumi', verb: '祐慶に 教わった 如意輪観音の 経を となえた',
+    weakText: '空に 観音さまが あらわれ、破魔の 真弓が 黒い もやごと 鬼婆を 射ぬいた！',
+    plainText: '経の 声は 黒い もやに 吸いこまれた……',
   },
   ofuda: {
     name: '那智のお札', sfx: 'ofuda', kind: 'bind', cost: 5, chance: 0.6, verb: '熊野那智の お札を 投げた',
@@ -78,3 +104,9 @@ export const COMPANION_SPELLS = {
 
 // 旅の者が武士になる（本人 10/4・相馬の道場の試し合い＝3本勝負で2本先に取る）。after＝このボスより後の話では武士として試算・試験する
 export const BUSHI = { after: 'sumitora', name: '武士', spell: 'iai' };
+
+// しおりが くノ一になる（本人 10/4 夜「しおりが弱すぎる。女くノ一として、途中クエストを受け変身してほしい」→ 2章 県北・黒脛巾組の試し＝影渡り）
+// 強さ＝levels.js の FORMS.kunoichi・たたかう＝短剣の二連撃（rules の dual）・妖術＝狐火の術・幻の術・武器＝苦無（頭から もらう）
+// after＝このボスより後の話では くノ一として試算・試験する（2章の出口＝鬼婆の南の口は くノ一になるまで通れない）
+export const KUNOICHI = { after: 'onibaba', flag: 'kunoichi', form: 'kunoichi', spells: ['kitsunebi', 'maboroshi'], gift: 'kunai' };
+
