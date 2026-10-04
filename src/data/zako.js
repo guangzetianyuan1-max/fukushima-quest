@@ -196,7 +196,7 @@ export const ZAKO = {
     restoreLines: ['夜雀の 群れは ぱっと 散って、夜の 林へ 消えていった。'],
   },
   kamaitachi: {
-    chapter: 1, tier: 1, pending: true,
+    chapter: 1, tier: 1,
     name: '鎌鼬', hp: 18, atk: 8, def: 2, agi: 16, exp: 5, mon: 4,
     biteName: 'つむじ風の 鎌', zones: [],
     introText: 'ひゅうと つむじ風……鎌の 手を した イタチが 走り抜けた！',
