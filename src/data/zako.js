@@ -274,14 +274,14 @@ export const ZAKO = {
     restoreLines: ['狂骨は 「うらみは もう 忘れた」と つぶやいて、井戸の 底へ しずんでいった。'],
   },
   nobusuma: {
-    chapter: 2, tier: 1, pending: true,
+    chapter: 2, tier: 1,
     name: '野衾', hp: 18, atk: 8, def: 2, agi: 15, exp: 5, mon: 4,
     biteName: '体当たり', zones: [],
     introText: '木の 上から、むささびの ような 影が ばさりと 飛びかかってきた！',
     restoreLines: ['野衾は 木から 木へ 飛び移って、山へ 消えていった。'],
   },
   itachi: {
-    chapter: 2, tier: 2, pending: true,
+    chapter: 2, tier: 2,
     name: '大鼬', hp: 20, atk: 8, def: 3, agi: 13, exp: 6, mon: 6,
     biteName: 'かみつき', zones: [],
     trick: {kind: "steal", chance: 0.25, verb: "くわえて 石垣の すき間へ 逃げこんだ"},
@@ -289,7 +289,7 @@ export const ZAKO = {
     restoreLines: ['大鼬は 「ちょっと 借りた だけさ」と、すたこら 去っていった。'],
   },
   yamabiko: {
-    chapter: 2, tier: 3, pending: true,
+    chapter: 2, tier: 3,
     name: '山彦', hp: 22, atk: 9, def: 3, agi: 11, exp: 6, mon: 5,
     biteName: '体当たり', zones: [],
     trick: {kind: "noise", chance: 0.3, text: "山彦が 声を まねして 叫び返した！ こだまが ひびいて、声が とどかない！"},
@@ -297,7 +297,7 @@ export const ZAKO = {
     restoreLines: ['山彦は 「やまびこ、やまびこ」と つぶやいて、谷の 奥へ 消えていった。'],
   },
   rokurokubi: {
-    chapter: 2, tier: 4, pending: true,
+    chapter: 2, tier: 4,
     name: 'ろくろ首', hp: 23, atk: 9, def: 3, agi: 9, exp: 7, mon: 6,
     biteName: 'のびる 首', zones: [],
     trick: {kind: "net", chance: 0.3, text: "ろくろ首の 首が するすると のびて 巻きついた！", stunText: "首に 巻かれて 動けない！"},
@@ -305,7 +305,7 @@ export const ZAKO = {
     restoreLines: ['ろくろ首は 首を ちぢめて、「夢を 見ていたの」と 笑って 去っていった。'],
   },
   yukionna: {
-    chapter: 2, tier: 5, pending: true,
+    chapter: 2, tier: 5,
     name: '雪女', hp: 24, atk: 10, def: 4, agi: 11, exp: 8, mon: 6,
     biteName: 'つめたい 息', zones: [],
     trick: {kind: "blind", chance: 0.3, text: "雪女の 吹雪！ 目の 前が まっ白に なった！"},
@@ -313,15 +313,15 @@ export const ZAKO = {
     restoreLines: ['雪女は 「春が 来たら 帰ります」と、雪に とけていった。'],
   },
   inugami: {
-    chapter: 2, tier: 6, pending: true,
+    chapter: 2, tier: 6,
     name: '犬神', hp: 26, atk: 10, def: 4, agi: 13, exp: 8, mon: 7,
     biteName: 'かみつき', zones: [],
     trick: {kind: "possess", chance: 0.25},
-    introText: '白い 犬の 霊が、うなり声を 上げて 宙を 走ってきた！',
+    introText: '青白い 炎を まとった 犬の 霊が、うなり声を 上げて 宙を 走ってきた！',
     restoreLines: ['犬神は くうんと 鳴いて、すうっと うすれていった。'],
   },
   wanyudo: {
-    chapter: 2, tier: 7, pending: true,
+    chapter: 2, tier: 7,
     name: '輪入道', hp: 30, atk: 11, def: 5, agi: 10, exp: 9, mon: 6,
     biteName: '火の 車輪', zones: [],
     trick: {kind: "boil", chance: 0.25, power: 10, text: "輪入道が 炎の 輪で 駆け回った！"},
@@ -329,14 +329,14 @@ export const ZAKO = {
     restoreLines: ['輪入道の 炎は しずまり、ただの 古い 車輪が 転がっていった。'],
   },
   yamajiji: {
-    chapter: 2, tier: 8, pending: true,
+    chapter: 2, tier: 8,
     name: '山爺', hp: 32, atk: 12, def: 6, agi: 6, exp: 10, mon: 7,
     biteName: '大きな こぶし', zones: [],
     introText: '雪の 山道に、ひとつ目の 大きな 爺さまが 立ちはだかった！',
     restoreLines: ['山爺は ふおっふおっと 笑って、山の 奥へ 帰っていった。'],
   },
   shojo: {
-    chapter: 2, tier: 9, pending: true,
+    chapter: 2, tier: 9,
     name: '猩々', hp: 34, atk: 12, def: 6, agi: 9, exp: 10, mon: 8,
     biteName: '大きな 手', zones: [],
     trick: {kind: "drink", chance: 0.25, amount: 14, text: "猩々は 大きな 盃の 酒を ぐいと 飲みほした！"},
@@ -344,7 +344,7 @@ export const ZAKO = {
     restoreLines: ['猩々は 「よい 酒だった」と 笑って、ふらふら 去っていった。'],
   },
   gashadokuro: {
-    chapter: 2, tier: 10, pending: true,
+    chapter: 2, tier: 10,
     name: 'がしゃどくろ', hp: 36, atk: 13, def: 7, agi: 8, exp: 11, mon: 8,
     biteName: '骨の 手', zones: [],
     trick: {kind: "curse", chance: 0.25},
