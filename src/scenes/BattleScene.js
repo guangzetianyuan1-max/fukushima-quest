@@ -1,17 +1,17 @@
-import { MINCHO } from '../ui/fonts.js?v=156';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=156';
-import { EPISODES } from '../data/episodes.js?v=156';
-import { revealAt } from '../ui/reveal.js?v=156';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=156';
-import { chooseCommands } from '../battle/auto.js?v=156';
-import { itemNote } from '../data/items.js?v=156';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=156';
-import { STORY_FILES } from '../data/story_assets.js?v=156';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=156';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=156';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=156';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=156';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=156';
+import { GAME_FONT } from '../ui/fonts.js?v=157';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=157';
+import { EPISODES } from '../data/episodes.js?v=157';
+import { revealAt } from '../ui/reveal.js?v=157';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=157';
+import { chooseCommands } from '../battle/auto.js?v=157';
+import { itemNote } from '../data/items.js?v=157';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=157';
+import { STORY_FILES } from '../data/story_assets.js?v=157';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=157';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=157';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=157';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=157';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=157';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -40,7 +40,7 @@ export const SHIORI_DROP = 44;
 // 本人 10/4「しおりを前に、題名を後ろに、多少字が隠れてもOK」＝巻物はしおりの後ろ。頭の後ろへ 36 までは もぐってよい（それより長ければ小さく・2列に）
 export const STORY_SCROLL_MAX = MSG_Y + 2 + SHIORI_DROP - 200 + 36;
 const style = (size = SIZE.body, color = '#ffffff') => ({
-  fontFamily: MINCHO, fontSize: `${size}px`, color, resolution: 3,
+  fontFamily: GAME_FONT, fontSize: `${size}px`, color, resolution: 3,
   wordWrap: { width: 318, useAdvancedWrap: true }, lineSpacing: 8,
 });
 

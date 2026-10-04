@@ -3,12 +3,12 @@
 // ・窓＝四隅の飾りはそのまま、辺と中だけを伸ばす（9つに分けて並べる。NineSlice は WebGL だけなので使わない）
 // ・丸いボタン＝押すと凹んだ絵に替わり2ドット沈む。離す・指が外れると戻る
 // ・十字キー＝押したキーだけ凹む。当たりはキーより広め（親指で外さない）
-import { MINCHO } from './fonts.js?v=156';
-import { KEY_POS } from './kit_layout.js?v=156';
+import { GAME_FONT } from './fonts.js?v=157';
+import { KEY_POS } from './kit_layout.js?v=157';
 
 export const BTN_COLORS = ['orange', 'purple', 'red', 'green', 'blue', 'gray']; // gray＝戦いの「戻る」（art_src/make_btn_gray.py）
 const DIRS = ['up', 'down', 'left', 'right'];
-const FONT = MINCHO; // 10/4 夜 明朝体へ
+const FONT = GAME_FONT; // ui/fonts.js
 
 export function preloadKit(scene) {
   const names = ['window', 'tab', 'bar', 'pad',

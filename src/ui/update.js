@@ -5,7 +5,7 @@
 //   （途中で勝手に読み直すと セーブしていない旅が消えるため）
 // いまの版＝この部品の住所の ?v=（publish_prep・build_site が付ける）。手元の確かめ（?v= 無し）と claude.ai（version.json 無し）では何もしない
 
-import { MINCHO } from './fonts.js?v=156';
+import { GAME_FONT } from './fonts.js?v=157';
 export const CURRENT = (() => {
   try {
     return new URL(import.meta.url).searchParams.get('v');
@@ -70,7 +70,7 @@ function banner(ver) {
   const b = document.createElement('button');
   b.type = 'button';
   b.textContent = `新しい版（版${ver}）が出ました。ここを さわると 更新します（セーブしていない旅は 消えます）`;
-  b.style.cssText = 'position:fixed;left:8px;right:8px;top:max(8px, env(safe-area-inset-top));z-index:9998;font-family:'+MINCHO.replace(/"/g, "'")+';font-size:14px;line-height:1.5;padding:10px 12px;border-radius:8px;border:2px solid #b8913a;background:#3a2f5c;color:#fff;text-align:left;';
+  b.style.cssText = 'position:fixed;left:8px;right:8px;top:max(8px, env(safe-area-inset-top));z-index:9998;font-family:'+GAME_FONT.replace(/"/g, "'")+';font-size:14px;line-height:1.5;padding:10px 12px;border-radius:8px;border:2px solid #b8913a;background:#3a2f5c;color:#fff;text-align:left;';
   b.addEventListener('click', () => reloadTo(ver));
   document.body.appendChild(b);
   shown = b;

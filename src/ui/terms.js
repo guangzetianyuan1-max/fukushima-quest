@@ -2,8 +2,8 @@
 // 初めて（と規約の版が変わったとき）は全文を出し、「同意します」に印を付けて「同意して はじめる」を押すまで ゲームを始めない
 // 同意したことは 端末の中（localStorage）に 版と日時で残す。残せない端末（記録を消す設定など）では 毎回 たずねる
 // 画面は Phaser でなく ふつうの HTML（長い文を読みやすく・指でなぞって送れるように）
-import { MINCHO } from './fonts.js?v=156';
-import { TERMS, TERMS_TITLE, TERMS_VERSION, TERMS_CHECK, TERMS_BUTTON } from '../data/terms.js?v=156';
+import { GAME_FONT } from './fonts.js?v=157';
+import { TERMS, TERMS_TITLE, TERMS_VERSION, TERMS_CHECK, TERMS_BUTTON } from '../data/terms.js?v=157';
 
 export const TERMS_KEY = 'fq-terms';
 
@@ -44,7 +44,7 @@ export function askTerms() {
   }
   if (store && !needTerms(store)) return Promise.resolve();
   return new Promise((done) => {
-    const font = MINCHO;
+    const font = GAME_FONT;
     const wrap = el('div', `position:fixed;inset:0;z-index:9999;background:#0b0a1e;color:#f4f0e6;display:flex;flex-direction:column;align-items:center;font-family:${font};padding:max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));box-sizing:border-box;`);
     wrap.setAttribute('role', 'dialog');
     wrap.setAttribute('aria-modal', 'true');

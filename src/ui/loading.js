@@ -2,9 +2,9 @@
 // 題の画面の前に HTML で出す：最新の版を確かめる → 字 → よく使う絵（何%）。終わったら消してゲームを始める
 // 全部を毎回読み直すと約35MB＝通信量と待ち時間が大きい ⇒ 毎回するのは「新しい版が出ていないか」の確かめ（小さな version.json）だけ。出ていれば読み直す
 
-import { MINCHO } from './fonts.js?v=156';
+import { GAME_FONT } from './fonts.js?v=157';
 export function showLoading() {
-  const font = MINCHO;
+  const font = GAME_FONT;
   const wrap = document.createElement('div');
   wrap.style.cssText = `position:fixed;inset:0;z-index:9990;background:#0b0a1e;color:#f4f0e6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;font-family:${font};padding:16px;box-sizing:border-box;`;
   const title = document.createElement('div');
