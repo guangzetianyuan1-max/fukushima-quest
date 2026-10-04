@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=122';
-import { revealAt } from '../ui/reveal.js?v=122';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=122';
-import { chooseCommands } from '../battle/auto.js?v=122';
-import { itemNote } from '../data/items.js?v=122';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=122';
-import { STORY_FILES } from '../data/story_assets.js?v=122';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=122';
-import { drawScroll } from '../ui/scroll.js?v=122';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=122';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=122';
+import { EPISODES } from '../data/episodes.js?v=123';
+import { revealAt } from '../ui/reveal.js?v=123';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=123';
+import { chooseCommands } from '../battle/auto.js?v=123';
+import { itemNote } from '../data/items.js?v=123';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=123';
+import { STORY_FILES } from '../data/story_assets.js?v=123';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=123';
+import { drawScroll, fitScroll } from '../ui/scroll.js?v=123';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=123';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=123';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -23,6 +23,11 @@ const MS_PER_CHAR = 90; // 長い文は字数に合わせて長く見せる（�
 // 字の大きさ（本人 10/1「文字が小さい」で約1.3倍に）
 const SIZE = { body: 21, speaker: 16, menu: 21, name: 20, stat: 18, badge: 17 };
 const MSG_Y = 420; // 下の窓の上端（窓は y 420〜632）
+// 紙芝居の3Dしおりを下げる量（本人 10/4「しおりを下に下げるもありですね。手が隠れるくらい」）＝下の部分は文の窓の後ろに隠れる
+export const SHIORI_DROP = 44;
+// 3Dしおり（下の端が MSG_Y+2+SHIORI_DROP・高さ 400×0.5）の頭の上の端。巻物はここより上で止める（10/4）
+// 本人 10/4「しおりを前に、題名を後ろに、多少字が隠れてもOK」＝巻物はしおりの後ろ。頭の後ろへ 36 までは もぐってよい（それより長ければ小さく・2列に）
+export const STORY_SCROLL_MAX = MSG_Y + 2 + SHIORI_DROP - 200 + 36;
 const style = (size = SIZE.body, color = '#ffffff') => ({
   fontFamily: 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif', fontSize: `${size}px`, color, resolution: 3,
   wordWrap: { width: 318, useAdvancedWrap: true }, lineSpacing: 8,
@@ -179,7 +184,8 @@ export class BattleScene extends Phaser.Scene {
   // ---- 題の巻物「第○話 ﹁話の名﹂」（本人 10/1「画面右上に、縦書きで」「習字で背景巻物」）----
   drawTalePlaque() {
     const e = this.ep.enemy;
-    drawScroll(this, W - 30, 146, { episode: e.episode, tale: e.tale, epSize: 15, taleSize: 24 }); // 右上の所持金の下
+    // 長い題名は 文の窓（MSG_Y）の上で止まるよう 小さく・2列に（10/4）
+    drawScroll(this, W - 30, 146, fitScroll(146, MSG_Y - 10, { episode: e.episode, tale: e.tale, epSize: 15, taleSize: 24 })); // 右上の所持金の下
   }
 
   // ---- 光の輪：中心が白く、外へ透明になる丸（色は tint で付ける） ----
@@ -430,19 +436,20 @@ export class BattleScene extends Phaser.Scene {
     box.add([frame, pic, win, who, text, skip]);
     // 影絵の右上に題の巻物（本人 10/2「左上に巻物」→「巻物は右が良い」）＝戦いの画面の巻物と同じ作り。右下は3Dしおり
     const before = this.children.list.length;
-    drawScroll(this, W - 46, 32, { episode: this.ep.enemy.episode, tale: this.ep.enemy.tale, epSize: 14, taleSize: 25 });
-    box.add(this.children.list.slice(before));
+    // ⭐長い題名は しおりの頭（3Dしおりの絵の上の端 SHIORI_TOP）より上で止める＝小さく・2列に（本人 10/4「題名が長いと、しおりの顔が隠れる」）
+    drawScroll(this, W - 46, 32, fitScroll(32, STORY_SCROLL_MAX, { episode: this.ep.enemy.episode, tale: this.ep.enemy.tale, epSize: 14, taleSize: 25 }));
+    box.addAt(this.children.list.slice(before), box.list.indexOf(win)); // 巻物は窓と3Dしおりの後ろ（しおりは この後で窓の前に入る＝巻物より手前）
     // 3Dしおり：挿絵の右下に半身で立ち（影絵も右下を空けて描かせている）、声の大きさで口を動かし、ときどき まばたき
     const has3d = this.textures.exists('shiori3d_m0_e0');
     let talking = false;
     let mouth = 0;
     let blinkUntil = 0;
     let nextBlink = this.time.now + 2500;
-    const sh = has3d ? this.add.image(W - 70, MSG_Y + 2, 'shiori3d_m0_e0').setOrigin(0.5, 1).setScale(0.5) : null;
+    const sh = has3d ? this.add.image(W - 70, MSG_Y + 2 + SHIORI_DROP, 'shiori3d_m0_e0').setOrigin(0.5, 1).setScale(0.5) : null;
     if (sh) {
       for (const m of [0, 1, 2]) for (const e of [0, 1]) this.textures.get(`shiori3d_m${m}_e${e}`).setFilter(Phaser.Textures.FilterMode.LINEAR);
       box.addAt(sh, box.list.indexOf(win)); // 窓の後ろ・挿絵の前
-      this.tweens.add({ targets: sh, y: MSG_Y + 4, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.InOut' }); // ゆっくり息をする
+      this.tweens.add({ targets: sh, y: MSG_Y + 4 + SHIORI_DROP, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.InOut' }); // ゆっくり息をする
     }
     const animate = () => {
       if (!sh?.scene) return; // 紙芝居の途中で場面が閉じたら（窓ごと消えた後）何もしない
