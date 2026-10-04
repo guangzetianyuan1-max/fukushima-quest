@@ -250,7 +250,6 @@ export const TOWNS = {
   // ---- 2章 県北（10/4・本人「順番に制作を」）。町の形は小高・相馬と同じ。話の手がかりは出どころで確かめた筋だけ（vault 日本昔話/2026-10-04-調査-福島昔話クエスト2章県北5話.md）----
   fukushima: {
     name: '福島',
-    cardPending: true, // 町の入口の一枚絵が届くまで 名前だけ
     shrineName: '福島の 神社',
     shrineLine: '福島の 神社で 旅の 無事を お願いしましょう。北の 信夫山は すぐそこよ。',
     props: [
@@ -296,7 +295,6 @@ export const TOWNS = {
   },
   nihonmatsu: {
     name: '二本松',
-    cardPending: true,
     shrineName: '二本松の 神社',
     shrineLine: '二本松の 神社で 旅の 無事を お願いしましょう。安達ヶ原の 観世寺は 町の 西よ。',
     props: [
