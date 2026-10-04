@@ -1,20 +1,58 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY } from './game.js?v=123';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY } from './game.js?v=124';
 
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
   'tree', 'forest', 'rockmtn', 'rock', 'plank', 'snowmtn', 'bridge', 'vortex', 'mistwall',
   'minka', 'mise', 'yadoya', 'torii', 'jinja', 'tera', 'shiro', 'sekisho', 'counter', 'hei', 'fune', 'toro',
   'icon_minka', 'icon_yadoya', 'icon_mise', 'icon_torii',
+  // 福島らしい景色（10/4・art_src/prep_scenery.py）
+  'sakura', 'shidare', 'sakura2', 'momo_hana', 'momo_mi', 'kuwa', 'kuwa2', 'yukisugi', 'yuki', 'yuki2', 'kaki', 'kaki2',
 ];
 
 // 同じ物ばかり並ぶと単調＝マスの場所で少し散らす
 const vary = (x, y) => (x * 7 + y * 13) % 5;
+// 0〜99 の散らし（マスごとに決まる・遊ぶたびに変わらない）
+const hash100 = (x, y) => (((x * 73856093) ^ (y * 19349663)) >>> 0) % 100;
+const pick = (list, x, y) => list[hash100(x * 3 + 1, y * 5 + 2) % list.length];
+
+// ⭐福島らしい景色（本人 10/4「移動時の景色も福島らしさが欲しい。桜、雪、桑の木(川俣)、桃など…飽きのこない背景に」）
+// 県北の林（T）は区画ごとに土地の実り：北＝福島・伊達の桃と柿／真ん中＝川俣の桑／南＝二本松の桜（しだれ桜を1本だけ目印に）／安達ヶ原の林は暗い杉のまま
+export const KENPOKU_GROVES = [
+  { x0: 0, y0: 0, x1: 35, y1: 16, kinds: ['momo_hana', 'momo_mi', 'momo_hana', 'kaki', 'kaki2'] },
+  { x0: 0, y0: 17, x1: 12, y1: 30, kinds: ['momo_mi', 'momo_hana', 'kaki'] },
+  { x0: 13, y0: 17, x1: 35, y1: 30, kinds: ['kuwa', 'kuwa2'] },
+  { x0: 0, y0: 31, x1: 35, y1: 44, kinds: ['sakura', 'sakura', 'sakura2'] },
+];
+export const SHIDARE_AT = { kenpoku: [10, 40] }; // しだれ桜は1本だけ（二本松の桜の林のまん中）
+
+// 林（T）のマスに置く木
+export function grovePiece(map, x, y) {
+  const base = vary(x, y) < 3 ? 'forest' : 'tree';
+  const sh = SHIDARE_AT[map];
+  if (sh && sh[0] === x && sh[1] === y) return 'shidare';
+  if (map === 'kenpoku') {
+    const g = KENPOKU_GROVES.find((r) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1);
+    return g ? pick(g.kinds, x, y) : base; // 安達ヶ原（y45〜）は暗い杉のまま
+  }
+  const h = hash100(x, y);
+  if (map === 'soma') return h < 22 ? 'sakura' : h < 30 ? 'sakura2' : base; // 相馬の林に桜をところどころ
+  return h < 16 ? 'sakura' : h < 22 ? 'sakura2' : base; // いわき
+}
+
+// 山（^）のマスに置く物。県北の西の山すそ（吾妻）は雪をかぶった杉と雪の小山
+export function mountainPiece(map, x, y) {
+  if (map === 'kenpoku' && x <= 4) {
+    const h = hash100(x, y);
+    return h < 40 ? 'yukisugi' : h < 52 ? pick(['yuki', 'yuki2'], x, y) : 'snowmtn';
+  }
+  return x <= 3 && vary(x, y) < 2 ? 'snowmtn' : 'rockmtn';
+}
 
 // 歩く地図：字 → { ground, objs: [名前…] }
-export function fieldLook(game, ch, x, y) {
+export function fieldLook(game, ch, x, y, map = 'field') {
   if (ROAD_OPENED_BY[ch]) return { ground: game.cleared?.[ROAD_OPENED_BY[ch]] ? 'road' : 'grass', objs: [] }; // 龍燈を戻すと現れる相馬への道（10/3）
   const boss = BOSS_AT[ch];
   if (boss) {
@@ -35,8 +73,8 @@ export function fieldLook(game, ch, x, y) {
     case 'o': return { ground: 'pond', objs: [] };
     case '=': return { ground: 'road', objs: [] };
     case 'b': return { ground: 'river', objs: ['plank'] };
-    case 'T': return { ground: 'grass', objs: [vary(x, y) < 3 ? 'forest' : 'tree'] };
-    case '^': return { ground: 'grass', objs: [x <= 3 && vary(x, y) < 2 ? 'snowmtn' : 'rockmtn'] };
+    case 'T': return { ground: 'grass', objs: [grovePiece(map, x, y)] };
+    case '^': return { ground: 'grass', objs: [mountainPiece(map, x, y)] };
     case 'N': return { ground: 'road', objs: ['sekisho'] };
     case 'H': return { ground: 'grass', objs: ['shiro'] };
     case 'Y': return { ground: 'grass', objs: ['icon_yadoya'] };
