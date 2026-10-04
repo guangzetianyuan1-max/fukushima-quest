@@ -5,7 +5,7 @@
 //   （途中で勝手に読み直すと セーブしていない旅が消えるため）
 // いまの版＝この部品の住所の ?v=（publish_prep・build_site が付ける）。手元の確かめ（?v= 無し）と claude.ai（version.json 無し）では何もしない
 
-import { GAME_FONT } from './fonts.js?v=163';
+import { GAME_FONT } from './fonts.js?v=164';
 export const CURRENT = (() => {
   try {
     return new URL(import.meta.url).searchParams.get('v');

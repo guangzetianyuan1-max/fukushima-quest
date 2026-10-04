@@ -226,7 +226,10 @@ export function adviceOf(pick) {
   if (sum.hayasa >= 24) lines.push('素早い人が 多いから、先に 動けることが 多いはず。');
   if ((JOBS[pick.tabi].points.seishin ?? 0) <= 3) lines.push('あなたは 術の力が 少なめ。弱点の術を 唱えるために、霊水を 持っておいてね。');
   if (lines.length === 1) lines.push('回復も 守りも そろっているわ。安心して 旅に 出られるわね。');
-  return { rows, lines, sum, heal };
+  // 総合力のグラフ（本人 10/5「アドバイスに総合力のグラフ。ひし形のやつ」）＝6つの見立てを 0〜1 に（いちばん強い組で1）
+  const cap = (v, m) => Math.max(0, Math.min(1, v / m));
+  const scores = [cap(heal, 3), cap(sum.tairyoku, 39), cap(sum.chikara, 46), cap(sum.chiryoku, 40), cap(mist, 3), cap(guard, 3)];
+  return { rows, lines, sum, heal, scores };
 }
 
 // 「戻る」＝ひとつ前の選びを取り消す（本人 10/5「戻るは前の画面ではなく、ひとつ前、職業を選びなおせるように」）

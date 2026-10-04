@@ -2,12 +2,12 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=163';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=163';
-import { sfx } from '../audio/chip.js?v=163';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=163';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=163';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=163';
+import { GAME_FONT } from '../ui/fonts.js?v=164';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=164';
+import { sfx } from '../audio/chip.js?v=164';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=164';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=164';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=164';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -184,18 +184,36 @@ export class JobScene extends Phaser.Scene {
     if (this.textures.exists('face_normal')) box.add(this.add.image(58, 112, 'face_normal').setDisplaySize(72, 72));
     box.add(this.add.text(102, 92, 'しおりの アドバイス', { fontFamily: FONT, fontSize: '20px', color: '#ffd98a', resolution: 3 }));
     box.add(this.add.text(102, 120, [pick.tabi, pick.shiori, ...pick.mates].map((j) => JOBS[j].name).join('・'), { fontFamily: FONT, fontSize: '13px', color: '#b8bcd8', resolution: 3, wordWrap: { width: W - 130, useAdvancedWrap: true } }));
-    // 6つの 見立て（2列）
+    // 総合力のグラフ（本人 10/5「ひし形のやつ」）＝6つの見立ての レーダー。軸の先に 名前と ◎○△
+    const C = { x: W / 2, y: 228, r: 62 };
+    const ang = (i) => -Math.PI / 2 + (i * Math.PI * 2) / a.rows.length;
+    const pt = (i, k) => [C.x + Math.cos(ang(i)) * C.r * k, C.y + Math.sin(ang(i)) * C.r * k];
+    const g = this.add.graphics();
+    for (const k of [1 / 3, 2 / 3, 1]) {
+      g.lineStyle(1, 0x5a5890, 1).beginPath();
+      a.rows.forEach((_, i) => { const [x, y] = pt(i, k); if (i) g.lineTo(x, y); else g.moveTo(x, y); });
+      g.closePath().strokePath();
+    }
+    a.rows.forEach((_, i) => { const [x, y] = pt(i, 1); g.lineStyle(1, 0x5a5890, 1).lineBetween(C.x, C.y, x, y); });
+    const poly = a.scores.map((v, i) => pt(i, Math.max(0.06, v)));
+    g.fillStyle(0xe0a83a, 0.45).beginPath();
+    poly.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+    g.closePath().fillPath();
+    g.lineStyle(2, 0xffd98a, 1).beginPath();
+    poly.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+    g.closePath().strokePath();
+    for (const [x, y] of poly) g.fillStyle(0xffd98a, 1).fillCircle(x, y, 3);
+    box.add(g);
     a.rows.forEach(([name, m], i) => {
-      const x = 30 + (i % 2) * 160;
-      const y = 166 + Math.floor(i / 2) * 30;
-      box.add(this.add.text(x, y, name, { fontFamily: FONT, fontSize: '17px', color: '#e6e6f0', resolution: 3 }));
-      box.add(this.add.text(x + 118, y, m, { fontFamily: FONT, fontSize: '19px', color: m === '◎' ? '#ffd98a' : m === '○' ? '#ffffff' : '#ff9a8a', resolution: 3 }).setOrigin(0.5, 0));
+      const [x, y] = pt(i, 1.32);
+      const col = m === '◎' ? '#ffd98a' : m === '○' ? '#ffffff' : '#ff9a8a';
+      box.add(this.add.text(x, y, `${name}${m}`, { fontFamily: FONT, fontSize: '15px', color: col, resolution: 3 }).setOrigin(0.5));
     });
-    let y = 262;
+    let y = 324;
     for (const t of a.lines) {
-      const tx = this.add.text(30, y, t, { fontFamily: FONT, fontSize: '15px', color: '#ffffff', resolution: 3, lineSpacing: 4, wordWrap: { width: W - 60, useAdvancedWrap: true } });
+      const tx = this.add.text(30, y, t, { fontFamily: FONT, fontSize: '14px', color: '#ffffff', resolution: 3, lineSpacing: 3, wordWrap: { width: W - 60, useAdvancedWrap: true } });
       box.add(tx);
-      y += tx.height + 10;
+      y += tx.height + 8;
     }
     box.add(makeWindow(this, W / 2 - 70, 590, 140, 44));
     box.add(this.add.text(W / 2, 612, 'とじる', { fontFamily: FONT, fontSize: '19px', color: '#ffffff', resolution: 3 }).setOrigin(0.5));
