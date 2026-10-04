@@ -2,14 +2,14 @@
 // 旅の者・しおり＝16コマ（正面0〜3／後ろ4〜7／左8〜11／右12〜15＝左の裏返し）・足の運び4コマ
 // 町の人＝正面の足踏み2コマ（向きは変わらない）
 // 1コマ 36×42 ドット。足もとをマスの中心から14ドット下に置く（origin y＝1−14/42）
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=153';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=154';
 
 export const DIRS = ['down', 'up', 'left', 'right'];
 // 仲間（本人 10/2：猟師・閼伽井嶽の僧）も旅の者・しおりと同じ16コマ
 export const HEROES = ['tabi', 'shiori', 'kariudo', 'sou'];
 // 力つきた仲間の幽霊（本人 10/2「死んだら幽霊のキャラを作りたい」）＝並びは旅の者・しおりと同じ16コマ
 export const GHOSTS = HEROES.map((id) => `${id}_ghost`);
-export const NPC_LOOKS = ['kannushi', 'osho', 'okami', 'shonin', 'kaji', 'ryoshi', 'yakunin', 'machibito', 'musume', 'kodomo', 'chaya', 'toshiyori'];
+export const NPC_LOOKS = ['kannushi', 'osho', 'okami', 'shonin', 'kaji', 'ryoshi', 'yakunin', 'machibito', 'musume', 'kodomo', 'chaya', 'toshiyori', 'kashira']; // kashira＝黒脛巾組の頭（10/4 夜）
 export const FRAME_W = 36;
 export const FRAME_H = 42;
 export const ORIGIN_Y = 1 - 14 / FRAME_H;
