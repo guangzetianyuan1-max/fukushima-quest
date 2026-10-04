@@ -5,7 +5,7 @@
 // ゲームでは、忘れの力でよみがえった墨虎。語って弱点が明かされるまでは岩穴の闇に隠れて、たたかう・鉄砲の半分がとどかない（hide）。
 // 明かされると白狼が現れて足跡で隠れ家を暴き、ときどき墨虎に とびかかる（helper）。弱点＝「白狼の足跡」
 // 絵＝10/3 届いた（pbl37p 墨虎・2uh591 捕らえられた姿＝肌が緑に描かれたので prep_art で人の肌へ・9mqri4 闇討ち・achnd8 火矢の雨）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=162';
+import { BASIC_ITEMS } from './basic_items.js?v=163';
 
 export const SUMITORA = {
   art: {

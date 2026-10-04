@@ -87,7 +87,7 @@ export const COMPANION_SPELLS = {
   // 如意輪の経（2章・本人 10/4 夜「祐慶にお経を教わる形で」）＝僧が 祐慶に 教わる。二本松市「安達ヶ原物語」：祐慶が祈ると 如意輪観音が 破魔の真弓で 鬼婆を射た
   // id は hama のまま（鬼婆の weakness）。僧が flags.nyoirin のときだけ持つ（game.js の battleData）
   hama: {
-    name: '如意輪の経', cost: 8, power: 46, weakMult: 3, plainMult: 0.5, sfx: 'yumi', verb: '祐慶に 教わった 如意輪観音の 経を となえた',
+    name: '如意輪の経', desc: '鬼婆の弱点（祐慶に教わった経）', cost: 8, power: 46, weakMult: 3, plainMult: 0.5, sfx: 'yumi', verb: '祐慶に 教わった 如意輪観音の 経を となえた',
     weakText: '空に 観音さまが あらわれ、破魔の 真弓が 黒い もやごと 鬼婆を 射ぬいた！',
     plainText: '経の 声は 黒い もやに 吸いこまれた……',
   },

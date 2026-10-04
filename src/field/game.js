@@ -1,19 +1,19 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=162';
-import { kanbanAt } from './kanban.js?v=162';
-import { SOMA_ROWS } from './soma_map.js?v=162';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=162';
-import { KENCHU_ROWS } from './kenchu_map.js?v=162';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=162';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=162';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=162';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=162';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=162';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=162';
-import { EQUIP, canWear, startEquip } from '../data/equip.js?v=162';
-import { becomeKunoichi } from './kagewatari.js?v=162';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=162';
+import { IWAKI_ROWS } from './iwaki_map.js?v=163';
+import { kanbanAt } from './kanban.js?v=163';
+import { SOMA_ROWS } from './soma_map.js?v=163';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=163';
+import { KENCHU_ROWS } from './kenchu_map.js?v=163';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=163';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=163';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=163';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=163';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=163';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=163';
+import { EQUIP, canWear, startEquip } from '../data/equip.js?v=163';
+import { becomeKunoichi } from './kagewatari.js?v=163';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=163';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -79,10 +79,13 @@ export function validPick(pick) {
   const all = [pick?.tabi, pick?.shiori, ...(pick?.mates ?? [])];
   return all.length === 4 && all.every((j) => JOB_IDS.includes(j)) && new Set(all).size === 4;
 }
+// あなたの名前（本人 10/5「『あなた』はすきな名前が付けられる。ひらがな4文字まで」）。無い・正しくない時は「旅の者」
+export const HERO_NAME_MAX = 4;
+export const validHeroName = (name) => typeof name === 'string' && /^[ぁ-ゖー]+$/.test(name) && [...name].length <= HERO_NAME_MAX;
 export function newGame(pick = DEFAULT_PICK) {
   if (!validPick(pick)) throw new Error('職業の選び方が正しくない');
   const members = ['tabi', 'shiori', ...pick.mates];
-  const base = { jobs: { tabi: pick.tabi, shiori: pick.shiori }, members, skills: Object.fromEntries(members.map((id) => [id, []])), lv: 1 };
+  const base = { jobs: { tabi: pick.tabi, shiori: pick.shiori }, members, skills: Object.fromEntries(members.map((id) => [id, []])), lv: 1, ...(validHeroName(pick.name) ? { heroName: pick.name } : {}) };
   return {
     ...base,
     somaW: 36, // 相馬の地図の幅（10/4 に40→36列へ詰めた）。無い記録は前の幅＝読み込むときに位置を直す
@@ -284,7 +287,7 @@ export function battleData(game, ep0) {
   const joined = membersOf(game).filter((id) => !ep.allies.some((a) => a.id === id))
     .map((id) => (JOBS[id] ? { id, name: nameOf(game, id), spells: [] } : { id, name: COMPANIONS[id]?.name ?? id, spells: COMPANIONS[id]?.spells ?? [], gun: !!COMPANIONS[id]?.gun }));
   const allies = [...ep.allies, ...joined].map((a0) => {
-    const a = formOf(game, a0);
+    const a = formOf(game, a0.id === 'tabi' ? { ...a0, name: nameOf(game, 'tabi') } : a0);
     const m = statsWithGear(a.id, lvOf(game, a.id), game.equip ?? {}, statKey(game, a.id));
     const p = game.party[a.id] ?? {};
     // 力つきて幽霊の仲間は戦いに出ない（alive:false・HP 0）
@@ -307,9 +310,9 @@ export function battleData(game, ep0) {
       ...ep.enemy, hp: fl.hp, atk: fl.atk, def: fl.def, forcedLose: true, tellBlock: fl.tellBlock,
       introText: fl.introText, loseLines: fl.loseLines, mist: { ...ep.enemy.mist, min: fl.mistMin ?? ep.enemy.mist?.min },
     };
-    return { ...ep, enemy, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
+    return { ...ep, enemy: { ...enemy, loseLines: heroLines(enemy.loseLines, game) }, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
   }
-  return { ...ep, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
+  return { ...ep, enemy: { ...ep.enemy, loseLines: heroLines(ep.enemy.loseLines, game) }, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
 }
 
 // 必ず負ける1回目のあと（2章 鬼婆）：文は減らさず、町（二本松）の宿で目をさます
@@ -618,8 +621,10 @@ export function join(game, id) {
   return { ok: true, game: { ...g, party: { ...game.party, [id]: { hp: m.hp, mp: m.mp } } } };
 }
 
-// 名前（主人公＝旅の者・しおり・仲間＝職業の名前・10/5）
-export const nameOf = (game, id) => NAME[id] ?? id;
+// 名前（あなた＝付けた名前か 旅の者・しおり・仲間＝職業の名前・10/5）
+export const nameOf = (game, id) => (id === 'tabi' && validHeroName(game?.heroName) ? game.heroName : NAME[id] ?? id);
+// 話のデータの「旅の者たちは 力つきた」などを あなたの名前に
+const heroLines = (lines, game) => (validHeroName(game?.heroName) && lines ? lines.map((t) => t.replace(/^旅の者/, game.heroName)) : lines);
 
 // ---- 相馬の道場（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に変更」・選んだ＝1章 相馬・道場の試し合い・居合い斬り）----
 // 師範と木刀で 3本勝負（2本先に取れば 免状）。旅の者ひとりで戦う。強さは そのときの旅の者に合わせる（いつ来ても勝負になる）

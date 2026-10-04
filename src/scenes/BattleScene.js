@@ -1,17 +1,17 @@
-import { GAME_FONT } from '../ui/fonts.js?v=162';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=162';
-import { EPISODES } from '../data/episodes.js?v=162';
-import { revealAt } from '../ui/reveal.js?v=162';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=162';
-import { chooseCommands } from '../battle/auto.js?v=162';
-import { itemNote } from '../data/items.js?v=162';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=162';
-import { STORY_FILES } from '../data/story_assets.js?v=162';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=162';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=162';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=162';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=162';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=162';
+import { GAME_FONT } from '../ui/fonts.js?v=163';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=163';
+import { EPISODES } from '../data/episodes.js?v=163';
+import { revealAt } from '../ui/reveal.js?v=163';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=163';
+import { chooseCommands } from '../battle/auto.js?v=163';
+import { itemNote } from '../data/items.js?v=163';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=163';
+import { STORY_FILES } from '../data/story_assets.js?v=163';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=163';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=163';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=163';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=163';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=163';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -764,7 +764,9 @@ export class BattleScene extends Phaser.Scene {
       const sp = this.ep.spells[id];
       const used = sp.once && a.usedOnce?.includes(id);
       const cost = sp.once ? (used ? '使った' : '1戦1回') : `術${sp.cost}`;
-      return [`${sp.name}（${cost}）`, () => this.choose(a, { type: 'spell', spellId: id })];
+      // 効き目（jobs.js の desc）。昔話の弱点の術は「語って明かすと よく効く」
+      const sub = sp.desc ?? (sp.weakMult ? (id === this.ep.enemy.weakness ? '語って明かした 弱点に よく効く' : '昔話の主の 弱点を突く術') : sp.kind === 'heal' ? '全員のHPを 回復' : null);
+      return [`${sp.name}（${cost}）`, () => this.choose(a, { type: 'spell', spellId: id }), null, sub];
     });
     this.showMenu('どの 術を つかう？', [...opts, ['戻る', () => this.askNextAlly()]]);
   }
@@ -799,7 +801,7 @@ export class BattleScene extends Phaser.Scene {
     const ROW = MENU_ROW;
     const BOTTOM = MSG_Y + 204;
     // 2列に並べる。6字を超える項目があるときは1列（字が大きいので2列だとはみ出す）
-    const cols = options.some(([label, , note]) => [...label].length > 6 || note) ? 1 : 2; // 効き目の字があれば1列（10/2 重なっていた）
+    const cols = options.some(([label, , note, sub]) => [...label].length > 6 || note || sub) ? 1 : 2; // 効き目の字があれば1列（10/2 重なっていた）
     const colW = cols === 1 ? 320 : 160;
     const titleH = title ? this.msgText.height + 10 : 0;
     const maxRows = Math.max(3, Math.floor((BOTTOM - MENU_TOP_B - 16 - titleH) / ROW));
@@ -823,10 +825,12 @@ export class BattleScene extends Phaser.Scene {
     this.menu.push(glow);
     let pressed = null;
     const release = () => { pressed = null; glow.setVisible(false); };
-    list.forEach(([label, fn, note], i) => {
+    list.forEach(([label, fn, note, sub], i) => {
       const x = 26 + (i % cols) * colW;
       const y = y0 + Math.floor(i / cols) * ROW; // 行の上の端
-      const t = this.add.text(x, y + (ROW - 6) / 2, `▶ ${label}`, { ...style(SIZE.menu, fn ? '#ffffff' : '#777777'), wordWrap: null }).setOrigin(0, 0.5).setDepth(5);
+      // sub＝名前の下の小さな字（技の効き目・10/5 本人「必殺技の効果を入れて」）＝行の上半分に名前・下半分に効き目
+      const t = this.add.text(x, y + (sub ? 12 : (ROW - 6) / 2), `▶ ${label}`, { ...style(sub ? 18 : SIZE.menu, fn ? '#ffffff' : '#777777'), wordWrap: null }).setOrigin(0, 0.5).setDepth(5);
+      if (sub) this.menu.push(this.add.text(x + 22, y + 31, sub, { ...style(13, fn ? '#b8d8ff' : '#777777'), wordWrap: null }).setOrigin(0, 0.5).setDepth(5));
       if (note) {
         // 効き目は右端にそろえて、小さめの黄色で（無くなった物は灰色）
         const n = this.add.text(W - 28, y + (ROW - 6) / 2, note, style(SIZE.badge, fn ? '#ffd34d' : '#777777')).setOrigin(1, 0.5).setDepth(5);
@@ -836,7 +840,7 @@ export class BattleScene extends Phaser.Scene {
       }
       if (fn) {
         // 当たり＝列の幅・高さ ROW−6（行と行のあいだ6ドットは どちらも効かない）
-        t.setInteractive(new Phaser.Geom.Rectangle(-10, (t.height - (ROW - 6)) / 2, colW - 8, ROW - 6), Phaser.Geom.Rectangle.Contains);
+        t.setInteractive(new Phaser.Geom.Rectangle(-10, sub ? t.height / 2 - 12 : (t.height - (ROW - 6)) / 2, colW - 8, ROW - 6), Phaser.Geom.Rectangle.Contains);
         t.input.cursor = 'pointer';
         t.on('pointerdown', () => { if (this.time.now < this.menuReadyAt) return; pressed = t; glow.setPosition(x - 10, y).setVisible(true); });
         t.on('pointerout', () => { if (pressed === t) release(); });
