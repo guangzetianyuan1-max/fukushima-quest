@@ -1,16 +1,16 @@
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=154';
-import { EPISODES } from '../data/episodes.js?v=154';
-import { revealAt } from '../ui/reveal.js?v=154';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=154';
-import { chooseCommands } from '../battle/auto.js?v=154';
-import { itemNote } from '../data/items.js?v=154';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=154';
-import { STORY_FILES } from '../data/story_assets.js?v=154';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=154';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=154';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=154';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=154';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=154';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=155';
+import { EPISODES } from '../data/episodes.js?v=155';
+import { revealAt } from '../ui/reveal.js?v=155';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=155';
+import { chooseCommands } from '../battle/auto.js?v=155';
+import { itemNote } from '../data/items.js?v=155';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=155';
+import { STORY_FILES } from '../data/story_assets.js?v=155';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=155';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=155';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=155';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=155';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=155';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -260,7 +260,7 @@ export class BattleScene extends Phaser.Scene {
     // 1人ぶんは幅78ドット：名前・HP・術を縦に3段。窓の高さは2人のときと同じ
     const four = this.state.allies.length > 2;
     this.state.allies.forEach((a, i) => {
-      const x = four ? 24 + i * 79 : 28 + i * 164; // 和風の枠の金の線の内側
+      const x = four ? 28 + i * 78 : 30 + i * 164; // 和風の枠の金の線の内側（10/4 夜 本人「旅の者・術が枠に被って見えにくい」＝24→28）
       if (!four) {
         this.nameTexts[a.id] = this.add.text(x, 20, a.name, style(SIZE.name));
         this.statusTexts[a.id] = {
