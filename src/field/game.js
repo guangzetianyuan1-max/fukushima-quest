@@ -1,18 +1,18 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=155';
-import { kanbanAt } from './kanban.js?v=155';
-import { SOMA_ROWS } from './soma_map.js?v=155';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=155';
-import { KENCHU_ROWS } from './kenchu_map.js?v=155';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=155';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=155';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=155';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=155';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=155';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, RETIRED_COMPANIONS, BUSHI, KUNOICHI } from '../data/companions.js?v=155';
-import { EQUIP, START_EQUIP, canWear } from '../data/equip.js?v=155';
-import { becomeKunoichi } from './kagewatari.js?v=155';
+import { IWAKI_ROWS } from './iwaki_map.js?v=156';
+import { kanbanAt } from './kanban.js?v=156';
+import { SOMA_ROWS } from './soma_map.js?v=156';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=156';
+import { KENCHU_ROWS } from './kenchu_map.js?v=156';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=156';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=156';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=156';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=156';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=156';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, RETIRED_COMPANIONS, BUSHI, KUNOICHI } from '../data/companions.js?v=156';
+import { EQUIP, START_EQUIP, canWear } from '../data/equip.js?v=156';
+import { becomeKunoichi } from './kagewatari.js?v=156';
 
 export const SAVE_KEY = 'fq-save-v1';
 

@@ -1,7 +1,8 @@
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=155';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=155';
-import { newGame, load, SAVE_KEY } from '../field/game.js?v=155';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=155';
+import { MINCHO, BOLD } from '../ui/fonts.js?v=156';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=156';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=156';
+import { newGame, load, SAVE_KEY } from '../field/game.js?v=156';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=156';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -13,8 +14,8 @@ import { preloadKit, makeWindow } from '../ui/kit.js?v=155';
 //    暗くなる途中でさわれば、すぐ戦いへ
 const W = 360;
 const TITLE_VIDEO = 'assets/title_dance.mp4?v=2'; // 動画を作り直したら番号を上げる（スマホが前の動画を覚えている）
-const TITLE_FONT = '"Potta One", ' + BRUSH_FONT;
-const DOT = 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
+const TITLE_FONT = MINCHO; // 10/4 夜 明朝体の太字へ（前＝毛筆の Potta One）
+const DOT = MINCHO;
 
 export class TitleScene extends Phaser.Scene {
   constructor() {
@@ -62,7 +63,7 @@ export class TitleScene extends Phaser.Scene {
     // 題字は太い毛筆の Potta One（本人 10/1「文字がダサい。習字の太字に」＝Yuji Boku は細くかすれ、RPG の英字も崩れた）
     // 題字は2行で大きく（本人 10/1「もっと大きく2行に」）。10/4 表紙は題字と下の2つの札だけ（本人「下に、『はじめから』『つづきから』のボタンのみ」）
     const title = (text, y, size) => smooth(this.add.text(W / 2, y, text, {
-      fontFamily: TITLE_FONT, fontSize: `${size}px`, color: '#ffffff', resolution: 3,
+      fontFamily: TITLE_FONT, fontStyle: BOLD, fontSize: `${size}px`, color: '#ffffff', resolution: 3,
       stroke: '#1a1008', strokeThickness: 10,
     }).setOrigin(0.5));
     title('福島昔話', 72, 58);

@@ -1,6 +1,7 @@
 // 巻物に毛筆で縦書きした題「第一話 ﹁龍燈﹂」（本人 10/1「ドット文字で無いほうが良い。習字で背景巻物」）
 // 上下に軸（こげ茶・金の端）、間に和紙。右から読む縦書きを1列で：話数 → かぎ括弧 → 話の名 → かぎ括弧
-const BRUSH = '"Yuji Boku", "Hiragino Mincho ProN", "Yu Mincho", serif';
+import { MINCHO, BOLD } from './fonts.js?v=156';
+const BRUSH = MINCHO; // 10/4 夜 明朝体の太字へ（前＝毛筆の Yuji Boku）
 const INK = 0x1a1008;
 const PAPER = 0xf1e4c0;
 const PAPER_EDGE = 0xd9c493;
@@ -78,7 +79,7 @@ export function drawScroll(scene, cx, top, opts) {
   g.lineTo(leftX + bracket.w / 2, L.closeY);
   g.strokePath();
 
-  const brush = (size) => ({ fontFamily: BRUSH, fontSize: `${size}px`, color: '#1a1008', resolution: 3 });
+  const brush = (size) => ({ fontFamily: BRUSH, fontStyle: BOLD, fontSize: `${size}px`, color: '#1a1008', resolution: 3 });
   [...episode].forEach((c, i) => smooth(scene.add.text(rightX, L.epY[i], c, brush(epSize)).setOrigin(0.5, 0)));
   L.parts.forEach((pt, ci) => pt.forEach((c, i) => smooth(scene.add.text(colX(ci), L.taleTop + i * L.taleStep, c, brush(taleSize)).setOrigin(0.5, 0))));
   return { bottom, width: colW + 12 };

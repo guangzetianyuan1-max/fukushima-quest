@@ -1,15 +1,16 @@
-import { TitleScene } from './scenes/TitleScene.js?v=155';
-import { BattleScene } from './scenes/BattleScene.js?v=155';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=155';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=155';
-import { HARAI } from './field/game.js?v=155';
-import { EQUIP } from './data/equip.js?v=155';
-import { EPISODES } from './data/episodes.js?v=155';
-import { unlock, isUnlocked } from './audio/chip.js?v=155';
-import { askTerms } from './ui/terms.js?v=155';
-import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=155';
-import { showLoading, preloadImages } from './ui/loading.js?v=155';
-import { PRELOAD_ASSETS } from './data/preload_assets.js?v=155';
+import { MINCHO_NAME, BOLD } from './ui/fonts.js?v=156';
+import { TitleScene } from './scenes/TitleScene.js?v=156';
+import { BattleScene } from './scenes/BattleScene.js?v=156';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=156';
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=156';
+import { HARAI } from './field/game.js?v=156';
+import { EQUIP } from './data/equip.js?v=156';
+import { EPISODES } from './data/episodes.js?v=156';
+import { unlock, isUnlocked } from './audio/chip.js?v=156';
+import { askTerms } from './ui/terms.js?v=156';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=156';
+import { showLoading, preloadImages } from './ui/loading.js?v=156';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=156';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
@@ -17,14 +18,24 @@ for (const ev of ['touchend', 'pointerup', 'click', 'keydown']) {
   document.addEventListener(ev, () => { if (isUnlocked()) unlock(); }, { passive: true, capture: true });
 }
 
-const FONT = 'DotGothic16';
-const BRUSH = 'Yuji Boku'; // 題の毛筆（本人 10/1「習字で」）
+const FONT = MINCHO_NAME; // 10/4 夜 明朝体へ（本人「ゲーム画面の全ての文字を明朝体に」）
+const BRUSH = MINCHO_NAME; // 題字と巻物＝同じ明朝の太字（前＝毛筆）
 const BRUSH_TEXT = '福島昔話クエストRPG' + EPISODES.map((e) => e.enemy.episode + e.enemy.tale).join('');
 // 画面に出る字を全部集めて、字体の読み込みに渡す（足りない字だけ端末の字になるのを防ぐ）
 const UI_TEXT = '▶旅の者しおりはどうする？たたかう術語る道具にげる自動中（さわると手動）HP弱点：灯の約束もどる戻るどの術をつかう？道具を薬草×はないもう一度いどむ0123456789/が あらわれた！を しずめた！の こうげき！に ダメージ！となえた！しかし術の力がたりない！もうないつかった！かいふくした！昔話を語りはじめた……弱点は明かされている。にげだした！まわりこまれてしまった！をはいた！うけた！力つきた……語り部の補足必殺技！食べた！わけた！もどった！とりだした。食べる者がいない。名物さわってはじめる音：入切／昔話旅に出るつぎの話へ（）序章のつづきは準備中です黒いもやがひとつ晴れたのこりすっかり術がまっすぐとどく。さえぎられて弱まったまわりにまた立ちこめた●○';
 // 相馬の道場と武士（10/4）の字
 const DOJO_TEXT = '武士道場の師範一本取られた勝ち見事その太刀筋まことの認めよう免状をさずける流奥義居合い斬り抜く瞬すべてこめよおぼえた出直してこい一閃光筋えがく刀柄に手をかけた刃はばんだ鈍った木刀打ちこみ本目はじめ精進されよ試し合い受けますか先に取れば見ておれよかろう腕覚えができたらいつでも来い';
 const ALL_TEXT = DOJO_TEXT + UI_TEXT + JSON.stringify(EPISODES) + FIELD_TEXT + JSON.stringify([ZAKO, ZAKO_TELL, HARAI, EQUIP]) + '攻守速武器防具お守りなし今だれが着ける？身に着けた引き取ってもらった名物を食べるそうびを見るどうする？ゲームを終わる所持金仲間を生き返らせますか？生き返った人はおらぬようじゃ幽霊憑かいしんのいちげき授かる勝守厄除け守湯本の寺でたのむもどる店に置いていったちずを見るさわるととじる平の城下町湯本の湯の町小名浜の港腕に合った得物を選びな旅の支度ならまかせておくれその人は着けられないつづきからはじめから［］旅をつづける記録した所からやり直す経験手に入れた！お礼にもらったレベルに上がった！もやをはらった逃げきったLv呪霊お祓い供養受ける八幡さまで何をしますか？いたしましょうか？です安らかに去っていった体が軽くなった呪いがとけた自由に動く番屋届いておるぞ返してもらった' + 'まだ旅の記録がありません旅のつづきへ小高の町相馬の城下町セーブして終わる旅を記録してゲームを終わりますか？おつかれさまいまここ急所に命中した一発でしとめた'; // 10/3 足した画面の字
+
+// 明朝体は線が細い＝ゲーム全体の pixelArt（角ばった描き方）のままだと字がギザギザになる。字だけ なめらかに・3倍の細かさで描く（10/4 夜）
+const TextProto = Phaser.GameObjects.Text.prototype;
+const origUpdateText = TextProto.updateText;
+TextProto.updateText = function patchedUpdateText() {
+  if (this.style && this.style.resolution < 3) this.style.resolution = 3;
+  const r = origUpdateText.call(this);
+  this.texture?.setFilter?.(Phaser.Textures.FilterMode.LINEAR);
+  return r;
+};
 
 async function start() {
   // ⭐起動のローディングバー（本人 10/4「はじめの画面にローディングバーを表示し、毎回データ更新を」）＝最新の版を確かめる → 字 → よく使う絵
@@ -41,8 +52,7 @@ async function start() {
     await Promise.race([
       Promise.all([
         document.fonts.load(`16px "${FONT}"`, ALL_TEXT),
-        document.fonts.load(`32px "${BRUSH}"`, BRUSH_TEXT),
-        document.fonts.load('33px "Potta One"', '福島昔話クエストRPG平の城下町湯本の湯の町小名浜の港' + EPISODES.map((e) => e.enemy.place).join('')), // 題字と場所
+        document.fonts.load(`${BOLD} 32px "${BRUSH}"`, BRUSH_TEXT + '福島昔話クエストRPG平の城下町湯本の湯の町小名浜の港' + EPISODES.map((e) => e.enemy.place).join('')), // 題字・巻物・場所（太字）
       ]),
       new Promise((r) => setTimeout(r, 3000)),
     ]);

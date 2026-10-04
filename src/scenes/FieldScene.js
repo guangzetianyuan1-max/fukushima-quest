@@ -2,37 +2,38 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=155';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=155';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=155';
-import { RIDERS } from '../data/nomaoi_assets.js?v=155';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=155';
-import { TILE } from '../field/tiles.js?v=155';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=155';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=155';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=155';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=155';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=155';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=155';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=155';
+import { MINCHO, BOLD } from '../ui/fonts.js?v=156';
+import { EPISODES } from '../data/episodes.js?v=156';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=156';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=156';
+import { RIDERS } from '../data/nomaoi_assets.js?v=156';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=156';
+import { TILE } from '../field/tiles.js?v=156';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=156';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=156';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=156';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=156';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=156';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=156';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=156';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=155';
-import { membersOf } from '../battle/levels.js?v=155';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=155';
-import { ICON_IDS } from '../data/icons.js?v=155';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=155';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=155';
-import { mapPointOf } from '../field/mapcard.js?v=155';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=155';
-import { makeRng } from '../battle/rules.js?v=155';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=155';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown, canWear } from '../data/equip.js?v=155';
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=155';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=155';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=155';
+} from '../field/game.js?v=156';
+import { membersOf } from '../battle/levels.js?v=156';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=156';
+import { ICON_IDS } from '../data/icons.js?v=156';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=156';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=156';
+import { mapPointOf } from '../field/mapcard.js?v=156';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=156';
+import { makeRng } from '../battle/rules.js?v=156';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=156';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown, canWear } from '../data/equip.js?v=156';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=156';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=156';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=156';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -53,7 +54,7 @@ export const MENU_ROW = 46;
 export const MENU_FS = 22;
 const MENU_TOP = 176;
 const STEP_MS = 170; // 1歩の速さ
-const FONT = 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif';
+const FONT = MINCHO; // 10/4 夜 明朝体へ（ui/fonts.js）
 const style = (size = 20, color = '#ffffff') => ({
   fontFamily: FONT, fontSize: `${size}px`, color, resolution: 3, wordWrap: { width: 318, useAdvancedWrap: true }, lineSpacing: 8,
 });
@@ -421,7 +422,7 @@ export class FieldScene extends Phaser.Scene {
     // 町の入口の一枚絵（Gemini）。まだ届いていない町（1章）は名前だけ
     if (this.textures.exists(`card_town_${this.mapId}`)) box.add(this.add.image(W / 2, 190, `card_town_${this.mapId}`));
     box.add(this.add.text(W / 2, 318, townCardName(this.mapId), {
-      fontFamily: '"Potta One", "Yuji Boku", serif', fontSize: '30px', color: '#ffffff', resolution: 3, stroke: '#1a1008', strokeThickness: 6,
+      fontFamily: MINCHO, fontStyle: BOLD, fontSize: '30px', color: '#ffffff', resolution: 3, stroke: '#1a1008', strokeThickness: 6,
     }).setOrigin(0.5));
     this.addUi(box);
     let done = false;
@@ -981,8 +982,8 @@ export class FieldScene extends Phaser.Scene {
     const scroll = this.add.rectangle(W / 2, TOP - 22, 34, 14, 0xe8d6a0).setStrokeStyle(2, 0x7a4a1a);
     const look = lookOf('shiori', this.g);
     const me = this.add.sprite(W / 2, BOT, `p-${look}`, frameOf('up', 0, look)).setOrigin(0.5, 0.85).setScale(1.2);
-    const say = this.add.text(W / 2, 40, '影から 影へ。灯りの すきに 走れ！', { fontFamily: 'DotGothic16', fontSize: '19px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
-    const info = this.add.text(W / 2, 600, '', { fontFamily: 'DotGothic16', fontSize: '18px', color: '#ffffff' }).setOrigin(0.5).setStroke('#120a04', 4);
+    const say = this.add.text(W / 2, 40, '影から 影へ。灯りの すきに 走れ！', { fontFamily: FONT, fontSize: '19px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
+    const info = this.add.text(W / 2, 600, '', { fontFamily: FONT, fontSize: '18px', color: '#ffffff' }).setOrigin(0.5).setStroke('#120a04', 4);
     box.add([scroll, me, say, info]);
     let t0 = this.time.now;
     let loop = null;
@@ -1412,9 +1413,9 @@ export class FieldScene extends Phaser.Scene {
     const DRUM = { x: W / 2, y: 560 };
     const drum = this.add.circle(DRUM.x, DRUM.y, 30, 0x8a4a1a).setStrokeStyle(4, 0xe8d0a0);
     const ringG = this.add.graphics();
-    const say = this.add.text(W / 2, 70, '太鼓に 合わせて さわれ！', { fontFamily: 'DotGothic16', fontSize: '20px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
-    const score = this.add.text(W / 2, 110, '', { fontFamily: 'DotGothic16', fontSize: '18px', color: '#ffffff' }).setOrigin(0.5).setStroke('#120a04', 4);
-    const grade = this.add.text(W / 2, 505, '', { fontFamily: 'DotGothic16', fontSize: '22px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
+    const say = this.add.text(W / 2, 70, '太鼓に 合わせて さわれ！', { fontFamily: FONT, fontSize: '20px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
+    const score = this.add.text(W / 2, 110, '', { fontFamily: FONT, fontSize: '18px', color: '#ffffff' }).setOrigin(0.5).setStroke('#120a04', 4);
+    const grade = this.add.text(W / 2, 505, '', { fontFamily: FONT, fontSize: '22px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
     box.add([drum, ringG, say, score, grade]);
     const showScore = () => score.setText(`提灯 ${round.lit} / ${CHOCHIN_LANTERNS}`);
     const relight = () => lamps.forEach((l, i) => l.setFillStyle(i < round.lit ? 0xff4a2a : 0x4a1a1a).setStrokeStyle(1, i < round.lit ? 0xffd27a : 0x2a0a0a));
