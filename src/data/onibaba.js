@@ -7,7 +7,7 @@
 //   1回目＝firstLose（必ず負ける・全滅しても文は減らない）→ 二本松の宿で目をさます → 祐慶が加わり 僧は閼伽井嶽へ（companions.js の SWAP_AFTER_LOSS）
 //   2回目＝弱点は祐慶の「破魔の真弓」。⚠語るのは しおり・術を射るのは祐慶
 // 絵＝まだ（仮に道中の霊の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=121';
+import { BASIC_ITEMS } from './basic_items.js?v=122';
 
 export const ONIBABA = {
   art: {
@@ -55,12 +55,14 @@ export const ONIBABA = {
     ],
     story: {
       tell: [
-        { img: 'assets/story/onibaba_1.png', voice: 'assets/story/onibaba_1.mp3', text: 'むかし、安達ヶ原の 岩屋に、旅人を 泊める 老婆が いたの。ある 秋、熊野の お坊さま 祐慶さまが、一夜の 宿を たのんだのよ。' },
-        { img: 'assets/story/onibaba_2.png', voice: 'assets/story/onibaba_2.mp3', text: '老婆は「この 部屋を あけては いけない」と 言って、出かけて いったの。祐慶さまが のぞくと……そこは、おそろしい 鬼婆の すみかだったのよ。' },
-        { img: 'assets/story/onibaba_3.png', voice: 'assets/story/onibaba_3.mp3', text: '逃げる 祐慶さまは、熊野那智の お札で 山や 川を 作ったけれど、鬼婆は 越えてきた。……忘れの 力で、その 鬼婆が よみがえったの。祐慶さま、観音さまの 弓を！' },
+        // 10/4 本人「鬼婆は実の娘を殺して半狂乱になる話です」＝鬼婆になった わけ（調査ノートの筋：お守り袋で実の娘と知り、狂って鬼婆に）を1枚目に足して4枚に。手にかける所は絵にしない
+        { img: 'assets/story/onibaba_1.png', voice: 'assets/story/onibaba_1.mp3', text: 'むかし、京の 乳母 いわては、姫の 病を 治す 薬を さがして、安達ヶ原の 岩屋に 住んだの。ある 晩、泊めた 身ごもった 女の人を 手に かけると、お守り袋から、生き別れた 実の 娘だと わかったのよ。いわては 気が ふれ、鬼婆に なってしまったの。' },
+        { img: 'assets/story/onibaba_2.png', voice: 'assets/story/onibaba_2.mp3', text: '長い 年月が たった 秋、熊野の お坊さま 祐慶さまが、岩屋の 老婆に 一夜の 宿を たのんだの。' },
+        { img: 'assets/story/onibaba_3.png', voice: 'assets/story/onibaba_3.mp3', text: '老婆は「この 部屋を あけては いけない」と 言って 出かけたの。祐慶さまが のぞくと……そこは、おそろしい 鬼婆の すみかだったのよ。' },
+        { img: 'assets/story/onibaba_4.png', voice: 'assets/story/onibaba_4.mp3', text: '逃げる 祐慶さまは、熊野那智の お札で 山や 川を 作ったけれど、鬼婆は 越えてきた。……忘れの 力で、その 鬼婆が よみがえったの。祐慶さま、観音さまの 弓を！' },
       ],
       after: [
-        { img: 'assets/story/onibaba_4.png', voice: 'assets/story/onibaba_4.mp3', text: 'ほんとうの お話では、祐慶さまが 祈ると、如意輪観音さまが 空に あらわれ、破魔の 真弓で 鬼婆を 射たの。いまも 観世寺には 岩屋が 残り、近くに 黒塚が あるのよ。' },
+        { img: 'assets/story/onibaba_5.png', voice: 'assets/story/onibaba_5.mp3', text: 'ほんとうの お話では、祐慶さまが 祈ると、如意輪観音さまが 空に あらわれ、破魔の 真弓で 鬼婆を 射たの。いまも 観世寺には 岩屋が 残り、近くに 黒塚が あるのよ。' },
       ],
     },
     revealText: '鬼婆の 弱点が 明かされた！ 祐慶の 破魔の真弓が よく効くように なった。',
