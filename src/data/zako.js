@@ -203,7 +203,7 @@ export const ZAKO = {
     restoreLines: ['鎌鼬は 風に まぎれて、どこかへ 去っていった。'],
   },
   kawauso: {
-    chapter: 1, tier: 2, pending: true,
+    chapter: 1, tier: 2,
     name: '川獺', hp: 20, atk: 8, def: 3, agi: 12, exp: 6, mon: 6,
     biteName: 'かみつき', zones: [],
     trick: {kind: "steal", chance: 0.25, verb: "くわえて 川へ 飛びこんだ"},
@@ -211,7 +211,7 @@ export const ZAKO = {
     restoreLines: ['川獺は 「ちょいと 借りた だけさ」と、川へ もどっていった。'],
   },
   hitotsume: {
-    chapter: 1, tier: 3, pending: true,
+    chapter: 1, tier: 3,
     name: '一つ目小僧', hp: 22, atk: 9, def: 3, agi: 10, exp: 6, mon: 5,
     biteName: '長い 舌', zones: [],
     trick: {kind: "noise", chance: 0.3, text: "一つ目小僧の 大声！ 「べろべろ ばあ！」 耳が キーンと して、声が とどかない！"},
@@ -219,7 +219,7 @@ export const ZAKO = {
     restoreLines: ['一つ目小僧は ぺこりと 頭を 下げて、夕やみに 消えていった。'],
   },
   funayurei: {
-    chapter: 1, tier: 4, pending: true,
+    chapter: 1, tier: 4,
     name: '船幽霊', hp: 23, atk: 9, def: 3, agi: 9, exp: 7, mon: 6,
     biteName: 'ひしゃく', zones: [],
     trick: {kind: "possess", chance: 0.25},
@@ -227,7 +227,7 @@ export const ZAKO = {
     restoreLines: ['船幽霊は 「浜へ 帰りたかった」と つぶやいて、波に とけていった。'],
   },
   noppera: {
-    chapter: 1, tier: 5, pending: true,
+    chapter: 1, tier: 5,
     name: 'のっぺらぼう', hp: 24, atk: 10, def: 4, agi: 9, exp: 8, mon: 6,
     biteName: 'つかみかかり', zones: [],
     trick: {kind: "blind", chance: 0.3, text: "のっぺらぼうが ふり向いた！ 目も 鼻も 口も ない 顔に、目が くらむ！"},
@@ -235,7 +235,7 @@ export const ZAKO = {
     restoreLines: ['のっぺらぼうは すうっと 顔を なでると、霧の 中へ 消えていった。'],
   },
   ittan: {
-    chapter: 1, tier: 6, pending: true,
+    chapter: 1, tier: 6,
     name: '一反木綿', hp: 26, atk: 10, def: 4, agi: 14, exp: 8, mon: 7,
     biteName: '巻きつき', zones: [],
     trick: {kind: "net", chance: 0.3, text: "一反木綿が ひらりと 舞って 巻きついた！", stunText: "布に 巻かれて 動けない！"},
@@ -243,7 +243,7 @@ export const ZAKO = {
     restoreLines: ['一反木綿は ふわりと 舞い上がって、夕空へ 消えていった。'],
   },
   ookuma: {
-    chapter: 1, tier: 7, pending: true,
+    chapter: 1, tier: 7,
     name: '大熊', hp: 30, atk: 11, def: 5, agi: 7, exp: 9, mon: 6,
     biteName: '大きな 爪', zones: [],
     introText: '林の 奥から、大きな 熊が 立ち上がった！',
@@ -258,7 +258,7 @@ export const ZAKO = {
     restoreLines: ['海坊主は ざぶんと しずんで、静かな 海に もどった。'],
   },
   oonyudo: {
-    chapter: 1, tier: 9, pending: true,
+    chapter: 1, tier: 9,
     name: '大入道', hp: 34, atk: 12, def: 6, agi: 5, exp: 10, mon: 8,
     biteName: '大きな こぶし', zones: [],
     trick: {kind: "drink", chance: 0.25, amount: 14, text: "大入道は ぐうんと 背を のばして ふくれ上がった！"},
@@ -266,7 +266,7 @@ export const ZAKO = {
     restoreLines: ['大入道は みるみる 小さく なって、ただの 影に なった。'],
   },
   kyokotsu: {
-    chapter: 1, tier: 10, pending: true,
+    chapter: 1, tier: 10,
     name: '狂骨', hp: 36, atk: 13, def: 7, agi: 8, exp: 11, mon: 8,
     biteName: '骨の 手', zones: [],
     trick: {kind: "curse", chance: 0.25},
