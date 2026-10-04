@@ -2,38 +2,39 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=157';
-import { EPISODES } from '../data/episodes.js?v=157';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=157';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=157';
-import { RIDERS } from '../data/nomaoi_assets.js?v=157';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=157';
-import { TILE } from '../field/tiles.js?v=157';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=157';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=157';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=157';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=157';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=157';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=157';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=157';
+import { collection, PER_PAGE } from '../field/collection.js?v=158';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=158';
+import { EPISODES } from '../data/episodes.js?v=158';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=158';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=158';
+import { RIDERS } from '../data/nomaoi_assets.js?v=158';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=158';
+import { TILE } from '../field/tiles.js?v=158';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=158';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=158';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=158';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=158';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=158';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=158';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=158';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=157';
-import { membersOf } from '../battle/levels.js?v=157';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=157';
-import { ICON_IDS } from '../data/icons.js?v=157';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=157';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=157';
-import { mapPointOf } from '../field/mapcard.js?v=157';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=157';
-import { makeRng } from '../battle/rules.js?v=157';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=157';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown, canWear } from '../data/equip.js?v=157';
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=157';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=157';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=157';
+} from '../field/game.js?v=158';
+import { membersOf } from '../battle/levels.js?v=158';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=158';
+import { ICON_IDS } from '../data/icons.js?v=158';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=158';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=158';
+import { mapPointOf } from '../field/mapcard.js?v=158';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=158';
+import { makeRng } from '../battle/rules.js?v=158';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=158';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown, canWear } from '../data/equip.js?v=158';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=158';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=158';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=158';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -457,6 +458,81 @@ export class FieldScene extends Phaser.Scene {
     box.add(this.add.text(W / 2, 628, 'さわると とじる', { fontFamily: FONT, fontSize: '15px', color: '#cfd8ff', resolution: 3 }).setOrigin(0.5, 1));
     this.addUi(box);
     this.time.delayedCall(250, () => this.input.once('pointerdown', () => { box.destroy(); this.busy = false; }));
+  }
+
+  // ---- コレクション（本人 10/4 夜「倒したボスのキャラクターをあつめる」）＝元に戻した昔話の主の 元の姿。まだの主は影と「？？？」 ----
+  showCollection(page = 0) {
+    this.closeDialog();
+    this.busy = true;
+    const col = collection(this.g);
+    // 絵は開いたときに読む（まだ読んでいない主の分だけ）
+    const need = col.items.filter((it) => !this.textures.exists(`col-${it.id}`));
+    if (need.length) {
+      need.forEach((it) => this.load.image(`col-${it.id}`, it.img));
+      this.load.once('complete', () => this.drawCollection(col, page));
+      this.load.start();
+      return;
+    }
+    this.drawCollection(col, page);
+  }
+
+  drawCollection(col, page) {
+    this.collectionBox?.destroy();
+    const box = this.add.container(0, 0).setDepth(2000); // 上の札・十字キーより手前
+    this.collectionBox = box;
+    box.add(this.add.rectangle(0, 0, W, 640, 0x07061a, 1).setOrigin(0).setInteractive());
+    const txt = (x, y, t, size, color = '#ffffff', o = {}) => this.add.text(x, y, t, { fontFamily: FONT, fontSize: `${size}px`, color, resolution: 3, align: 'center', ...o });
+    box.add(txt(W / 2, 18, `コレクション　${col.got} / ${col.total}`, 22, '#ffd27a').setOrigin(0.5, 0));
+    const CW = 110, CH = 160, GX = (W - CW * 3) / 4;
+    col.items.slice(page * PER_PAGE, (page + 1) * PER_PAGE).forEach((it, k) => {
+      const cx = GX + (k % 3) * (CW + GX), cy = 58 + Math.floor(k / 3) * (CH + 8);
+      const card = this.add.graphics();
+      card.fillStyle(0x15132e, 1).fillRoundedRect(cx, cy, CW, CH, 8);
+      card.lineStyle(2, it.got ? 0xc9a24a : 0x3a3660, 1).strokeRoundedRect(cx, cy, CW, CH, 8);
+      box.add(card);
+      const im = this.add.image(cx + CW / 2, cy + 50, `col-${it.id}`);
+      im.setScale(Math.min(88 / im.width, 84 / im.height));
+      if (!it.got) im.setTintFill(0x000000).setAlpha(0.75); // まだの主は 黒い影
+      box.add(im);
+      box.add(txt(cx + CW / 2, cy + 98, it.got ? it.name : '？？？', it.name.length > 6 ? 13 : 15, it.got ? '#ffffff' : '#8a86b0', { wordWrap: { width: CW - 8, useAdvancedWrap: true } }).setOrigin(0.5, 0));
+      box.add(txt(cx + CW / 2, cy + CH - 6, it.episode, 12, '#cfc4a0').setOrigin(0.5, 1));
+      if (it.got) {
+        const hit = this.add.zone(cx, cy, CW, CH).setOrigin(0).setInteractive();
+        hit.on('pointerup', () => this.showCollectionCard(it, col, page));
+        box.add(hit);
+      }
+    });
+    // 下の札：まえ・つぎ・とじる（押して離して決まる）
+    const btn = (x, label, on, enabled = true) => {
+      const t = txt(x, 600, label, 20, enabled ? '#ffffff' : '#555070').setOrigin(0.5);
+      box.add(t);
+      if (!enabled) return;
+      const z = this.add.zone(x - 55, 578, 110, 44).setOrigin(0).setInteractive();
+      z.on('pointerup', () => { sfx('select'); on(); });
+      box.add(z);
+    };
+    btn(60, '◀ まえ', () => this.drawCollection(col, page - 1), page > 0);
+    btn(W / 2, 'とじる', () => { box.destroy(); this.collectionBox = null; this.busy = false; });
+    btn(W - 60, 'つぎ ▶', () => this.drawCollection(col, page + 1), page < col.pages - 1);
+    box.add(txt(W / 2, 568, `${page + 1} / ${col.pages}`, 13, '#8a86b0').setOrigin(0.5, 1));
+    this.cameras.main.ignore(box); // 窓用のカメラだけで描く（窓の部品の箱の外＝上の札・十字キーより手前）
+  }
+
+  // 1体を大きく：元の姿・名前・話・場所・ほんとうのお話（さわると一覧へ）
+  showCollectionCard(it, col, page) {
+    const box = this.add.container(0, 0).setDepth(2100);
+    const txt = (x, y, t, size, color = '#ffffff', o = {}) => this.add.text(x, y, t, { fontFamily: FONT, fontSize: `${size}px`, color, resolution: 3, align: 'center', ...o });
+    box.add(this.add.rectangle(0, 0, W, 640, 0x07061a, 1).setOrigin(0).setInteractive());
+    const im = this.add.image(W / 2, 190, `col-${it.id}`);
+    im.setScale(Math.min(240 / im.width, 240 / im.height));
+    box.add(im);
+    box.add(txt(W / 2, 330, it.name, 26, '#ffd27a').setOrigin(0.5, 0));
+    box.add(txt(W / 2, 370, `${it.episode}「${it.tale}」・${it.place}`, 15, '#cfc4a0', { wordWrap: { width: 320, useAdvancedWrap: true } }).setOrigin(0.5, 0));
+    if (it.hosoku) box.add(txt(W / 2, 420, it.hosoku, 15, '#ffffff', { align: 'left', wordWrap: { width: 310, useAdvancedWrap: true }, lineSpacing: 6 }).setOrigin(0.5, 0));
+    box.add(txt(W / 2, 628, 'さわると もどる', 15, '#cfd8ff').setOrigin(0.5, 1));
+    this.cameras.main.ignore(box);
+    sfx('select');
+    this.time.delayedCall(250, () => this.input.once('pointerup', () => box.destroy()));
   }
 
   // ---- 座標 ----
@@ -1753,13 +1829,14 @@ export class FieldScene extends Phaser.Scene {
     ]);
   }
 
-  // ---- どうぐ：道具を使う・そうびを見る・ちずを見る ----
+  // ---- どうぐ：道具を使う・そうびを見る・ちずを見る・コレクション ----
   pressItems() {
     if (this.busy || this.moving) return;
     this.showMenu('どうする？', [
       ['道具を 使う', () => this.foodMenu()],
       ['そうびを 見る', () => this.showGear()],
       ['ちずを 見る', () => this.showMap()],
+      ['コレクション', () => this.showCollection(0)],
       ['セーブして 終わる', () => this.saveAndQuit()],
       ['とじる', () => this.closeDialog()],
     ]);
