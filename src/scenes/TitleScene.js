@@ -1,7 +1,7 @@
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=138';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=138';
-import { newGame, load, SAVE_KEY } from '../field/game.js?v=138';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=138';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=139';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=139';
+import { newGame, load, SAVE_KEY } from '../field/game.js?v=139';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=139';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -110,7 +110,9 @@ export class TitleScene extends Phaser.Scene {
     const press = (x, y) => {
       if (this.stage === 1 && this.time.now >= this.skipAt) { this.go(); return; }
       if (this.stage !== 0) return;
-      if (this.btns.fresh.hit(x, y)) begin(true);
+      // 2つの札の当たりは真ん中の1列で重なる＝近い方の札（同じ近さなら つづきから＝記録を捨てない向き・10/4 試運転）
+      const nearCont = Math.abs(x - this.btns.cont.cx) <= Math.abs(x - this.btns.fresh.cx);
+      if (this.btns.fresh.hit(x, y) && !(this.btns.cont.enabled && nearCont && this.btns.cont.hit(x, y))) begin(true);
       else if (this.btns.cont.enabled && this.btns.cont.hit(x, y)) begin(false);
       else if (this.btns.cont.hit(x, y)) this.prompt.setText('まだ 旅の 記録が ありません');
     };

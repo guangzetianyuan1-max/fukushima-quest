@@ -1,15 +1,15 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=138';
-import { SOMA_ROWS } from './soma_map.js?v=138';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=138';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=138';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=138';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=138';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=138';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=138';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=138';
-import { EQUIP, START_EQUIP } from '../data/equip.js?v=138';
+import { IWAKI_ROWS } from './iwaki_map.js?v=139';
+import { SOMA_ROWS } from './soma_map.js?v=139';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=139';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=139';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=139';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=139';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=139';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=139';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, SWAP_AFTER_LOSS, BUSHI } from '../data/companions.js?v=139';
+import { EQUIP, START_EQUIP } from '../data/equip.js?v=139';
 
 export const SAVE_KEY = 'fq-save-v1';
 
@@ -287,11 +287,12 @@ export function afterForcedLose(game, enemyId) {
 // 戦いのあとに持ち帰る物：HP・術・呪い・取り憑き・残りの名物・盗まれた物・取られた文
 // 力つきた仲間は幽霊のまま（dead・HP 0）＝寺社で生き返らせる（本人 10/2）
 function settle(game, state) {
+  // 戦いに出ていない仲間（戦いの後に加わった人など）の欄は残す（10/4 試運転：二度押しで加わったばかりの猟師の欄が消え、地図が落ちた）
   const party = Object.fromEntries(state.allies.map((a) => [a.id, a.alive === false || a.hp <= 0
     ? { hp: 0, mp: a.mp, dead: true, curse: false, ghost: false }
     : { hp: a.hp, mp: a.mp, curse: !!a.curse, ghost: !!a.ghost }]));
   return {
-    ...game, party, items: { ...state.items },
+    ...game, party: { ...game.party, ...party }, items: { ...state.items },
     stolen: [...(game.stolen ?? []), ...(state.stolen ?? [])],
     mon: Math.max(0, game.mon - (state.monLost ?? 0)),
     steps: 0,

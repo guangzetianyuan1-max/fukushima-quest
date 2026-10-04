@@ -1,14 +1,14 @@
-import { EPISODES } from '../data/episodes.js?v=138';
-import { revealAt } from '../ui/reveal.js?v=138';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=138';
-import { chooseCommands } from '../battle/auto.js?v=138';
-import { itemNote } from '../data/items.js?v=138';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=138';
-import { STORY_FILES } from '../data/story_assets.js?v=138';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=138';
-import { drawScroll, fitScroll } from '../ui/scroll.js?v=138';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=138';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=138';
+import { EPISODES } from '../data/episodes.js?v=139';
+import { revealAt } from '../ui/reveal.js?v=139';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=139';
+import { chooseCommands } from '../battle/auto.js?v=139';
+import { itemNote } from '../data/items.js?v=139';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=139';
+import { STORY_FILES } from '../data/story_assets.js?v=139';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=139';
+import { drawScroll, fitScroll } from '../ui/scroll.js?v=139';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=139';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=139';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -32,6 +32,9 @@ const style = (size = SIZE.body, color = '#ffffff') => ({
   fontFamily: 'DotGothic16, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif', fontSize: `${size}px`, color, resolution: 3,
   wordWrap: { width: 318, useAdvancedWrap: true }, lineSpacing: 8,
 });
+
+// 終わりの選び（旅を つづける・やり直す）は1回だけ効く＝暗くなる0.4秒の間の二度押しで、お礼の文と経験が二重に入った（10/4 試運転）
+const once = (fn) => { let done = false; return () => { if (done) return; done = true; fn(); }; };
 
 export class BattleScene extends Phaser.Scene {
   constructor() {
@@ -845,18 +848,18 @@ export class BattleScene extends Phaser.Scene {
 
   // 全滅したとき：やり直す／ゲームを終わる（本人 10/2「死んだら、ゲームを終わるのコマンドも入れて」＝題の画面へ。記録があれば「つづきから」）
   showRetry(label) {
-    const quit = ['ゲームを 終わる', () => {
+    const quit = ['ゲームを 終わる', once(() => {
       stopBgm();
       this.cameras.main.fadeOut(500, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('title'));
-    }];
+    })];
     // 必ず負ける1回目（2章 鬼婆）：記録へ戻らず、町の宿で目をさます（文も減らない）
     if (this.fromField && this.state?.enemy?.forcedLose) {
-      this.showMenu('', [['……', () => this.backToField(afterForcedLose(this.registry.get('game'), this.ep.enemy.id))]]);
+      this.showMenu('', [['……', once(() => this.backToField(afterForcedLose(this.registry.get('game'), this.ep.enemy.id)))]]);
       return;
     }
     if (this.fromField) {
-      this.showMenu('', [['記録した 所から やり直す', () => this.backToField(afterLose(this.registry.get('game')))], quit]);
+      this.showMenu('', [['記録した 所から やり直す', once(() => this.backToField(afterLose(this.registry.get('game'))))], quit]);
       return;
     }
     this.showMenu('', [[label, () => this.scene.restart({ index: this.index })], quit]);
@@ -865,7 +868,7 @@ export class BattleScene extends Phaser.Scene {
   // 勝ったあと：つぎの話があれば「つぎの話へ」、無ければ準備中と伝える
   showAfterWin() {
     if (this.fromField) {
-      this.showMenu('', [['旅を つづける', () => this.backToField(afterWin(this.registry.get('game'), this.ep.enemy.id, this.state))]]);
+      this.showMenu('', [['旅を つづける', once(() => this.backToField(afterWin(this.registry.get('game'), this.ep.enemy.id, this.state)))]]);
       return;
     }
     const next = EPISODES[this.index + 1];

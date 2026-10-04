@@ -3,7 +3,7 @@
 // 釣りの手順（画面は FieldScene の fishing*）：①うきが沈んで「！」が出たら さわる（早すぎ・遅すぎは逃げる）
 //                                          ②左右に動く針が緑の帯に入ったら さわる（帯の幅と針の速さは魚しだい）
 // 画面と切り離す＝Node で試験する。ここの関数は game を書き換えずに新しい game を返す
-import { EQUIP } from '../data/equip.js?v=138';
+import { EQUIP } from '../data/equip.js?v=139';
 
 export const ROD_PRICE = 5;
 // 「！」が出てから さわれる長さ（ミリ秒）と、「！」が出るまでの待ち
