@@ -2,35 +2,36 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=147';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=147';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=147';
-import { RIDERS } from '../data/nomaoi_assets.js?v=147';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=147';
-import { TILE } from '../field/tiles.js?v=147';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=147';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=147';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=147';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=147';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=147';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=147';
+import { EPISODES } from '../data/episodes.js?v=148';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=148';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=148';
+import { RIDERS } from '../data/nomaoi_assets.js?v=148';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=148';
+import { TILE } from '../field/tiles.js?v=148';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=148';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=148';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=148';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=148';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=148';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=148';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=148';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=147';
-import { membersOf } from '../battle/levels.js?v=147';
-import { COMPANIONS } from '../data/companions.js?v=147';
-import { ICON_IDS } from '../data/icons.js?v=147';
-import { FACE_IDS } from '../data/faces.js?v=147';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=147';
-import { mapPointOf } from '../field/mapcard.js?v=147';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=147';
-import { makeRng } from '../battle/rules.js?v=147';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=147';
-import { buyEquip, partyView } from '../field/game.js?v=147';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=147';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=147';
+} from '../field/game.js?v=148';
+import { membersOf } from '../battle/levels.js?v=148';
+import { COMPANIONS } from '../data/companions.js?v=148';
+import { ICON_IDS } from '../data/icons.js?v=148';
+import { FACE_IDS } from '../data/faces.js?v=148';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=148';
+import { mapPointOf } from '../field/mapcard.js?v=148';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=148';
+import { makeRng } from '../battle/rules.js?v=148';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=148';
+import { buyEquip, partyView } from '../field/game.js?v=148';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=148';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=148';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -165,6 +166,7 @@ export class FieldScene extends Phaser.Scene {
   create() {
     // ⚠町に入る・出る・戦いから帰るたびに作り直す＝前の部品（消えた字）を忘れてから作る
     this.statusText = null;
+    this.memberUi = []; // 上の札の1人ずつの字（前の回の字は消えている）
     this.zoomLabel = null; // 倍率の字（歩く地図だけ・前の回の字は消えている）
     this.moneyText = null;
     this.g = this.registry.get('game');
@@ -508,19 +510,42 @@ export class FieldScene extends Phaser.Scene {
     // 作り直しで消えた札の字（scene が無い）には触らない。⛔isActive() で見ると、場面を始め直した直後（create の中）も止まって見えて札が空のままだった（10/2）
     if (!this.statusText?.scene) return;
     const p = this.g.party;
-    // 呪い＝呪・取り憑き＝憑 を名前の後ろに。力つきた仲間は「幽霊」（寺社で生き返る）
-    const mark = (id) => (p[id].curse ? '呪' : '') + (p[id].ghost ? '憑' : '');
-    const hp = (id) => (p[id].dead ? `${nameOf(this.g, id)} 幽霊` : `${nameOf(this.g, id)}${mark(id)} ${p[id].hp}/${maxOf(this.g, id).hp}`);
-    // 術の力も見せる（本人 10/2「術は温泉で回復しますか？」＝宿で戻るのが見えるように）
-    const mp = (id) => (maxOf(this.g, id).mp > 0 && !p[id].dead ? ` 術${p[id].mp}` : '');
     const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬', kenpoku: '県北' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
     // 2人ずつ1行（4人なら2行）・いちばん下の行に Lv と場所（右に所持金）
+    // ⭐本人 10/4「憑依されると…分かりにくい。HPを赤字に」＝1人ずつ 名前（白）・印（色つき：憑＝赤／呪＝紫／霊＝水色）・HP（憑依は赤）・術 を別の字で並べる
     const ids = membersOf(this.g);
-    const lines = [];
-    for (let i = 0; i < ids.length; i += 2) lines.push(ids.slice(i, i + 2).map((id) => `${hp(id)}${mp(id)}`).join('　'));
-    this.statusText.setText(`${lines.join('\n')}\nLv ${this.g.lv ?? 1}　${place}`);
+    for (const t of this.memberUi.flatMap((m) => m.all)) t.destroy();
+    this.memberUi = ids.map((id, i) => {
+      const x0 = 30 + (i % 2) * 154;
+      const y = 16 + Math.floor(i / 2) * 23;
+      const m = maxOf(this.g, id);
+      const all = [];
+      const put = (x, text, color) => { const t = this.addUi(this.add.text(x, y, text, style(15, color))); all.push(t); return t; };
+      let x = x0;
+      const name = put(x, nameOf(this.g, id), '#ffffff');
+      x += name.width + 2;
+      for (const k of badgesOf(p[id])) {
+        const b = put(x, AILMENTS[k].badge, AILMENTS[k].color).setStroke('#2a0a0a', 3);
+        x += b.width + 1;
+      }
+      const hp = put(x + 5, p[id].dead ? '幽霊' : `${p[id].hp}/${m.hp}`, hpColor(p[id], m.hp));
+      // 術の力も見せる（本人 10/2「術は温泉で回復しますか？」＝宿で戻るのが見えるように）
+      if (m.mp > 0 && !p[id].dead) put(hp.x + hp.width + 6, `術${p[id].mp}`, '#ffffff');
+      return { id, hp, all };
+    });
+    this.statusText.setY(16 + Math.ceil(ids.length / 2) * 23).setText(`Lv ${this.g.lv ?? 1}　${place}`);
     this.moneyText?.setText(`所持金 ${this.g.mon}文`);
     this.refreshGhosts?.();
+  }
+
+  // 憑依で HP が減ったとき（10/4）＝上の札の HP を点滅させ、横に赤い「−1」を浮かせる
+  flashHpLoss(id, n) {
+    const m = this.memberUi.find((u) => u.id === id);
+    if (!m?.hp?.scene) return;
+    this.tweens.add({ targets: m.hp, alpha: 0.25, duration: 120, yoyo: true, repeat: 1 });
+    // 右隣の「術」に重ならないよう、HP の真上から上へ浮かせる
+    const f = this.addUi(this.add.text(m.hp.x + m.hp.width / 2, m.hp.y + 2, `−${n}`, style(14, '#ff5a5a')).setOrigin(0.5, 1).setStroke('#2a0a0a', 4));
+    this.tweens.add({ targets: f, y: f.y - 10, alpha: 0, duration: 800, onComplete: () => f.destroy() });
   }
 
   // ---- 文と選び ----
@@ -735,8 +760,11 @@ export class FieldScene extends Phaser.Scene {
       onComplete: () => {
         this.moving = false;
         let g = { ...this.g, pos: { map: this.mapId, x: nx, y: ny, dir } };
+        const before = this.g.party;
         if (isField(this.mapId)) g = walkStep(g);
         this.setGame(g);
+        // 憑依で HP が減った人は、上の札の HP が点滅して「−1」が浮く（本人 10/4「減っていることを知らせてほしい」）
+        for (const id of membersOf(g)) if (g.party[id]?.ghost && g.party[id].hp < (before[id]?.hp ?? 0)) this.flashHpLoss(id, before[id].hp - g.party[id].hp);
         this.arrive(nx, ny);
       },
     });

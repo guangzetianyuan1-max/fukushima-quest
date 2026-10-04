@@ -1,14 +1,15 @@
-import { EPISODES } from '../data/episodes.js?v=147';
-import { revealAt } from '../ui/reveal.js?v=147';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=147';
-import { chooseCommands } from '../battle/auto.js?v=147';
-import { itemNote } from '../data/items.js?v=147';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=147';
-import { STORY_FILES } from '../data/story_assets.js?v=147';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=147';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=147';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=147';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=147';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=148';
+import { EPISODES } from '../data/episodes.js?v=148';
+import { revealAt } from '../ui/reveal.js?v=148';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=148';
+import { chooseCommands } from '../battle/auto.js?v=148';
+import { itemNote } from '../data/items.js?v=148';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=148';
+import { STORY_FILES } from '../data/story_assets.js?v=148';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=148';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=148';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=148';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=148';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -247,20 +248,22 @@ export class BattleScene extends Phaser.Scene {
   drawStatus() {
     this.windowBox(8, 8, W - 16, 102);
     this.statusTexts = {};
+    this.nameTexts = {};
+    this.badgeTexts = [];
     // 3〜4人（昔話の味方が加わったとき）は 名前を上に横一列（本人 10/2「名前を上部に4つ並べて」＝2×2だと字が重なった）。
     // 1人ぶんは幅78ドット：名前・HP・術を縦に3段。窓の高さは2人のときと同じ
     const four = this.state.allies.length > 2;
     this.state.allies.forEach((a, i) => {
       const x = four ? 24 + i * 79 : 28 + i * 164; // 和風の枠の金の線の内側
       if (!four) {
-        this.add.text(x, 20, a.name, style(SIZE.name));
+        this.nameTexts[a.id] = this.add.text(x, 20, a.name, style(SIZE.name));
         this.statusTexts[a.id] = {
           hp: this.add.text(x, 48, '', style(SIZE.stat)),
           mp: this.add.text(x, 76, '', style(SIZE.stat)),
         };
         return;
       }
-      this.add.text(x, 20, a.name, style(17));
+      this.nameTexts[a.id] = this.add.text(x, 20, a.name, style(17));
       this.statusTexts[a.id] = {
         hp: this.add.text(x, 50, '', style(13)),
         mp: this.add.text(x, 76, '', style(13)),
@@ -272,6 +275,7 @@ export class BattleScene extends Phaser.Scene {
   refreshStatus() {
     this.refreshMon();
     for (const a of this.state.allies) this.setAllyHp(a.id, a.hp);
+    this.refreshAilments();
     // 4人のときは術の無い者（しおり）の「術 0」を出さない
     for (const a of this.state.allies) this.statusTexts[a.id].mp.setText(this.state.allies.length > 2 && !a.maxMp ? '' : `術 ${a.mp}`);
   }
@@ -280,7 +284,28 @@ export class BattleScene extends Phaser.Scene {
     const a = this.state.allies.find((x) => x.id === id);
     const t = this.statusTexts[id].hp;
     t.setText(`HP ${hp}/${a.maxHp}`);
-    t.setColor(hp === 0 ? '#ff5050' : hp / a.maxHp < 0.4 ? '#ffd34d' : '#ffffff');
+    t.setColor(hp === 0 ? '#ff5050' : hpColor({ ...a, hp }, a.maxHp)); // 憑依は赤（10/4）
+  }
+
+  // 癖の印（本人 10/4「癖がついたらわかるように」）＝名前の右に色つきの印（憑＝赤／呪＝紫／止＝橙／霊＝水色）
+  // 全員にかかる状態は右上の所持金の下に「術封じ あと3」「目くらまし あと2」
+  refreshAilments() {
+    for (const t of this.badgeTexts ?? []) t.destroy();
+    this.badgeTexts = [];
+    const four = this.state.allies.length > 2;
+    for (const a of this.state.allies) {
+      const n = this.nameTexts?.[a.id];
+      if (!n?.scene) continue;
+      let x = n.x + n.width + 2;
+      for (const k of badgesOf(a)) {
+        const b = this.add.text(x, n.y + (four ? 1 : 2), AILMENTS[k].badge, style(four ? 15 : 17, AILMENTS[k].color)).setStroke('#2a0a0a', 4).setDepth(3);
+        this.badgeTexts.push(b);
+        x += b.width + 1;
+      }
+    }
+    partyStateLines(this.state).forEach((l, i) => {
+      this.badgeTexts.push(this.add.text(W - 14, 142 + i * 24, l.text, style(SIZE.badge, l.color)).setOrigin(1, 0).setStroke('#1a1030', 5).setDepth(3));
+    });
   }
 
   refreshMon() {

@@ -107,7 +107,7 @@ function allyAct(state, a, cmd, data, rng, log) {
   }
   // 爆音で声が届かない（居合い斬りは声を使わないので出せる）
   if (state.silence > 0 && ((cmd.type === 'spell' && data.spells[cmd.spellId]?.kind !== 'iai') || cmd.type === 'tell')) {
-    log.push({ text: `${a.name}は 声を 出したが、爆音で かき消された！` });
+    log.push({ text: `${a.name}は 声を 出したが、かき消されて 届かない！` }); // 10/4 鳴き声・こだまでも合う文に（前は どの雑魚でも「爆音」）
     return;
   }
   // 隠れる敵（1章 橘墨虎・本人 10/3）：弱点が明かされるまで、たたかう・鉄砲の半分は岩穴の闇に とどかない

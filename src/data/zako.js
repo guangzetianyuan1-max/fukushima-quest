@@ -352,14 +352,14 @@ export const ZAKO = {
     restoreLines: ['がしゃどくろは ほろほろと くずれ、土に かえっていった。'],
   },
   raiju: {
-    chapter: 3, tier: 1, pending: true,
+    chapter: 3, tier: 1,
     name: '雷獣', hp: 18, atk: 8, def: 2, agi: 16, exp: 5, mon: 4,
     biteName: 'いなずまの 爪', zones: [],
     introText: 'ごろごろ……雷の 光と いっしょに、獣が 落ちてきた！',
     restoreLines: ['雷獣は ぱちっと 光って、雲の 上へ 帰っていった。'],
   },
   kyuso: {
-    chapter: 3, tier: 2, pending: true,
+    chapter: 3, tier: 2,
     name: '旧鼠', hp: 20, atk: 8, def: 3, agi: 13, exp: 6, mon: 6,
     biteName: '大きな 前歯', zones: [],
     trick: {kind: "steal", chance: 0.25, verb: "くわえて 床下へ 逃げこんだ"},
@@ -367,7 +367,7 @@ export const ZAKO = {
     restoreLines: ['旧鼠は ちゅうと 鳴いて、納屋の 奥へ 消えていった。'],
   },
   konaki: {
-    chapter: 3, tier: 3, pending: true,
+    chapter: 3, tier: 3,
     name: '子泣き爺', hp: 22, atk: 9, def: 3, agi: 6, exp: 6, mon: 5,
     biteName: 'のしかかり', zones: [],
     trick: {kind: "noise", chance: 0.3, text: "子泣き爺が おぎゃあ おぎゃあと 泣きわめく！ 耳が ふさがって、声が とどかない！"},
@@ -375,7 +375,7 @@ export const ZAKO = {
     restoreLines: ['子泣き爺は 「すまんかった」と 笑って、とことこ 去っていった。'],
   },
   nurikabe: {
-    chapter: 3, tier: 4, pending: true,
+    chapter: 3, tier: 4,
     name: '塗壁', hp: 23, atk: 9, def: 3, agi: 4, exp: 7, mon: 6,
     biteName: '体当たり', zones: [],
     trick: {kind: "net", chance: 0.3, text: "目の 前に 塗壁が 立ちはだかった！", stunText: "壁に はばまれて 動けない！"},
@@ -383,7 +383,7 @@ export const ZAKO = {
     restoreLines: ['塗壁は すうっと うすくなって、ただの 夜道に もどった。'],
   },
   sunakake: {
-    chapter: 3, tier: 5, pending: true,
+    chapter: 3, tier: 5,
     name: '砂かけ婆', hp: 24, atk: 10, def: 4, agi: 10, exp: 8, mon: 6,
     biteName: '杖', zones: [],
     trick: {kind: "blind", chance: 0.3, text: "砂かけ婆が 砂を ばらまいた！ 目に 砂が 入った！"},
@@ -391,7 +391,7 @@ export const ZAKO = {
     restoreLines: ['砂かけ婆は 「ひっひっ」と 笑って、森の 奥へ 去っていった。'],
   },
   aoandon: {
-    chapter: 3, tier: 6, pending: true,
+    chapter: 3, tier: 6,
     name: '青行灯', hp: 26, atk: 10, def: 4, agi: 9, exp: 8, mon: 7,
     biteName: 'つめたい 手', zones: [],
     trick: {kind: "possess", chance: 0.25},
@@ -399,14 +399,14 @@ export const ZAKO = {
     restoreLines: ['青行灯は 「話は おしまい」と ささやいて、灯と いっしょに 消えた。'],
   },
   okubi: {
-    chapter: 3, tier: 7, pending: true,
+    chapter: 3, tier: 7,
     name: '大首', hp: 30, atk: 11, def: 5, agi: 7, exp: 9, mon: 6,
     biteName: 'かみつき', zones: [],
     introText: '夜空に、家ほども ある 大きな 顔が 浮かんでいる！',
     restoreLines: ['大首は にたりと 笑って、夜空に とけていった。'],
   },
   katawaguruma: {
-    chapter: 3, tier: 8, pending: true,
+    chapter: 3, tier: 8,
     name: '片輪車', hp: 32, atk: 12, def: 6, agi: 10, exp: 10, mon: 7,
     biteName: '火の 車輪', zones: [],
     trick: {kind: "boil", chance: 0.25, power: 10, text: "片輪車が 炎を まき散らして 走り抜けた！"},
@@ -414,7 +414,7 @@ export const ZAKO = {
     restoreLines: ['片輪車の 炎は 消え、からからと 夜道を 去っていった。'],
   },
   oogama: {
-    chapter: 3, tier: 9, pending: true,
+    chapter: 3, tier: 9,
     name: '大蝦蟇', hp: 34, atk: 12, def: 6, agi: 5, exp: 10, mon: 8,
     biteName: '長い 舌', zones: [],
     trick: {kind: "drink", chance: 0.25, amount: 14, text: "大蝦蟇は 沼の 毒気を 吸いこんで ふくれ上がった！"},
@@ -422,7 +422,7 @@ export const ZAKO = {
     restoreLines: ['大蝦蟇は ゲコリと 鳴いて、沼の 底へ しずんでいった。'],
   },
   hannya: {
-    chapter: 3, tier: 10, pending: true,
+    chapter: 3, tier: 10,
     name: '般若', hp: 36, atk: 13, def: 7, agi: 9, exp: 11, mon: 8,
     biteName: '長い 爪', zones: [],
     trick: {kind: "curse", chance: 0.25},
@@ -430,14 +430,14 @@ export const ZAKO = {
     restoreLines: ['般若の 面は ぽとりと 落ち、中の 女は 泣きながら 去っていった。'],
   },
   ippondatara: {
-    chapter: 4, tier: 1, pending: true,
+    chapter: 4, tier: 1,
     name: '一本だたら', hp: 18, atk: 8, def: 2, agi: 14, exp: 5, mon: 4,
     biteName: '大きな 一本足', zones: [],
     introText: '雪の 山に、大きな 一本足の 足あとが つづいている……',
     restoreLines: ['一本だたらは 片足で ぴょんと はねて、山の 奥へ 消えていった。'],
   },
   yamawaro: {
-    chapter: 4, tier: 2, pending: true,
+    chapter: 4, tier: 2,
     name: '山童', hp: 20, atk: 8, def: 3, agi: 12, exp: 6, mon: 6,
     biteName: '体当たり', zones: [],
     trick: {kind: "steal", chance: 0.25, verb: "かかえて 山へ 逃げていった"},
@@ -445,7 +445,7 @@ export const ZAKO = {
     restoreLines: ['山童は 「わるかった」と 頭を かいて、山へ 帰っていった。'],
   },
   itsumade: {
-    chapter: 4, tier: 3, pending: true,
+    chapter: 4, tier: 3,
     name: '以津真天', hp: 22, atk: 9, def: 3, agi: 13, exp: 6, mon: 5,
     biteName: '鋭い 爪', zones: [],
     trick: {kind: "noise", chance: 0.3, text: "以津真天が 「いつまで、いつまで」と 叫びつづける！ 声が とどかない！"},
@@ -453,7 +453,7 @@ export const ZAKO = {
     restoreLines: ['以津真天は ひと声 鳴いて、黒い 雲の 中へ 飛び去った。'],
   },
   tsuchigumo: {
-    chapter: 4, tier: 4, pending: true,
+    chapter: 4, tier: 4,
     name: '土蜘蛛', hp: 23, atk: 9, def: 3, agi: 8, exp: 7, mon: 6,
     biteName: '長い あし', zones: [],
     trick: {kind: "net", chance: 0.3, text: "土蜘蛛が 太い 糸を 吐きかけた！", stunText: "糸に からまって 動けない！"},
@@ -461,7 +461,7 @@ export const ZAKO = {
     restoreLines: ['土蜘蛛は 糸を たぐって、岩屋の 奥へ 消えていった。'],
   },
   enenra: {
-    chapter: 4, tier: 5, pending: true,
+    chapter: 4, tier: 5,
     name: '煙々羅', hp: 24, atk: 10, def: 4, agi: 12, exp: 8, mon: 6,
     biteName: '煙の 手', zones: [],
     trick: {kind: "blind", chance: 0.3, text: "煙々羅が 煙を 巻き上げた！ 煙で 目が くらむ！"},
@@ -469,7 +469,7 @@ export const ZAKO = {
     restoreLines: ['煙々羅は ふわりと ほどけて、空へ のぼっていった。'],
   },
   aonyobo: {
-    chapter: 4, tier: 6, pending: true,
+    chapter: 4, tier: 6,
     name: '青女房', hp: 26, atk: 10, def: 4, agi: 9, exp: 8, mon: 7,
     biteName: 'つめたい 手', zones: [],
     trick: {kind: "possess", chance: 0.25},
@@ -477,14 +477,14 @@ export const ZAKO = {
     restoreLines: ['青女房は 「待つのは もう やめます」と ささやいて、消えていった。'],
   },
   ushioni: {
-    chapter: 4, tier: 7, pending: true,
+    chapter: 4, tier: 7,
     name: '牛鬼', hp: 30, atk: 11, def: 5, agi: 6, exp: 9, mon: 6,
     biteName: '角', zones: [],
     introText: '岩場から、牛の 頭に 蜘蛛の 体の 牛鬼が 這い出てきた！',
     restoreLines: ['牛鬼は 低く うなって、岩場の 奥へ 帰っていった。'],
   },
   oonamazu: {
-    chapter: 4, tier: 8, pending: true,
+    chapter: 4, tier: 8,
     name: '大鯰', hp: 32, atk: 12, def: 6, agi: 5, exp: 10, mon: 7,
     biteName: '大きな 口', zones: [],
     trick: {kind: "boil", chance: 0.25, power: 11, text: "大鯰が あばれて 大地が ゆれた！"},
@@ -492,7 +492,7 @@ export const ZAKO = {
     restoreLines: ['大鯰は ひげを ゆらして、湖の 底へ しずんでいった。'],
   },
   onikuma: {
-    chapter: 4, tier: 9, pending: true,
+    chapter: 4, tier: 9,
     name: '鬼熊', hp: 34, atk: 12, def: 6, agi: 7, exp: 10, mon: 8,
     biteName: '大きな 爪', zones: [],
     trick: {kind: "drink", chance: 0.25, amount: 16, text: "鬼熊は 木の 実を むさぼって 力を 取りもどした！"},
@@ -500,7 +500,7 @@ export const ZAKO = {
     restoreLines: ['鬼熊は ぐるると うなって、深い 山へ 帰っていった。'],
   },
   tesso: {
-    chapter: 4, tier: 10, pending: true,
+    chapter: 4, tier: 10,
     name: '鉄鼠', hp: 36, atk: 13, def: 7, agi: 10, exp: 11, mon: 8,
     biteName: '鉄の 牙', zones: [],
     trick: {kind: "curse", chance: 0.25},
@@ -508,14 +508,14 @@ export const ZAKO = {
     restoreLines: ['鉄鼠は 「恨みは 晴れた」と つぶやいて、ねずみたちと 散っていった。'],
   },
   satori: {
-    chapter: 5, tier: 1, pending: true,
+    chapter: 5, tier: 1,
     name: '覚', hp: 18, atk: 8, def: 2, agi: 15, exp: 5, mon: 4,
     biteName: '大きな 手', zones: [],
     introText: '「おまえは 今、こわいと 思ったな」……心を 読む 覚だ！',
     restoreLines: ['覚は 「読めぬ 心も あるものだ」と、山の 奥へ 去っていった。'],
   },
   amanojaku: {
-    chapter: 5, tier: 2, pending: true,
+    chapter: 5, tier: 2,
     name: '天邪鬼', hp: 20, atk: 8, def: 3, agi: 14, exp: 6, mon: 6,
     biteName: 'ひっかき', zones: [],
     trick: {kind: "steal", chance: 0.25, verb: "ひょいと 取って、あかんべえ して 逃げた"},
@@ -523,7 +523,7 @@ export const ZAKO = {
     restoreLines: ['天邪鬼は 「ふん、つまらん」と 言いながら、うれしそうに 去っていった。'],
   },
   onmoraki: {
-    chapter: 5, tier: 3, pending: true,
+    chapter: 5, tier: 3,
     name: '陰摩羅鬼', hp: 22, atk: 9, def: 3, agi: 12, exp: 6, mon: 5,
     biteName: 'くちばし', zones: [],
     trick: {kind: "noise", chance: 0.3, text: "陰摩羅鬼が 甲高く 鳴いた！ 耳が ふさがって、声が とどかない！"},
@@ -531,7 +531,7 @@ export const ZAKO = {
     restoreLines: ['陰摩羅鬼は ひと声 鳴いて、夜空へ 飛び去った。'],
   },
   ryomen: {
-    chapter: 5, tier: 4, pending: true,
+    chapter: 5, tier: 4,
     name: '両面宿儺', hp: 23, atk: 9, def: 3, agi: 10, exp: 7, mon: 6,
     biteName: '四本の 腕', zones: [],
     trick: {kind: "net", chance: 0.3, text: "両面宿儺の 四本の 腕が つかみかかった！", stunText: "四本の 腕に つかまれて 動けない！"},
@@ -539,7 +539,7 @@ export const ZAKO = {
     restoreLines: ['両面宿儺は 二つの 顔で うなずき、山の 奥へ 去っていった。'],
   },
   oboroguruma: {
-    chapter: 5, tier: 5, pending: true,
+    chapter: 5, tier: 5,
     name: '朧車', hp: 24, atk: 10, def: 4, agi: 9, exp: 8, mon: 6,
     biteName: '車輪', zones: [],
     trick: {kind: "blind", chance: 0.3, text: "朧車が 朧な 霧を 吐いた！ 目の 前が かすむ！"},
@@ -547,7 +547,7 @@ export const ZAKO = {
     restoreLines: ['朧車は 霧に とけて、月夜の 向こうへ 消えていった。'],
   },
   shichinin: {
-    chapter: 5, tier: 6, pending: true,
+    chapter: 5, tier: 6,
     name: '七人ミサキ', hp: 26, atk: 10, def: 4, agi: 11, exp: 8, mon: 7,
     biteName: 'つめたい 手', zones: [],
     trick: {kind: "possess", chance: 0.25},
@@ -555,14 +555,14 @@ export const ZAKO = {
     restoreLines: ['七人ミサキは 一人ずつ 霧に とけて、静かに 消えていった。'],
   },
   oohihi: {
-    chapter: 5, tier: 7, pending: true,
+    chapter: 5, tier: 7,
     name: '大狒々', hp: 30, atk: 11, def: 5, agi: 12, exp: 9, mon: 6,
     biteName: '大きな 腕', zones: [],
     introText: '山を ゆらして、見上げるほどの 大狒々が 歯を むいた！',
     restoreLines: ['大狒々は 「ひひ」と 笑って、深い 山へ 帰っていった。'],
   },
   basan: {
-    chapter: 5, tier: 8, pending: true,
+    chapter: 5, tier: 8,
     name: '波山', hp: 32, atk: 12, def: 6, agi: 11, exp: 10, mon: 7,
     biteName: '炎の くちばし', zones: [],
     trick: {kind: "boil", chance: 0.25, power: 12, text: "波山が 炎を 吐いて 羽ばたいた！"},
@@ -570,7 +570,7 @@ export const ZAKO = {
     restoreLines: ['波山の 炎は 消え、ばさばさと 竹やぶへ 帰っていった。'],
   },
   baku: {
-    chapter: 5, tier: 9, pending: true,
+    chapter: 5, tier: 9,
     name: '獏', hp: 34, atk: 12, def: 6, agi: 7, exp: 10, mon: 8,
     biteName: '長い 鼻', zones: [],
     trick: {kind: "drink", chance: 0.25, amount: 18, text: "獏は 悪い 夢を 食べて 力を 取りもどした！"},
