@@ -1,5 +1,5 @@
 // 龍燈の龍と戦う1場面のデータ。数値は試算（500戦）で決めた：自動＝498勝（必殺技は運なので、まれに負ける）・語らないと0勝。
-import { BASIC_ITEMS } from './basic_items.js?v=159';
+import { BASIC_ITEMS } from './basic_items.js?v=160';
 
 export const RYUTO = {
   // 絵（art_src/prep_art.py ryuto で整えた物）と、敵の後ろの光：呑まれた間は月明かり／戻ったら金色
@@ -33,13 +33,13 @@ export const RYUTO = {
     // 10/2 猟師が鉈・笠を着けて来る（EXPECT_GEAR）ので たたかうだけで200戦21勝＝守り48→52
     // ⭐10/3 本人「4話の龍が弱い。4人が武器装備した状況でテストし、程よい強さに」＝試算（tests/_tune_ryuto.mjs・4人・Lv5・EXPECT_GEAR[5]）で
     //   旧：自動100%・勝った時に4人のHP 84%残り・倒れる人0 → 新：自動92%・9割8ターン以内・4戦に1回ほど誰かが倒れる・たたかうだけ0勝
-    hp: 276, atk: 49, def: 52, agi: 9, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp240 atk46）
+    hp: 276, atk: 45, def: 52, agi: 9, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp240 atk46） ⭐10/5 職業の旅＝代表の5組（tests/_party.js の COMPS）の平均で合わせ直した（tests/_autotune.mjs）
     weakness: 'tomoshibi',
     // 黒いもや：始めは min〜max を運で・毎ターン rise の見込みで ふいに濃くなる・必殺技でも1つ戻る（本人 10/1「もやはランダムに」）
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '黒い炎', chance: 0.3, power: 22, flash: [255, 90, 30], sfx: 'flame' }, // 必殺技：毎ターン3割で全員に（本人 10/1「龍なら炎」）・10/3 威力12→20
+    special: { name: '黒い炎', chance: 0.3, power: 20, flash: [255, 90, 30], sfx: 'flame' }, // 必殺技：毎ターン3割で全員に（本人 10/1「龍なら炎」）・10/3 威力12→20
     // 2つ目の必殺技（本人 10/3「4話の龍に必殺技を増やしてほしい。全員に大ダメージをくらわすもの」）＝龍は沖から川をさかのぼってきた主＝海の大波。先に見る
-    special2: { name: '黒い大波', chance: 0.18, power: 41, flash: [60, 110, 200], sfx: 'oonami' },
+    special2: { name: '黒い大波', chance: 0.18, power: 37, flash: [60, 110, 200], sfx: 'oonami' },
     biteName: 'かみつき',
     introText: '黒く 濁った 灯が、龍の まわりで ゆれている……',
     tellLines: [

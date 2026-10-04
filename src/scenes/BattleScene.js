@@ -1,17 +1,17 @@
-import { GAME_FONT } from '../ui/fonts.js?v=159';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=159';
-import { EPISODES } from '../data/episodes.js?v=159';
-import { revealAt } from '../ui/reveal.js?v=159';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=159';
-import { chooseCommands } from '../battle/auto.js?v=159';
-import { itemNote } from '../data/items.js?v=159';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=159';
-import { STORY_FILES } from '../data/story_assets.js?v=159';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=159';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=159';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=159';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=159';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=159';
+import { GAME_FONT } from '../ui/fonts.js?v=160';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=160';
+import { EPISODES } from '../data/episodes.js?v=160';
+import { revealAt } from '../ui/reveal.js?v=160';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=160';
+import { chooseCommands } from '../battle/auto.js?v=160';
+import { itemNote } from '../data/items.js?v=160';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=160';
+import { STORY_FILES } from '../data/story_assets.js?v=160';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=160';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=160';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=160';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=160';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=160';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -688,13 +688,17 @@ export class BattleScene extends Phaser.Scene {
       else if ((this.state.items.tama ?? 0) > 0) this.choose(a, { type: 'shoot' });
       else this.showMessages([{ text: '鉄砲の 玉が ない！ 玉は 平の 刀屋で 売っている。' }], () => this.askNextAlly());
     }, 'red'];
-    const second = a.canTell ? (tell ? ['語る', () => this.choose(a, { type: 'tell' }), 'purple'] : null) : a.gun ? gun : ['術', () => this.spellMenu(a), 'red'];
+    // 10/5 職業の旅：しおりも職業の技を持つ＝「語る」と「術」の両方を出す（語り終えたら「術」だけ）
+    const tellBtn = tell ? ['語る', () => this.choose(a, { type: 'tell' }), 'purple'] : null;
+    const jutsu = a.gun ? gun : (a.spells?.length ? ['術', () => this.spellMenu(a), 'red'] : null);
+    const autoColor = tellBtn && jutsu ? 'orange' : tellBtn ? 'red' : 'purple';
     this.showButtons(a.gun ? `${a.name}は どうする？（玉 ${this.state.items.tama ?? 0}）` : `${a.name}は どうする？`, [
       ['たたかう', () => this.choose(a, { type: 'attack' }), 'orange'],
-      second,
+      tellBtn,
+      jutsu,
       ['道具', () => this.itemMenu(a), 'green'],
       ['にげる', () => this.choose(a, { type: 'flee' }), 'blue'],
-      ['自動', () => this.startAuto(), a.canTell ? 'red' : 'purple'],
+      ['自動', () => this.startAuto(), autoColor],
     ].filter(Boolean), this.inputIndex > 0 ? () => this.backAlly() : null);
     // ↑ 2人目からは「戻る」＝前の人のコマンドを選び直す（本人 10/3「戦闘中のボタンで『戻る』を追加」「他と同じ大きさで、違う色で」）
   }
@@ -735,7 +739,7 @@ export class BattleScene extends Phaser.Scene {
       const row = i < top ? 0 : 1;
       const n = row === 0 ? top : all.length - top;
       const k = row === 0 ? i : i - top;
-      const pitch = n >= 3 ? 108 : 120;
+      const pitch = n >= 4 ? 84 : n >= 3 ? 108 : 120; // 4つの段（しおりの 語る・術 の両方）は詰める
       const x = W / 2 + (k - (n - 1) / 2) * pitch;
       const y = MSG_Y + (row === 0 ? 102 : 174);
       const b = makeButton(this, x, y, color, label, () => {
@@ -758,7 +762,9 @@ export class BattleScene extends Phaser.Scene {
   spellMenu(a) {
     const opts = a.spells.map((id) => {
       const sp = this.ep.spells[id];
-      return [`${sp.name}（術${sp.cost}）`, () => this.choose(a, { type: 'spell', spellId: id })];
+      const used = sp.once && a.usedOnce?.includes(id);
+      const cost = sp.once ? (used ? '使った' : '1戦1回') : `術${sp.cost}`;
+      return [`${sp.name}（${cost}）`, () => this.choose(a, { type: 'spell', spellId: id })];
     });
     this.showMenu('どの 術を つかう？', [...opts, ['戻る', () => this.askNextAlly()]]);
   }
@@ -938,16 +944,16 @@ export class BattleScene extends Phaser.Scene {
     this.time.delayedCall(2000, () => this.showMessages(bl.lines.map((text) => ({ text })), done));
   }
 
-  // ---- 相馬の道場（10/4）：1本ごとに勝ち負けを数え、決まるまで次の本目へ。2本取れば武士・居合い斬り ----
+  // ---- 一騎打ちの試し（10/4 相馬の道場→10/5 職業の師匠）：1本ごとに勝ち負けを数え、決まるまで次の本目へ。2本取れば その章の技 ----
   endDuel(won) {
     this.auto = false;
     this.updateAutoBadge();
     stopBgm();
-    const { game, lines, next, bushi } = afterDuel(this.registry.get('game'), this.duel, won);
+    const { game, lines, next, learned } = afterDuel(this.registry.get('game'), this.duel, won);
     this.registry.set('game', game);
-    const list = lines.map((text) => ({ text, sfx: text.includes('武士に なった') || text.includes('おぼえた') ? 'win' : undefined }));
+    const list = lines.map((text) => ({ text, sfx: text.includes('おぼえた') ? 'win' : undefined }));
     list[0].sfx = won ? 'hit' : 'damage';
-    if (won && !bushi) this.tweens.add({ targets: this.dragon, alpha: 0.4, duration: 300, yoyo: true });
+    if (won && !learned) this.tweens.add({ targets: this.dragon, alpha: 0.4, duration: 300, yoyo: true });
     this.showMessages(list, () => {
       if (next) this.scene.restart({ duel: next, fromField: true });
       else this.backToField(game);

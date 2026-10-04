@@ -1,20 +1,22 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=159';
-import { kanbanAt } from './kanban.js?v=159';
-import { SOMA_ROWS } from './soma_map.js?v=159';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=159';
-import { KENCHU_ROWS } from './kenchu_map.js?v=159';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=159';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=159';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=159';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=159';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear } from '../battle/levels.js?v=159';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, RETIRED_COMPANIONS, BUSHI, KUNOICHI } from '../data/companions.js?v=159';
-import { EQUIP, START_EQUIP, canWear } from '../data/equip.js?v=159';
-import { becomeKunoichi } from './kagewatari.js?v=159';
+import { IWAKI_ROWS } from './iwaki_map.js?v=160';
+import { kanbanAt } from './kanban.js?v=160';
+import { SOMA_ROWS } from './soma_map.js?v=160';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=160';
+import { KENCHU_ROWS } from './kenchu_map.js?v=160';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=160';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=160';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=160';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=160';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=160';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=160';
+import { EQUIP, canWear, startEquip } from '../data/equip.js?v=160';
+import { becomeKunoichi } from './kagewatari.js?v=160';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=160';
 
-export const SAVE_KEY = 'fq-save-v1';
+// v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
+export const SAVE_KEY = 'fq-save-v2';
 
 // 地図の字 → ボス（episodes.js の enemy.id）と、もやの壁 → 晴れる条件
 export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora', A: 'amekai', F: 'gobou', C: 'mukade', V: 'heppiri', B: 'onibaba', h: 'jakotsu', m: 'miharugoma', d: 'otakimaru', n: 'nekonaki', t: 'tengu', q: 'takuzen', p: 'kappa', z: 'kiyohime' }; // A〜B＝2章 県北（10/4）・h〜z＝3章 県中・県南（10/4）
@@ -44,9 +46,13 @@ export function lvOf(game, id) {
   if (PARTY_IDS.includes(id) || game?.expOf?.[id] == null) return game?.lv ?? 1; // 前の記録には expOf が無い＝今のレベルのまま
   return levelFor(game.expOf[id]);
 }
-// 強さの表の名前（くノ一になった しおりは 'kunoichi'・10/4 夜）
-export const statKey = (game, id) => (id === 'shiori' && game?.flags?.[KUNOICHI.flag] ? KUNOICHI.form : id);
-export const maxOf = (game, id) => statsAt(statKey(game, id), lvOf(game, id));
+// 強さの表の名前＝職業（'job_<職業>'・10/5）。職業の無い前の形（試験の古い仲間）は id のまま
+export const statKey = (game, id) => {
+  const j = jobOf(game, id);
+  if (j) return `job_${j}`;
+  return id === 'shiori' && game?.flags?.[KUNOICHI.flag] ? KUNOICHI.form : id;
+};
+export const maxOf = (game, id) => memberStats(id, statKey(game, id), lvOf(game, id));
 
 function findChar(rows, ch) {
   for (let y = 0; y < rows.length; y++) {
@@ -66,18 +72,27 @@ const fullParty = (game, keepDead = false) => Object.fromEntries(membersOf(game)
   return [id, { ...p, hp: m.hp, mp: m.mp, dead: false }];
 }));
 
-export function newGame() {
+// ---- 職業を選ぶ（本人 10/5「①初めから4人 ②職業を選択してからスタート」）----
+// pick＝{ tabi: 主人公の職業, shiori: しおりの職業, mates: [仲間2人の職業] }。4人とも別の職業。仲間の id は職業の id
+export const DEFAULT_PICK = { tabi: 'bushi', shiori: 'miko', mates: ['sou', 'yumi'] }; // 試験と、選ばずに始めたとき
+export function validPick(pick) {
+  const all = [pick?.tabi, pick?.shiori, ...(pick?.mates ?? [])];
+  return all.length === 4 && all.every((j) => JOB_IDS.includes(j)) && new Set(all).size === 4;
+}
+export function newGame(pick = DEFAULT_PICK) {
+  if (!validPick(pick)) throw new Error('職業の選び方が正しくない');
+  const members = ['tabi', 'shiori', ...pick.mates];
+  const base = { jobs: { tabi: pick.tabi, shiori: pick.shiori }, members, skills: Object.fromEntries(members.map((id) => [id, []])), lv: 1 };
   return {
+    ...base,
     somaW: 36, // 相馬の地図の幅（10/4 に40→36列へ詰めた）。無い記録は前の幅＝読み込むときに位置を直す
     pos: { ...START },
     fieldPos: { x: START.x, y: START.y }, // 町に入る前に立っていた所（町を出るとここへ）
     mon: 30,
-    members: [...PARTY_IDS], // 昔話の味方が加わると増える（join）
     items: { yakusou: 2, jouyakusou: 1, reisui: 1 },
-    party: fullParty(),
-    lv: 1,
+    party: fullParty(base),
     exp: 0,
-    equip: structuredClone(START_EQUIP),
+    equip: startEquip(base),
     steps: 0, // 道中の敵に出会ってからの歩数
     stolen: [], // 盗まれた名物（小名浜の番屋に届く）
     cleared: {},
@@ -111,15 +126,33 @@ export function terrainAt(map, x, y) {
 }
 
 export function wallOpen(game, ch) {
-  return !!game.cleared[WALL_OPENED_BY[ch]] && (!WALL_NEEDS_FLAG[ch] || !!game.flags?.[WALL_NEEDS_FLAG[ch]]);
+  return !!game.cleared[WALL_OPENED_BY[ch]] && (!WALL_NEEDS_SKILLS[ch] || chapterSkillsDone(game, WALL_NEEDS_SKILLS[ch]));
 }
-// ボスのほかに 要る物（10/4 県北への口は、相馬の道場で武士になってから）
-export const WALL_NEEDS_FLAG = { 8: 'bushi', '(': 'kunoichi' }; // (＝2章の出口（鬼婆の南）は しおりが くノ一になってから（10/4 夜）
-// ボスは戻したが、その章のクエストが残っているときに ぶつかると出る言葉（関所の番人）
+// 章の出口（本人 10/5「4人とも その章の技を習うまで通さない」）＝壁の字 → 章。8＝1章の出口（相馬→県北）。2章・3章の出口は段階②③で足す
+export const WALL_NEEDS_SKILLS = { 8: 1 };
+export const WALL_NEEDS_FLAG = {}; // 前の形（武士・くノ一の印）の名残
+// ボスは戻したが、その章の技を まだ習っていない人がいるときに ぶつかると出る言葉（関所の番人）
 export const WALL_QUEST_LINES = {
-  8: ['西の 口の 番人「待たれよ。武士の 免状の 無い 者は、県北へは 通せぬ。」', 'しおり「相馬の 町の 道場で、師範に 腕を 認めて もらいましょう。」'],
-  '(': ['南の 口の 番人「待たれよ。この 先の 郡山へは、忍びの 心得 なくしては 抜けられぬ。」', 'しおり「福島の 町に、黒脛巾組の 頭が いると 聞いたわ。わたしが 試しを 受けてみる。」'],
+  8: ['西の 口の 番人「待たれよ。相馬と 小高の 師匠に 技を 認められた 者しか、県北へは 通せぬ。」', 'しおり「4人とも、師匠の 試しを 受けましょう。」'],
 };
+// その章の技を まだ習っていない人（番人の言葉に 名前を出す）
+export function missingSkills(game, ch) {
+  return membersOf(game).filter((id) => {
+    const j = JOBS[jobOf(game, id)];
+    return j && !(game.skills?.[id] ?? []).includes(j.skills[ch - 1]);
+  });
+}
+export function wallQuestLines(game, ch) {
+  const base = WALL_QUEST_LINES[ch];
+  const need = WALL_NEEDS_SKILLS[ch];
+  if (!base || !need) return base ?? null;
+  const left = missingSkills(game, need).map((id) => {
+    const q = QUESTS[need]?.[jobOf(game, id)];
+    return `${nameOf(game, id)}（${q ? `${TOWN_LABEL[q.town] ?? q.town}の ${q.master}` : '師匠'}）`;
+  });
+  return [base[0], `しおり「まだ 習っていないのは、${left.join('・')}よ。」`];
+}
+const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', nihonmatsu: '二本松', koriyama: '郡山', sukagawa: '須賀川', shirakawa: '白河' };
 
 // そのマスへ歩けるか（町の人の立つマスは画面の側で見る）
 export function canWalk(game, map, x, y) {
@@ -201,26 +234,13 @@ export function load(text) {
       if (to) items[to] = (items[to] ?? 0) + n;
     }
     const stolen = (g.stolen ?? []).map((id) => (ITEMS[id] ? id : OLD_ITEM[id])).filter(Boolean);
-    return retireCompanions(fixSomaWidth({ ...g, items, stolen }));
+    if (!g.jobs || !validPick({ tabi: g.jobs.tabi, shiori: g.jobs.shiori, mates: (g.members ?? []).slice(2) })) return null; // 職業の無い記録（v1）は読まない
+    return fixSomaWidth({ ...g, items, stolen, skills: g.skills ?? {} });
   } catch {
     return null;
   }
 }
 
-// 前の版（〜v152）で祐慶が仲間になった記録＝僧へ戻す（経験・装備・HP はそのまま・お経は学んだことに）（10/4 夜 本人「祐慶に替わるは無し」）
-export function retireCompanions(g) {
-  let out = g;
-  for (const [old, to] of Object.entries(RETIRED_COMPANIONS)) {
-    if (!(out.members ?? []).includes(old)) continue;
-    const swap = (o) => { if (!o || !(old in o)) return o; const n = { ...o, [to]: o[old] }; delete n[old]; return n; };
-    out = {
-      ...out, members: out.members.map((id) => (id === old ? to : id)),
-      expOf: swap(out.expOf), equip: swap(out.equip), party: swap(out.party),
-      flags: { ...out.flags, nyoirin: true },
-    };
-  }
-  return out;
-}
 
 // ⭐10/4 相馬の地図を40→36列へ詰めた（本人「右側に海を入れて」＝列21・22・29・30を消した）。前の記録の相馬の位置を、詰めた後の列へ読み替える
 export function somaOldToNewX(x) {
@@ -260,13 +280,12 @@ export function battleData(game, ep0) {
   const items = Object.fromEntries(Object.entries(game.items)
     .filter(([, n]) => n > 0)
     .map(([id, n]) => [id, { ...ITEMS[id], count: n }]));
-  // 加わった昔話の味方を、話のデータの2人の後ろに足す
-  const joined = membersOf(game).filter((id) => COMPANIONS[id] && !ep.allies.some((a) => a.id === id))
-    .map((id) => ({ id, name: COMPANIONS[id].name, spells: COMPANIONS[id].spells, gun: !!COMPANIONS[id].gun }));
-  const bushi = !!game.flags?.bushi;
+  // 仲間2人（職業の人物）を、話のデータの2人（主人公・しおり）の後ろに足す。職業の無い前の形は 昔話の味方
+  const joined = membersOf(game).filter((id) => !ep.allies.some((a) => a.id === id))
+    .map((id) => (JOBS[id] ? { id, name: nameOf(game, id), spells: [] } : { id, name: COMPANIONS[id]?.name ?? id, spells: COMPANIONS[id]?.spells ?? [], gun: !!COMPANIONS[id]?.gun }));
   const allies = [...ep.allies, ...joined].map((a0) => {
     const a = formOf(game, a0);
-    const m = statsWithGear(a.id, lvOf(game, a.id), game.equip ?? START_EQUIP, statKey(game, a.id));
+    const m = statsWithGear(a.id, lvOf(game, a.id), game.equip ?? {}, statKey(game, a.id));
     const p = game.party[a.id] ?? {};
     // 力つきて幽霊の仲間は戦いに出ない（alive:false・HP 0）
     if (p.dead) return { ...a, ...m, maxHp: m.hp, maxMp: m.mp, hp: 0, mp: p.mp ?? 0, alive: false };
@@ -282,20 +301,15 @@ export function battleData(game, ep0) {
     ep = { ...ep, spells: { ...ep.spells, [w]: { ...ep.spells[w], power: Math.round(ep.spells[w].power * hint.mult) } }, enemy: { ...ep.enemy, hintText: hint.text } };
   }
   // ⭐必ず負ける1回目（2章 鬼婆・本人 10/4「鬼婆は最強なので、一度全滅→町で祐慶と合流し、再トライ」）
-  // 猟師がいて 玉が0発のまま ボスに来たら、しおりが知らせる（10/4 夜 通しの調整：ボスの強さは 玉3発を持つ見込みで合わせてある）
-  const gunner = membersOf(game).some((id) => COMPANIONS[id]?.gun && !game.party?.[id]?.dead);
-  if (gunner && !ep.enemy.noWeak && !(game.items?.tama > 0) && !ep.enemy.hintText) {
-    ep = { ...ep, enemy: { ...ep.enemy, hintText: '鉄砲の 玉が 一発も ないわ……。町の 刀屋や よろず屋で 買っておくと、猟師さんが 頼りに なるのに。' } };
-  }
   const fl = ep.enemy.firstLose;
   if (fl && !game.flags?.[fl.until ?? `${ep.enemy.id}Lost`]) { // until＝その印が付くまで必ず負ける（鬼婆＝僧が如意輪の経を学ぶまで・10/4 夜）
     const enemy = {
       ...ep.enemy, hp: fl.hp, atk: fl.atk, def: fl.def, forcedLose: true, tellBlock: fl.tellBlock,
       introText: fl.introText, loseLines: fl.loseLines, mist: { ...ep.enemy.mist, min: fl.mistMin ?? ep.enemy.mist?.min },
     };
-    return { ...ep, enemy: bushiLines(enemy, bushi), allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
+    return { ...ep, enemy, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
   }
-  return { ...ep, enemy: bushiLines(ep.enemy, bushi), allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS } };
+  return { ...ep, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
 }
 
 // 必ず負ける1回目のあと（2章 鬼婆）：文は減らさず、町（二本松）の宿で目をさます
@@ -319,14 +333,38 @@ export function afterKagewatari(game) {
   return { ...r, game: { ...r.game, party: { ...r.game.party, shiori: { ...p, hp: m.hp, mp: m.mp, dead: false } } } };
 }
 
-// 着替え・学びを 戦いの味方に映す：武士（名前と居合い斬り）・くノ一（妖術と 短剣の二連撃）・僧の如意輪の経
+// 職業と学びを 戦いの味方に映す（10/5）：職業の技（はじめから＋習った物）・持ち味（かいしん・二連撃・つっぱり・射る・調合）・しおりの如意輪の経
+const ATTACK_TEXT = { rikishi: 'つっぱり', yumi: '矢' };
 export function formOf(game, a) {
   const f = game?.flags ?? {};
-  if (a.id === 'tabi' && f.bushi) return { ...a, name: BUSHI.name, spells: [...(a.spells ?? []), BUSHI.spell] };
-  if (a.id === 'shiori' && f[KUNOICHI.flag]) return { ...a, spells: [...(a.spells ?? []), ...KUNOICHI.spells], dual: true, form: KUNOICHI.form };
+  let out = a;
+  const job = jobOf(game, a.id);
+  if (job) {
+    const j = JOBS[job];
+    out = { ...out, job, spells: [...(a.spells ?? []), ...jobSpellsOf(game, a.id)], ...(j.passive ?? {}), ...(ATTACK_TEXT[job] ? { attackText: ATTACK_TEXT[job] } : {}) };
+  }
   const le = Object.values(LEARN_AFTER_LOSS).find((x) => x.who === a.id && f[x.flag]);
-  if (le) return { ...a, spells: [...(a.spells ?? []).filter((id) => id !== le.spell), le.spell] };
-  return a;
+  if (le) out = { ...out, spells: [...(out.spells ?? []).filter((id) => id !== le.spell), le.spell] };
+  return out;
+}
+
+// ---- 技を習う（章の町の師匠の試しに受かる）----
+export function learnSkill(game, who, ch) {
+  const j = JOBS[jobOf(game, who)];
+  const sk = j?.skills[ch - 1];
+  if (!sk) return { ok: false, game };
+  const have = game.skills?.[who] ?? [];
+  if (have.includes(sk)) return { ok: false, game, skill: sk };
+  return { ok: true, skill: sk, game: { ...game, skills: { ...game.skills, [who]: [...have, sk] } } };
+}
+// その町で 試しを受けられる人（師匠ごと）：{ who, job, master, form, done }
+export function questsAt(game, town, ch = 1) {
+  return membersOf(game).flatMap((id) => {
+    const job = jobOf(game, id);
+    const q = QUESTS[ch]?.[job];
+    if (!q || q.town !== town) return [];
+    return [{ who: id, job, ...q, skill: JOBS[job].skills[ch - 1], done: (game.skills?.[id] ?? []).includes(JOBS[job].skills[ch - 1]) }];
+  });
 }
 
 // 戦いのあとに持ち帰る物：HP・術・呪い・取り憑き・残りの名物・盗まれた物・取られた文
@@ -381,13 +419,13 @@ export function afterZako(game, zakoId, state) {
     const p = g.party[id];
     const lv = lvOf(g, id);
     if (p.dead || lv === before[id]) return [id, p];
-    const b = statsAt(id, before[id]);
-    const a = statsAt(id, lv);
+    const b = memberStats(id, statKey(g, id), before[id]);
+    const a = memberStats(id, statKey(g, id), lv);
     return [id, { ...p, hp: p.hp + a.hp - b.hp, mp: p.mp + a.mp - b.mp }];
   }));
   g = { ...g, party };
   if (g.lv > before.tabi) lines.push(`${nameOf(g, 'tabi')}たちは レベル ${g.lv}に 上がった！`);
-  for (const id of membersOf(g)) if (!PARTY_IDS.includes(id) && lvOf(g, id) > before[id]) lines.push(`${NAME[id]}は レベル ${lvOf(g, id)}に 上がった！`);
+  for (const id of membersOf(g)) if (g.expOf?.[id] != null && lvOf(g, id) > before[id]) lines.push(`${nameOf(g, id)}は レベル ${lvOf(g, id)}に 上がった！`);
   return { game: g, lines };
 }
 
@@ -518,7 +556,7 @@ export function afterLose(game) {
 }
 
 // 歩いている間に道具を使う：HP の物は一番弱っている仲間に、術の物は術を使う仲間に
-export const NAME = { tabi: '旅の者', shiori: 'しおり', ...Object.fromEntries(Object.entries(COMPANIONS).map(([id, c]) => [id, c.name])) };
+export const NAME = { ...Object.fromEntries(Object.entries(COMPANIONS).map(([id, c]) => [id, c.name])), ...Object.fromEntries(Object.entries(JOBS).map(([id, j]) => [id, j.name])), tabi: '旅の者', shiori: 'しおり' };
 export function useItem(game, id) {
   const it = ITEMS[id];
   if (it.kind === 'ammo') return { ok: false, game, text: `${it.name}は 戦いで 猟師が 鉄砲に こめて 使う。` };
@@ -548,9 +586,9 @@ export function useItem(game, id) {
 // 買うと その場で着ける。前の品は半値で引き取り。着けられない人・文が足りないときは買えない
 export function buyEquip(game, id, who) {
   const e = EQUIP[id];
-  if (!canWear(game.flags, id, who)) return { ok: false, reason: 'who', game }; // くノ一は 薙刀の系統を着けない・短剣は くノ一だけ（10/4 夜）
+  if (!canWear(game, id, who)) return { ok: false, reason: 'who', game }; // 武器は その職業の系統だけ（10/5）
   if (game.mon < e.price) return { ok: false, reason: 'money', game };
-  const equip = structuredClone(game.equip ?? START_EQUIP);
+  const equip = structuredClone(game.equip ?? {});
   equip[who] ??= { weapon: null, armor: null, charm: null }; // 仲間が加わる前の記録には その人の欄が無い
   const old = equip[who][e.slot];
   const refund = old ? Math.floor(EQUIP[old].price / 2) : 0;
@@ -561,8 +599,8 @@ export function buyEquip(game, id, who) {
 // 強さを見る（どうぐ → そうび）
 export function partyView(game) {
   return membersOf(game).map((id) => ({
-    id, ...statsWithGear(id, lvOf(game, id), game.equip ?? START_EQUIP, statKey(game, id)),
-    gear: game.equip?.[id] ?? START_EQUIP[id] ?? {}, // 昔話の味方は装備なし（いまは）
+    id, job: jobOf(game, id), ...statsWithGear(id, lvOf(game, id), game.equip ?? {}, statKey(game, id)),
+    gear: game.equip?.[id] ?? {},
   }));
 }
 
@@ -580,59 +618,71 @@ export function join(game, id) {
   return { ok: true, game: { ...g, party: { ...game.party, [id]: { hp: m.hp, mp: m.mp } } } };
 }
 
-// 名前（武士になった旅の者は「武士」・10/4）
-export const nameOf = (game, id) => (id === 'tabi' && game?.flags?.bushi ? BUSHI.name : NAME[id]);
-function bushiLines(enemy, bushi) {
-  if (!bushi || !enemy.loseLines) return enemy;
-  return { ...enemy, loseLines: enemy.loseLines.map((t) => t.replace(/^旅の者/, BUSHI.name)) };
-}
+// 名前（主人公＝旅の者・しおり・仲間＝職業の名前・10/5）
+export const nameOf = (game, id) => NAME[id] ?? id;
 
 // ---- 相馬の道場（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に変更」・選んだ＝1章 相馬・道場の試し合い・居合い斬り）----
 // 師範と木刀で 3本勝負（2本先に取れば 免状）。旅の者ひとりで戦う。強さは そのときの旅の者に合わせる（いつ来ても勝負になる）
 // 1本ごとに傷は手当てしてもらえる（木刀の試し合い）。2本取られたら「出直してこい」＝数は0へ戻り、また挑める（文は取られない）
 export const DOJO_WIN = 2;
-export const DOJO_ROUNDS = [1.03, 1.03, 1.03]; // 本目ごとの師範の強さ（10/4 測った：本目で上げると 体力の1太刀の差で急に勝てなくなる＝そろえる。1本 約6〜8割・免状まで 約6〜9割＝tests/_tune_dojo.mjs）
+export const DOJO_ROUNDS = [1.02, 1.02, 1.02]; // 10/5 職業の一騎打ちへ広げたので 1.03→1.02（5職業×Lv5〜11で 1本 7〜9割・合格 8〜10割＝tests/_tune_duel.mjs。⚠1.00 で ほぼ全勝・1.03 で 4割台の段＝整数の丸めで急に変わる） // 本目ごとの師範の強さ（10/4 測った：本目で上げると 体力の1太刀の差で急に勝てなくなる＝そろえる。1本 約6〜8割・免状まで 約6〜9割＝tests/_tune_dojo.mjs）
 export const DOJO_ART = 'assets/dojo_shihan.png'; // 10/4 師範の絵が届いた（294zkl・art_src/prep_dojo.py）
-export function duelData(game, round) {
-  const lv = lvOf(game, 'tabi');
-  const m = statsWithGear('tabi', lv, game.equip ?? START_EQUIP);
+// 10/5〜 一騎打ちは 武士・力士・妖術使い・忍者・山伏の試し（jobs.js の QUESTS の form 'duel'）＝ who（その人ひとり）と 師匠
+export function duelData(game, round, who = game.flags?.dojo?.who ?? 'tabi') {
+  const lv = lvOf(game, who);
+  const m = statsWithGear(who, lv, game.equip ?? {}, statKey(game, who));
+  const q = QUESTS[game.flags?.dojo?.ch ?? 1]?.[jobOf(game, who)];
+  const master = q?.master ?? '道場の師範';
   const k = DOJO_ROUNDS[round - 1] ?? 1;
-  const hit = Math.max(1, m.atk * 0.7); // 旅の者の1太刀（師範の守りが 攻撃力の6割）
+  // 1ターンに入る見込み（師匠の守り＝攻撃力の6割）。10/5 職業の持ち味（二連撃・つっぱり・射る）も数える＝どの職業でも 同じくらいの勝負になる
+  const one = formOf(game, { id: who, name: nameOf(game, who), spells: [] });
+  const def = m.atk * 0.6;
+  const pierce = one.pierce ?? (one.dual ? 0.7 : 1);
+  const hit = Math.max(1, one.dual ? 2 * (m.atk * 0.7 - (def * pierce) / 2) : m.atk * (one.atkMult ?? 1) - (def * pierce) / 2);
   const enemy = {
-    id: `dojo-${round}`, duel: round, name: '道場の師範',
-    hp: Math.round(hit * 5.6 * k), atk: Math.round((m.def / 2 + m.hp / 5.4) * k), def: Math.round(m.atk * 0.6), agi: m.agi,
+    id: `dojo-${round}`, duel: round, name: master,
+    hp: Math.round(hit * 5.6 * k), atk: Math.round((m.def / 2 + m.hp / 5.4) * k), def: Math.round(def), agi: m.agi,
     weakness: null, noWeak: true, canFlee: false, trick: null, special: null,
     bgm: 'somaBattle', biteName: '木刀の 打ちこみ',
     introText: `${round}本目、はじめ！`,
     tellLines: ['がんばって！ 相手の 木刀を よく 見て！'],
-    restoreLines: [], loseLines: [`${nameOf(game, 'tabi')}は 一本 取られた……`],
+    restoreLines: [], loseLines: [`${nameOf(game, who)}は 一本 取られた……`],
   };
-  const tabi = { id: 'tabi', name: nameOf(game, 'tabi'), ...m, maxHp: m.hp, maxMp: m.mp, hp: m.hp, mp: m.mp, alive: true, spells: [] };
+  // 一騎打ちは たたかう だけ（持ち味は効く＝力士の つっぱり・忍者の 二連撃・武士の かいしん）
+  const me = { ...one, spells: [], ...m, maxHp: m.hp, maxMp: m.mp, hp: m.hp, mp: m.mp, alive: true };
   return {
     art: { dark: DOJO_ART, light: DOJO_ART, bg: ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
-    allies: [tabi], items: {}, spells: {}, enemy,
+    allies: [me], items: {}, spells: {}, enemy,
   };
 }
 // 1本の勝ち負けのあと。next＝つぎの本目（決まったら null）・bushi＝いま武士になった。HP と術は戦いの前のまま（木刀の試し合いは傷を残さない）
+// 一騎打ちを始める（町の師匠に話して「試しを受ける」）
+export function startDuel(game, who, ch = 1) {
+  return { ...game, flags: { ...game.flags, dojo: { who, ch, wins: 0, losses: 0 } } };
+}
 export function afterDuel(game, round, won) {
-  const d = { wins: 0, losses: 0, ...(game.flags?.dojo ?? {}) };
+  const d = { who: 'tabi', ch: 1, wins: 0, losses: 0, ...(game.flags?.dojo ?? {}) };
   if (won) d.wins += 1; else d.losses += 1;
-  const lines = [won ? `一本！ ${round}本目は ${nameOf(game, 'tabi')}の 勝ち！` : `一本！ ${round}本目は 師範の 勝ち。`];
-  let flags = { ...game.flags, dojo: d };
+  const q = QUESTS[d.ch]?.[jobOf(game, d.who)];
+  const master = q?.master ?? '師範';
+  const lines = [won ? `一本！ ${round}本目は ${nameOf(game, d.who)}の 勝ち！` : `一本！ ${round}本目は ${master}の 勝ち。`];
+  let g = { ...game, flags: { ...game.flags, dojo: d } };
   let next = round + 1;
-  let bushi = false;
+  let learned = null;
   if (d.wins >= DOJO_WIN) {
-    flags = { ...game.flags, dojo: null, bushi: true };
+    g = { ...g, flags: { ...g.flags, dojo: null } };
     next = null;
-    bushi = true;
-    lines.push('師範「見事！ その 太刀筋、まことの 武士と 認めよう。免状を さずける。」',
-      '旅の者は 武士に なった！',
-      '師範「これは わが 流の 奥義、居合い斬り。抜く 一瞬に すべてを こめよ。」',
-      '武士は 居合い斬りを おぼえた！');
+    const r = learnSkill(g, d.who, d.ch);
+    g = r.game;
+    learned = r.skill ?? null;
+    const sp = JOB_SPELLS[r.skill];
+    lines.push(`${master}「見事！ その 腕、しかと 認めよう。」`,
+      `${master}「わが 奥義、${sp?.name ?? ''}を さずける。」`,
+      `${nameOf(game, d.who)}は ${sp?.name ?? ''}を おぼえた！`);
   } else if (d.losses >= DOJO_WIN) {
-    flags = { ...game.flags, dojo: null };
+    g = { ...g, flags: { ...g.flags, dojo: null } };
     next = null;
-    lines.push('師範「まだまだ。腕を みがいて 出直して こい。」');
+    lines.push(`${master}「まだまだ。腕を みがいて 出直して こい。」`);
   }
-  return { game: { ...game, flags }, lines, next, bushi };
+  return { game: g, lines, next, learned, bushi: false };
 }

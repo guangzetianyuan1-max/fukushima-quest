@@ -2,39 +2,44 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=159';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=159';
-import { EPISODES } from '../data/episodes.js?v=159';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=159';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=159';
-import { RIDERS } from '../data/nomaoi_assets.js?v=159';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=159';
-import { TILE } from '../field/tiles.js?v=159';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=159';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=159';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=159';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=159';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=159';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=159';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=159';
+import { collection, PER_PAGE } from '../field/collection.js?v=160';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=160';
+import { EPISODES } from '../data/episodes.js?v=160';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=160';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=160';
+import { RIDERS } from '../data/nomaoi_assets.js?v=160';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=160';
+import { TILE } from '../field/tiles.js?v=160';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=160';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=160';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=160';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=160';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=160';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=160';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=160';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=159';
-import { membersOf } from '../battle/levels.js?v=159';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=159';
-import { ICON_IDS } from '../data/icons.js?v=159';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=159';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=159';
-import { mapPointOf } from '../field/mapcard.js?v=159';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=159';
-import { makeRng } from '../battle/rules.js?v=159';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=159';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown, canWear } from '../data/equip.js?v=159';
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=159';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=159';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=159';
+  wallQuestLines, startDuel, learnSkill,
+} from '../field/game.js?v=160';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=160';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=160';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=160';
+import { membersOf } from '../battle/levels.js?v=160';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=160';
+import { ICON_IDS } from '../data/icons.js?v=160';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=160';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=160';
+import { mapPointOf } from '../field/mapcard.js?v=160';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=160';
+import { makeRng } from '../battle/rules.js?v=160';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=160';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=160';
+const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari } from '../field/game.js?v=160';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=160';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=160';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -65,8 +70,15 @@ const NAMES = NAME;
 // 歩く絵の名前（昔話の味方は自分の絵が届くまで町の人の絵を借りる）。幽霊の絵があるのは旅の者・しおり
 // 武士になった旅の者は 武士の絵（本人 10/4「武士になったら、キャラクターの見た目も更新したい」・絵が届くまでは旅の者のまま）
 // 着替えた姿（武士・くノ一）は 絵が届いていれば その姿で歩く（EXTRA_LOOKS）
-const lookOf = (id, g) => (id === 'tabi' && g?.flags?.bushi && EXTRA_LOOKS.includes('bushi') ? 'bushi'
-  : id === 'shiori' && g?.flags?.kunoichi && EXTRA_LOOKS.includes('kunoichi') ? 'kunoichi' : COMPANIONS[id]?.look ?? id);
+// 10/5 職業の旅：主人公としおりは いまの姿のまま（本人）。仲間2人は 職業の人物＝絵が届くまで 歩く絵（16コマ）のある姿を借り、色で分ける
+export const JOB_LOOK = {
+  bushi: ['bushi'], sou: ['sou'], yojutsu: ['kunoichi', 0xd8c0ff], ninja: ['kunoichi'], rikishi: ['kariudo', 0xffd8b8],
+  yumi: ['kariudo'], miko: ['kunoichi', 0xffd0d0], onmyo: ['sou', 0xc8d8ff], kusushi: ['kunoichi', 0xd0ffd8], yamabushi: ['sou', 0xfff0b8],
+};
+// 職業の人物の絵が届いたら（EXTRA_LOOKS に 'job_<職業>'・art_src/Geminiプロンプト_職業10人.md）その絵で歩き、色は変えない
+const ownLook = (id) => EXTRA_LOOKS.includes(`job_${id}`);
+const lookOf = (id, g) => (id === 'tabi' || id === 'shiori' ? id : ownLook(id) ? `job_${id}` : JOB_LOOK[id]?.[0] ?? COMPANIONS[id]?.look ?? id);
+const tintOf = (id) => (id === 'tabi' || id === 'shiori' || ownLook(id) ? null : JOB_LOOK[id]?.[1] ?? null);
 const HAS_GHOST = ['tabi', 'shiori', 'kariudo', 'sou'];
 
 // もやの壁にぶつかったとき、しおりが言う手がかり
@@ -244,6 +256,7 @@ export class FieldScene extends Phaser.Scene {
     // 後ろの人から置く＝前の人が上に重なる
     for (const f of [...this.followers].reverse()) {
       f.sprite = this.add.sprite(...this.center(f.x, f.y), `p-${lookOf(f.id, this.g)}`, frameOf(this.facing, 0, lookOf(f.id, this.g))).setOrigin(0.5, ORIGIN_Y);
+      if (tintOf(f.id)) f.sprite.setTint(tintOf(f.id));
     }
     this.shiori = this.followers[0].sprite;
     this.player = this.add.sprite(...this.center(x, y), 'p-tabi', frameOf(this.facing, 0, 'tabi')).setOrigin(0.5, ORIGIN_Y);
@@ -885,7 +898,7 @@ export class FieldScene extends Phaser.Scene {
     this.lastBump = this.time.now;
     // ボスは戻したが その章のクエストが残っている（10/4 本人「クエストが終わっていない場合、進めないように」）
     if (this.g.cleared?.[WALL_OPENED_BY[t.ch]] && WALL_QUEST_LINES[t.ch]) {
-      this.showMessages(WALL_QUEST_LINES[t.ch].map((text) => ({ text })));
+      this.showMessages(wallQuestLines(this.g, t.ch).map((text) => ({ text })));
       return;
     }
     this.showMessages([{ text: '黒い もやが 道を ふさいでいる……' }, { speaker: 'しおり', text: WALL_HINT[t.ch] }]);
@@ -979,6 +992,7 @@ export class FieldScene extends Phaser.Scene {
     else if (n.role === 'bansho') this.banshoTalk();
     else if (n.role === 'fishing') this.showMessages(lines, () => this.fishMenu());
     else if (n.role === 'dojo') this.dojoTalk(n);
+    else if (n.role === 'master') this.masterTalk(n);
     else if (n.role === 'shinobi') this.shinobiTalk(n);
     else this.showMessages(lines);
   }
@@ -1000,7 +1014,223 @@ export class FieldScene extends Phaser.Scene {
     this.showMessages([{ text }], () => (n.role === 'equip' ? this.equipShop(n.goods, n.items) : this.shopMenu(n)));
   }
 
-  // 相馬の道場（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に」）＝師範と木刀で3本勝負。2本取れば免状と居合い斬り
+  // ---- 職業の師匠（10/5 本人「それぞれの職業は必殺技が3つあり、1章から3章までのどこかで、クエストを受けて習得する」）----
+  // その職業の人が 旅にいなければ「連れて来い」だけ。習い終えていれば ひと言。試しの形＝一騎打ち／問答／神楽／的当て（jobs.js の QUESTS）
+  masterTalk(n) {
+    const q = QUESTS[n.ch]?.[n.job];
+    const job = JOBS[n.job];
+    const master = q?.master ?? '師匠';
+    const who = membersOf(this.g).find((id) => jobOf(this.g, id) === n.job);
+    const skill = job.skills[n.ch - 1];
+    const sp = JOB_SPELLS[skill];
+    const say = (text) => ({ speaker: master, text });
+    if (!who) {
+      this.showMessages([...n.lines.map(say), say(`${job.name}の 腕の 立つ 者を 連れて きたら、${sp.name}を 教えよう。`)]);
+      return;
+    }
+    if ((this.g.skills?.[who] ?? []).includes(skill)) {
+      this.showMessages([say(`${sp.name}は 使いこなせて おるか。精進 されよ。`)]);
+      return;
+    }
+    const FORM = {
+      duel: `一騎打ちを 受けますか？（${nameOf(this.g, who)} ひとり・3本勝負・2本 先に 取れば 合格）`,
+      mondo: `問答を 受けますか？（${MONDO_COUNT}問・${MONDO_PASS}問 正しければ 合格）`,
+      kagura: '神楽の 試しを 受けますか？（太鼓に 合わせて 鈴を 振る）',
+      mato: `的当てを 受けますか？（矢${MATO_ARROWS}本・${MATO_PASS}本 当てれば 合格）`,
+    };
+    this.showMessages([...n.lines.map(say), say(`${nameOf(this.g, who)}よ、試しに 受かれば ${sp.name}を さずけよう。`)], () => this.showMenu(FORM[q.form], [
+      ['受ける', () => this.beginQuest(n, q, who)],
+      ['やめる', () => this.showMessages([say('心が 決まったら、また 来なさい。')])],
+    ]));
+  }
+
+  beginQuest(n, q, who) {
+    if (q.form === 'duel') {
+      this.setGame(startDuel(this.g, who, n.ch));
+      this.showMessages([{ speaker: q.master, text: 'よかろう。仲間は 下がって 見ておれ。' }], () => {
+        this.busy = true;
+        this.cameras.main.fadeOut(400, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('battle', { duel: 1, fromField: true }));
+      });
+    } else if (q.form === 'mondo') {
+      this.mondo = { n, q, who, m: newMondo(n.ch, n.job, makeRng((Date.now() & 0x7fffffff) || 1)) };
+      this.askMondo();
+    } else if (q.form === 'kagura') this.startKagura(n, q, who);
+    else if (q.form === 'mato') this.startMato(n, q, who);
+  }
+
+  // 合格：技を習う（台詞は師匠ごとに同じ形）
+  passQuest(n, q, who) {
+    const r = learnSkill(this.g, who, n.ch);
+    if (r.ok) this.setGame(r.game);
+    const sp = JOB_SPELLS[r.skill];
+    this.showMessages([
+      { speaker: q.master, text: '見事！ その 腕、しかと 認めよう。' },
+      { speaker: q.master, text: `わが 奥義、${sp?.name ?? ''}を さずける。` },
+      { text: `${nameOf(this.g, who)}は ${sp?.name ?? ''}を おぼえた！`, jingle: 'join' },
+    ]);
+  }
+
+  // 問答：問いを1つずつ 選びで出す。答えるたびに 正しいか 言う
+  askMondo() {
+    const st = this.mondo;
+    if (mondoDone(st.m)) {
+      const ok = mondoPassed(st.m);
+      this.mondo = null;
+      const head = { speaker: st.q.master, text: `${MONDO_COUNT}問のうち ${st.m.right}問 正しかった。` };
+      if (ok) this.showMessages([head], () => this.passQuest(st.n, st.q, st.who));
+      else this.showMessages([head, { speaker: st.q.master, text: 'まだまだ。土地の 人の 話を よく 聞いて、出直して こい。' }, { speaker: 'しおり', text: '町の 人や 立て札、昔話の 中に 答えが あるわ。' }]);
+      return;
+    }
+    const cur = st.m.qs[st.m.at];
+    this.showMenu(`問${st.m.at + 1}　${cur.q}`, cur.c.map((label, k) => [label, () => {
+      const r = answerMondo(st.m, k);
+      st.m = r.m;
+      sfx(r.ok ? 'heal' : 'cancel');
+      this.showMessages([{ speaker: st.q.master, text: r.ok ? 'うむ、そのとおり。' : `ちがう。答えは「${cur.c[cur.a]}」じゃ。` }], () => this.askMondo());
+    }]));
+  }
+
+  // 神楽：二本松の提灯祭りと同じ遊び（太鼓の拍に合わせて さわる）。鈴が KAGURA_PASS 灯れば合格
+  startKagura(n, q, who) {
+    this.closeDialog();
+    this.busy = true;
+    stopBgm();
+    let round = newRound(makeRng((Date.now() & 0x7fffffff) || 1));
+    const box = this.add.container(0, 0);
+    this.addUi(box);
+    const bg = this.add.graphics();
+    bg.fillGradientStyle(0x14102a, 0x14102a, 0x3a1420, 0x3a1420, 1).fillRect(0, 0, W, 640);
+    bg.fillStyle(0xb0302a, 1).fillRect(40, 150, 14, 300).fillRect(W - 54, 150, 14, 300).fillRect(20, 140, W - 40, 16); // 神楽殿の柱と梁
+    bg.fillStyle(0x2a1a10, 1).fillRect(0, 450, W, 190);
+    box.add(bg);
+    const look = lookOf(who, this.g);
+    const dancer = this.add.sprite(W / 2, 400, `p-${look}`, frameOf('down', 0, look)).setOrigin(0.5, 0.85).setScale(2.4);
+    if (tintOf(who)) dancer.setTint(tintOf(who));
+    const DRUM = { x: W / 2, y: 560 };
+    const drum = this.add.circle(DRUM.x, DRUM.y, 30, 0x8a4a1a).setStrokeStyle(4, 0xe8d0a0);
+    const ringG = this.add.graphics();
+    const say = this.add.text(W / 2, 70, '太鼓に 合わせて 鈴を 振れ！', { fontFamily: FONT, fontSize: '20px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
+    const score = this.add.text(W / 2, 110, '', { fontFamily: FONT, fontSize: '18px', color: '#ffffff' }).setOrigin(0.5).setStroke('#120a04', 4);
+    const grade = this.add.text(W / 2, 505, '', { fontFamily: FONT, fontSize: '22px', color: '#ffd27a' }).setOrigin(0.5).setStroke('#120a04', 5);
+    box.add([dancer, drum, ringG, say, score, grade]);
+    const showScore = () => score.setText(`舞の 冴え ${round.lit} / ${KAGURA_PASS}　乱れ ${round.misses} / ${KAGURA_MISS}`);
+    let t0 = this.time.now;
+    let cued = 0;
+    let loop = null;
+    const now = () => this.time.now - t0;
+    const tick = () => {
+      const t = now();
+      while (cued < round.beats.length && round.beats[cued].t <= t) { sfx(round.beats[cued].big ? 'ootaiko' : 'taiko'); cued += 1; }
+      ringG.clear();
+      const next = round.beats.find((b, i) => !round.hit.includes(i) && b.t + CHOCHIN_OK > t);
+      if (next) {
+        const k = Math.max(0, Math.min(1, (next.t - t) / CHOCHIN_BEAT));
+        ringG.lineStyle(next.big ? 6 : 4, next.big ? 0xff4a2a : 0xffd27a, 1).strokeCircle(DRUM.x, DRUM.y, 30 + k * 70);
+      }
+      if (t > roundEndAt(round)) finish();
+    };
+    const tap = () => {
+      if (!loop) return;
+      const res = tapAt(round, now());
+      round = res.round;
+      if (res.grade === 'miss') { grade.setText(''); return; }
+      grade.setText(res.grade === 'yoi' ? 'よい！' : 'まあ');
+      sfx('kagura');
+      dancer.setFrame(frameOf(['left', 'right', 'down', 'up'][round.hit.length % 4], 0, look));
+      this.tweens.add({ targets: drum, scale: 1.15, duration: 60, yoyo: true });
+      showScore();
+    };
+    const hit = this.add.zone(0, 0, W, 640).setOrigin(0).setInteractive();
+    hit.on('pointerdown', tap);
+    box.add(hit);
+    const finish = () => {
+      loop?.remove(false);
+      loop = null;
+      hit.removeAllListeners();
+      const ok = kaguraPassed(round);
+      say.setText('そこまで！');
+      sfx(ok ? 'win' : 'down');
+      this.time.delayedCall(1000, () => {
+        box.destroy();
+        this.busy = false;
+        startBgm(this.fieldBgm());
+        if (ok) this.passQuest(n, q, who);
+        else this.showMessages([{ speaker: q.master, text: round.misses > KAGURA_MISS ? `拍の 無い所で ${round.misses}回 鈴を 振った。神楽は 太鼓と ひとつに なって 舞うもの。` : `舞の 冴えが ${round.lit}。${KAGURA_PASS}には 届かぬ。太鼓の 輪が 重なる 瞬間を よく 見て。` }]);
+      });
+    };
+    showScore();
+    this.kagura = { round: () => round, tap, now, tick }; // 確かめ用の取っ手
+    t0 = this.time.now;
+    loop = this.time.addEvent({ delay: 16, loop: true, callback: tick });
+  }
+
+  // 的当て：左右に ゆれる的が 真ん中の 線に 重なった 瞬間に さわる
+  startMato(n, q, who) {
+    this.closeDialog();
+    this.busy = true;
+    stopBgm();
+    let m = newMato(makeRng((Date.now() & 0x7fffffff) || 1));
+    const box = this.add.container(0, 0);
+    this.addUi(box);
+    const bg = this.add.graphics();
+    bg.fillGradientStyle(0x8ac0e8, 0x8ac0e8, 0xd8eef8, 0xd8eef8, 1).fillRect(0, 0, W, 640);
+    bg.fillStyle(0x6a9a4a, 1).fillRect(0, 300, W, 340); // 弓場の 芝
+    bg.fillStyle(0x3a2a1a, 1).fillRect(0, 196, W, 8); // 的の 走る 線
+    box.add(bg);
+    const LINE_Y = 200;
+    const aim = this.add.rectangle(W / 2, LINE_Y, 4, 120, 0xe0302a, 0.8);
+    const zone = this.add.rectangle(W / 2, LINE_Y, MATO_HALF * 2 * W, 70, 0xffffff, 0.25);
+    const target = this.add.container(0, LINE_Y);
+    target.add([this.add.circle(0, 0, 26, 0xffffff).setStrokeStyle(2, 0x222222), this.add.circle(0, 0, 18, 0x222222), this.add.circle(0, 0, 11, 0xffffff), this.add.circle(0, 0, 5, 0xe0302a)]);
+    const look = lookOf(who, this.g);
+    const archer = this.add.sprite(W / 2, 560, `p-${look}`, frameOf('up', 0, look)).setOrigin(0.5, 0.85).setScale(2.4);
+    if (tintOf(who)) archer.setTint(tintOf(who));
+    const say = this.add.text(W / 2, 60, '的が 赤い 線に 重なったら さわれ！', { fontFamily: FONT, fontSize: '18px', color: '#1a1030' }).setOrigin(0.5).setStroke('#ffffff', 4);
+    const info = this.add.text(W / 2, 100, '', { fontFamily: FONT, fontSize: '18px', color: '#1a1030' }).setOrigin(0.5).setStroke('#ffffff', 4);
+    const res = this.add.text(W / 2, 300, '', { fontFamily: FONT, fontSize: '24px', color: '#e0302a' }).setOrigin(0.5).setStroke('#ffffff', 5);
+    box.add([zone, aim, target, archer, say, info, res]);
+    const showInfo = () => info.setText(`矢 ${m.shots.length} / ${MATO_ARROWS}　当たり ${m.hits}（${MATO_PASS}本で 合格）`);
+    let t0 = this.time.now;
+    let loop = null;
+    let lock = 0;
+    const now = () => this.time.now - t0;
+    const tick = () => { target.x = matoX(m, now()) * W; };
+    const tap = () => {
+      if (!loop || this.time.now < lock) return;
+      lock = this.time.now + 350; // 続けて 射られない（矢を つがえる 間）
+      const r = shootMato(m, now());
+      m = r.m;
+      sfx(r.hit ? 'kaburaya' : 'attack');
+      res.setText(r.hit ? '命中！' : 'はずれ');
+      this.tweens.add({ targets: res, alpha: { from: 1, to: 0 }, duration: 700 });
+      showInfo();
+      if (matoDone(m)) finish();
+    };
+    const hit = this.add.zone(0, 0, W, 640).setOrigin(0).setInteractive();
+    hit.on('pointerdown', tap);
+    box.add(hit);
+    const finish = () => {
+      loop?.remove(false);
+      loop = null;
+      hit.removeAllListeners();
+      const ok = matoPassed(m);
+      sfx(ok ? 'win' : 'down');
+      this.time.delayedCall(900, () => {
+        box.destroy();
+        this.busy = false;
+        startBgm(this.fieldBgm());
+        if (ok) this.passQuest(n, q, who);
+        else this.showMessages([{ speaker: q.master, text: `${MATO_ARROWS}本のうち ${m.hits}本。的が 線に 来る 少し 前に 指を 動かすのだ。` }]);
+      });
+    };
+    showInfo();
+    this.mato = { m: () => m, tap, now, tick }; // 確かめ用の取っ手
+    t0 = this.time.now;
+    loop = this.time.addEvent({ delay: 16, loop: true, callback: tick });
+  }
+
+  // 相馬の道場（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に」）＝師範と木刀で3本勝負。2本取れば免状と居合い斬り（10/5〜 職業の師匠 masterTalk に入れ替え）
   dojoTalk(n) {
     if (this.g.flags?.bushi) {
       this.showMessages([{ text: '師範「おお、武士どの。居合い斬りは 抜く 一瞬が 命。精進 されよ。」' }]);
@@ -1018,6 +1248,11 @@ export class FieldScene extends Phaser.Scene {
 
   // 黒脛巾組の頭（2章 福島の町・本人 10/4 夜「しおりが弱すぎる。女くノ一として、途中クエストを受け変身」）＝試し「影渡り」に受かると くノ一
   shinobiTalk(n) {
+    // 10/5 職業の旅：影渡りは 2章の 忍者の試しとして 使い直す（段階②）。それまでは 話すだけ
+    if (this.g.jobs) {
+      this.showMessages([...n.lines.map((text) => ({ text })), { text: '頭「影渡りの 試しは、忍びの 者に だけ 受けさせる。……いずれ 時が 来たら 声を かけよう。」' }]);
+      return;
+    }
     if (this.g.flags?.kunoichi) {
       this.showMessages([{ text: '頭「くノ一どの。影を 味方に つけよ。狐火は 闇でこそ 燃える。」' }]);
       return;
@@ -1317,7 +1552,7 @@ export class FieldScene extends Phaser.Scene {
       return;
     }
     if (p.kind === 'equip' && !who) {
-      const opts = EQUIP[p.id].who.filter((w) => membersOf(this.g).includes(w) && canWear(this.g.flags, p.id, w)).map((w) => {
+      const opts = membersOf(this.g).filter((w) => canWear(this.g, p.id, w)).map((w) => {
         const now = this.g.equip?.[w]?.[EQUIP[p.id].slot];
         const [, fn, note, color] = this.equipOption(p.id, w, () => this.takePrize(pid, w, shopId)); // いまと比べた変わり方（10/3）
         return [`${nameOf(this.g, w)}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
@@ -1740,8 +1975,8 @@ export class FieldScene extends Phaser.Scene {
   equipShop(goods, items = [], who = null) {
     const members = membersOf(this.g);
     const back = () => this.equipShop(goods, items, who);
-    const forWho = (w) => goods.filter((id) => canWear(this.g.flags, id, w)); // くノ一は薙刀の系統を着けない・短剣は くノ一だけ（10/4 夜）
-    const all = goods.filter((id) => EQUIP[id].who.some((w) => members.includes(w) && canWear(this.g.flags, id, w)));
+    const forWho = (w) => goods.filter((id) => canWear(this.g, id, w)); // 武器は その職業の系統だけ（10/5）
+    const all = goods.filter((id) => members.some((w) => canWear(this.g, id, w)));
     // 道具の棚（本人 10/3「よろず屋でも採用」＝道具屋と同じく 効き目と持っている数を出す）。鉄砲の玉は猟師がいる時だけ
     const sell = items.filter((id) => ITEMS[id].kind !== 'ammo' || members.includes('kariudo'));
     const shelf = { goods: sell, back: () => this.equipShop(goods, items) };
@@ -1778,7 +2013,7 @@ export class FieldScene extends Phaser.Scene {
   pickWho(id, back) {
     const e = EQUIP[id];
     const eq = this.g.equip ?? START_EQUIP;
-    const opts = e.who.filter((w) => membersOf(this.g).includes(w) && canWear(this.g.flags, id, w)).map((w) => { // まだ加わっていない人は出さない
+    const opts = membersOf(this.g).filter((w) => canWear(this.g, id, w)).map((w) => {
       const now = eq[w]?.[e.slot];
       const [, fn, note, color] = this.equipOption(id, w, () => this.doBuyEquip(id, w, back));
       return [`${nameOf(this.g, w)}（今：${now ? EQUIP[now].name : 'なし'}）`, fn, note, color];
@@ -1874,9 +2109,10 @@ export class FieldScene extends Phaser.Scene {
 
   showGear() {
     const lines = partyView(this.g).map((p) => ({
-      speaker: `${nameOf(this.g, p.id)}　Lv ${p.lv}`, // 仲間ごとのレベル（10/3〜 加わった味方は低めから）
-      face: p.id === 'shiori' ? 'normal' : p.id, // 本人 10/3「しおり以外顔が無い。みんな顔をつけて」
-      text: [`攻 ${p.atk}　守 ${p.def}　速 ${p.agi}`, ...SLOTS.map((s) => `${SLOT_NAME[s]}：${p.gear[s] ? EQUIP[p.gear[s]].name : 'なし'}`)].join('\n'),
+      speaker: `${nameOf(this.g, p.id)}${p.job && (p.id === 'tabi' || p.id === 'shiori') ? `（${JOBS[p.job].name}）` : ''}　Lv ${p.lv}`, // 10/5 主人公・しおりは 職業を 添える
+      face: p.id === 'shiori' ? 'normal' : FACE_IDS.includes(`job_${p.id}`) ? `job_${p.id}` : p.id, // 本人 10/3「しおり以外顔が無い。みんな顔をつけて」・10/5 職業の人物の顔が届いたら job_<職業>
+      text: [`攻 ${p.atk}　守 ${p.def}　速 ${p.agi}　知 ${p.int}`, ...SLOTS.map((s) => `${SLOT_NAME[s]}：${p.gear[s] ? EQUIP[p.gear[s]].name : 'なし'}`),
+        ...(p.job ? [`技：${[JOBS[p.job].basic, ...(this.g.skills?.[p.id] ?? [])].filter(Boolean).map((id) => JOB_SPELLS[id].name).join('・') || 'まだ ない'}`] : [])].join('\n'),
     }));
     this.showMessages(lines);
   }

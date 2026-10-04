@@ -4,7 +4,7 @@
 // 漁師になった少年 長吉は、海から戻ると海のめぐみと無事に帰れたことへの感謝を忘れなかった
 // ゲームでは、忘れられて黒いもやに呑まれた暮らしの守り神。弱点＝「海の幸への感謝」。倒すと元に戻り、長い腕で虎捕山への もやを払う
 // 絵＝10/3 届いた（1ukroq 呑まれた・z1hpg6 元の姿・3dcp6z 長い腕。①→挿絵→②の順で頼んで姿がそろった）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=159';
+import { BASIC_ITEMS } from './basic_items.js?v=160';
 
 export const TENAGA = {
   art: {
@@ -33,12 +33,12 @@ export const TENAGA = {
     expectLv: 8,
     // 強さ＝試算（node tests/_tune.mjs '{}' <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/3）
     // 10/3 装備を1段強くした（本人「武器や防具、道具も強く」）ので体力 360→420（試算 自動0.96）
-    hp: 483, atk: 81, def: 72, agi: 9, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp420 atk72）
+    hp: 483, atk: 88, def: 72, agi: 9, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp420 atk72） ⭐10/5 職業の旅＝代表の5組（tests/_party.js の COMPS）の平均で合わせ直した（tests/_autotune.mjs）
     bgm: 'tenaga', // 話ごとの戦いの曲（本人 10/3「1章の4話はBGMも全て変えて」・chip.js）
     weakness: 'kansha',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝長い腕（山の上から 海まで とどく腕で 全員を なぎはらう）
-    special: { name: '長い腕', chance: 0.28, power: 42, flash: [220, 200, 140], sfx: 'ude', cutin: 'assets/cutin/tenaga_nagaiude.png' },
+    special: { name: '長い腕', chance: 0.28, power: 46, flash: [220, 200, 140], sfx: 'ude', cutin: 'assets/cutin/tenaga_nagaiude.png' },
     biteName: '長い 手で つかむ',
     introText: '鹿狼山の 上から、長い 長い 腕が のびてきた……',
     tellLines: [

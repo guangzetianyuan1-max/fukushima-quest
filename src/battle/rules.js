@@ -29,6 +29,19 @@ export const DUAL_ATK = 0.7;
 export const DUAL_DEF = 0.7;
 // 狐火の術：居合い斬りと同じく 明かす前の昔話の主には2割。もやの間は 術と同じく半分（MIST_BLOCK）
 export const YOJUTSU_UNREVEALED = 0.2;
+// 職業の大きな技（jobs.js の big）＝明かす前の昔話の主には2割（語ってから術の決まりを残す・10/5）
+export const BIG_UNREVEALED = 0.2;
+// 術（magic）の威力＝ 知力 × mult × MAGIC_K（守り無視）。回復＝最大HPの frac ×（HEAL_BASE＋知力÷HEAL_DIV）
+export const MAGIC_K = 1.25;
+export const HEAL_BASE = 0.6;
+export const HEAL_DIV = 50;
+// 神楽舞・法螺貝・火渡り（buff）の残りがあれば 攻めの倍率
+const buffMult = (state) => (state.buff?.turns > 0 ? state.buff.mult : 1);
+const healScale = (a) => HEAL_BASE + (a.int ?? 0) / HEAL_DIV;
+// 道中の敵か、語って弱点が明かされた昔話の主
+const opened = (e) => !!(e.noWeak || e.revealed);
+// 声を使わない技（爆音の間も出せる）
+const VOICELESS = new Set(['iai', 'strike', 'evade', 'cover', 'mistall', 'poison', 'healOne']);
 // 急所（本人 10/3「1/10の確率で敵の急所にあたり、一発でしとめる」→ 10/4 夜「10回に1回ランダムに急所に一発で当たり、敵が倒れる」）
 // ＝撃った10発に1発は 急所。道中の敵は一発で倒れる。昔話の主（ボス）は 体力の GUN_KYUSHO_BOSS（2割）の大きな傷（10/4 夜 本人「道中の敵だけ一発」
 //   ＝ボスにも一発を効かせたら 玉3発で ボス戦の勝率が約98%になった）。ボスは語って弱点を明かしたあとだけ（明かす前は 黒いもやが玉を呑む）
@@ -113,7 +126,7 @@ function allyAct(state, a, cmd, data, rng, log) {
     return;
   }
   // 爆音で声が届かない（居合い斬りは声を使わないので出せる）
-  if (state.silence > 0 && ((cmd.type === 'spell' && data.spells[cmd.spellId]?.kind !== 'iai') || cmd.type === 'tell')) {
+  if (state.silence > 0 && ((cmd.type === 'spell' && !VOICELESS.has(data.spells[cmd.spellId]?.kind)) || cmd.type === 'tell')) {
     log.push({ text: `${a.name}は 声を 出したが、かき消されて 届かない！` }); // 10/4 鳴き声・こだまでも合う文に（前は どの雑魚でも「爆音」）
     return;
   }
@@ -133,15 +146,21 @@ function allyAct(state, a, cmd, data, rng, log) {
       // くノ一の 短剣の二連撃（10/4 夜）
       log.push({ text: `${a.name}の 短剣！ 二連撃！`, effect: { kind: 'dual' }, sfx: 'tanken' });
       for (let k = 0; k < 2 && e.hp > 0; k++) {
-        const d = physicalDamage(a.atk * DUAL_ATK, e.def * DUAL_DEF, rng);
+        const d = physicalDamage(a.atk * DUAL_ATK * buffMult(state), e.def * (a.job && !opened(e) ? 1 : a.pierce ?? DUAL_DEF), rng);
         e.hp = Math.max(0, e.hp - d);
         log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
       }
     } else {
-      const crit = a.id === 'tabi' && rng() < CRIT_CHANCE;
-      const d = crit ? Math.max(1, Math.round(a.atk * spread(rng))) : physicalDamage(a.atk, e.def, rng);
+      // 職業の持ち味（10/5）：武士＝かいしんが出やすい（crit）・力士＝つっぱり（atkMult）・弓矢使い＝守りを半分つらぬく（pierce）
+      // 職業の無い者（前の作りの仲間・試験）は 旅の者だけ 1/16
+      // ⭐守りを くぐる持ち味（かいしん・射る・二連撃の すきま）は、語って弱点を明かす前の昔話の主には効かない（黒いもやが 守る）
+      //   ＝たたかうだけで勝てない決まりを残す（10/5 試算：武士・弓矢使いの組が たたかうだけで 龍燈に 200戦132勝した）
+      const cc = a.crit != null ? (opened(e) ? a.crit : 0) : (a.id === 'tabi' ? CRIT_CHANCE : 0);
+      const crit = cc > 0 && rng() < cc;
+      const atk = a.atk * (a.atkMult ?? 1) * buffMult(state);
+      const d = crit ? Math.max(1, Math.round(atk * spread(rng))) : physicalDamage(atk, e.def * (opened(e) ? a.pierce ?? 1 : 1), rng);
       e.hp = Math.max(0, e.hp - d);
-      log.push({ text: `${a.name}の こうげき！`, sfx: 'attack' });
+      log.push({ text: a.attackText ? `${a.name}の ${a.attackText}！` : `${a.name}の こうげき！`, sfx: 'attack' });
       if (crit) log.push({ text: 'かいしんの いちげき！', effect: { kind: 'crit' }, sfx: 'hit' });
       log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
     }
@@ -193,6 +212,8 @@ function allyAct(state, a, cmd, data, rng, log) {
     }
     e.hp = Math.max(0, e.hp - d);
     log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+  } else if (cmd.type === 'spell' && isJobSkill(data.spells[cmd.spellId])) {
+    jobSkill(state, a, data.spells[cmd.spellId], cmd.spellId, rng, log);
   } else if (cmd.type === 'spell' && data.spells[cmd.spellId]?.kind === 'yojutsu') {
     // くノ一の 狐火の術（10/4 夜）：守りを無視した 攻撃力×mult。もやの間は半分・明かす前の昔話の主には2割
     const sp = data.spells[cmd.spellId];
@@ -310,7 +331,7 @@ function allyAct(state, a, cmd, data, rng, log) {
       log.push({ text: `${a.name}は ${it.name}を みんなに ふるまった！`, sfx: 'eat' });
       for (const x of state.allies.filter((y) => y.alive)) {
         const before = x.hp;
-        x.hp = Math.min(x.maxHp, x.hp + it.amount);
+        x.hp = Math.min(x.maxHp, x.hp + Math.round(it.amount * (a.itemMult ?? 1)));
         log.push({ text: `${x.name}の HPが ${x.hp - before} かいふくした！`, effect: { kind: 'heal', target: x.id, hp: x.hp } });
       }
       return;
@@ -322,13 +343,15 @@ function allyAct(state, a, cmd, data, rng, log) {
     }
     state.items[cmd.itemId] -= 1;
     log.push({ text: t === a ? `${a.name}は ${it.name}を 使った！` : `${a.name}は ${t.name}に ${it.name}を 使った！`, sfx: 'eat' });
+    const amt = Math.round(it.amount * (a.itemMult ?? 1)); // 薬師の調合（10/5）＝効き目1.5倍
+    if (a.itemMult > 1) log.push({ text: `${a.name}の 調合で、効き目が 増した！` });
     if (it.kind === 'mp') {
       const before = t.mp;
-      t.mp = Math.min(t.maxMp, t.mp + it.amount);
+      t.mp = Math.min(t.maxMp, t.mp + amt);
       log.push({ text: `${t.name}の 術の力が ${t.mp - before} もどった！`, effect: { kind: 'mp', target: t.id, mp: t.mp } });
     } else {
       const before = t.hp;
-      t.hp = Math.min(t.maxHp, t.hp + it.amount);
+      t.hp = Math.min(t.maxHp, t.hp + amt);
       log.push({ text: `${t.name}の HPが ${t.hp - before} かいふくした！`, effect: { kind: 'heal', target: t.id, hp: t.hp } });
     }
     if (it.desc) log.push({ text: it.desc, speaker: 'しおり' });
@@ -371,6 +394,122 @@ function allyAct(state, a, cmd, data, rng, log) {
   }
 }
 
+// ---- 職業の技（jobs.js の JOB_SPELLS・本人 10/5「職業が多数あり」）----
+const JOB_KINDS = new Set(['strike', 'magic', 'healOne', 'revive', 'cleanse', 'buff', 'guard', 'cover', 'debuff', 'seal', 'poison', 'evade', 'mistall']);
+// 前からの heal（power で決まる仲間の術）は前の決まりのまま。frac のある heal（読経・御神酒・天岩戸）は職業の技
+const isJobSkill = (sp) => !!sp && (JOB_KINDS.has(sp.kind) || (sp.kind === 'heal' && sp.frac != null));
+
+function clearMist(e, n, log) {
+  if (!(e.mistLeft > 0) || !n || e.hp <= 0) return;
+  e.mistLeft = Math.max(0, e.mistLeft - n);
+  log.push({
+    text: e.mistLeft > 0 ? `黒い もやが 晴れた！（のこり ${e.mistLeft}）` : '黒い もやが すっかり 晴れた！ 術が まっすぐ とどく。',
+    effect: { kind: 'mist', mist: e.mistLeft }, sfx: 'clear',
+  });
+}
+
+function jobSkill(state, a, sp, id, rng, log) {
+  const e = state.enemy;
+  log.push({ text: `${a.name}は ${sp.verb ?? sp.name + 'を 使った'}！`, sfx: sp.sfx });
+  if (sp.once && a.usedOnce?.includes(id)) {
+    log.push({ text: 'しかし この戦いでは もう 使えない！' });
+    return;
+  }
+  if (sp.noMist && e.mistLeft > 0) {
+    log.push({ text: 'しかし 黒い もやで 間合いが 見えない！' });
+    return;
+  }
+  if (a.mp < (sp.cost ?? 0)) {
+    log.push({ text: 'しかし 術の力が たりない！' });
+    return;
+  }
+  a.mp -= sp.cost ?? 0;
+  if (sp.once) a.usedOnce = [...(a.usedOnce ?? []), id];
+  const living = state.allies.filter((x) => x.alive);
+  const heal = (t, n) => {
+    const before = t.hp;
+    t.hp = Math.min(t.maxHp, t.hp + Math.max(1, n));
+    log.push({ text: `${t.name}の HPが ${t.hp - before} かいふくした！`, effect: { kind: 'heal', target: t.id, hp: t.hp } });
+  };
+  const k = sp.kind;
+  const closed = !e.noWeak && !e.revealed; // 昔話の主で、まだ語っていない
+  if (k === 'strike' || k === 'magic') {
+    log.push({ text: sp.text, effect: { kind: k === 'magic' ? 'kitsunebi' : 'iai' } });
+    const hits = sp.hits ?? 1;
+    for (let h = 0; h < hits && e.hp > 0; h++) {
+      if (state.blind > 0 && k === 'strike' && rng() < 0.5) {
+        log.push({ text: '目が くらんで、外れてしまった！' });
+        continue;
+      }
+      let d;
+      if (k === 'magic') d = Math.max(1, Math.round((a.int ?? a.atk) * sp.mult * MAGIC_K * buffMult(state) * spread(rng)));
+      else {
+        const atk = a.atk * sp.mult * buffMult(state);
+        d = sp.crit ? Math.max(1, Math.round(atk * spread(rng))) : physicalDamage(atk, e.def * (sp.defMult ?? 1), rng);
+      }
+      if (sp.big && closed) d = Math.max(1, Math.round(d * BIG_UNREVEALED));
+      else if (k === 'magic' && e.mistLeft > 0) d = Math.max(1, Math.round(d * MIST_BLOCK));
+      e.hp = Math.max(0, e.hp - d);
+      if (sp.crit && h === 0) log.push({ text: 'かいしんの いちげき！', effect: { kind: 'crit' } });
+      log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+    }
+    if (sp.big && closed) log.push({ text: '黒い もやが 技の 勢いを 呑みこんだ……' });
+    else if (k === 'magic' && e.mistLeft > 0) log.push({ text: '黒い もやに さえぎられて、術が 弱まった……' });
+    if (sp.stun && e.hp > 0) {
+      e.bound = Math.max(e.bound ?? 0, sp.stun);
+      e.boundText = 'は 目を まわして 動けない！';
+      log.push({ text: `${e.name}は 目を まわした！` });
+    }
+    clearMist(e, sp.clearMist, log);
+    return;
+  }
+  log.push({ text: sp.text });
+  if (k === 'heal') {
+    for (const t of living) heal(t, Math.round(t.maxHp * sp.frac * (sp.frac >= 1 ? 1 : healScale(a)) * (sp.frac >= 1 ? 1 : spread(rng))));
+    clearMist(e, sp.clearMist, log);
+  } else if (k === 'healOne') {
+    const t = lowestAlly(state);
+    heal(t, Math.round(t.maxHp * sp.frac));
+  } else if (k === 'revive') {
+    const dead = state.allies.filter((x) => !x.alive);
+    if (!dead.length) log.push({ text: 'しかし 倒れた 仲間は いない。' });
+    for (const t of sp.all ? dead : dead.slice(0, 1)) {
+      t.alive = true;
+      t.hp = Math.max(1, Math.round(t.maxHp * sp.frac));
+      t.stunned = 0;
+      log.push({ text: `${t.name}が 起きあがった！`, effect: { kind: 'heal', target: t.id, hp: t.hp }, sfx: 'heal' });
+    }
+  } else if (k === 'cleanse') {
+    let n = state.blind > 0 ? 1 : 0;
+    for (const t of living) {
+      if (t.curse || t.ghost || t.stunned > 0) n += 1;
+      t.curse = false;
+      t.ghost = false;
+      t.stunned = 0;
+    }
+    state.blind = 0;
+    log.push({ text: n ? 'みなの 悪い 印が 消えた！' : 'みなの 体が 軽く なった。' });
+    if (sp.frac) for (const t of living) heal(t, Math.round(t.maxHp * sp.frac * healScale(a)));
+  } else if (k === 'buff') {
+    state.buff = { mult: sp.mult, agi: sp.agi ?? 0, turns: sp.turns };
+  } else if (k === 'guard') {
+    state.guard = { mult: sp.mult, turns: sp.turns };
+  } else if (k === 'cover') {
+    state.cover = { id: a.id, turns: sp.turns };
+  } else if (k === 'debuff') {
+    e.weak = { mult: sp.mult, turns: sp.turns };
+  } else if (k === 'seal') {
+    e.sealed = 1;
+  } else if (k === 'poison') {
+    e.poison = { dmg: Math.max(1, Math.round(e.maxHp * sp.frac * (closed ? BIG_UNREVEALED : 1))), turns: sp.turns };
+  } else if (k === 'evade') {
+    state.evade = 1;
+  } else if (k === 'mistall') {
+    if (!(e.mistLeft > 0)) log.push({ text: 'もやは もう 晴れている。' });
+    clearMist(e, 99, log);
+  }
+}
+
 // 敵は毎ターン special.chance の見込みで必殺技（全員に当たる）。それ以外はかみつき（1人）
 // 2体同時（twin・2章 ムカデとオロチ・本人 10/4）＝二匹とも それぞれの名前で動く（体力は ひとつ）
 function enemyAct(state, rng, log) {
@@ -404,15 +543,29 @@ function enemyStrike(state, rng, log, name, bite) {
     log.push({ text: `${name}${e.dazeText}` });
     return;
   }
+  // 煙玉（忍者・10/5）＝このターンの敵の動きは 全員 かわす
+  if (state.evade > 0) {
+    log.push({ text: `${name}の 攻撃は、煙の 中の 影を すりぬけた！` });
+    return;
+  }
   if (e.trick && rng() < e.trick.chance && doTrick(state, e, living, rng, log)) return;
   // 必殺技は2つまで（本人 10/3「4話の龍に必殺技を増やして。全員に大ダメージ」）＝special2 を先に見て、出なければ special
   // ⚠special2 の無い敵は rng を引く回数が前と同じ（運の並びを変えない）
   // stun の技（へっぴり嫁の すごいおなら）は、気絶している人がいる間は出さない＝続けて気絶させて何もできないまま負けるのを防ぐ
   const sp = [e.special2, e.special].find((x) => x && !(x.stun && living.some((a) => a.stunned > 0)) && rng() < x.chance);
+  // 結界の符（陰陽師・10/5）＝次の必殺技を1回 封じる
+  if (sp && e.sealed > 0) {
+    e.sealed = 0;
+    log.push({ text: `${name}は ${sp.name}を 放とうとした！ しかし 結界が 封じた！`, effect: { kind: 'shake' }, sfx: 'clear' });
+    return;
+  }
+  // 呪符（敵の攻め）・不動の結界（受ける傷）の倍率
+  const weakMult = e.weak?.turns > 0 ? e.weak.mult : 1;
+  const guardMult = state.guard?.turns > 0 ? state.guard.mult : 1;
   if (sp) {
     // cutin＝技の挿絵（本人 10/3「今回から、ボスの必殺技は別のアクション(挿絵)を」）。挿絵のある技は文を長めに止める（hold）
     log.push({ text: `${name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin, solo: !!sp.sfxSolo }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
-    for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * spread(rng))), log);
+    for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * weakMult * guardMult * spread(rng))), log);
     // 気絶（本人 10/4「おならをくらったら全員しばらくの間、気絶」）＝生き残った全員が stun 回 自分の番を休む
     if (sp.stun) {
       const hit = living.filter((a) => a.alive);
@@ -428,9 +581,16 @@ function enemyStrike(state, rng, log, name, bite) {
       log.push({ text: `${e.name}の まわりに、また 黒い もやが 立ちこめた……`, effect: { kind: 'mist', mist: e.mistLeft } });
     }
   } else {
-    const t = living[Math.floor(rng() * living.length)];
+    let t = living[Math.floor(rng() * living.length)];
     log.push({ text: `${name}の ${bite}！`, effect: { kind: 'shake' }, sfx: 'bite' });
-    hurt(t, physicalDamage(e.atk, t.def, rng), log);
+    // かばう（力士・10/5）＝ほかの人への一撃を 受けとめる
+    const cov = state.cover?.turns > 0 ? living.find((x) => x.id === state.cover.id) : null;
+    if (cov && cov !== t) {
+      log.push({ text: `${cov.name}が ${t.name}を かばった！` });
+      t = cov;
+    }
+    const d = physicalDamage(e.atk * weakMult, t.def, rng);
+    hurt(t, weakMult === 1 && guardMult === 1 ? d : Math.max(1, Math.round(d * guardMult)), log);
   }
 }
 
@@ -528,7 +688,7 @@ export function resolveTurn(state0, commands, data, rng) {
   const state = structuredClone(state0);
   const log = [];
   const actors = [
-    ...state.allies.filter((a) => a.alive).map((a) => ({ side: 'ally', id: a.id, agi: a.agi })),
+    ...state.allies.filter((a) => a.alive).map((a) => ({ side: 'ally', id: a.id, agi: a.agi + (state.buff?.turns > 0 ? state.buff.agi ?? 0 : 0) })),
     { side: 'enemy', id: state.enemy.id, agi: state.enemy.agi },
   ].sort((x, y) => y.agi - x.agi);
   for (const actor of actors) {
@@ -557,6 +717,17 @@ export function resolveTurn(state0, commands, data, rng) {
       state.over = isOver(state);
     }
   }
+  // 毒の吹き矢（薬師・10/5）＝ターンの終わりに 毒が むしばむ
+  const pz = state.enemy.poison;
+  if (!state.over && pz?.turns > 0) {
+    state.enemy.hp = Math.max(0, state.enemy.hp - pz.dmg);
+    pz.turns -= 1;
+    log.push({ text: `毒が ${state.enemy.name}を むしばむ！ ${pz.dmg}の ダメージ！`, effect: { kind: 'hitEnemy' } });
+    state.over = isOver(state);
+  }
+  for (const key of ['buff', 'guard', 'cover']) if (state[key]?.turns > 0) state[key].turns -= 1;
+  if (state.enemy.weak?.turns > 0) state.enemy.weak.turns -= 1;
+  if (state.evade > 0) state.evade -= 1;
   if (state.over === 'win') state.enemy.restored = true;
   if (state.silence > 0) state.silence -= 1;
   if (state.blind > 0) state.blind -= 1;

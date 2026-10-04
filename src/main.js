@@ -1,16 +1,17 @@
-import { FONT_NAME, TITLE_WEIGHT } from './ui/fonts.js?v=159';
-import { TitleScene } from './scenes/TitleScene.js?v=159';
-import { BattleScene } from './scenes/BattleScene.js?v=159';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=159';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=159';
-import { HARAI } from './field/game.js?v=159';
-import { EQUIP } from './data/equip.js?v=159';
-import { EPISODES } from './data/episodes.js?v=159';
-import { unlock, isUnlocked } from './audio/chip.js?v=159';
-import { askTerms } from './ui/terms.js?v=159';
-import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=159';
-import { showLoading, preloadImages } from './ui/loading.js?v=159';
-import { PRELOAD_ASSETS } from './data/preload_assets.js?v=159';
+import { FONT_NAME, TITLE_WEIGHT } from './ui/fonts.js?v=160';
+import { TitleScene } from './scenes/TitleScene.js?v=160';
+import { JobScene } from './scenes/JobScene.js?v=160';
+import { BattleScene } from './scenes/BattleScene.js?v=160';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=160';
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=160';
+import { HARAI } from './field/game.js?v=160';
+import { EQUIP } from './data/equip.js?v=160';
+import { EPISODES } from './data/episodes.js?v=160';
+import { unlock, isUnlocked } from './audio/chip.js?v=160';
+import { askTerms } from './ui/terms.js?v=160';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=160';
+import { showLoading, preloadImages } from './ui/loading.js?v=160';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=160';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
@@ -64,7 +65,7 @@ async function start() {
     backgroundColor: '#000000',
     pixelArt: true,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [TitleScene, FieldScene, BattleScene], // 題の画面 → 歩く地図 ⇄ 戦い
+    scene: [TitleScene, JobScene, FieldScene, BattleScene], // 題の画面 →（はじめから）職業を選ぶ → 歩く地図 ⇄ 戦い
   });
 }
 

@@ -2,7 +2,7 @@
 // 話（出どころ uminominwa.jp/animation/19）：漁師に「松川様」と敬われていた、背中に藻の生えた大ザメ。
 // 殿様が人に害があると聞いて弓で射たが死なず、矢が刺さったまま、川を渡る殿様に襲いかかり、殿様は愛馬を失った。
 // 数値は試算（500戦）で決める。第一話なので序章でいちばん勝ちやすく（autoWinTarget 1.0）
-import { BASIC_ITEMS } from './basic_items.js?v=159';
+import { BASIC_ITEMS } from './basic_items.js?v=160';
 
 export const MATSUKAWA = {
   art: {
@@ -30,7 +30,7 @@ export const MATSUKAWA = {
     autoWinTarget: 1.0,
     // 着くころのレベル expectLv と、そのレベルの仲間で試算した強さ（道中の敵の回・2026-10-01。殴るだけでは削れないよう守りを上げた・刀屋の回で装備 EXPECT_GEAR 込みに合わせ直し）
     expectLv: 2,
-    hp: 135, atk: 17, def: 16, agi: 9,
+    hp: 135, atk: 17, def: 46, agi: 9, // ⭐10/5 職業の旅＝初めから4人（力士の つっぱり）＝たたかうだけで勝てないよう守り16→46
     weakness: 'uyamai',
     // 黒いもや：始めは min〜max を運で・毎ターン rise の見込みで ふいに濃くなる・必殺技でも1つ戻る（本人 10/1「もやはランダムに」）
     mist: { min: 1, max: 2, rise: 0.2 },

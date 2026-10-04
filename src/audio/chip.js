@@ -426,6 +426,37 @@ const SFX = {
     tone(N(70), t + 1.52, 0.1, { type: 'square', vol: 0.12, slideTo: N(82) });
     noise(t + 0.35, 1.2, { vol: 0.22, from: 300, to: 2600 });
   },
+  // ---- 職業の技（10/5 jobs.js の JOB_SPELLS）。どれも別の音 ----
+  cancel: (t) => tone(N(60), t, 0.08, { vol: 0.15, slideTo: N(55) }),
+  shakujo: (t) => { for (let i = 0; i < 4; i++) tone(N(98 + (i % 2) * 3), t + i * 0.035, 0.06, { type: 'triangle', vol: 0.12 }); noise(t, 0.08, { vol: 0.25, from: 2500, to: 600 }); },
+  kabutowari: (t) => { noise(t, 0.05, { vol: 0.3, from: 9000, to: 4000 }); tone(N(36), t + 0.04, 0.3, { type: 'square', vol: 0.3, slideTo: N(24) }); noise(t + 0.05, 0.25, { vol: 0.35, from: 1500, to: 200 }); },
+  tsubame: (t) => { noise(t, 0.1, { vol: 0.3, from: 3000, to: 9000 }); noise(t + 0.16, 0.1, { vol: 0.3, from: 9000, to: 3000 }); tone(N(100), t + 0.3, 0.12, { type: 'sine', vol: 0.12 }); },
+  fudo: (t) => { noise(t, 0.8, { vol: 0.3, from: 400, to: 2500 }); arp([55, 62, 67], t, 0.12, 0.6, { type: 'triangle', vol: 0.22 }); },
+  sosei: (t) => arp([67, 72, 76, 79, 84, 88], t, 0.1, 0.5, { type: 'sine', vol: 0.2 }),
+  ikazuchi: (t) => { noise(t, 0.08, { vol: 0.5, from: 9000, to: 6000 }); noise(t + 0.08, 0.9, { vol: 0.45, from: 1200, to: 100 }); tone(N(28), t + 0.08, 0.6, { type: 'square', vol: 0.25, slideTo: N(22) }); },
+  oogama: (t) => { tone(N(36), t, 0.25, { type: 'square', vol: 0.3, slideTo: N(43) }); tone(N(31), t + 0.3, 0.4, { type: 'triangle', vol: 0.4, slideTo: N(24) }); noise(t + 0.3, 0.5, { vol: 0.35, from: 800, to: 150 }); },
+  kemuri: (t) => noise(t, 0.9, { vol: 0.28, from: 5000, to: 400 }),
+  kagenui: (t) => { noise(t, 0.06, { vol: 0.25, from: 8000, to: 3000 }); tone(N(91), t + 0.06, 0.25, { type: 'sine', vol: 0.12, slideTo: N(79) }); },
+  bunshin: (t) => { for (let i = 0; i < 3; i++) noise(t + i * 0.09, 0.07, { vol: 0.28, from: 7000, to: 1200 }); arp([79, 83, 86], t + 0.3, 0.06, 0.15, { type: 'square', vol: 0.12 }); },
+  shiko: (t) => { tone(N(26), t, 0.35, { type: 'sine', vol: 0.6, slideTo: N(21) }); noise(t, 0.3, { vol: 0.45, from: 600, to: 100 }); noise(t + 0.25, 0.5, { vol: 0.25, from: 2000, to: 8000 }); },
+  kabau: (t) => { tone(N(43), t, 0.2, { type: 'square', vol: 0.2 }); tone(N(48), t + 0.15, 0.3, { type: 'square', vol: 0.2 }); },
+  nage: (t) => { noise(t, 0.2, { vol: 0.25, from: 400, to: 3000 }); tone(N(29), t + 0.25, 0.4, { type: 'sine', vol: 0.6, slideTo: N(20) }); noise(t + 0.25, 0.3, { vol: 0.4, from: 900, to: 100 }); },
+  kaburaya: (t) => { tone(N(84), t, 0.7, { type: 'sine', vol: 0.18, slideTo: N(96) }); noise(t, 0.7, { vol: 0.1, from: 3000, to: 5000 }); },
+  kaen: (t) => { noise(t, 0.12, { vol: 0.25, from: 2000, to: 7000 }); noise(t + 0.1, 0.6, { vol: 0.35, from: 500, to: 3000 }); },
+  hachiya: (t) => { for (let i = 0; i < 4; i++) { noise(t + i * 0.08, 0.05, { vol: 0.25, from: 6000, to: 2000 }); tone(N(88 - i * 2), t + i * 0.08, 0.04, { vol: 0.1 }); } },
+  kagura: (t) => { for (let i = 0; i < 6; i++) tone(N(96 + (i % 3) * 2), t + i * 0.07, 0.08, { type: 'triangle', vol: 0.1 }); arp([74, 79, 81], t + 0.2, 0.15, 0.3, { type: 'sine', vol: 0.15 }); },
+  omiki: (t) => arp([72, 79, 84, 79, 88], t, 0.09, 0.35, { type: 'sine', vol: 0.2 }),
+  iwato: (t) => { tone(N(36), t, 0.6, { type: 'sine', vol: 0.4, slideTo: N(43) }); arp([79, 84, 88, 91, 96], t + 0.3, 0.08, 0.6, { type: 'sine', vol: 0.18 }); },
+  jufu: (t) => { tone(N(62), t, 0.4, { type: 'square', vol: 0.12, slideTo: N(55) }); noise(t, 0.1, { vol: 0.2, from: 4000, to: 1000 }); },
+  kekkai: (t) => { for (let i = 0; i < 4; i++) tone(N(84 + i * 5), t + i * 0.06, 0.08, { type: 'triangle', vol: 0.14 }); tone(N(103), t + 0.25, 0.5, { type: 'sine', vol: 0.12 }); },
+  taizan: (t) => { tone(N(38), t, 0.8, { type: 'triangle', vol: 0.3 }); arp([62, 69, 74, 81, 86], t + 0.2, 0.12, 0.6, { type: 'sine', vol: 0.16 }); },
+  gedoku: (t) => arp([76, 74, 79, 84], t, 0.07, 0.15, { type: 'square', vol: 0.12 }),
+  fukiya: (t) => { noise(t, 0.12, { vol: 0.2, from: 1500, to: 6000 }); tone(N(70), t + 0.12, 0.3, { type: 'square', vol: 0.08, slideTo: N(58) }); },
+  hiyaku: (t) => arp([72, 76, 79, 84, 91], t, 0.06, 0.4, { type: 'triangle', vol: 0.24 }),
+  horagai: (t) => { tone(N(46), t, 0.9, { type: 'sawtooth', vol: 0.18, slideTo: N(48) }); tone(N(58), t + 0.1, 0.8, { type: 'triangle', vol: 0.1 }); },
+  kuji: (t) => { for (let i = 0; i < 9; i++) noise(t + i * 0.05, 0.04, { vol: 0.18, from: 5000, to: 1500 }); tone(N(91), t + 0.45, 0.3, { type: 'sine', vol: 0.14 }); },
+  hiwatari: (t) => { noise(t, 1.0, { vol: 0.3, from: 300, to: 2000 }); arp([60, 64, 67, 72], t + 0.2, 0.1, 0.4, { type: 'square', vol: 0.15 }); },
+  shikigami: (t) => { noise(t, 0.15, { vol: 0.15, from: 2000, to: 5000 }); arp([88, 91, 95], t + 0.1, 0.05, 0.12, { type: 'sine', vol: 0.15 }); },
   special: (t) => {
     noise(t, 0.18, { vol: 0.35, from: 800, to: 9000 }); // すべりこむ風切り
     tone(N(72), t, 0.18, { type: 'sawtooth', vol: 0.12, slideTo: N(96) });

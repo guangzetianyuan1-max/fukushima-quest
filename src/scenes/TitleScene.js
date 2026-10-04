@@ -1,8 +1,8 @@
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=159';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=159';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=159';
-import { newGame, load, SAVE_KEY } from '../field/game.js?v=159';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=159';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=160';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=160';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=160';
+import { load, SAVE_KEY } from '../field/game.js?v=160';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=160';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -154,7 +154,12 @@ export class TitleScene extends Phaser.Scene {
     this.stage = 2;
     sfx('select');
     stopBgm();
-    this.registry.set('game', this.saved && !this.fresh ? this.saved : newGame());
-    this.scene.start('field');
+    // はじめから＝職業を選ぶ画面へ（10/5）。つづきから＝記録の場所から
+    if (this.saved && !this.fresh) {
+      this.registry.set('game', this.saved);
+      this.scene.start('field');
+    } else {
+      this.scene.start('jobs');
+    }
   }
 }

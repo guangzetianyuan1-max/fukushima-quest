@@ -4,7 +4,7 @@
 // 真冬の黒沼で尻尾が凍って切れ、神通力を失った。和尚に諭され、蚕を食うネズミを退治して恩を返し、蚕の守り神「ねこ稲荷」に祀られた
 // ゲームでは、忘れられて黒いもやに呑まれた信夫山の狐。弱点＝「尻尾の釣り」（凍った黒沼）。倒すと元に戻り、ムカデとオロチへの もやを払う
 // 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=159';
+import { BASIC_ITEMS } from './basic_items.js?v=160';
 
 export const GOBOU = {
   art: {
@@ -32,12 +32,12 @@ export const GOBOU = {
     autoWinTarget: 0.93,
     // 強さ＝試算（node tests/_autotune.mjs <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 11,
-    hp: 700, atk: 88, def: 92, agi: 13, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp560 atk83）
+    hp: 700, atk: 108, def: 92, agi: 13, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp560 atk83） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す）
     bgm: 'gobou',
     weakness: 'shippo',
     mist: { min: 1, max: 3, rise: 0.2 },
     // 必殺技＝木の葉の 小判（化かしの 木の葉が 舞い、全員の 目を くらます）
-    special: { name: '木の葉の 小判', chance: 0.27, power: 47, flash: [255, 220, 120], sfx: 'koban', cutin: 'assets/cutin/gobou_konoha.png' },
+    special: { name: '木の葉の 小判', chance: 0.27, power: 58, flash: [255, 220, 120], sfx: 'koban', cutin: 'assets/cutin/gobou_konoha.png' },
     biteName: '和尚に 化けて ひっかく',
     introText: '信夫山の 坂に、袈裟を 着た 和尚さんが 立っていた。……その 足もとから、ふさふさの 尻尾が のぞいている！',
     tellLines: [

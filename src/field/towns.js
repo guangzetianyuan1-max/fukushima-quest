@@ -34,7 +34,7 @@ export const TOWNS = {
     ],
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 八幡さまへ。'] },
-      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['bokuto', 'katana', 'sensu', 'tessen', 'nata', 'yamagatana', 'kashizue', 'kongozue'], items: ['tama'], lines: ['刀屋だ。腕に 合った 得物を 選びな。鉄砲の 玉も 置いてあるぜ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['bokuto', 'katana', 'sensu', 'tessen', 'tanto', 'wakizashi', 'nata', 'yamagatana', 'kashizue', 'kongozue', 'hankyu', 'yumi'], items: ['tama'], lines: ['刀屋だ。腕に 合った 得物を 選びな。鉄砲の 玉も 置いてあるぜ。'] },
       { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['kasa', 'kyahan', 'mino'], lines: ['荒物屋だよ。旅の 支度なら まかせて おくれ。'] },
       { x: 3, y: 11, look: 'machibito', lines: ['ここは 平の 城下町。お城の まわりに 町が ひらけたんだ。'] },
       { x: 9, y: 12, look: 'musume', lines: ['黒い もやが 出てから、昔話を 語る 人が へってしまって……'] },
@@ -174,7 +174,7 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 小高の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 15, lines: ['いらっしゃいませ。小高の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['tachi', 'naginata', 'kumayari', 'shakujo', 'domaru', 'mino'], items: ['yakusou', 'jouyakusou', 'tokujou', 'reisui', 'goshinsui', 'tama'], lines: ['小高の よろず屋だ。太刀も 薙刀も、胴丸も、薬も 鉄砲の 玉も あるぜ。'] }, // 10/3 本人「よろず屋でも採用」＝道具も置く
+      { x: 11, y: 8, look: 'shonin', role: 'equip', goods: ['tachi', 'naginata', 'kunai', 'kumayari', 'shakujo', 'shigetou', 'domaru', 'mino'], items: ['yakusou', 'jouyakusou', 'tokujou', 'reisui', 'goshinsui', 'tama'], lines: ['小高の よろず屋だ。太刀も 薙刀も、胴丸も、薬も 鉄砲の 玉も あるぜ。'] }, // 10/3 本人「よろず屋でも採用」＝道具も置く
       { x: 10, y: 11, look: 'musume', role: 'shop', goods: ['yakusou', 'jouyakusou', 'tokujou', 'reisui', 'goshinsui'], lines: ['旅の 薬売りで ございます。相馬の 道は 敵が 強いので、よく 効く 薬を そろえて おります。'] }, // 10/3 本人「道具も強く」
       // 話の手がかり（出どころで確かめた筋だけ）
       { x: 9, y: 12, look: 'ryoshi', lines: [
@@ -191,8 +191,14 @@ export const TOWNS = {
       ] },
       { x: 2, y: 5, look: 'kodomo', lines: [
         '相馬の 道は いわきより 敵が 強いよ。レベルを 上げて、よろず屋で 得物を そろえてから 行こう。',
-        '加わった 仲間は レベルが 低めだから、宿で 休んで 守ってあげてね。',
+        '小高と 相馬の 町には、職業ごとの 師匠が いるよ。試しに 受かると 技を 教えて もらえるんだ。',
       ] },
+      // ⭐1章の師匠（本人 10/5「それぞれの職業は必殺技が3つあり、1章から3章までのどこかで、クエストを受けて習得する」）＝jobs.js の QUESTS[1]。歩く絵は町の人の絵を借りる
+      { x: 8, y: 4, look: 'osho', role: 'master', job: 'sou', ch: 1, lines: ['小高の 寺の 和尚じゃ。', '真言は、この 土地の 昔を 知る 者が となえて こそ 届く。わしの 問いに 答えて みよ。'] },
+      { x: 1, y: 6, look: 'machibito', role: 'master', job: 'yamabushi', ch: 1, lines: ['羽黒の 山で 修行した 山伏だ。', '法螺貝は 腹の 底から 吹く もの。わしと 一騎打ちを して、腕を 見せよ。'] },
+      { x: 11, y: 6, look: 'chaya', role: 'master', job: 'yojutsu', ch: 1, lines: ['山に こもって 術を みがく 者です。', '幻の 術は、己の 姿を 見失わぬ 者にしか 使えません。一騎打ちで 確かめましょう。'] },
+      { x: 4, y: 8, look: 'kashira', role: 'master', job: 'ninja', ch: 1, lines: ['……忍びの 師匠だ。', '煙玉は 投げる 間合いが 命。一騎打ちで 間合いを 見せて みよ。'] },
+      { x: 1, y: 11, look: 'shonin', role: 'master', job: 'kusushi', ch: 1, lines: ['小高の 薬屋の 主で ございます。', '丸薬は 土地の 草と 水で 作る もの。この 土地の 話を どれほど 知って おられるか、問うて みましょう。'] },
     ],
   },
   nakamura: {
@@ -223,7 +229,7 @@ export const TOWNS = {
     ],
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 相馬の 神社へ。'] },
-      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['nodachi', 'oonaginata', 'jumonji', 'tetsushakujo', 'kusari', 'domaru'], items: ['tama'], lines: ['相馬の 刀屋だ。野太刀に 十文字槍、鎖帷子も あるぜ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['nodachi', 'oonaginata', 'shinobigatana', 'jumonji', 'tetsushakujo', 'tsuyoyumi', 'kusari', 'domaru'], items: ['tama'], lines: ['相馬の 刀屋だ。野太刀に 十文字槍、鎖帷子も あるぜ。'] },
       { x: 10, y: 11, look: 'shonin', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['相馬の 道具屋だ。薬箱は 皆の 傷を いっぺんに 手当て できるぜ。'] }, // 10/3 本人「道具も強く」
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 18, lines: ['いらっしゃいませ。相馬の 宿で ございます。'] },
       { x: 9, y: 12, look: 'ryoshi', lines: [
@@ -240,11 +246,12 @@ export const TOWNS = {
       { x: 2, y: 5, look: 'musume', lines: [
         '虎捕山の 入口の もやは、鹿狼山の 手長明神さまを 元に もどせば 晴れると 思うの。',
       ] },
-      // 道場の師範（本人 10/4「旅の者は、途中クエストを受け剣術使いの『武士』に」・選んだ＝相馬・道場の試し合い）。歩く絵が届くまで役人の絵を借りる
-      { x: 11, y: 12, look: 'yakunin', role: 'dojo', lines: [
-        '相馬の 剣術道場の 師範だ。よい 目を して おるな、旅の者。',
-        'わしと 木刀で 試し合いを して、2本 取れば 武士の 免状と、わが 流の 奥義を さずけよう。',
-      ] },
+      // ⭐1章の師匠（10/5・jobs.js の QUESTS[1]）。道場の師範（10/4 武士の試し合い）は 武士の師匠へ
+      { x: 11, y: 12, look: 'yakunin', role: 'master', job: 'bushi', ch: 1, lines: ['相馬の 剣術道場の 師範だ。', 'わしと 木刀で 試し合いを して、2本 取れば、わが 流の 奥義を さずけよう。'] },
+      { x: 8, y: 4, look: 'musume', role: 'master', job: 'miko', ch: 1, lines: ['相馬の 神社の 巫女頭です。', '神楽は 神さまに ささげる 舞。太鼓に 合わせて 鈴を 振れたら、舞を お伝えしましょう。'] },
+      { x: 1, y: 6, look: 'toshiyori', role: 'master', job: 'onmyo', ch: 1, lines: ['星と 暦を 読む 陰陽師じゃ。', '呪符は 名と いわれを 知って こそ 効く。相馬の 昔話を 問うて みよう。'] },
+      { x: 11, y: 6, look: 'ryoshi', role: 'master', job: 'rikishi', ch: 1, lines: ['相撲の 親方だ。', '四股は 大地を しずめる 足踏み。わしと 一番 取って、力を 見せて みろ。'] },
+      { x: 1, y: 11, look: 'kaji', role: 'master', job: 'yumi', ch: 1, lines: ['弓の 師匠だ。', '鏑矢は 鳴る 矢。動く 的を 射ぬけたら、引き方を 教えよう。'] },
     ],
   },
   // ---- 2章 県北（10/4・本人「順番に制作を」）。町の形は小高・相馬と同じ。話の手がかりは出どころで確かめた筋だけ（vault 日本昔話/2026-10-04-調査-福島昔話クエスト2章県北5話.md）----
@@ -277,7 +284,7 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 福島の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 22, lines: ['いらっしゃいませ。福島の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['nodachi', 'oonaginata', 'jumonji', 'tetsushakujo', 'kusari', 'domaru'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['福島の 刀屋だ。信夫山の 化け物に 負けない 得物を そろえて いけ。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['meito', 'hokonaginata', 'yoroidoshi', 'matagiyari', 'ginshakujo', 'nurigome', 'yoroi', 'kusari'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['福島の 刀屋だ。信夫山の 化け物に 負けない 得物を そろえて いけ。'] },
       { x: 9, y: 12, look: 'shonin', lines: [
         '信夫山には むかし、ご坊狐という 狐が いてな。お山の 和尚さんに 化けて、木の葉の 小判で 魚を 買って いったそうだ。',
       ] },
@@ -327,7 +334,7 @@ export const TOWNS = {
     ],
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 二本松の 神社へ。'] },
-      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['nodachi', 'oonaginata', 'jumonji', 'tetsushakujo', 'kusari', 'domaru'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['二本松の 刀屋だ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['meito', 'hokonaginata', 'yoroidoshi', 'matagiyari', 'ginshakujo', 'nurigome', 'yoroi', 'kusari'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['二本松の 刀屋だ。'] },
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 24, lines: ['いらっしゃいませ。二本松の 宿で ございます。'] },
       { x: 3, y: 11, look: 'toshiyori', lines: [
         '安達ヶ原の 岩屋には、むかし 鬼婆が すんで おった。熊野の お坊さま 祐慶さまが、観音さまの 弓の 力で しずめたと 伝わる。',
@@ -367,7 +374,7 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 郡山の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 26, lines: ['いらっしゃいませ。郡山の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'yoroidoshi', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['郡山の 刀屋だ。大滝根山の 主に 負けない 得物を そろえて いけ。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'kodachi', 'oomiyari', 'kinshakujo', 'daikyu', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['郡山の 刀屋だ。大滝根山の 主に 負けない 得物を そろえて いけ。'] },
       { x: 9, y: 12, look: 'shonin', lines: [
         '郡山は 鯉の 町さ。鯉を 育てる 量は、全国の 市町村で いちばんと 言われて いる。',
         '使われなく なった ため池と、糸を とる 蚕の さなぎを 餌に して、鯉を 育てて きたんだ。',
@@ -408,7 +415,7 @@ export const TOWNS = {
     ],
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 須賀川の 神社へ。'] },
-      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'yoroidoshi', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、具足を そろえて いけ。'] },
+      { x: 1, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'kodachi', 'oomiyari', 'kinshakujo', 'daikyu', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、具足を そろえて いけ。'] },
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 28, lines: ['いらっしゃいませ。須賀川の 宿で ございます。'] },
       { x: 3, y: 11, look: 'toshiyori', lines: [
         '須賀川の 松明あかしは、四百年 あまり 続く 火祭りじゃ。',
@@ -451,7 +458,7 @@ export const TOWNS = {
     npcs: [
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 白河の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 30, lines: ['いらっしゃいませ。白河の 宿で ございます。'] },
-      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'yoroidoshi', 'oomiyari', 'kinshakujo', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['白河の 刀屋だ。安珍堂の 炎に 負けるなよ。'] },
+      { x: 11, y: 8, look: 'kaji', role: 'equip', goods: ['ootachi', 'nagamaki', 'kodachi', 'oomiyari', 'kinshakujo', 'daikyu', 'gusoku', 'yoroi'], items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['白河の 刀屋だ。安珍堂の 炎に 負けるなよ。'] },
       { x: 3, y: 11, look: 'toshiyori', lines: [
         '小峰城は、南北朝の ころに 結城親朝が 築き、江戸の はじめに 白河藩の 城として 仕上がった 城じゃ。',
         '南の 南湖は、白河藩主 松平定信が 造った 公園。日本で いちばん 古い 公園とも 言われて おる。',

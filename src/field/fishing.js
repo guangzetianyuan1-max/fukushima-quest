@@ -3,7 +3,7 @@
 // 釣りの手順（画面は FieldScene の fishing*）：①うきが沈んで「！」が出たら さわる（早すぎ・遅すぎは逃げる）
 //                                          ②左右に動く針が緑の帯に入ったら さわる（帯の幅と針の速さは魚しだい）
 // 画面と切り離す＝Node で試験する。ここの関数は game を書き換えずに新しい game を返す
-import { EQUIP } from '../data/equip.js?v=159';
+import { EQUIP, canWear } from '../data/equip.js?v=160';
 
 export const ROD_PRICE = 5;
 // 「！」が出てから さわれる長さ（ミリ秒）と、「！」が出るまでの待ち
@@ -74,7 +74,7 @@ export function exchangePrize(game, p, key, who = null) {
     return { ok: true, game: g };
   }
   const e = EQUIP[p.id];
-  if (!who || !e.who.includes(who)) return { ok: false, reason: 'who', game };
+  if (!who || !(game.members ?? ['tabi', 'shiori']).includes(who) || !canWear(game, p.id, who)) return { ok: false, reason: 'who', game }; // 10/5 職業の旅：旅にいる人・武器は その職業の系統
   const equip = structuredClone(g.equip ?? {});
   equip[who] ??= { weapon: null, armor: null, charm: null };
   const old = equip[who][e.slot];

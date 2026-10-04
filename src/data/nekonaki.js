@@ -4,7 +4,7 @@
 // ⚠式部の生まれは「石川と 言い伝えられている」まで・宿の実名は出さない・式部との再会は どの出どころにも無い
 // ⚠化け猫にしない（後の章に化け猫のボスがある見込み・猫は「慕って鳴きつづける猫」のまま）
 // ゲームでは、忘れられて黒いもやに呑まれ、泉のほとりで鳴きつづける猫。弱点＝「猫啼の湯」（病が治った泉）。勝つと湯につかれる（温泉）・鮫川への もやが晴れる
-import { BASIC_ITEMS } from './basic_items.js?v=159';
+import { BASIC_ITEMS } from './basic_items.js?v=160';
 
 export const NEKONAKI = {
   art: {
@@ -32,11 +32,11 @@ export const NEKONAKI = {
     autoWinTarget: 0.88,
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 16,
-    hp: 922, atk: 155, def: 124, agi: 16, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp720 atk108） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp576 atk149）
+    hp: 922, atk: 145, def: 124, agi: 16, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp720 atk108） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp576 atk149） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す）
     bgm: 'nekonaki',
     weakness: 'yu',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '慕い鳴き', chance: 0.25, power: 85, flash: [200, 180, 255], sfx: 'shitainaki', cutin: 'assets/cutin/nekonaki_naki.png' },
+    special: { name: '慕い鳴き', chance: 0.25, power: 79, flash: [200, 180, 255], sfx: 'shitainaki', cutin: 'assets/cutin/nekonaki_naki.png' },
     biteName: '爪で ひっかく',
     introText: '泉の ほとりで、黒い もやを まとった 猫が 鳴いていた。……その 声は、だれかを 呼んでいる。',
     tellLines: [

@@ -5,7 +5,7 @@
 // 必殺技は「すごいおなら」（本人 10/1「おなら」→10/4「おおきな屁」→同日「すごいおなら」・おならの効果音・くらうと全員しばらく気絶）。⛔下品に振れさせない（音・臭いを書かない。可笑しみは真面目に語ることから）・子ども向けの絵柄に寄せない
 // ゲームでは、忘れられて黒いもやに呑まれた嫁。弱点＝「迎えの言葉」（遠慮は いらんよ）。倒すと元に戻り、二本松への道の大岩を吹き飛ばす
 // 絵＝まだ（仮に道中の娘の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=159';
+import { BASIC_ITEMS } from './basic_items.js?v=160';
 
 export const HEPPIRI = {
   art: {
@@ -33,7 +33,7 @@ export const HEPPIRI = {
     autoWinTarget: 0.93,
     // 強さ＝試算（node tests/_autotune.mjs <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 13,
-    hp: 691, atk: 69, def: 104, agi: 10, // 10/4 気絶を足したので攻め 90→65（tests/_tune_onara.mjs で自動の勝率0.93） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp640 atk65）
+    hp: 587, atk: 70, def: 135, agi: 10, // 10/4 気絶を足したので攻め 90→65（tests/_tune_onara.mjs で自動の勝率0.93） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp640 atk65） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す）
     bgm: 'heppiri',
     weakness: 'mukae',
     mist: { min: 1, max: 3, rise: 0.2 },

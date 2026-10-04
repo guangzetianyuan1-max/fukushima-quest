@@ -2,7 +2,7 @@
 // 確かめた事（二本松市・福島県の紹介）：二本松神社の例大祭・350年以上・宵祭りに 7つの町の太鼓台が集まり、神社の御神火を紅い提灯に灯す・太鼓台1台に 約300の提灯
 // 遊び方：太鼓の拍に合わせて さわると、太鼓台の提灯が灯る（ぴったり＝3つ・少しずれ＝1つ・大太鼓の拍は2倍）。灯した10個で 提灯点 1点 → 景品
 // 計算は画面と切り離す（画面は FieldScene の startChochin）
-import { exchangePrize } from './fishing.js?v=159';
+import { exchangePrize } from './fishing.js?v=160';
 
 export const ENTRY_PRICE = 15;
 export const BEAT_MS = 600; // 100拍/分（お囃子の太鼓くらい）
@@ -14,6 +14,11 @@ export const LANTERNS = 100; // 画面の太鼓台に並べる提灯の数（灯
 export const PER_POINT = 10; // 灯した10個で1点
 export const REST_P = 0.12; // 休みの拍（打たない）
 export const BIG_EVERY = 8; // 8拍ごとに大太鼓（2倍灯る）
+// 巫女の師匠の 神楽の試し（10/5）＝同じ遊びで 舞の冴え（灯した数）が KAGURA_PASS 以上・拍の無い所で さわったのが KAGURA_MISS 回まで なら合格
+// （やみくもに さわり続けると 灯る数は届く＝10/5 試験で 0.44秒ごとに さわって73。拍の外れを数えて 落とす）
+export const KAGURA_PASS = 50; // 10/5 ブラウザで 0.07秒きざみに合わせて 51＝人の手で 60 は きびしい
+export const KAGURA_MISS = 8; // 休みの拍（約4つ）で つい さわっても 受かる幅
+export const kaguraPassed = (round) => round.lit >= KAGURA_PASS && round.misses <= KAGURA_MISS;
 
 // 拍の並び：{ t, big } の列。休みの拍は入れない（はじめの4拍と大太鼓の拍は休まない）
 export function planBeats(rng) {
