@@ -5,11 +5,11 @@
 // 原典には敵はいない＝ゲームでは、忘れられて黒いもやに呑まれた母の霊。弱点＝「子を守る約束」。原典は紙芝居④で しおりが語る
 // ⚠身ごもった母の死・墓の赤子＝絵と語りは直接見せず、やさしく語る
 // 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=126';
+import { BASIC_ITEMS } from './basic_items.js?v=127';
 
 export const AMEKAI = {
   art: {
-    dark: 'assets/amekai_dark.png', light: 'assets/amekai_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 絵が届いた（ng9l8f・q5ld7m・挿絵 wygk69）。⏳背景はまだ（道中の北を借りる）
+    dark: 'assets/amekai_dark.png', light: 'assets/amekai_light.png', bg: 'assets/bg_amekai.png', // 10/4 絵が届いた（ng9l8f・q5ld7m・挿絵 wygk69・背景 oxvwii＝柱田の墓地と霊山）
     glowDark: 0x9fb4ff, glowLight: 0xffe6c8, // 墓地の月明かり → 戻ったら やわらかな 灯
   },
   allies: [

@@ -6,11 +6,11 @@
 // 弱点＝「主の名乗り」（どちらが主かと問うと、二匹は にらみあって ぶつかる）。明かされたあとは ときどき二匹が かみつきあう（helper の作りを使う）
 // 原典では人は関わらず相打ち＝紙芝居④で しおりが語る
 // 絵＝まだ（仮に道中のムカデの絵）。二匹を1枚に描く。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=126';
+import { BASIC_ITEMS } from './basic_items.js?v=127';
 
 export const MUKADE = {
   art: {
-    dark: 'assets/mukade_dark.png', light: 'assets/mukade_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 絵が届いた（nbslan・2匹を1枚に）。⏳挿絵2枚と背景はまだ
+    dark: 'assets/mukade_dark.png', light: 'assets/mukade_light.png', bg: 'assets/bg_mukade.png', // 10/4 絵が届いた（nbslan・2匹を1枚に・挿絵2枚・背景 gkhahd＝信夫山の黒沼と赤い月）
     glowDark: 0xb090ff, glowLight: 0xffd27a,
   },
   allies: [

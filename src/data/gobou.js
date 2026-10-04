@@ -4,11 +4,11 @@
 // 真冬の黒沼で尻尾が凍って切れ、神通力を失った。和尚に諭され、蚕を食うネズミを退治して恩を返し、蚕の守り神「ねこ稲荷」に祀られた
 // ゲームでは、忘れられて黒いもやに呑まれた信夫山の狐。弱点＝「尻尾の釣り」（凍った黒沼）。倒すと元に戻り、ムカデとオロチへの もやを払う
 // 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=126';
+import { BASIC_ITEMS } from './basic_items.js?v=127';
 
 export const GOBOU = {
   art: {
-    dark: 'assets/gobou_dark.png', light: 'assets/gobou_light.png', bg: 'assets/bg_dochu_north.png', // 10/4 絵が届いた（ukupff・nzgnh9・挿絵 j24ni1）。⏳背景はまだ
+    dark: 'assets/gobou_dark.png', light: 'assets/gobou_light.png', bg: 'assets/bg_gobou.png', // 10/4 絵が届いた（ukupff・nzgnh9・挿絵 j24ni1・背景 qnfr0r＝信夫山の雪の参道・上の切れた杉の帯は夜空で塗った）
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
   allies: [
