@@ -7,7 +7,7 @@
 //   1回目＝firstLose（必ず負ける・全滅しても文は減らない）→ 二本松の宿で目をさます → 祐慶が加わり 僧は閼伽井嶽へ（companions.js の SWAP_AFTER_LOSS）
 //   2回目＝弱点は祐慶の「破魔の真弓」。⚠語るのは しおり・術を射るのは祐慶
 // 絵＝まだ（仮に道中の霊の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=151';
+import { BASIC_ITEMS } from './basic_items.js?v=152';
 
 export const ONIBABA = {
   art: {

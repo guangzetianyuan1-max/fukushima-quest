@@ -2,36 +2,36 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { EPISODES } from '../data/episodes.js?v=151';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=151';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=151';
-import { RIDERS } from '../data/nomaoi_assets.js?v=151';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=151';
-import { TILE } from '../field/tiles.js?v=151';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=151';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=151';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=151';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=151';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=151';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=151';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=151';
+import { EPISODES } from '../data/episodes.js?v=152';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=152';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=152';
+import { RIDERS } from '../data/nomaoi_assets.js?v=152';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=152';
+import { TILE } from '../field/tiles.js?v=152';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=152';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=152';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=152';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=152';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=152';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=152';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=152';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-} from '../field/game.js?v=151';
-import { membersOf } from '../battle/levels.js?v=151';
-import { COMPANIONS } from '../data/companions.js?v=151';
-import { ICON_IDS } from '../data/icons.js?v=151';
-import { FACE_IDS } from '../data/faces.js?v=151';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=151';
-import { mapPointOf } from '../field/mapcard.js?v=151';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=151';
-import { makeRng } from '../battle/rules.js?v=151';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=151';
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka } from '../field/game.js?v=151';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=151';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=151';
+} from '../field/game.js?v=152';
+import { membersOf } from '../battle/levels.js?v=152';
+import { COMPANIONS } from '../data/companions.js?v=152';
+import { ICON_IDS } from '../data/icons.js?v=152';
+import { FACE_IDS } from '../data/faces.js?v=152';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=152';
+import { mapPointOf } from '../field/mapcard.js?v=152';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=152';
+import { makeRng } from '../battle/rules.js?v=152';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, START_EQUIP, diffNote, diffDown } from '../data/equip.js?v=152';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka } from '../field/game.js?v=152';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=152';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK } from '../field/chochin.js?v=152';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {

@@ -1,16 +1,16 @@
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=151';
-import { EPISODES } from '../data/episodes.js?v=151';
-import { revealAt } from '../ui/reveal.js?v=151';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=151';
-import { chooseCommands } from '../battle/auto.js?v=151';
-import { itemNote } from '../data/items.js?v=151';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=151';
-import { STORY_FILES } from '../data/story_assets.js?v=151';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=151';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=151';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=151';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=151';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=151';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=152';
+import { EPISODES } from '../data/episodes.js?v=152';
+import { revealAt } from '../ui/reveal.js?v=152';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=152';
+import { chooseCommands } from '../battle/auto.js?v=152';
+import { itemNote } from '../data/items.js?v=152';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=152';
+import { STORY_FILES } from '../data/story_assets.js?v=152';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=152';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=152';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=152';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=152';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=152';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -483,12 +483,7 @@ export class BattleScene extends Phaser.Scene {
     const skip = this.add.text(16, MSG_Y - 8, 'とばす ▶▶', style(17, '#ffffff')).setOrigin(0, 1).setStroke('#1a1030', 5).setPadding(12, 8, 6, 8); // 右下は3Dしおりが立つので左
     skip.setInteractive({ useHandCursor: true });
     box.add([frame, pic, win, who, text, skip]);
-    // 影絵の右上に題の巻物（本人 10/2「左上に巻物」→「巻物は右が良い」）＝戦いの画面の巻物と同じ作り。右下は3Dしおり
-    const before = this.children.list.length;
-    // ⭐長い題名は しおりの頭（3Dしおりの絵の上の端 SHIORI_TOP）より上で止める＝小さく・2列に（本人 10/4「題名が長いと、しおりの顔が隠れる」）
-    drawScroll(this, W - 46, 32, fitScroll(32, STORY_SCROLL_MAX, { episode: this.ep.enemy.episode, tale: this.ep.enemy.tale, epSize: 14, taleSize: 25 }));
-    const smallScroll = this.children.list.slice(before);
-    box.addAt(smallScroll, box.list.indexOf(win)); // 巻物は窓と3Dしおりの後ろ（しおりは この後で窓の前に入る＝巻物より手前）
+    // ⛔影絵の右上の小さな巻物はやめた（本人 10/4「昔話中の右側表示は要りません」＝始めに大きな巻物で題を読む）
     // 3Dしおり：挿絵の右下に半身で立ち（影絵も右下を空けて描かせている）、声の大きさで口を動かし、ときどき まばたき
     const has3d = this.textures.exists('shiori3d_m0_e0');
     let talking = false;
@@ -596,7 +591,6 @@ export class BattleScene extends Phaser.Scene {
       if (part !== 'tell' || !e.episode || !e.tale) { show(); return; }
       titling = true;
       pic.setVisible(false);
-      for (const o of smallScroll) o.setAlpha(0); // 右上の小さな巻物は 題を読み終えてから出す（2つ並ばない）
       who.setText('');
       text.setText('');
       const before = this.children.list.length;
@@ -610,7 +604,6 @@ export class BattleScene extends Phaser.Scene {
         titling = false;
         stopVoice();
         this.tweens.add({ targets: card, alpha: 0, duration: 250, onComplete: () => { card.destroy(); if (!ended) show(); } });
-        this.tweens.add({ targets: smallScroll, alpha: 1, duration: 400 });
       };
       this.tweens.add({ targets: card, alpha: 1, duration: 300 });
       const url = `assets/story/title_${e.id}.mp3`;
