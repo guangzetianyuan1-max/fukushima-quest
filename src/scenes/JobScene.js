@@ -2,12 +2,12 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=161';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=161';
-import { sfx } from '../audio/chip.js?v=161';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES } from '../data/jobs.js?v=161';
-import { newGame, validPick } from '../field/game.js?v=161';
-import { choose, pickOf } from '../data/jobs.js?v=161';
+import { GAME_FONT } from '../ui/fonts.js?v=162';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=162';
+import { sfx } from '../audio/chip.js?v=162';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES } from '../data/jobs.js?v=162';
+import { newGame, validPick } from '../field/game.js?v=162';
+import { choose, pickOf } from '../data/jobs.js?v=162';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -16,6 +16,7 @@ const SLOT = { y: 48, w: 84, h: 66, gap: 4 };
 const GRID = { y: 122, w: 170, h: 44, gap: 6 };
 const INFO = { y: 362, h: 220 };
 const GO = { y: 590, h: 44 };
+const BACK = { x: 8, w: 84 };
 
 export class JobScene extends Phaser.Scene {
   constructor() {
@@ -28,6 +29,7 @@ export class JobScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setBackgroundColor('#14122a');
+    this.leaving = false;
     this.slots = [null, null, null, null];
     this.active = 0;
     this.shown = null;
@@ -69,9 +71,16 @@ export class JobScene extends Phaser.Scene {
     makeWindow(this, 4, INFO.y, W - 8, INFO.h);
     this.info = this.add.container(0, 0);
     // 旅に出る
-    this.goWin = makeWindow(this, 40, GO.y, W - 80, GO.h);
-    this.goText = this.add.text(W / 2, GO.y + GO.h / 2, 'この4人で 旅に出る', { fontFamily: FONT, fontSize: '20px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
-    const goHit = this.add.zone(W / 2, GO.y + GO.h / 2, W - 80, GO.h).setInteractive();
+    // 戻る（本人 10/5「職業選択の画面で『戻る』のボタン」）＝題の画面へ。左に小さく・旅に出るは右に大きく（押しまちがえないよう間を空ける）
+    makeWindow(this, BACK.x, GO.y, BACK.w, GO.h);
+    this.add.text(BACK.x + BACK.w / 2, GO.y + GO.h / 2, '戻る', { fontFamily: FONT, fontSize: '20px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
+    const backHit = this.add.zone(BACK.x + BACK.w / 2, GO.y + GO.h / 2, BACK.w, GO.h).setInteractive();
+    this.onTap(backHit, () => this.back());
+    const gx = BACK.x + BACK.w + 12;
+    const gw = W - 8 - gx;
+    this.goWin = makeWindow(this, gx, GO.y, gw, GO.h);
+    this.goText = this.add.text(gx + gw / 2, GO.y + GO.h / 2, 'この4人で 旅に出る', { fontFamily: FONT, fontSize: '19px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
+    const goHit = this.add.zone(gx + gw / 2, GO.y + GO.h / 2, gw, GO.h).setInteractive();
     this.onTap(goHit, () => this.start());
     this.showInfo(null);
     this.refresh();
@@ -138,12 +147,22 @@ export class JobScene extends Phaser.Scene {
     j.skills.forEach((s, c) => txt(14, y0 + c * 17, `${c + 1}章で習う：${JOB_SPELLS[s].name}`, 14, '#e6e6f0'));
   }
 
+  back() {
+    if (this.leaving) return;
+    this.leaving = true;
+    sfx('select');
+    this.cameras.main.fadeOut(400, 0, 0, 0);
+    this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('title'));
+  }
+
   start() {
     const pick = pickOf(this.slots);
     if (!validPick(pick)) {
       sfx('cancel');
       return;
     }
+    if (this.leaving) return;
+    this.leaving = true;
     sfx('select');
     this.registry.set('game', newGame(pick));
     this.cameras.main.fadeOut(600, 0, 0, 0);
