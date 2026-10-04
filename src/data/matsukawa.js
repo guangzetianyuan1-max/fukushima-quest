@@ -2,7 +2,7 @@
 // 話（出どころ uminominwa.jp/animation/19）：漁師に「松川様」と敬われていた、背中に藻の生えた大ザメ。
 // 殿様が人に害があると聞いて弓で射たが死なず、矢が刺さったまま、川を渡る殿様に襲いかかり、殿様は愛馬を失った。
 // 数値は試算（500戦）で決める。第一話なので序章でいちばん勝ちやすく（autoWinTarget 1.0）
-import { BASIC_ITEMS } from './basic_items.js?v=132';
+import { BASIC_ITEMS } from './basic_items.js?v=133';
 
 export const MATSUKAWA = {
   art: {
