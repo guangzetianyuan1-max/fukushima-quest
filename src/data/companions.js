@@ -89,6 +89,7 @@ export const COMPANION_SPELLS = {
   hama: {
     name: '如意輪の経', desc: '鬼婆の弱点（祐慶に教わった経）', cost: 8, power: 46, weakMult: 3, plainMult: 0.5, sfx: 'yumi', verb: '祐慶に 教わった 如意輪観音の 経を となえた',
     weakText: '空に 観音さまが あらわれ、破魔の 真弓が 黒い もやごと 鬼婆を 射ぬいた！',
+    cutin: 'assets/cutin/onibaba_kannon.png', // 観音さまが破魔の真弓で鬼婆を射る挿絵（10/5 夜 v5ak7f）
     plainText: '経の 声は 黒い もやに 吸いこまれた……',
   },
   ofuda: {

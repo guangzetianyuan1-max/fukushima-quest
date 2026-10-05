@@ -325,7 +325,8 @@ function allyAct(state, a, cmd, data, rng, log) {
       log.push({ text: '黒い もやに さえぎられて、術が 弱まった……' });
     }
     e.hp = Math.max(0, e.hp - d);
-    log.push({ text: revealed ? sp.weakText : sp.plainText });
+    // 術の挿絵（10/5 夜 本人「鬼婆を懲らしめる観音様のカットインが欲しい」）＝弱点が明かされて効いたときだけ。音は術の音だけ（solo）
+    log.push({ text: revealed ? sp.weakText : sp.plainText, ...(revealed && sp.cutin ? { effect: { kind: 'special', flash: sp.flash ?? [255, 230, 150], cutin: sp.cutin, solo: true }, hold: 1700 } : {}) });
     log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
   } else if (cmd.type === 'item') {
     // 道具。kind 'hp' は一番弱った味方の HP を、'mp' は術を使う味方の術の力を戻す
