@@ -1,19 +1,19 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=173';
-import { kanbanAt } from './kanban.js?v=173';
-import { SOMA_ROWS } from './soma_map.js?v=173';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=173';
-import { KENCHU_ROWS } from './kenchu_map.js?v=173';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=173';
-import { TOWNS, TOWN_ENTRY } from './towns.js?v=173';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=173';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=173';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=173';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=173';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=173';
-import { becomeKunoichi } from './kagewatari.js?v=173';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=173';
+import { IWAKI_ROWS } from './iwaki_map.js?v=174';
+import { kanbanAt } from './kanban.js?v=174';
+import { SOMA_ROWS } from './soma_map.js?v=174';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=174';
+import { KENCHU_ROWS } from './kenchu_map.js?v=174';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=174';
+import { TOWNS, TOWN_ENTRY } from './towns.js?v=174';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=174';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=174';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=174';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=174';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=174';
+import { becomeKunoichi } from './kagewatari.js?v=174';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=174';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -309,9 +309,10 @@ export function battleData(game, ep0) {
       ...ep.enemy, hp: fl.hp, atk: fl.atk, def: fl.def, forcedLose: true, tellBlock: fl.tellBlock,
       introText: fl.introText, loseLines: fl.loseLines, mist: { ...ep.enemy.mist, min: fl.mistMin ?? ep.enemy.mist?.min },
     };
-    return { ...ep, enemy: { ...enemy, loseLines: heroLines(enemy.loseLines, game) }, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
+    return { ...ep, enemy: { ...enemy, loseLines: heroLines(enemy.loseLines, game), restoreLines: heroLines(enemy.restoreLines, game) }, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
   }
-  return { ...ep, enemy: { ...ep.enemy, loseLines: heroLines(ep.enemy.loseLines, game) }, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
+  // 勝った後の文にも あなたの名前（10/5 夕 バグ出し：三春駒「旅の者は 三春駒の 術を 授かった！」が名前を付けても残った）
+  return { ...ep, enemy: { ...ep.enemy, loseLines: heroLines(ep.enemy.loseLines, game), restoreLines: heroLines(ep.enemy.restoreLines, game) }, allies, items, spells: { ...ep.spells, ...COMPANION_SPELLS, ...JOB_SPELLS } };
 }
 
 // 必ず負ける1回目のあと（2章 鬼婆）：文は減らさず、町（二本松）の宿で目をさます
