@@ -3,8 +3,8 @@
 // ・窓＝四隅の飾りはそのまま、辺と中だけを伸ばす（9つに分けて並べる。NineSlice は WebGL だけなので使わない）
 // ・丸いボタン＝押すと凹んだ絵に替わり2ドット沈む。離す・指が外れると戻る
 // ・十字キー＝押したキーだけ凹む。当たりはキーより広め（親指で外さない）
-import { GAME_FONT } from './fonts.js?v=188';
-import { KEY_POS } from './kit_layout.js?v=188';
+import { GAME_FONT } from './fonts.js?v=189';
+import { KEY_POS } from './kit_layout.js?v=189';
 
 export const BTN_COLORS = ['orange', 'purple', 'red', 'green', 'blue', 'gray']; // gray＝戦いの「戻る」（art_src/make_btn_gray.py）
 const DIRS = ['up', 'down', 'left', 'right'];
@@ -114,19 +114,40 @@ export function makePad(scene, cx, cy, onDir, scale = 1) {
 // 窓に収まらない文を、ページに分ける（区切りは文の中の空白＝言葉の切れ目。本人 10/2「下の会話の文字がはみ出る。枠内に収めて」）
 // ⛔字を小さくして収める手は、顔ありの長い文で15ドットでもはみ出した
 export function paginate(textObj, text, maxY) {
-  const segs = text.split(/(?<= )/);
+  // 10/6 本人「文字が画面からはみ出る」＝半角の空白でしか 区切らなかった（「技：…・…・…」や 改行だけの 文は 1ページに 入りきらず 窓の 下へ）
+  const segs = text.split(/(?<=[ 　\n・、。])/);
+  const over = (s) => { textObj.setText(s); return textObj.y + textObj.height > maxY; };
   const pages = [];
   let cur = '';
+  const push = () => { const p = cur.replace(/^\n+/, '').trimEnd(); if (p) pages.push(p); cur = ''; };
   for (const s of segs) {
-    textObj.setText(cur + s);
-    if (cur && textObj.y + textObj.height > maxY) {
-      pages.push(cur.trimEnd());
-      cur = s;
-    } else {
-      cur += s;
+    if (!over(cur + s)) { cur += s; continue; }
+    if (cur) push();
+    if (!over(s)) { cur = s; continue; }
+    for (const ch of s) { // 1語だけで 窓を越える＝1字ずつ
+      if (cur && over(cur + ch)) push();
+      cur += ch;
     }
   }
-  if (cur) pages.push(cur.trimEnd());
+  push();
   textObj.setText(pages[0] ?? '');
-  return pages;
+  return pages.length ? pages : [''];
+}
+
+// 顔絵の 下の 名前を 顔の 幅（maxW）に 収める（10/6 本人「そうびを見るで重なり」＝「あいうえ（武士）　Lv 20」が 本文と 画面の 左の 外まで はみ出した）
+// 字を 小さく → それでも 入らなければ「（」か 全角の空白の 前で 2行に
+export function fitSpeaker(t, maxW = 104, size = 20, min = 13) {
+  const raw = t.text.replace(/\n/g, '');
+  const tryFit = (txt) => {
+    t.setText(txt);
+    for (let fs = size; fs >= min; fs--) {
+      t.setFontSize(fs);
+      if (t.width <= maxW) return true;
+    }
+    return false;
+  };
+  if (tryFit(raw)) return;
+  const i = raw.search(/[（　]/);
+  if (i > 0 && tryFit(`${raw.slice(0, i)}\n${raw.slice(i).trim()}`)) return;
+  t.setFontSize(min);
 }

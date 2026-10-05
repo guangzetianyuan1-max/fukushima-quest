@@ -2,46 +2,46 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=188';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=188';
-import { EPISODES } from '../data/episodes.js?v=188';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=188';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=188';
-import { RIDERS } from '../data/nomaoi_assets.js?v=188';
-import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=188';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=188';
-import { TILE } from '../field/tiles.js?v=188';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=188';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=188';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=188';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=188';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=188';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=188';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=188';
+import { collection, PER_PAGE } from '../field/collection.js?v=189';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=189';
+import { EPISODES } from '../data/episodes.js?v=189';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=189';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=189';
+import { RIDERS } from '../data/nomaoi_assets.js?v=189';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=189';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=189';
+import { TILE } from '../field/tiles.js?v=189';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=189';
+import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=189';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=189';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=189';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=189';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=189';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=189';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=188';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=188';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=188';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=188';
-import { membersOf } from '../battle/levels.js?v=188';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=188';
-import { ICON_IDS } from '../data/icons.js?v=188';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=188';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=188';
-import { mapPointOf } from '../field/mapcard.js?v=188';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=188';
-import { makeRng } from '../battle/rules.js?v=188';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=188';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=188';
+} from '../field/game.js?v=189';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=189';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=189';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=189';
+import { membersOf } from '../battle/levels.js?v=189';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=189';
+import { ICON_IDS } from '../data/icons.js?v=189';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=189';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=189';
+import { mapPointOf } from '../field/mapcard.js?v=189';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=189';
+import { makeRng } from '../battle/rules.js?v=189';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=189';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=189';
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=188';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=188';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=188';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=188';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=189';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=189';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=189';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=189';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -782,8 +782,10 @@ export class FieldScene extends Phaser.Scene {
     // 金の枠の内側（右の線は x 約342）に収める
     this.dlgText.setX(face ? 128 : 30).setWordWrapWidth(face ? 202 : 302, true);
     // 名前：顔があるときは顔の下に ひとまわり大きく（本人 10/2）／無いときは左上
-    if (face) this.dlgSpeaker.setPosition(72, PANEL_Y + 142).setOrigin(0.5, 0).setFontSize(20);
-    else this.dlgSpeaker.setPosition(38, PANEL_Y + 18).setOrigin(0, 0).setFontSize(16);
+    if (face) {
+      this.dlgSpeaker.setPosition(72, PANEL_Y + 142).setOrigin(0.5, 0).setFontSize(20);
+      fitSpeaker(this.dlgSpeaker); // 顔の 幅に 収める（10/6）
+    } else this.dlgSpeaker.setPosition(38, PANEL_Y + 18).setOrigin(0, 0).setFontSize(16);
   }
 
 
@@ -839,7 +841,10 @@ export class FieldScene extends Phaser.Scene {
         this.dlg.add(n);
         this.menuItems.push(n);
         // 長い項目（旅の者（今：旅の笠）など）が右の注記とぶつかるときは、その行の字だけ縮める（10/4 試運転）
-        for (let fs = MENU_FS; t.x + t.width > n.x - n.width - 8 && fs > 15; fs--) t.setFontSize(fs - 1);
+        for (let fs = MENU_FS; t.x + t.width > n.x - n.width - 8 && fs > 12; fs--) t.setFontSize(fs - 1);
+        // 10/6 それでも ぶつかる（勝守の 人選び「あいうえ（今：厄除け守）」と「攻+2 厄除け無し」）＝注記も 縮め、最後は 項目を「…」で 詰める
+        for (let fs = 17; t.x + t.width > n.x - n.width - 8 && fs > 13; fs--) n.setFontSize(fs - 1);
+        while (t.x + t.width > n.x - n.width - 8 && t.text.length > 4) t.setText(`${t.text.replace(/…$/, '').slice(0, -1)}…`);
       }
       if (fn) {
         // 当たり＝行の幅いっぱい・高さ ROW−6（行と行のあいだ6ドットは どちらも効かない）
@@ -2318,12 +2323,18 @@ export class FieldScene extends Phaser.Scene {
 
 
   showGear() {
-    const lines = partyView(this.g).map((p) => ({
-      speaker: `${nameOf(this.g, p.id)}${p.job && (p.id === 'tabi' || p.id === 'shiori') ? `（${JOBS[p.job].name}）` : ''}　Lv ${p.lv}`, // 10/5 主人公・しおりは 職業を 添える
-      face: p.id === 'shiori' ? 'normal' : FACE_IDS.includes(`job_${p.id}`) ? `job_${p.id}` : p.id, // 本人 10/3「しおり以外顔が無い。みんな顔をつけて」・10/5 職業の人物の顔が届いたら job_<職業>
-      text: [`攻 ${p.atk}　守 ${p.def}　速 ${p.agi}　知 ${p.int}`, ...SLOTS.map((s) => `${SLOT_NAME[s]}：${p.gear[s] ? EQUIP[p.gear[s]].name : 'なし'}`),
-        ...(p.job ? [`技：${[JOBS[p.job].basic, ...(this.g.skills?.[p.id] ?? [])].filter(Boolean).map((id) => JOB_SPELLS[id].name).join('・') || 'まだ ない'}`] : [])].join('\n'),
-    }));
+    // 10/6 本人「そうびを見るで重なり」＝1人ぶん 6〜8行を 顔の 横の 狭い 窓に 詰めていた（名前は 顔の 下から 本文へ はみ出し、本文は 窓の 下を 越えた）
+    // ⇒ 1人ぶんを「強さ」「装備」「技」の 3枚に 分ける。名前は 職業まで（Lv は 本文へ）
+    const lines = partyView(this.g).flatMap((p) => {
+      const speaker = `${nameOf(this.g, p.id)}${p.job && (p.id === 'tabi' || p.id === 'shiori') ? `（${JOBS[p.job].name}）` : ''}`; // 10/5 主人公・しおりは 職業を 添える
+      const face = p.id === 'shiori' ? 'normal' : FACE_IDS.includes(`job_${p.id}`) ? `job_${p.id}` : p.id; // 本人 10/3「しおり以外顔が無い。みんな顔をつけて」・10/5 職業の人物の顔が届いたら job_<職業>
+      const skills = p.job ? [JOBS[p.job].basic, ...(this.g.skills?.[p.id] ?? [])].filter(Boolean).map((id) => JOB_SPELLS[id].name) : [];
+      return [
+        { speaker, face, text: `Lv ${p.lv}\n攻 ${p.atk}　守 ${p.def}\n速 ${p.agi}　知 ${p.int}` },
+        { speaker, face, text: SLOTS.map((sl) => `${SLOT_NAME[sl]}：${p.gear[sl] ? EQUIP[p.gear[sl]].name : 'なし'}`).join('\n') },
+        ...(p.job ? [{ speaker, face, text: `技：${skills.join('・') || 'まだ ない'}` }] : []),
+      ];
+    });
     this.showMessages(lines);
   }
 

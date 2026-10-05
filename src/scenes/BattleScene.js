@@ -1,18 +1,18 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=188';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=188';
-import { EPISODES } from '../data/episodes.js?v=188';
-import { revealAt } from '../ui/reveal.js?v=188';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=188';
-import { chooseCommands } from '../battle/auto.js?v=188';
-import { itemNote } from '../data/items.js?v=188';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=188';
-import { STORY_FILES } from '../data/story_assets.js?v=188';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=188';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=188';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=188';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=188';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=188';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=188';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=189';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=189';
+import { EPISODES } from '../data/episodes.js?v=189';
+import { revealAt } from '../ui/reveal.js?v=189';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=189';
+import { chooseCommands } from '../battle/auto.js?v=189';
+import { itemNote } from '../data/items.js?v=189';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=189';
+import { STORY_FILES } from '../data/story_assets.js?v=189';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=189';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=189';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=189';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=189';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=189';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=189';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -761,8 +761,10 @@ export class BattleScene extends Phaser.Scene {
     // 金の枠の内側（窓は x 8〜352・右の線は x 約334）に収める
     this.msgText.setX(face ? 130 : 30).setWordWrapWidth(face ? 200 : 300, true);
     // 名前：顔があるときは顔の下に ひとまわり大きく（本人 10/2）／無いときは左上
-    if (face) this.msgSpeaker.setPosition(72, MSG_Y + 150).setOrigin(0.5, 0).setFontSize(20);
-    else this.msgSpeaker.setPosition(38, MSG_Y + 18).setOrigin(0, 0).setFontSize(SIZE.speaker);
+    if (face) {
+      this.msgSpeaker.setPosition(72, MSG_Y + 150).setOrigin(0.5, 0).setFontSize(20);
+      fitSpeaker(this.msgSpeaker); // 顔の 幅に 収める（10/6）
+    } else this.msgSpeaker.setPosition(38, MSG_Y + 18).setOrigin(0, 0).setFontSize(SIZE.speaker);
   }
 
 
@@ -879,7 +881,9 @@ export class BattleScene extends Phaser.Scene {
         const n = this.add.text(W - 28, y + (ROW - 6) / 2, note, style(SIZE.badge, fn ? '#ffd34d' : '#777777')).setOrigin(1, 0.5).setDepth(5);
         this.menu.push(n);
         // 長い項目が右の効き目とぶつかるときは、その行の字だけ縮める（10/4）
-        for (let fs = SIZE.menu; t.x + t.width > n.x - n.width - 8 && fs > 15; fs--) t.setFontSize(fs - 1);
+        for (let fs = SIZE.menu; t.x + t.width > n.x - n.width - 8 && fs > 12; fs--) t.setFontSize(fs - 1);
+        for (let fs = SIZE.badge; t.x + t.width > n.x - n.width - 8 && fs > 13; fs--) n.setFontSize(fs - 1); // 10/6 注記も 縮める
+        while (t.x + t.width > n.x - n.width - 8 && t.text.length > 4) t.setText(`${t.text.replace(/…$/, '').slice(0, -1)}…`);
       }
       if (fn) {
         // 当たり＝列の幅・高さ ROW−6（行と行のあいだ6ドットは どちらも効かない）
