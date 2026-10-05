@@ -5,7 +5,7 @@
 // 淵は川の改修でいまは無い（＝忘れられた話）。ゲームでは忘れられて暴れる淵の主（若侍の姿）。倒すと元に戻る
 // ⭐10/2 敵は若侍→大蛇へ（本人「話からすると、男子と戦いではなく、蛇と戦ったほうが良い」＝紙芝居で若者の正体は大蛇と語るため）。
 // うなぎ・龍と見分けるため、とぐろを巻いて鎌首をもたげた蛇・元の姿は白銀（art_src/Geminiプロンプト_蛇岸淵.md）
-import { BASIC_ITEMS } from './basic_items.js?v=170';
+import { BASIC_ITEMS } from './basic_items.js?v=171';
 
 export const JAGAN = {
   art: {
