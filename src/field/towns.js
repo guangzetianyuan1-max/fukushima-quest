@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=182'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=183'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。どの町も 13×14・入ると (6,12) に立つ
@@ -52,8 +52,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「いわきの 湯本温泉は、古くから 知られた 湯の町よ。旅の つかれは 湯で 落としてね。」', '湯めぐりの 案内人「北の 県北や 県中には、職業の 技を 教えて くれる 温泉が あるんだって。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「いわきの 湯本温泉は、古くから 知られた 湯の町よ。旅の つかれは 湯で 落としてね。」', '湯めぐりの 案内人「北の 県北や 県中には、職業の 技を 教えて くれる 温泉が あるんだって。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 八幡さまへ。'] },
       { x: 1, y: 8, look: 'kaji', role: 'equip', goods: gearAt([1, 2]), items: ['tama'], lines: ['刀屋だ。腕に 合った 得物を 選びな。'] },
       { x: 11, y: 8, look: 'shonin', role: 'equip', goods: gearAt([], [1, 2]), lines: ['荒物屋だよ。旅の 支度なら まかせて おくれ。'] },
@@ -99,8 +99,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「ここ 湯本の 湯宿で 休んでいってね。」', '湯めぐりの 案内人「県北には 飯坂・高湯・土湯・岳、県中には 磐梯熱海や 二岐の 温泉が あるのよ。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「ここ 湯本の 湯宿で 休んでいってね。」', '湯めぐりの 案内人「県北には 飯坂・高湯・土湯・岳、県中には 磐梯熱海や 二岐の 温泉が あるのよ。」'] },
       { x: 4, y: 4, look: 'osho', role: 'temple', lines: ['湯本の 寺じゃ。迷うた 霊が 憑いたら、供養して 進ぜよう。'] },
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。湯本の いで湯の 宿で ございます。'] },
       { x: 11, y: 7, look: 'musume', role: 'shop', goods: ['yakusou', 'reisui'], lines: ['道具屋で ございます。薬草は いかが？'] },
@@ -145,8 +145,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「港の 仕事の あとは、湯本温泉で ひと風呂よ。」', '湯めぐりの 案内人「県北の 温泉地には、番頭さんや 湯治の お客さんの 師匠が いるらしいわ。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「港の 仕事の あとは、湯本温泉で ひと風呂よ。」', '湯めぐりの 案内人「県北の 温泉地には、番頭さんや 湯治の お客さんの 師匠が いるらしいわ。」'] },
       { x: 1, y: 7, look: 'shonin', role: 'shop', goods: ['yakusou', 'jouyakusou', 'reisui'], lines: ['へい らっしゃい！ 小名浜の 道具屋だ。'] },
       { x: 11, y: 7, look: 'yakunin', role: 'bansho', lines: ['番屋だ。盗まれた 物は ここに 届く。いまは 何も 預かって おらん。'] },
       // 釣り番（本人 10/2「小名浜のまちがあまり機能しない」→「漁港で釣り＋景品」）
@@ -197,8 +197,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「相馬を 抜けて 県北へ 行ったら、温泉地を めぐってみて。」', '湯めぐりの 案内人「飯坂・高湯・土湯・岳。どこかに、あなたたちの 技を 見て くれる 師匠が いるはずよ。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「相馬を 抜けて 県北へ 行ったら、温泉地を めぐってみて。」', '湯めぐりの 案内人「飯坂・高湯・土湯・岳。どこかに、あなたたちの 技を 見て くれる 師匠が いるはずよ。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 小高の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 15, lines: ['いらっしゃいませ。小高の 宿で ございます。'] },
       { x: 11, y: 8, look: 'shonin', role: 'equip', goods: gearAt([3], [2, 3]), items: ['yakusou', 'jouyakusou', 'tokujou', 'reisui', 'goshinsui', 'tama'], lines: ['小高の よろず屋だ。それぞれの 腕に 合った 得物と 防具、薬も あるぜ。'] }, // 10/3 本人「よろず屋でも採用」＝道具も置く
@@ -255,8 +255,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「県北の 温泉地には、職業の 技を 教える 師匠が いるらしいわ。」', '湯めぐりの 案内人「湯に つかれば 傷も 呪いも 落ちるから、旅の 合間に 寄ってね。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「県北の 温泉地には、職業の 技を 教える 師匠が いるらしいわ。」', '湯めぐりの 案内人「湯に つかれば 傷も 呪いも 落ちるから、旅の 合間に 寄ってね。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 相馬の 神社へ。'] },
       { x: 1, y: 8, look: 'kaji', role: 'equip', goods: gearAt([4], [3, 4]), items: ['tama'], lines: ['相馬の 刀屋だ。職人ごとの 得物と 防具を そろえて あるぜ。'] },
       { x: 10, y: 11, look: 'shonin', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['相馬の 道具屋だ。薬箱は 皆の 傷を いっぺんに 手当て できるぜ。'] }, // 10/3 本人「道具も強く」
@@ -311,8 +311,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「福島の まわりには、北に 飯坂温泉、西に 高湯温泉と 土湯温泉が あるわ。」', '湯めぐりの 案内人「番頭さんや おかみさん、湯治の お客さんが、技を 教えて くれるって。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「福島の まわりには、北に 飯坂温泉、西に 高湯温泉と 土湯温泉が あるわ。」', '湯めぐりの 案内人「番頭さんや おかみさん、湯治の お客さんが、技を 教えて くれるって。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 福島の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 22, lines: ['いらっしゃいませ。福島の 宿で ございます。'] },
       { x: 11, y: 8, look: 'kaji', role: 'equip', goods: gearAt([5], [4, 5]), items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['福島の 刀屋だ。信夫山の 化け物に 負けない 得物を そろえて いけ。'] },
@@ -366,8 +366,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「二本松の 西の 岳温泉には、湯治の 力士と、もと 忍びの 仲居さんが いるわ。」', '湯めぐりの 案内人「温泉の 湯屋で つかれば、HPも 術も 満タンよ。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「二本松の 西の 岳温泉には、湯治の 力士と、もと 忍びの 仲居さんが いるわ。」', '湯めぐりの 案内人「温泉の 湯屋で つかれば、HPも 術も 満タンよ。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 二本松の 神社へ。'] },
       { x: 1, y: 8, look: 'kaji', role: 'equip', goods: gearAt([5], [4, 5]), items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['二本松の 刀屋だ。'] },
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 24, lines: ['いらっしゃいませ。二本松の 宿で ございます。'] },
@@ -407,8 +407,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「郡山の 西の 磐梯熱海温泉には、芸者さん・湯治の 大関・番頭さんが いるわ。」', '湯めぐりの 案内人「3章の 技は、県中と 県南の 温泉地で 習えるのよ。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「郡山の 西の 磐梯熱海温泉には、芸者さん・湯治の 大関・番頭さんが いるわ。」', '湯めぐりの 案内人「3章の 技は、県中と 県南の 温泉地で 習えるのよ。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 郡山の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 26, lines: ['いらっしゃいませ。郡山の 宿で ございます。'] },
       { x: 11, y: 8, look: 'kaji', role: 'equip', goods: gearAt([6], [5, 6]), items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['郡山の 刀屋だ。大滝根山の 主に 負けない 得物を そろえて いけ。'] },
@@ -451,8 +451,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「石川の 母畑温泉と 猫啼温泉、天栄の 谷の 二岐温泉にも 師匠が いるって。」', '湯めぐりの 案内人「松明あかしの 御神火も、旅の 力に なるわよ。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「石川の 母畑温泉と 猫啼温泉、天栄の 谷の 二岐温泉にも 師匠が いるって。」', '湯めぐりの 案内人「松明あかしの 御神火も、旅の 力に なるわよ。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 須賀川の 神社へ。'] },
       { x: 1, y: 8, look: 'kaji', role: 'equip', goods: gearAt([6], [5, 6]), items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、具足を そろえて いけ。'] },
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 28, lines: ['いらっしゃいませ。須賀川の 宿で ございます。'] },
@@ -495,8 +495,8 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
-      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）＝絵が届くまで 娘の絵を借りる
-      { x: 7, y: 12, look: 'musume', guide: true, lines: ['湯めぐりの 案内人「白河の 西の 甲子温泉には、若旦那と 仲居さんが いるわ。」', '湯めぐりの 案内人「安珍堂へ 行く 前に、湯で 体を 整えてね。」'] },
+      // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
+      { x: 7, y: 12, look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「白河の 西の 甲子温泉には、若旦那と 仲居さんが いるわ。」', '湯めぐりの 案内人「安珍堂へ 行く 前に、湯で 体を 整えてね。」'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 白河の 神社へ。'] },
       { x: 1, y: 8, look: 'okami', role: 'inn', price: 30, lines: ['いらっしゃいませ。白河の 宿で ございます。'] },
       { x: 11, y: 8, look: 'kaji', role: 'equip', goods: gearAt([6], [5, 6]), items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['白河の 刀屋だ。安珍堂の 炎に 負けるなよ。'] },
@@ -537,7 +537,7 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。飯坂の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['飯坂の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'kashira', role: 'master', job: 'bushi', ch: 2, lines: ['湯治に 来ておる 浪人よ。', '兜をも 割る 一太刀、湯上がりの 腕ならしに 受けて みるか。'] },
+      { x: 5, y: 3, look: 'onsen_kenkaku', role: 'master', job: 'bushi', ch: 2, lines: ['湯治に 来ておる 浪人よ。', '兜をも 割る 一太刀、湯上がりの 腕ならしに 受けて みるか。'] },
       { x: 8, y: 3, look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 2, lines: ['飯坂の 湯宿の 番頭で ございます。', '結界の 符の 書き方、県北の 昔話の 問いに 答えられたら お教えしましょう。'] },
       { x: 10, y: 12, look: 'onsen_okami', role: 'master', job: 'miko', ch: 2, lines: ['飯坂の 湯宿の おかみで ございます。', '太鼓に 合わせて 舞えたら、御神酒の 舞を 教えましょう。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
@@ -568,8 +568,8 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。高湯の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['高湯の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'osho', role: 'master', job: 'yamabushi', ch: 2, lines: ['吾妻山で 修行を 終えて、湯治に 来た 山伏じゃ。', '九字の 印は、山で 鍛えた 心から 生まれる。'] },
-      { x: 8, y: 3, look: 'osho', role: 'master', job: 'sou', ch: 2, lines: ['高湯の 湯で 体を 休めておる 老いた 僧です。', '鬼婆の 話を 知る 者に、不動の 結界を 授けましょう。'] },
+      { x: 5, y: 3, look: 'onsen_yamabushi', role: 'master', job: 'yamabushi', ch: 2, lines: ['吾妻山で 修行を 終えて、湯治に 来た 山伏じゃ。', '九字の 印は、山で 鍛えた 心から 生まれる。'] },
+      { x: 8, y: 3, look: 'onsen_rousou', role: 'master', job: 'sou', ch: 2, lines: ['高湯の 湯で 体を 休めておる 老いた 僧です。', '鬼婆の 話を 知る 者に、不動の 結界を 授けましょう。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
@@ -598,7 +598,7 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。土湯の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['土湯の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'machibito', role: 'master', job: 'yojutsu', ch: 2, lines: ['旅の 奇術師さ。こけしの 里で ひと休み。', '雷を 呼ぶ 術、腕で 示して ごらん。'] },
+      { x: 5, y: 3, look: 'onsen_kijutsu', role: 'master', job: 'yojutsu', ch: 2, lines: ['旅の 奇術師さ。こけしの 里で ひと休み。', '雷を 呼ぶ 術、腕で 示して ごらん。'] },
       { x: 8, y: 3, look: 'machibito', role: 'master', job: 'kusushi', ch: 2, lines: ['土湯の 湯守じゃ。湯の 効き目は 薬にも 通じる。', '毒の 吹き矢の 作り方、昔話の 問いに 答えられたら 教えよう。'] },
       { x: 10, y: 12, look: 'onsen_itamae', role: 'master', job: 'yumi', ch: 2, lines: ['湯宿の 板前だ。もとは 安達太良の 猟師でな。', '火矢は、狙いが 定まらねば 使えぬぞ。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
@@ -629,7 +629,7 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。岳の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['岳の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'ryoshi', role: 'master', job: 'rikishi', ch: 2, lines: ['湯治に 来ておる 力士だ。', '仲間を かばう 体は、四股で つくる。わしと 一番 取れ。'] },
+      { x: 5, y: 3, look: 'onsen_rikishi', role: 'master', job: 'rikishi', ch: 2, lines: ['湯治に 来ておる 力士だ。', '仲間を かばう 体は、四股で つくる。わしと 一番 取れ。'] },
       { x: 8, y: 3, look: 'onsen_nakai', role: 'master', job: 'ninja', ch: 2, lines: ['岳の 湯宿の 仲居です。……昔は 黒脛巾組に おりました。', '影縫いの 技、影渡りの 試しに 受かったら お教えします。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
@@ -660,7 +660,7 @@ export const TOWNS = {
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。磐梯熱海の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['磐梯熱海の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
       { x: 5, y: 3, look: 'onsen_geisha', role: 'master', job: 'yojutsu', ch: 3, lines: ['磐梯熱海の 芸者で ございます。', '大蝦蟇を 呼ぶ 術、お座敷の 余興で なく 腕で 見せて くださいな。'] },
-      { x: 8, y: 3, look: 'ryoshi', role: 'master', job: 'rikishi', ch: 3, lines: ['湯治に 来ておる 大関だ。', '上手投げは 腰で 投げる。わしと 一番 取れ。'] },
+      { x: 8, y: 3, look: 'onsen_rikishi', role: 'master', job: 'rikishi', ch: 3, lines: ['湯治に 来ておる 大関だ。', '上手投げは 腰で 投げる。わしと 一番 取れ。'] },
       { x: 10, y: 12, look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 3, lines: ['磐梯熱海の 湯宿の 番頭で ございます。', '泰山府君の 祭、県中の 昔話を 知る 方に お教えしましょう。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
@@ -690,8 +690,8 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。母畑の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['母畑の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'toshiyori', role: 'master', job: 'kusushi', ch: 3, lines: ['湯治に 来ておる 町医者じゃ。', '秘薬の 調合、昔話の 問いに 答えられたら 教えよう。'] },
-      { x: 8, y: 3, look: 'toshiyori', role: 'master', job: 'sou', ch: 3, lines: ['母畑の 湯宿の 隠居じゃ。若いころは 寺に おった。', '託善の 話を 知る 者に、蘇生の 経を 授けよう。'] },
+      { x: 5, y: 3, look: 'onsen_isha', role: 'master', job: 'kusushi', ch: 3, lines: ['湯治に 来ておる 町医者じゃ。', '秘薬の 調合、昔話の 問いに 答えられたら 教えよう。'] },
+      { x: 8, y: 3, look: 'onsen_inkyo', role: 'master', job: 'sou', ch: 3, lines: ['母畑の 湯宿の 隠居じゃ。若いころは 寺に おった。', '託善の 話を 知る 者に、蘇生の 経を 授けよう。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
@@ -749,7 +749,7 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。二岐の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['二岐の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'osho', role: 'master', job: 'yamabushi', ch: 3, lines: ['二岐山で 修行を する 山伏じゃ。', '火渡りの 行、受けて みるか。'] },
+      { x: 5, y: 3, look: 'onsen_yamabushi', role: 'master', job: 'yamabushi', ch: 3, lines: ['二岐山で 修行を する 山伏じゃ。', '火渡りの 行、受けて みるか。'] },
       { x: 8, y: 3, look: 'machibito', role: 'master', job: 'yumi', ch: 3, lines: ['二岐の 湯守じゃ。山で 鍛えた 弓の 腕は 落ちておらん。', '満月の 一矢は、ためが いのちだ。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
