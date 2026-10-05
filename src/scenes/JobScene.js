@@ -2,12 +2,12 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=171';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=171';
-import { sfx } from '../audio/chip.js?v=171';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=171';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=171';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=171';
+import { GAME_FONT } from '../ui/fonts.js?v=172';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=172';
+import { sfx } from '../audio/chip.js?v=172';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=172';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=172';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=172';
 
 const W = 360;
 const FONT = GAME_FONT;
