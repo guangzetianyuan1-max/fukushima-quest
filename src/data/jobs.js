@@ -147,7 +147,7 @@ export const JOB_SPELLS = {
 };
 
 // 章ごとのクエスト（本人「章ごとに1つ」）。town＝師匠の立つ町・form＝試しの形（duel 一騎打ち／mondo 問答／kagura 神楽／mato 的当て／kagewatari 影渡り）
-// 段階①（10/5）＝1章だけ。2章・3章は段階②③で足す
+// 段階①（10/5）＝1章・段階②（10/5 夜）＝2章。3章は段階③で足す
 export const QUESTS = {
   1: {
     bushi: { town: 'nakamura', master: '道場の師範', form: 'duel' },
@@ -160,6 +160,19 @@ export const QUESTS = {
     ninja: { town: 'odaka', master: '忍びの 師匠', form: 'duel' },
     kusushi: { town: 'odaka', master: '薬屋の 主', form: 'mondo' },
     yamabushi: { town: 'odaka', master: '羽黒の 山伏', form: 'duel' },
+  },
+  // 段階②（10/5 夜 本人「おｋ」）＝2章 県北：福島に5人・二本松に5人。忍者は 黒脛巾組の 影渡り
+  2: {
+    ninja: { town: 'fukushima', master: '黒脛巾組の 頭', form: 'kagewatari' },
+    yamabushi: { town: 'fukushima', master: '信夫山の 山伏', form: 'duel' },
+    yojutsu: { town: 'fukushima', master: '狐の 術使い', form: 'duel' },
+    kusushi: { town: 'fukushima', master: '町医者', form: 'mondo' },
+    onmyo: { town: 'fukushima', master: '信夫山の 陰陽師', form: 'mondo' },
+    bushi: { town: 'nihonmatsu', master: '剣術指南', form: 'duel' },
+    rikishi: { town: 'nihonmatsu', master: '相撲の 親方', form: 'duel' },
+    yumi: { town: 'nihonmatsu', master: '安達太良の 猟師', form: 'mato' },
+    miko: { town: 'nihonmatsu', master: '二本松神社の 巫女頭', form: 'kagura' },
+    sou: { town: 'nihonmatsu', master: '観世寺の 住職', form: 'mondo' },
   },
 };
 

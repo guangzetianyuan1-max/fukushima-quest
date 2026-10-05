@@ -1,19 +1,19 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=179';
-import { kanbanAt } from './kanban.js?v=179';
-import { SOMA_ROWS } from './soma_map.js?v=179';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=179';
-import { KENCHU_ROWS } from './kenchu_map.js?v=179';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=179';
-import { TOWNS, TOWN_ENTRY, roofCells } from './towns.js?v=179';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=179';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=179';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=179';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=179';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=179';
-import { becomeKunoichi } from './kagewatari.js?v=179';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=179';
+import { IWAKI_ROWS } from './iwaki_map.js?v=180';
+import { kanbanAt } from './kanban.js?v=180';
+import { SOMA_ROWS } from './soma_map.js?v=180';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=180';
+import { KENCHU_ROWS } from './kenchu_map.js?v=180';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=180';
+import { TOWNS, TOWN_ENTRY, roofCells } from './towns.js?v=180';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=180';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=180';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=180';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=180';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=180';
+import { becomeKunoichi } from './kagewatari.js?v=180';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=180';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -132,11 +132,12 @@ export function wallOpen(game, ch) {
   return !!game.cleared[WALL_OPENED_BY[ch]] && (!WALL_NEEDS_SKILLS[ch] || chapterSkillsDone(game, WALL_NEEDS_SKILLS[ch]));
 }
 // 章の出口（本人 10/5「4人とも その章の技を習うまで通さない」）＝壁の字 → 章。8＝1章の出口（相馬→県北）。2章・3章の出口は段階②③で足す
-export const WALL_NEEDS_SKILLS = { 8: 1 };
+export const WALL_NEEDS_SKILLS = { 8: 1, '(': 2 }; // '('＝2章の出口（県北→県中・鬼婆で晴れる・10/5 夜 段階②）
 export const WALL_NEEDS_FLAG = {}; // 前の形（武士・くノ一の印）の名残
 // ボスは戻したが、その章の技を まだ習っていない人がいるときに ぶつかると出る言葉（関所の番人）
 export const WALL_QUEST_LINES = {
   8: ['西の 口の 番人「待たれよ。相馬と 小高の 師匠に 技を 認められた 者しか、県北へは 通せぬ。」', 'しおり「4人とも、師匠の 試しを 受けましょう。」'],
+  '(': ['南の 口の 番人「待たれよ。福島と 二本松の 師匠に 技を 認められた 者しか、県中へは 通せぬ。」', 'しおり「4人とも、師匠の 試しを 受けましょう。」'],
 };
 // その章の技を まだ習っていない人（番人の言葉に 名前を出す）
 export function missingSkills(game, ch) {
@@ -662,7 +663,7 @@ export function duelData(game, round, who = game.flags?.dojo?.who ?? 'tabi') {
   // 一騎打ちは たたかう だけ（持ち味は効く＝力士の つっぱり・忍者の 二連撃・武士の かいしん）
   const me = { ...one, spells: [], ...m, maxHp: m.hp, maxMp: m.mp, hp: m.hp, mp: m.mp, alive: true };
   return {
-    art: { dark: DOJO_ART, light: DOJO_ART, bg: ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
+    art: { dark: DOJO_ART, light: DOJO_ART, bg: (game.flags?.dojo?.ch ?? 1) >= 2 ? ZONE_BG.kenpoku : ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
     allies: [me], items: {}, spells: {}, enemy,
   };
 }

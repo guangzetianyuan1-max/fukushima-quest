@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=179'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=180'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。どの町も 13×14・入ると (6,12) に立つ
@@ -319,10 +319,16 @@ export const TOWNS = {
       ] },
       // 黒脛巾組の頭（本人 10/4 夜「しおりが弱すぎる。女くノ一として、途中クエストを受け変身」→ 2章・黒脛巾組・忍びの試し）
       // 黒脛巾組＝伊達政宗の忍びの組。信夫郡 鳥谷野城の城主 安部対馬が 腕の立つ者50人を選んだと伝わる（実在には異説＝「伝わる」で語る）
-      { x: 11, y: 11, look: 'kashira', role: 'shinobi', lines: [
-        '黒い 脛巾（はばき）の 男「……わしらは 黒脛巾組と 呼ばれて おる。伊達の 殿さまの 忍びよ。」',
-        '男「信夫郡の 鳥谷野の 城主さまが、腕の 立つ 者を 五十人 選んだのが 始まりと 伝わる。」',
+      // 10/5 夜 段階②：頭は 2章の 忍者の 師匠（試し＝影渡り）
+      { x: 11, y: 11, look: 'kashira', role: 'master', job: 'ninja', ch: 2, lines: [
+        '……わしらは 黒脛巾組と 呼ばれて おる。伊達の 殿さまの 忍びよ。',
+        '信夫郡の 鳥谷野の 城主さまが、腕の 立つ 者を 五十人 選んだのが 始まりと 伝わる。',
       ] },
+      // 2章の師匠（10/5 夜 段階②）＝絵は 町の人を借りる（師匠の絵は 本人に頼む）
+      { x: 9, y: 4, look: 'osho', role: 'master', job: 'yamabushi', ch: 2, lines: ['信夫山の 羽黒の 山伏じゃ。', '九字の 印は、山で 鍛えた 心から 生まれる。'] },
+      { x: 1, y: 11, look: 'chaya', role: 'master', job: 'yojutsu', ch: 2, lines: ['信夫山の 狐たちに 術を 習った 者よ。', '雷を 呼ぶには、知恵と 胆力が いるわ。'] },
+      { x: 5, y: 11, look: 'shonin', role: 'master', job: 'kusushi', ch: 2, lines: ['福島の 町で 医者を しておる。', '薬も 毒も 使いよう。県北の 昔話を 知っておるかね。'] },
+      { x: 8, y: 11, look: 'toshiyori', role: 'master', job: 'onmyo', ch: 2, lines: ['信夫山を 長く 見てきた 陰陽師じゃ。', '結界の 符は、土地の 話を 知る 者に しか 書けぬ。'] },
     ],
   },
   nihonmatsu: {
@@ -352,6 +358,12 @@ export const TOWNS = {
       'TTTTTTxTTTTTT',
     ],
     npcs: [
+      // 2章の師匠（10/5 夜 段階②）＝絵は 町の人を借りる（師匠の絵は 本人に頼む）
+      { x: 10, y: 11, look: 'yakunin', role: 'master', job: 'bushi', ch: 2, lines: ['二本松の 城下で 剣術を 教えておる。', '兜をも 割る 一太刀、受けて みるか。'] },
+      { x: 8, y: 11, look: 'machibito', role: 'master', job: 'rikishi', ch: 2, lines: ['二本松の 相撲の 親方だ。', '仲間を かばう 体は、四股で つくる。'] },
+      { x: 1, y: 11, look: 'ryoshi', role: 'master', job: 'yumi', ch: 2, lines: ['安達太良山で 猟を しておる。', '火矢は、狙いが 定まらねば 使えぬぞ。'] },
+      { x: 9, y: 4, look: 'musume', role: 'master', job: 'miko', ch: 2, lines: ['二本松神社の 巫女頭です。', '提灯祭りの 太鼓に 合わせられたら、御神酒の 舞を 教えましょう。'] },
+      { x: 1, y: 5, look: 'osho', role: 'master', job: 'sou', ch: 2, lines: ['安達ヶ原の 観世寺の 住職です。', '鬼婆の 話を 知る 者に、不動の 結界を 授けましょう。'] },
       { x: 4, y: 4, look: 'kannushi', role: 'shrine', lines: ['ようこそ 二本松の 神社へ。'] },
       { x: 1, y: 8, look: 'kaji', role: 'equip', goods: gearAt([5], [4, 5]), items: ['tokujou', 'goshinsui', 'kusuribako', 'tama'], lines: ['二本松の 刀屋だ。'] },
       { x: 11, y: 8, look: 'okami', role: 'inn', price: 24, lines: ['いらっしゃいませ。二本松の 宿で ございます。'] },

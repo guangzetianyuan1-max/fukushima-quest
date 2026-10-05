@@ -3,7 +3,7 @@
 // 大滝根山の鬼穴を根城にした大多鬼丸を、坂上田村麻呂が討つ。白鳥の導きで洞穴に追い込まれ、大多鬼丸は果てた。田村麻呂は その武勇を惜しみ、首を仙台平に丁重に葬った
 // ⭐市は二つの見方を並べる（賊・鬼の首領／七里ヶ沢を平和に治め、朝廷の求めを断った豪族）＝悪鬼として一方的に描かない。⭐「田村麻呂がこの地へ来た文献は無い」（市）＝伝説として語る
 // ゲームでは、忘れられて黒いもやに呑まれた大滝根山の主。弱点＝三春で授かる「三春駒」（第十五話・田村麻呂を助けた木の馬百頭）
-import { BASIC_ITEMS } from './basic_items.js?v=179';
+import { BASIC_ITEMS } from './basic_items.js?v=180';
 
 export const OTAKIMARU = {
   art: {
@@ -31,11 +31,11 @@ export const OTAKIMARU = {
     autoWinTarget: 0.87,
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 16,
-    hp: 973, atk: 141, def: 126, agi: 12, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp760 atk107） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp608 atk148） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す）
+    hp: 973, atk: 165, def: 126, agi: 12, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp760 atk107） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp608 atk148） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す） // 10/5 夜 段階②（2章の技が入った）で 5組の平均に合わせ直した（_autotune・前 atk141 必殺技79）
     bgm: 'otakimaru',
     weakness: 'miharugoma',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '鬼穴の 岩落とし', chance: 0.24, power: 79, flash: [255, 150, 90], sfx: 'iwaotoshi', cutin: 'assets/cutin/otakimaru_iwa.png' },
+    special: { name: '鬼穴の 岩落とし', chance: 0.24, power: 92, flash: [255, 150, 90], sfx: 'iwaotoshi', cutin: 'assets/cutin/otakimaru_iwa.png' },
     biteName: '大太刀で 斬りかかる',
     introText: '大滝根山の 岩屋の 前に、鎧の 大男が 立ちふさがった。……その 目は、黒い もやに くもっている！',
     tellLines: [

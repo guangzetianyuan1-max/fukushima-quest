@@ -3,7 +3,7 @@
 // 馬のしっぽにぶら下がっていたカッパの大将を地べたに叩きつけて捕らえ、「人や馬にいたずらをしない」「大水を出して田畑を荒らさない」を石に証文として書かせて許した。
 // 証文は丘に埋めて杉を植え、不開（あかず）神社と名づけた＝いまの赤津神社の由来。⚠頭の皿・きゅうりは この原典に無い
 // ゲームでは、忘れられて黒いもやに呑まれたカッパの大将。弱点＝「石の証文」。⭐託善和尚（第十九話）を元に戻していると、証文が もっと効く（hint）
-import { BASIC_ITEMS } from './basic_items.js?v=179';
+import { BASIC_ITEMS } from './basic_items.js?v=180';
 
 export const KAPPA = {
   art: {
@@ -31,13 +31,13 @@ export const KAPPA = {
     autoWinTarget: 0.86,
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 18,
-    hp: 998, atk: 157, def: 138, agi: 13, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp780 atk115） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp624 atk163） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す）
+    hp: 998, atk: 179, def: 138, agi: 13, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp780 atk115） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp624 atk163） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す） // 10/5 夜 段階②（2章の技が入った）で 5組の平均に合わせ直した（_autotune・前 atk157 必殺技87）
     bgm: 'kappa',
     weakness: 'shomon',
     // 託善和尚（第十九話・狸森）を元に戻していると、弱点の術が もっと効く（game.js の battleData）
     hint: { after: 'takuzen', mult: 1.25, text: '託善和尚さまが 言っていたわ。カッパの 大将は、石の 証文を いちばん こわがるって！' },
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '釈迦堂川の 大水', chance: 0.25, power: 87, flash: [110, 170, 255], sfx: 'oomizu', cutin: 'assets/cutin/kappa_oomizu.png' },
+    special: { name: '釈迦堂川の 大水', chance: 0.25, power: 99, flash: [110, 170, 255], sfx: 'oomizu', cutin: 'assets/cutin/kappa_oomizu.png' },
     biteName: '水かきで ひっかく',
     introText: '釈迦堂川の 水面から、カッパの 大将が 顔を 出した。……一族を ひきつれ、黒い もやを まとっている！',
     tellLines: [
