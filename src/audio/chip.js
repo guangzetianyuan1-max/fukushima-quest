@@ -42,13 +42,23 @@ export function voiceLevel() {
   for (const v of voiceBuf) s += v * v;
   return Math.sqrt(s / voiceBuf.length);
 }
+// 声の番号札（10/6 本人「昔話スキップでナレーションが止まりませんでした」）
+// 読み込み中に「とばす」で止めても、読み込みが終わった声が あとから鳴り出していた（stopVoice の時は まだ鳴っていない）
+// ⇒ 鳴らす前に番号を取り、止めるたびに番号を進める。読み込みが終わった時に 番号が古ければ 鳴らさない
+export function makeVoiceGate() {
+  let n = 0;
+  return { take: () => ++n, cancel: () => { n += 1; }, current: (t) => t === n };
+}
+const voiceGate = makeVoiceGate();
 // onStart(秒)＝鳴りはじめた時に声の長さを知らせる（紙芝居の安全弁をその長さに合わせる）
 export async function playVoice(url, onStart) {
   if (!ctx) return 0;
+  const ticket = voiceGate.take();
   try {
     if (!voiceCache.has(url)) voiceCache.set(url, fetch(url).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)));
     const audio = await voiceCache.get(url);
-    stopVoice();
+    if (!voiceGate.current(ticket)) return 0; // 読み込みの間に 止められた・次の声に替わった＝鳴らさない
+    stopSrc();
     const src = ctx.createBufferSource();
     src.buffer = audio;
     const g = ctx.createGain();
@@ -69,6 +79,10 @@ export async function playVoice(url, onStart) {
 }
 
 export function stopVoice() {
+  voiceGate.cancel(); // 読み込み中の声も 鳴らさない
+  stopSrc();
+}
+function stopSrc() {
   if (voiceSrc) {
     const s = voiceSrc;
     voiceSrc = null;
@@ -76,6 +90,8 @@ export function stopVoice() {
   }
   restoreBgm();
 }
+// 確かめ用：いま鳴っている声があるか
+export const voicePlaying = () => !!voiceSrc;
 
 function restoreBgm() {
   if (master) master.gain.value = muted ? 0 : VOLUME;
