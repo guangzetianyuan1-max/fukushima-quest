@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=186';
+import { makeRng } from '../battle/rules.js?v=187';
 
 export const TILE = 16;
 
@@ -106,6 +106,9 @@ export const TOWN_TERRAIN = {
   '.': ['grass', true], '=': ['stone', true], ',': ['sand', true], '#': ['wall', false], _: ['floor', true],
   c: ['counter', false], T: ['tree', false], '~': ['sea', false], u: ['onsen', false], z: ['hall', false],
   t: ['torii', true], x: ['stone', true],
+  // 10/5 夜 町の形を作り直した（art_src/make_towns.py）
+  k: ['tree', false], K: ['tree', false], m: ['tree', false], Y: ['tree', false], S: ['tree', false], R: ['wall', false], l: ['wall', false],
+  r: ['sea', false], p: ['sea', false], b: ['stone', true], d: ['stone', true], H: ['wall', false], a: ['wall', false], P: ['stone', true], w: ['wall', false],
 };
 
 // 絵の帯を1枚作って Phaser に登録する（1度だけ）

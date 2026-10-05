@@ -1,8 +1,8 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=186';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=186';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=187';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=187';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -132,9 +132,12 @@ export function fieldLook(game, ch, x, y, map = 'field') {
 }
 
 // 町の中：字 → 地面と小物（建物は towns.js の props で、何マスかにまたがって置く）
-const TOWN_GROUND = { '.': 'grass', '=': 'stone', ',': 'sand', '#': 'grass', _: 'floor', c: 'floor', T: 'grass', '~': 'sea', u: 'onsen', z: 'grass', t: 'stone', x: 'stone' };
+// 10/5 夜 町の形を作り直した（art_src/make_towns.py の GROUND・OBJ と同じ）。堀と池（p）は 川の水の色（沼の色は 黒く沈んだ）
+const TOWN_GROUND = { '.': 'grass', '=': 'stone', ',': 'sand', '#': 'grass', _: 'floor', c: 'floor', T: 'grass', '~': 'sea', u: 'onsen', z: 'grass', t: 'stone', x: 'stone',
+  k: 'grass', K: 'grass', m: 'grass', Y: 'grass', R: 'grass', l: 'stone', r: 'river', b: 'river', p: 'river', d: 'road', H: 'sand', a: 'sand', P: 'sea', S: 'grass', w: 'paddy' };
+const TOWN_OBJ = { T: 'tree', t: 'torii', k: 'sakura', K: 'kaki', m: 'momo_hana', Y: 'yukisugi', R: 'rock', l: 'toro', b: 'bridge', H: 'hoshidana', a: 'ami', P: 'plank', S: 'shidare' };
 export function townLook(ch, x, y) {
-  const objs = ch === 'T' ? ['tree'] : ch === 't' ? ['torii'] : [];
+  const objs = TOWN_OBJ[ch] ? [TOWN_OBJ[ch]] : [];
   return { ground: TOWN_GROUND[ch] ?? 'grass', objs };
 }
 export const TOWN_CHARS = Object.keys(TOWN_GROUND);

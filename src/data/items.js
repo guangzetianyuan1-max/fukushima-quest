@@ -1,6 +1,6 @@
 // 道具の一覧と値段（文）。歩く地図の店と持ち物はここを引く
 // 10/2 本人「食べ物を普通に戻して欲しい。ご当地ものは、完成後入れなおします」＝いわきの名物（iwaki_foods.js）は取っておき、いまは ふつうの道具
-import { BASIC_ITEMS } from './basic_items.js?v=186';
+import { BASIC_ITEMS } from './basic_items.js?v=187';
 
 const strip = ({ count, ...rest }) => rest;
 
@@ -24,7 +24,7 @@ export function itemNote(it) {
   return { mp: `術+${it.amount}`, hpall: `全員HP+${it.amount}`, bind: '敵を止める', ammo: '鉄砲' }[it.kind] ?? `HP+${it.amount}`;
 }
 
-export const PRICE = { yakusou: 8, jouyakusou: 30, reisui: 15, tama: 10, tokujou: 60, goshinsui: 45, kusuribako: 90 };
+export const PRICE = { yakusou: 8, jouyakusou: 30, reisui: 15, tama: 10, tokujou: 60, goshinsui: 45, kusuribako: 90, tamayokan: 45 }; // 玉羊羹＝二本松の菓子屋（10/5 夜・HP90＝上薬草と特上の間）
 
 // 前の記録（名物のころ）の持ち物を、いまの道具に読み替える
 export const OLD_ITEM = { mehikari: 'yakusou', manju: 'yakusou', uni: 'jouyakusou', katsuo: 'reisui' };

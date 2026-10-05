@@ -1,19 +1,19 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=186';
-import { kanbanAt } from './kanban.js?v=186';
-import { SOMA_ROWS } from './soma_map.js?v=186';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=186';
-import { KENCHU_ROWS } from './kenchu_map.js?v=186';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=186';
-import { TOWNS, TOWN_ENTRY, roofCells } from './towns.js?v=186';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=186';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=186';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=186';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=186';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=186';
-import { becomeKunoichi } from './kagewatari.js?v=186';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=186';
+import { IWAKI_ROWS } from './iwaki_map.js?v=187';
+import { kanbanAt } from './kanban.js?v=187';
+import { SOMA_ROWS } from './soma_map.js?v=187';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=187';
+import { KENCHU_ROWS } from './kenchu_map.js?v=187';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=187';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=187';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=187';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=187';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=187';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=187';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=187';
+import { becomeKunoichi } from './kagewatari.js?v=187';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=187';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -186,7 +186,7 @@ export const DELTA = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }
 
 // ---- 町に入る・出る ----
 export function enterTown(game, town) {
-  return { ...game, fieldMap: game.pos.map, fieldPos: { x: game.pos.x, y: game.pos.y }, pos: { map: town, ...TOWN_ENTRY, dir: 'up' }, justEntered: town };
+  return { ...game, fieldMap: game.pos.map, fieldPos: { x: game.pos.x, y: game.pos.y }, pos: { map: town, ...townEntry(town), dir: 'up' }, justEntered: town };
 }
 
 export function leaveTown(game) {
@@ -244,12 +244,18 @@ export function load(text) {
     }
     const stolen = (g.stolen ?? []).map((id) => (ITEMS[id] ? id : OLD_ITEM[id])).filter(Boolean);
     if (!g.jobs || !validPick({ tabi: g.jobs.tabi, shiori: g.jobs.shiori, mates: (g.members ?? []).slice(2) })) return null; // 職業の無い記録（v1）は読まない
-    return migrateEquip(fixSomaWidth({ ...g, items, stolen, skills: g.skills ?? {} })); // 10/5 武器と防具は職業ごと＝前の品を同じ段の品へ
+    return fixTownPos(migrateEquip(fixSomaWidth({ ...g, items, stolen, skills: g.skills ?? {} }))); // 10/5 武器と防具は職業ごと＝前の品を同じ段の品へ
   } catch {
     return null;
   }
 }
 
+
+// ⭐10/5 夜 町の形を作り直した（本人「街並みがパターン化してつまらない」）＝前の記録の 町の中の位置が 建物・屋根・水に なったら、その町の入口へ
+export function fixTownPos(g) {
+  const fix = (p) => (p && TOWNS[p.map] && !canWalk(g, p.map, p.x, p.y) ? { map: p.map, ...townEntry(p.map), dir: 'up' } : p);
+  return { ...g, pos: fix(g.pos), ...(g.savePos ? { savePos: fix(g.savePos) } : {}) };
+}
 
 // ⭐10/4 相馬の地図を40→36列へ詰めた（本人「右側に海を入れて」＝列21・22・29・30を消した）。前の記録の相馬の位置を、詰めた後の列へ読み替える
 export function somaOldToNewX(x) {
@@ -332,7 +338,7 @@ export function afterForcedLose(game, enemyId) {
   const town = le?.town;
   if (!town) return { ...g, ...afterLose({ ...g, mon: g.mon * 2 }), mon: g.mon };
   // 町の入口に立つ（町を出ると、ボスの手前の 地図の場所へ）
-  return { ...g, pos: { map: town, ...TOWN_ENTRY, dir: 'up' }, justEntered: null };
+  return { ...g, pos: { map: town, ...townEntry(town), dir: 'up' }, justEntered: null };
 }
 
 // 影渡りに受かった（10/4 夜）：くノ一になり、しおりの HP と術の力を くノ一の満タンへ（しおりの術の力は 0 だった）
@@ -646,6 +652,10 @@ export function duelData(game, round, who = game.flags?.dojo?.who ?? 'tabi') {
   const q = QUESTS[game.flags?.dojo?.ch ?? 1]?.[jobOf(game, who)];
   const master = q?.master ?? '道場の師範';
   const k = DOJO_ROUNDS[round - 1] ?? 1;
+  // 相手の絵：相馬の 剣術道場の 師範（1章の 武士）だけ 描いた絵（DOJO_ART）。ほかの 師匠は 話しかけた その人の 歩く絵を 大きく（BattleScene が 正面の1コマから 作る）
+  const look = game.flags?.dojo?.look ?? null;
+  const own = (game.flags?.dojo?.ch ?? 1) === 1 && jobOf(game, who) === 'bushi';
+  const art = own || !look ? { dark: DOJO_ART, light: DOJO_ART } : { dark: `people:${look}`, light: `people:${look}`, look };
   // 1ターンに入る見込み（師匠の守り＝攻撃力の6割）。10/5 職業の持ち味（二連撃・つっぱり・射る）も数える＝どの職業でも 同じくらいの勝負になる
   const one = formOf(game, { id: who, name: nameOf(game, who), spells: [] });
   const def = m.atk * 0.6;
@@ -663,14 +673,15 @@ export function duelData(game, round, who = game.flags?.dojo?.who ?? 'tabi') {
   // 一騎打ちは たたかう だけ（持ち味は効く＝力士の つっぱり・忍者の 二連撃・武士の かいしん）
   const me = { ...one, spells: [], ...m, maxHp: m.hp, maxMp: m.mp, hp: m.hp, mp: m.mp, alive: true };
   return {
-    art: { dark: DOJO_ART, light: DOJO_ART, bg: [ZONE_BG.soma, ZONE_BG.soma, ZONE_BG.kenpoku, ZONE_BG.kenchu][game.flags?.dojo?.ch ?? 1] ?? ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
+    art: { ...art, bg: [ZONE_BG.soma, ZONE_BG.soma, ZONE_BG.kenpoku, ZONE_BG.kenchu][game.flags?.dojo?.ch ?? 1] ?? ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
     allies: [me], items: {}, spells: {}, enemy,
   };
 }
 // 1本の勝ち負けのあと。next＝つぎの本目（決まったら null）・bushi＝いま武士になった。HP と術は戦いの前のまま（木刀の試し合いは傷を残さない）
 // 一騎打ちを始める（町の師匠に話して「試しを受ける」）
-export function startDuel(game, who, ch = 1) {
-  return { ...game, flags: { ...game.flags, dojo: { who, ch, wins: 0, losses: 0 } } };
+// look＝話しかけた 師匠の 見た目（10/5 夜 本人「必殺技のクエストで、話す人と戦う人が違うことがある。剣の試合は同じ人」＝戦いの相手を その師匠の絵に）
+export function startDuel(game, who, ch = 1, look = null) {
+  return { ...game, flags: { ...game.flags, dojo: { who, ch, look, wins: 0, losses: 0 } } };
 }
 export function afterDuel(game, round, won) {
   const d = { who: 'tabi', ch: 1, wins: 0, losses: 0, ...(game.flags?.dojo ?? {}) };

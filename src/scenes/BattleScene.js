@@ -1,17 +1,18 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=186';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=186';
-import { EPISODES } from '../data/episodes.js?v=186';
-import { revealAt } from '../ui/reveal.js?v=186';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=186';
-import { chooseCommands } from '../battle/auto.js?v=186';
-import { itemNote } from '../data/items.js?v=186';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=186';
-import { STORY_FILES } from '../data/story_assets.js?v=186';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=186';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=186';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=186';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=186';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=186';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=187';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=187';
+import { EPISODES } from '../data/episodes.js?v=187';
+import { revealAt } from '../ui/reveal.js?v=187';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=187';
+import { chooseCommands } from '../battle/auto.js?v=187';
+import { itemNote } from '../data/items.js?v=187';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=187';
+import { STORY_FILES } from '../data/story_assets.js?v=187';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=187';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=187';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=187';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=187';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=187';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=187';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -73,8 +74,13 @@ export class BattleScene extends Phaser.Scene {
   }
 
   preload() {
+    // 一騎打ちの 相手の絵は 師匠ごとに 変わる＝前の 一騎打ちの 絵（同じ名前）を 捨てて 読み直す（10/5 夜）
+    if (this.duel) for (const part of ['dark', 'light']) if (this.textures.exists(key(this.ep, part))) this.textures.remove(key(this.ep, part));
+    const look = this.ep.art.look;
+    if (look && !this.textures.exists(`p-${look}`)) this.load.spritesheet(`p-${look}`, `assets/people/${look}.png`, { frameWidth: FRAME_W, frameHeight: FRAME_H });
     for (const part of ['dark', 'light', 'bg']) {
       const k = key(this.ep, part);
+      if (String(this.ep.art[part]).startsWith('people:')) continue;
       if (!this.textures.exists(k)) this.load.image(k, this.ep.art[part]);
     }
     // 元に戻ったあとに現れる人（賢沼の弁天さまなど）
@@ -105,7 +111,24 @@ export class BattleScene extends Phaser.Scene {
     for (const f of ['normal', 'surprise', 'sad']) if (!this.textures.exists(`face_${f}`)) this.load.image(`face_${f}`, `assets/cards/face_${f}.png`);
   }
 
+  // 一騎打ちの 師匠の絵＝歩く絵の 正面の1コマを 3倍に（ドットの まま）。画面では さらに2倍＝高さ 約250
+  makeLookArt() {
+    const look = this.ep.art.look;
+    if (!look || !this.textures.exists(`p-${look}`)) return;
+    const f = this.textures.getFrame(`p-${look}`, frameOf('down', 0, look));
+    for (const part of ['dark', 'light']) {
+      const k = key(this.ep, part);
+      if (this.textures.exists(k)) this.textures.remove(k);
+      const t = this.textures.createCanvas(k, f.cutWidth * 3, f.cutHeight * 3);
+      const ctx = t.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(f.source.image, f.cutX, f.cutY, f.cutWidth, f.cutHeight, 0, 0, f.cutWidth * 3, f.cutHeight * 3);
+      t.refresh();
+    }
+  }
+
   create() {
+    this.makeLookArt();
     // ⚠場面は戦うたびに作り直す＝前の戦いで消えた部品が this に残っている。作る前に触ると止まる（10/2 道中の敵が出ると固まった＝所持金の字）
     this.monBadge = null;
     this.msgFace = null;
