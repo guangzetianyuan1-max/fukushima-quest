@@ -1,7 +1,7 @@
 // 装備（本人 10/1「武器、防具の採用は無いか？」→「3」＝刀屋と装備の回）
 // 1人に3か所：weapon 武器／armor 防具／charm お守り。who＝着けられる人。買うとその場で着け、前の品は半値で引き取ってもらう
 // 序章いわきで買える所：平の刀屋（武器）・平の荒物屋（防具）・平の八幡さま（勝守）・湯本のお寺（厄除け守）
-import { JOBS, jobOf } from './jobs.js?v=167';
+import { JOBS, jobOf } from './jobs.js?v=168';
 
 export const EQUIP = {
   // ---- 武器と防具＝職業ごと（本人 10/5「武器、防具は職業別に作ってください」）。id＝<職業>_w<段>（武器 段0〜6）／<職業>_a<段>（防具 段1〜6）
@@ -63,14 +63,14 @@ export const EQUIP = {
   ninja_a4: { name: '鎖帷子', slot: 'armor', job: 'ninja', tier: 4, def: 15, price: 300 },
   ninja_a5: { name: '黒鉄の帷子', slot: 'armor', job: 'ninja', tier: 5, def: 22, price: 520 },
   ninja_a6: { name: '影の装束', slot: 'armor', job: 'ninja', tier: 6, def: 30, price: 820 },
-  // rikishi
-  rikishi_w0: { name: '棍棒', slot: 'weapon', job: 'rikishi', tier: 0, atk: 2, price: 0 },
-  rikishi_w1: { name: '六尺棒', slot: 'weapon', job: 'rikishi', tier: 1, atk: 5, price: 30 },
-  rikishi_w2: { name: '鉄の棒', slot: 'weapon', job: 'rikishi', tier: 2, atk: 10, price: 100 },
-  rikishi_w3: { name: '金棒', slot: 'weapon', job: 'rikishi', tier: 3, atk: 16, price: 220 },
-  rikishi_w4: { name: '大金棒', slot: 'weapon', job: 'rikishi', tier: 4, atk: 24, price: 380 },
-  rikishi_w5: { name: '黒鉄の金棒', slot: 'weapon', job: 'rikishi', tier: 5, atk: 33, price: 640 },
-  rikishi_w6: { name: '金砕棒', slot: 'weapon', job: 'rikishi', tier: 6, atk: 44, price: 1000 },
+  // rikishi（10/5 夕 本人「力士の武器で刃物はおかしい、素手が基本」＝手に巻く・はめる物。金剛の手甲＝力士の名の元の 金剛力士から）
+  rikishi_w0: { name: '素手', slot: 'weapon', job: 'rikishi', tier: 0, atk: 2, price: 0 },
+  rikishi_w1: { name: '晒しの巻き手', slot: 'weapon', job: 'rikishi', tier: 1, atk: 5, price: 30 },
+  rikishi_w2: { name: '革の手甲', slot: 'weapon', job: 'rikishi', tier: 2, atk: 10, price: 100 },
+  rikishi_w3: { name: '鉄の手甲', slot: 'weapon', job: 'rikishi', tier: 3, atk: 16, price: 220 },
+  rikishi_w4: { name: '鋲打ちの手甲', slot: 'weapon', job: 'rikishi', tier: 4, atk: 24, price: 380 },
+  rikishi_w5: { name: '黒鉄の手甲', slot: 'weapon', job: 'rikishi', tier: 5, atk: 33, price: 640 },
+  rikishi_w6: { name: '金剛の手甲', slot: 'weapon', job: 'rikishi', tier: 6, atk: 44, price: 1000 },
   rikishi_a1: { name: '稽古まわし', slot: 'armor', job: 'rikishi', tier: 1, def: 2, price: 15 },
   rikishi_a2: { name: '浴衣', slot: 'armor', job: 'rikishi', tier: 2, def: 6, price: 60 },
   rikishi_a3: { name: '化粧まわし', slot: 'armor', job: 'rikishi', tier: 3, def: 10, price: 150 },

@@ -9,7 +9,7 @@ export const JOB_IDS = ['bushi', 'sou', 'yojutsu', 'ninja', 'rikishi', 'yumi', '
 
 export const POINT_TOTAL = 30;
 // 武器の系統の名前（equip.js の line）
-export const WEAPON_NAMES = { katana: '刀', tsue: '杖', ougi: '扇', blade: '短剣', bou: '棒・金棒', bow: '弓', naginata: '幣・薙刀', shaku: '笏・剣', hari: '針・杖', shakujo: '錫杖' }; // 10/5 武器と防具は職業ごと
+export const WEAPON_NAMES = { katana: '刀', tsue: '杖', ougi: '扇', blade: '短剣', bou: '素手・手甲', bow: '弓', naginata: '幣・薙刀', shaku: '笏・剣', hari: '針・杖', shakujo: '錫杖' }; // 10/5 武器と防具は職業ごと
 export const POINT_NAMES = { chikara: '力', tairyoku: '体力', chiryoku: '知力', seishin: '精神力', hayasa: '素早さ' };
 // 点 → 強さ（base＝Lv1・grow＝1つごとの伸び）。値を変えたら ボスの強さ合わせをやり直す
 export const POINT_RULE = {

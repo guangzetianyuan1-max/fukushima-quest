@@ -1,17 +1,17 @@
-import { GAME_FONT } from '../ui/fonts.js?v=167';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=167';
-import { EPISODES } from '../data/episodes.js?v=167';
-import { revealAt } from '../ui/reveal.js?v=167';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=167';
-import { chooseCommands } from '../battle/auto.js?v=167';
-import { itemNote } from '../data/items.js?v=167';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=167';
-import { STORY_FILES } from '../data/story_assets.js?v=167';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=167';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=167';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=167';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=167';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=167';
+import { GAME_FONT } from '../ui/fonts.js?v=168';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=168';
+import { EPISODES } from '../data/episodes.js?v=168';
+import { revealAt } from '../ui/reveal.js?v=168';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=168';
+import { chooseCommands } from '../battle/auto.js?v=168';
+import { itemNote } from '../data/items.js?v=168';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=168';
+import { STORY_FILES } from '../data/story_assets.js?v=168';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=168';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=168';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=168';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=168';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=168';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -86,6 +86,9 @@ export class BattleScene extends Phaser.Scene {
         if (STORY_FILES.includes(c.img) && !this.textures.exists(c.img)) this.load.image(c.img, c.img);
       }
     }
+    // 紙芝居の始めの絵（アイキャッチ・10/5 夕 本人「巻物は消去して、YouTubeで使用したアイキャッチ画像を採用」）＝art_src/prep_eyecatch.py
+    const eye = `assets/story/eye_${this.ep.enemy.id}.png`;
+    if (STORY_FILES.includes(eye) && !this.textures.exists(eye)) this.load.image(eye, eye);
     // 紙芝居で語る3Dしおり（本人 10/2「3Dしおりを登場させて、語って欲しい」）＝口3つ×目2つ。_しおり/_3D試し/render_game_stills.py で焼いた
     if (this.ep.enemy.story) {
       for (const m of [0, 1, 2]) for (const e of [0, 1]) {
@@ -618,9 +621,19 @@ export class BattleScene extends Phaser.Scene {
       pic.setVisible(false);
       who.setText('');
       text.setText('');
-      const before = this.children.list.length;
-      drawScroll(this, W / 2, 44, fitScroll(44, W - 30, { episode: e.episode, tale: e.tale, epSize: 22, taleSize: 42 }));
-      const card = this.add.container(0, 0, this.children.list.slice(before)).setAlpha(0);
+      // ⛔巻物はやめた（10/5 夕 本人）＝挿絵の枠いっぱいにアイキャッチ、上の空に話数と題の字（右下は3Dしおりが立つ）。絵が まだの話は 字だけ
+      const eyeKey = `assets/story/eye_${e.id}.png`;
+      const parts = [];
+      const fy = 18 + (W - 16) / 2;
+      if (this.textures.exists(eyeKey)) {
+        const eye = this.add.image(W / 2, fy, eyeKey);
+        eye.setScale((W - 40) / Math.max(eye.width, eye.height));
+        parts.push(eye);
+      }
+      const ink = (t, size, y) => this.add.text(W / 2, y, t, { fontFamily: GAME_FONT, fontSize: `${size}px`, color: '#ffffff' })
+        .setOrigin(0.5).setStroke('#120a20', 8).setShadow(0, 2, '#000000', 6, true, true);
+      parts.push(ink(e.episode, 24, 48), ink(e.tale, [...e.tale].length > 8 ? 26 : [...e.tale].length > 5 ? 32 : 40, 92));
+      const card = this.add.container(0, 0, parts).setAlpha(0);
       box.addAt(card, box.list.indexOf(win)); // 窓としおりの後ろ・挿絵の枠の前
       let done = false;
       titleEnd = () => {

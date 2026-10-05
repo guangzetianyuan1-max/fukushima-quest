@@ -42,7 +42,7 @@ export function voiceLevel() {
   for (const v of voiceBuf) s += v * v;
   return Math.sqrt(s / voiceBuf.length);
 }
-// 声の番号札（10/6 本人「昔話スキップでナレーションが止まりませんでした」）
+// 声の番号札（10/5 夕 本人「昔話スキップでナレーションが止まりませんでした」）
 // 読み込み中に「とばす」で止めても、読み込みが終わった声が あとから鳴り出していた（stopVoice の時は まだ鳴っていない）
 // ⇒ 鳴らす前に番号を取り、止めるたびに番号を進める。読み込みが終わった時に 番号が古ければ 鳴らさない
 export function makeVoiceGate() {
