@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=175'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=176'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。どの町も 13×14・入ると (6,12) に立つ
@@ -7,6 +7,24 @@ import { gearAt } from '../data/equip.js?v=175'; // 10/5 武器と防具は職�
 // props＝建物の絵（look.js の OBJECTS）を x,y から w×h マスに置く（絵は幅を w マスに合わせ、下の辺をそろえる＝上にはみ出してよい）
 // 2026-10-02 本人「いわきを作り直し」で Gemini の建物に。店の人は建物の戸口（下の段）に立ち、手前にカウンター
 export const TOWN_ENTRY = { x: 6, y: 12 };
+// 10/5 夜：屋根のマスに立っていた町の人10人（小名浜・小高・相馬・福島・須賀川）を となりの屋根のかからないマスへ移した。屋根で切れて行けなくなる角（町の人の横）は杉の木にした（本人「ふさぐことで人が通れないことが無いように」・tests/roof.test.js）
+
+// ⭐屋根のマス（10/5 夜 本人「町や城で、屋根の上に乗るのは辞めて」）
+// 建物の絵は下の辺をそろえて上へはみ出す＝はみ出した屋根が ROOF_MIN ドット以上かかる 歩けるマスは通れない（game.js の canWalk）
+// 絵の大きさ（ドット）＝assets/tiles/o_<名>.png。tests/roof.test.js が 絵と合っているかを見る（絵を描き直したら ここも直す）
+export const ROOF_PX = { jinja: [96, 111], mise: [128, 95], tera: [96, 77], yadoya: [128, 113], minka: [96, 73], counter: [64, 27], toro: [22, 38], fune: [64, 38], shiro: [44, 51] };
+export const ROOF_MIN = 10;
+export function roofCells(props, cell = 32) {
+  const out = new Set();
+  for (const p of props ?? []) {
+    const px = ROOF_PX[p.img];
+    if (!px) continue;
+    const k = p.w > 1 ? (p.w * cell) / px[0] : 1;
+    const top = (p.y + p.h) * cell - px[1] * k; // 絵の上の端
+    for (let y = p.y - 1; y >= 0 && (y + 1) * cell - top >= ROOF_MIN; y--) for (let x = p.x; x < p.x + p.w; x++) out.add(`${x},${y}`);
+  }
+  return out;
+}
 
 export const TOWNS = {
   taira: {
@@ -21,9 +39,9 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
+      'TTTTTzzz.TTTT',
       'TTT...=...TTT',
-      'T.....t.....T',
+      'TT....t....TT',
       'T.....=.....T',
       '####..=..####',
       '#__#..=..#__#',
@@ -66,7 +84,7 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
+      'TTTTTzzz.TTTT',
       'TTT...=...TTT',
       'T.....=.....T',
       '####..=..####',
@@ -126,7 +144,7 @@ export const TOWNS = {
       { x: 1, y: 7, look: 'shonin', role: 'shop', goods: ['yakusou', 'jouyakusou', 'reisui'], lines: ['へい らっしゃい！ 小名浜の 道具屋だ。'] },
       { x: 11, y: 7, look: 'yakunin', role: 'bansho', lines: ['番屋だ。盗まれた 物は ここに 届く。いまは 何も 預かって おらん。'] },
       // 釣り番（本人 10/2「小名浜のまちがあまり機能しない」→「漁港で釣り＋景品」）
-      { x: 3, y: 5, look: 'ryoshi', role: 'fishing', lines: ['小名浜は 港町。めひかりも カツオも ここで 揚がるんだ。', '竿を 貸すぜ。釣れた 魚で 釣り点が たまる。点は 景品と 換えて やろう。'] },
+      { x: 4, y: 5, look: 'ryoshi', role: 'fishing', lines: ['小名浜は 港町。めひかりも カツオも ここで 揚がるんだ。', '竿を 貸すぜ。釣れた 魚で 釣り点が たまる。点は 景品と 換えて やろう。'] },
       { x: 9, y: 11, look: 'kodomo', lines: ['鮫川の 河口に、黒い もやが うずまいてたんだって！'] },
       // 閼伽井嶽の龍燈＝海から山の お堂へ 灯が のぼる言い伝え（第四話の手がかり）
       { x: 4, y: 12, look: 'toshiyori', lines: ['海から 山の お堂へ、灯が のぼっていく……。', 'わしが 若いころは、閼伽井嶽の 龍の 灯を 見た 者も おったもんじゃ。'] },
@@ -135,7 +153,7 @@ export const TOWNS = {
         '戦いに 迷ったら「自動」に 任せても いいのよ。しおりさんが 語って、みんなが 動いて くれるわ。',
         '自動を やめたいときは、下の 窓の 上の「自動中」の 札を さわってね。',
       ] },
-      { x: 9, y: 5, look: 'machibito', lines: [
+      { x: 8, y: 5, look: 'machibito', lines: [
         '沼の ほうには 腕の いい 猟師が いるって 話だ。仲間に なって くれたら 心強いぜ。',
         '猟師の 鉄砲は、黒い もやが 晴れてから 撃つもんだ。玉は 平の 刀屋で 売ってるよ。',
       ] },
@@ -160,9 +178,9 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
-      'TTT...=...TTT',
-      'T.....t.....T',
+      'TTTTTzzzTTTTT',
+      'TTTT..=...TTT',
+      'T.....t....TT',
       'T.....=.....T',
       '####..=..####',
       '#__#..=..#__#',
@@ -190,14 +208,14 @@ export const TOWNS = {
         '小高の お城の 殿様は、大悲山の 山や 谷に、大蛇の 苦手な 鉄の 釘を 打たせたと 伝わる。',
         '大悲山の 入口の 黒い もやは、金谷の 山の 化け物の 前で 獲りすぎないと 誓えば 晴れるはずだ。',
       ] },
-      { x: 2, y: 5, look: 'kodomo', lines: [
+      { x: 4, y: 5, look: 'kodomo', lines: [
         '相馬の 道は いわきより 敵が 強いよ。レベルを 上げて、よろず屋で 得物を そろえてから 行こう。',
         '小高と 相馬の 町には、職業ごとの 師匠が いるよ。試しに 受かると 技を 教えて もらえるんだ。',
       ] },
       // ⭐1章の師匠（本人 10/5「それぞれの職業は必殺技が3つあり、1章から3章までのどこかで、クエストを受けて習得する」）＝jobs.js の QUESTS[1]。歩く絵は町の人の絵を借りる
       { x: 8, y: 4, look: 'osho', role: 'master', job: 'sou', ch: 1, lines: ['小高の 寺の 和尚じゃ。', '真言は、この 土地の 昔を 知る 者が となえて こそ 届く。わしの 問いに 答えて みよ。'] },
-      { x: 1, y: 6, look: 'machibito', role: 'master', job: 'yamabushi', ch: 1, lines: ['羽黒の 山で 修行した 山伏だ。', '法螺貝は 腹の 底から 吹く もの。わしと 一騎打ちを して、腕を 見せよ。'] },
-      { x: 11, y: 6, look: 'chaya', role: 'master', job: 'yojutsu', ch: 1, lines: ['山に こもって 術を みがく 者です。', '幻の 術は、己の 姿を 見失わぬ 者にしか 使えません。一騎打ちで 確かめましょう。'] },
+      { x: 4, y: 6, look: 'machibito', role: 'master', job: 'yamabushi', ch: 1, lines: ['羽黒の 山で 修行した 山伏だ。', '法螺貝は 腹の 底から 吹く もの。わしと 一騎打ちを して、腕を 見せよ。'] },
+      { x: 7, y: 5, look: 'chaya', role: 'master', job: 'yojutsu', ch: 1, lines: ['山に こもって 術を みがく 者です。', '幻の 術は、己の 姿を 見失わぬ 者にしか 使えません。一騎打ちで 確かめましょう。'] },
       { x: 4, y: 8, look: 'kashira', role: 'master', job: 'ninja', ch: 1, lines: ['……忍びの 師匠だ。', '煙玉は 投げる 間合いが 命。一騎打ちで 間合いを 見せて みよ。'] },
       { x: 1, y: 11, look: 'shonin', role: 'master', job: 'kusushi', ch: 1, lines: ['小高の 薬屋の 主で ございます。', '丸薬は 土地の 草と 水で 作る もの。この 土地の 話を どれほど 知って おられるか、問うて みましょう。'] },
     ],
@@ -216,16 +234,16 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
-      'TTT...=...TTT',
-      'T.....t.....T',
+      'TTTTTzzzTTTTT',
+      'TTT...=..TTTT',
+      'TT....t.....T',
       'T.....=.....T',
       '####..=..####',
       '#__#..=..#__#',
       '#cc#..=..#cc#',
       '.===========.',
       'T.....=.....T',
-      'T.....=.....T',
+      'T.....=...T.T',
       'TTTTTTxTTTTTT',
     ],
     npcs: [
@@ -240,7 +258,7 @@ export const TOWNS = {
       { x: 3, y: 11, look: 'toshiyori', lines: [
         '新地の 貝塚はな、食べた 貝を 捨てた 跡じゃと 伝わる。海の めぐみに 感謝を 忘れては いかん。',
       ] },
-      { x: 10, y: 5, look: 'yakunin', lines: [
+      { x: 8, y: 5, look: 'yakunin', lines: [
         '西の 虎捕山には、平安の むかし、橘墨虎という 凶賊が 隠れて おったそうだ。',
         '源頼義さまが 白い 狼の 足跡を たどって、墨虎を 捕らえた。それで「虎捕山」と よぶのだ。',
       ] },
@@ -250,8 +268,8 @@ export const TOWNS = {
       // ⭐1章の師匠（10/5・jobs.js の QUESTS[1]）。道場の師範（10/4 武士の試し合い）は 武士の師匠へ
       { x: 11, y: 12, look: 'yakunin', role: 'master', job: 'bushi', ch: 1, lines: ['相馬の 剣術道場の 師範だ。', 'わしと 木刀で 試し合いを して、2本 取れば、わが 流の 奥義を さずけよう。'] },
       { x: 8, y: 4, look: 'musume', role: 'master', job: 'miko', ch: 1, lines: ['相馬の 神社の 巫女頭です。', '神楽は 神さまに ささげる 舞。太鼓に 合わせて 鈴を 振れたら、舞を お伝えしましょう。'] },
-      { x: 1, y: 6, look: 'toshiyori', role: 'master', job: 'onmyo', ch: 1, lines: ['星と 暦を 読む 陰陽師じゃ。', '呪符は 名と いわれを 知って こそ 効く。相馬の 昔話を 問うて みよう。'] },
-      { x: 11, y: 6, look: 'ryoshi', role: 'master', job: 'rikishi', ch: 1, lines: ['相撲の 親方だ。', '四股は 大地を しずめる 足踏み。わしと 一番 取って、力を 見せて みろ。'] },
+      { x: 4, y: 6, look: 'toshiyori', role: 'master', job: 'onmyo', ch: 1, lines: ['星と 暦を 読む 陰陽師じゃ。', '呪符は 名と いわれを 知って こそ 効く。相馬の 昔話を 問うて みよう。'] },
+      { x: 8, y: 6, look: 'ryoshi', role: 'master', job: 'rikishi', ch: 1, lines: ['相撲の 親方だ。', '四股は 大地を しずめる 足踏み。わしと 一番 取って、力を 見せて みろ。'] },
       { x: 1, y: 11, look: 'kaji', role: 'master', job: 'yumi', ch: 1, lines: ['弓の 師匠だ。', '鏑矢は 鳴る 矢。動く 的を 射ぬけたら、引き方を 教えよう。'] },
     ],
   },
@@ -270,9 +288,9 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
-      'TTT...=...TTT',
-      'T.....t.....T',
+      'TTTTTzzz.TTTT',
+      'TTTT..=...TTT',
+      'T.....t....TT',
       'T.....=.....T',
       '####..=..####',
       '#__#..=..#__#',
@@ -296,7 +314,7 @@ export const TOWNS = {
       { x: 10, y: 5, look: 'musume', lines: [
         '信夫山の 中ほどには ねこ稲荷が あるの。改心した 狐が、蚕の 守り神として まつられて いるのよ。',
       ] },
-      { x: 2, y: 5, look: 'kodomo', lines: [
+      { x: 4, y: 5, look: 'kodomo', lines: [
         '東の 霊山の ほうでは、夜に 飴を 買いに くる 女の 人の 話が あるんだって。',
       ] },
       // 黒脛巾組の頭（本人 10/4 夜「しおりが弱すぎる。女くノ一として、途中クエストを受け変身」→ 2章・黒脛巾組・忍びの試し）
@@ -321,7 +339,7 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
+      'TTTTTzzz.TTTT',
       'TTT...=...TTT',
       'T.....t.....T',
       'T.....=.....T',
@@ -360,9 +378,9 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
-      'TTT...=...TTT',
-      'T.....t.....T',
+      'TTTTTzzz.TTTT',
+      'TTTT..=...TTT',
+      'T.....t....TT',
       'T.....=.....T',
       '####..=..####',
       '#__#..=..#__#',
@@ -402,7 +420,7 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
+      'TTTTTzzz.TTTT',
       'TTT...=...TTT',
       'T.....t.....T',
       'T.....=.....T',
@@ -425,7 +443,7 @@ export const TOWNS = {
       { x: 9, y: 12, look: 'shonin', lines: [
         '須賀川の 牡丹園は 国の 名勝さ。二百五十年 あまり 前、薬に するため 牡丹を 植えたのが はじまりなんだ。',
       ] },
-      { x: 10, y: 5, look: 'musume', lines: [
+      { x: 9, y: 4, look: 'musume', lines: [
         '狸森の 託善和尚さまは、とても かしこい お坊さまだったそうよ。……でも、その 正体は。',
       ] },
     ],
@@ -444,9 +462,9 @@ export const TOWNS = {
       'TTTTTTTTTTTTT',
       'TTTTTTTTTTTTT',
       'TTTTTzzzTTTTT',
-      'TTTT.zzz.TTTT',
-      'TTT...=...TTT',
-      'T.....t.....T',
+      'TTTTTzzz.TTTT',
+      'TTTT..=...TTT',
+      'T.....t....TT',
       'T.....=.....T',
       '####..=..####',
       '#__#..=..#__#',

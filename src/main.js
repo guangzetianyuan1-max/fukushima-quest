@@ -1,17 +1,17 @@
-import { FONT_NAME, TITLE_WEIGHT } from './ui/fonts.js?v=175';
-import { TitleScene } from './scenes/TitleScene.js?v=175';
-import { JobScene } from './scenes/JobScene.js?v=175';
-import { BattleScene } from './scenes/BattleScene.js?v=175';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=175';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=175';
-import { HARAI } from './field/game.js?v=175';
-import { EQUIP } from './data/equip.js?v=175';
-import { EPISODES } from './data/episodes.js?v=175';
-import { unlock, isUnlocked } from './audio/chip.js?v=175';
-import { askTerms } from './ui/terms.js?v=175';
-import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=175';
-import { showLoading, preloadImages } from './ui/loading.js?v=175';
-import { PRELOAD_ASSETS } from './data/preload_assets.js?v=175';
+import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=176';
+import { TitleScene } from './scenes/TitleScene.js?v=176';
+import { JobScene } from './scenes/JobScene.js?v=176';
+import { BattleScene } from './scenes/BattleScene.js?v=176';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=176';
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=176';
+import { HARAI } from './field/game.js?v=176';
+import { EQUIP } from './data/equip.js?v=176';
+import { EPISODES } from './data/episodes.js?v=176';
+import { unlock, isUnlocked } from './audio/chip.js?v=176';
+import { askTerms } from './ui/terms.js?v=176';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=176';
+import { showLoading, preloadImages } from './ui/loading.js?v=176';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=176';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
@@ -43,6 +43,7 @@ async function start() {
     await Promise.race([
       Promise.all([
         document.fonts.load(`16px "${FONT}"`, ALL_TEXT),
+        document.fonts.load(`40px "${EYE_FONT_NAME}"`, EPISODES.map((e) => e.enemy.episode + e.enemy.tale).join('')), // アイキャッチの習字（10/5 夜）
         document.fonts.load(`${TITLE_WEIGHT} 32px "${BRUSH}"`, BRUSH_TEXT + '福島昔話クエストRPG平の城下町湯本の湯の町小名浜の港' + EPISODES.map((e) => e.enemy.place).join('')), // 題字・巻物・場所（太字）
       ]),
       new Promise((r) => setTimeout(r, 3000)),
