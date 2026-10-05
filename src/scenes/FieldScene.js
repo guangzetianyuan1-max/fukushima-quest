@@ -2,50 +2,52 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=184';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=184';
-import { EPISODES } from '../data/episodes.js?v=184';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=184';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=184';
-import { RIDERS } from '../data/nomaoi_assets.js?v=184';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=184';
-import { TILE } from '../field/tiles.js?v=184';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=184';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=184';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=184';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=184';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=184';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=184';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=184';
+import { collection, PER_PAGE } from '../field/collection.js?v=185';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=185';
+import { EPISODES } from '../data/episodes.js?v=185';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=185';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=185';
+import { RIDERS } from '../data/nomaoi_assets.js?v=185';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=185';
+import { TILE } from '../field/tiles.js?v=185';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=185';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=185';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=185';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=185';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=185';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=185';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=185';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=184';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=184';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=184';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=184';
-import { membersOf } from '../battle/levels.js?v=184';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=184';
-import { ICON_IDS } from '../data/icons.js?v=184';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=184';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=184';
-import { mapPointOf } from '../field/mapcard.js?v=184';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=184';
-import { makeRng } from '../battle/rules.js?v=184';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=184';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=184';
+} from '../field/game.js?v=185';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=185';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=185';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=185';
+import { membersOf } from '../battle/levels.js?v=185';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=185';
+import { ICON_IDS } from '../data/icons.js?v=185';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=185';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=185';
+import { mapPointOf } from '../field/mapcard.js?v=185';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=185';
+import { makeRng } from '../battle/rules.js?v=185';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=185';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=185';
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=184';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=184';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=184';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=185';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=185';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=185';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=185';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
   chochin: { key: 'chochinPts', label: '提灯点', prizes: CHOCHIN_PRIZES, exchange: exchangeChochin, back: 'chochinMenu', keeper: '世話役' },
   fish: { key: 'fishPts', label: '釣り点', prizes: PRIZES, exchange, back: 'fishMenu', keeper: '釣り番' },
   flag: { key: 'flagPts', label: '旗点', prizes: FLAG_PRIZES, exchange: exchangeFlag, back: 'nomaoiMenu', keeper: '世話役' },
+  taimatsu: { key: 'taimatsuPts', label: '松明点', prizes: TAIMATSU_PRIZES, exchange: exchangeTaimatsu, back: 'taimatsuMenu', keeper: '世話役' },
 };
 
 const W = 360;
@@ -216,6 +218,7 @@ export class FieldScene extends Phaser.Scene {
     // 場面を作り直すと 前の回の 遊びの取っ手が残る（Phaser は同じ場面の物を使い回す）＝10/5 夜 試運転で 2章の神楽・的当てが 前の回の取っ手で動いた
     this.kagura = null;
     this.mato = null;
+    this.taimatsu = null;
     this.kagewatari = null;
     this.mondo = null;
     this.mapId = this.g.pos.map;
@@ -1444,14 +1447,120 @@ export class FieldScene extends Phaser.Scene {
       '五老山の 世話役「ここは 松明あかしの 山だ。毎年 十一月の 第二土曜に、大きな 松明に 火を つける。」',
       '世話役「むかし 須賀川城が 攻め落とされた ときに 亡くなった 人たちを、松明の 火で とむらうんだ。四百年 あまり 続いて いる。」',
     ];
-    this.showMessages(lines.map((text) => ({ text })), () => this.showMenu('御神火に 手を 合わせますか？', [
-      ['手を 合わせる', () => {
+    this.showMessages([...lines.map((text) => ({ text })), { text: '世話役「大松明に 火を 移す「火移し」を やって いかんか。火の粉が 松明の 真上に 来た 一瞬が 勝負だ。」' }], () => this.taimatsuMenu());
+  }
+
+  // 松明あかしの選び（10/5 夜 本人「須賀川のイベント祭りが無い」→「火移し」）
+  taimatsuMenu() {
+    this.showMenu(`松明点 ${this.g.taimatsuPts ?? 0}点（所持金 ${this.g.mon}文）`, [
+      [`火移しに 加わる（${TAIMATSU_PRICE}文）`, () => this.startTaimatsu()],
+      ['景品と 換える', () => this.prizeMenu(null, 'taimatsu')],
+      ['御神火に 手を 合わせる', () => {
         this.setGame(prayGojinka(this.g));
         sfx('heal');
         this.showMessages([{ text: '御神火に 手を 合わせた。みなの 術の 力が 満ちた！' }]);
       }],
       ['立ち去る', () => this.closeDialog()],
-    ]));
+    ]);
+  }
+
+  // 火移しの画面：夜の五老山に 大松明10本。火の粉が 左右に ゆれる。光っている松明の 真上に 来た瞬間に さわると 点火
+  startTaimatsu() {
+    const r0 = enterTaimatsu(this.g);
+    if (!r0.ok) {
+      this.showMessages([{ text: '文が 足りないようだ……' }], () => this.taimatsuMenu());
+      return;
+    }
+    this.setGame(r0.game);
+    this.closeDialog();
+    this.busy = true;
+    stopBgm();
+    let r = newTaimatsu(makeRng((Date.now() & 0x7fffffff) || 1));
+    const box = this.add.container(0, 0);
+    this.addUi(box);
+    const bg = this.add.graphics();
+    bg.fillGradientStyle(0x0b0a2a, 0x0b0a2a, 0x3a1a3a, 0x3a1a3a, 1).fillRect(0, 0, W, 640);
+    // 五老山の 稜線（左右対称に しない）
+    bg.fillStyle(0x140c18, 1).beginPath().moveTo(0, 470).lineTo(70, 420).lineTo(150, 440).lineTo(230, 395).lineTo(300, 430).lineTo(W, 410).lineTo(W, 640).lineTo(0, 640).closePath().fillPath();
+    box.add(bg);
+    const SPARK_Y = 250;
+    const TOP = 300;
+    const torches = [...Array(TAIMATSU_TORCHES).keys()].map((i) => {
+      const x = torchX(i) * W;
+      const pole = this.add.rectangle(x, TOP + 70, 16, 140, 0x5a3a1a).setStrokeStyle(2, 0x2a1a0a);
+      const ring = this.add.rectangle(x, TOP + 70, 24, 150, 0xffffff, 0).setStrokeStyle(3, 0xffe080, 0);
+      const flame = this.add.circle(x, TOP - 8, 14, 0xff7a20).setVisible(false);
+      const glow = this.add.circle(x, TOP - 8, 28, 0xffb040, 0.35).setVisible(false);
+      box.add([glow, pole, ring, flame]);
+      return { pole, ring, flame, glow };
+    });
+    const spark = this.add.circle(W / 2, SPARK_Y, 9, 0xffc060);
+    const sparkGlow = this.add.circle(W / 2, SPARK_Y, 18, 0xff8020, 0.35);
+    const say = this.add.text(W / 2, 60, '光る 松明の 真上で さわれ！', { fontFamily: FONT, fontSize: '19px', color: '#ffffff' }).setOrigin(0.5).setStroke('#1a1030', 5);
+    const info = this.add.text(W / 2, 100, '', { fontFamily: FONT, fontSize: '18px', color: '#ffe9a8' }).setOrigin(0.5).setStroke('#1a1030', 5);
+    const res = this.add.text(W / 2, 170, '', { fontFamily: FONT, fontSize: '26px', color: '#ffb040' }).setOrigin(0.5).setStroke('#1a1030', 6);
+    box.add([sparkGlow, spark, say, info, res]);
+    let t0 = this.time.now;
+    let loop = null;
+    let lock = 0;
+    const now = () => this.time.now - t0;
+    const mark = () => {
+      const tg = taimatsuTarget(r);
+      torches.forEach((o, i) => {
+        const on = r.lit.includes(i);
+        o.flame.setVisible(on);
+        o.glow.setVisible(on);
+        o.ring.setStrokeStyle(3, 0xffe080, i === tg ? 1 : 0);
+      });
+    };
+    const showInfo = () => info.setText(`灯した ${r.lit.length} / ${TAIMATSU_TORCHES}　のこり ${Math.ceil(taimatsuLeft(r, now()) / 1000)}秒`);
+    const tick = () => {
+      const x = sparkX(r, now()) * W;
+      spark.x = x;
+      sparkGlow.x = x;
+      sparkGlow.setAlpha(0.25 + 0.15 * Math.sin(this.time.now / 90));
+      showInfo();
+      if (taimatsuDone(r, now())) finish();
+    };
+    const tap = () => {
+      if (!loop || this.time.now < lock) return;
+      lock = this.time.now + 250;
+      const out = tapTaimatsu(r, now());
+      r = out.r;
+      sfx(out.hit ? 'flame' : 'attack');
+      res.setText(out.hit ? '点火！' : 'はずれ（−2秒）');
+      this.tweens.add({ targets: res, alpha: { from: 1, to: 0 }, duration: 600 });
+      mark();
+      if (taimatsuDone(r, now())) finish();
+    };
+    const hit = this.add.zone(0, 0, W, 640).setOrigin(0).setInteractive();
+    hit.on('pointerdown', tap);
+    box.add(hit);
+    const finish = () => {
+      if (!loop) return;
+      loop.remove(false);
+      loop = null;
+      hit.removeAllListeners();
+      const pts = taimatsuPts(r);
+      this.setGame(addTorches(this.g, r));
+      sfx(r.lit.length >= TAIMATSU_TORCHES ? 'win' : 'select');
+      this.time.delayedCall(1000, () => {
+        box.destroy();
+        this.busy = false;
+        this.taimatsu = null;
+        startBgm(this.fieldBgm());
+        const all = r.lit.length >= TAIMATSU_TORCHES;
+        this.showMessages([
+          { text: `大松明を ${r.lit.length}本 灯した！${all ? ' 全部 灯った！' : ''}` },
+          { text: `松明点を ${pts}点 もらった（いま ${this.g.taimatsuPts ?? 0}点）。` },
+        ], () => this.taimatsuMenu());
+      });
+    };
+    mark();
+    showInfo();
+    this.taimatsu = { r: () => r, tap, now, tick }; // 確かめ用の取っ手
+    t0 = this.time.now;
+    loop = this.time.addEvent({ delay: 16, loop: true, callback: tick });
   }
 
   // 猫啼温泉（3章・10/4）：HP・術が満タン＋呪い・取り憑きも落ちる（猫の病が治った湯）。力つきた仲間は戻らない
