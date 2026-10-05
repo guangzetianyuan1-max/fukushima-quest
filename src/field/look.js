@@ -1,16 +1,16 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=181';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=181';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=182';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=182';
 
-// 温泉マーク（本人に頼んだ絵が届いたら 'icon_onsen' に替えて OBJECTS に足す）
-export const ONSEN_ICON = 'icon_yadoya';
+// 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
+export const ONSEN_ICON = 'icon_onsen';
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
   'tree', 'forest', 'rockmtn', 'rock', 'plank', 'snowmtn', 'bridge', 'vortex', 'mistwall',
   'minka', 'mise', 'yadoya', 'torii', 'jinja', 'tera', 'shiro', 'sekisho', 'counter', 'hei', 'fune', 'toro',
-  'icon_minka', 'icon_yadoya', 'icon_mise', 'icon_torii',
+  'icon_minka', 'icon_yadoya', 'icon_mise', 'icon_torii', 'icon_onsen',
   // 福島らしい景色（10/4・art_src/prep_scenery.py）
   'sakura', 'shidare', 'sakura2', 'momo_hana', 'momo_mi', 'kuwa', 'kuwa2', 'yukisugi', 'yuki', 'yuki2', 'kaki', 'kaki2',
   // 浜の景色（10/4・art_src/prep_beach.py）

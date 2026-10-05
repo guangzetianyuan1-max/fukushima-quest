@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=181'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=182'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。どの町も 13×14・入ると (6,12) に立つ
@@ -538,8 +538,8 @@ export const TOWNS = {
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。飯坂の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['飯坂の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
       { x: 5, y: 3, look: 'kashira', role: 'master', job: 'bushi', ch: 2, lines: ['湯治に 来ておる 浪人よ。', '兜をも 割る 一太刀、湯上がりの 腕ならしに 受けて みるか。'] },
-      { x: 8, y: 3, look: 'shonin', role: 'master', job: 'onmyo', ch: 2, lines: ['飯坂の 湯宿の 番頭で ございます。', '結界の 符の 書き方、県北の 昔話の 問いに 答えられたら お教えしましょう。'] },
-      { x: 10, y: 12, look: 'okami', role: 'master', job: 'miko', ch: 2, lines: ['飯坂の 湯宿の おかみで ございます。', '太鼓に 合わせて 舞えたら、御神酒の 舞を 教えましょう。'] },
+      { x: 8, y: 3, look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 2, lines: ['飯坂の 湯宿の 番頭で ございます。', '結界の 符の 書き方、県北の 昔話の 問いに 答えられたら お教えしましょう。'] },
+      { x: 10, y: 12, look: 'onsen_okami', role: 'master', job: 'miko', ch: 2, lines: ['飯坂の 湯宿の おかみで ございます。', '太鼓に 合わせて 舞えたら、御神酒の 舞を 教えましょう。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
@@ -600,7 +600,7 @@ export const TOWNS = {
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['土湯の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
       { x: 5, y: 3, look: 'machibito', role: 'master', job: 'yojutsu', ch: 2, lines: ['旅の 奇術師さ。こけしの 里で ひと休み。', '雷を 呼ぶ 術、腕で 示して ごらん。'] },
       { x: 8, y: 3, look: 'machibito', role: 'master', job: 'kusushi', ch: 2, lines: ['土湯の 湯守じゃ。湯の 効き目は 薬にも 通じる。', '毒の 吹き矢の 作り方、昔話の 問いに 答えられたら 教えよう。'] },
-      { x: 10, y: 12, look: 'kaji', role: 'master', job: 'yumi', ch: 2, lines: ['湯宿の 板前だ。もとは 安達太良の 猟師でな。', '火矢は、狙いが 定まらねば 使えぬぞ。'] },
+      { x: 10, y: 12, look: 'onsen_itamae', role: 'master', job: 'yumi', ch: 2, lines: ['湯宿の 板前だ。もとは 安達太良の 猟師でな。', '火矢は、狙いが 定まらねば 使えぬぞ。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
@@ -630,7 +630,7 @@ export const TOWNS = {
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。岳の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['岳の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
       { x: 5, y: 3, look: 'ryoshi', role: 'master', job: 'rikishi', ch: 2, lines: ['湯治に 来ておる 力士だ。', '仲間を かばう 体は、四股で つくる。わしと 一番 取れ。'] },
-      { x: 8, y: 3, look: 'musume', role: 'master', job: 'ninja', ch: 2, lines: ['岳の 湯宿の 仲居です。……昔は 黒脛巾組に おりました。', '影縫いの 技、影渡りの 試しに 受かったら お教えします。'] },
+      { x: 8, y: 3, look: 'onsen_nakai', role: 'master', job: 'ninja', ch: 2, lines: ['岳の 湯宿の 仲居です。……昔は 黒脛巾組に おりました。', '影縫いの 技、影渡りの 試しに 受かったら お教えします。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
@@ -659,9 +659,9 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。磐梯熱海の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['磐梯熱海の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'chaya', role: 'master', job: 'yojutsu', ch: 3, lines: ['磐梯熱海の 芸者で ございます。', '大蝦蟇を 呼ぶ 術、お座敷の 余興で なく 腕で 見せて くださいな。'] },
+      { x: 5, y: 3, look: 'onsen_geisha', role: 'master', job: 'yojutsu', ch: 3, lines: ['磐梯熱海の 芸者で ございます。', '大蝦蟇を 呼ぶ 術、お座敷の 余興で なく 腕で 見せて くださいな。'] },
       { x: 8, y: 3, look: 'ryoshi', role: 'master', job: 'rikishi', ch: 3, lines: ['湯治に 来ておる 大関だ。', '上手投げは 腰で 投げる。わしと 一番 取れ。'] },
-      { x: 10, y: 12, look: 'shonin', role: 'master', job: 'onmyo', ch: 3, lines: ['磐梯熱海の 湯宿の 番頭で ございます。', '泰山府君の 祭、県中の 昔話を 知る 方に お教えしましょう。'] },
+      { x: 10, y: 12, look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 3, lines: ['磐梯熱海の 湯宿の 番頭で ございます。', '泰山府君の 祭、県中の 昔話を 知る 方に お教えしましょう。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
@@ -720,7 +720,7 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。猫啼の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['猫啼の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'okami', role: 'master', job: 'miko', ch: 3, lines: ['猫啼の 湯宿の おかみで ございます。', '太鼓に 合わせて 舞えたら、天岩戸の 舞を 教えましょう。'] },
+      { x: 5, y: 3, look: 'onsen_okami', role: 'master', job: 'miko', ch: 3, lines: ['猫啼の 湯宿の おかみで ございます。', '太鼓に 合わせて 舞えたら、天岩戸の 舞を 教えましょう。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
@@ -779,8 +779,8 @@ export const TOWNS = {
     npcs: [
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。甲子の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['甲子の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { x: 5, y: 3, look: 'yakunin', role: 'master', job: 'bushi', ch: 3, lines: ['甲子の 湯宿の 若旦那です。剣術は 白河で 習いました。', '燕返しの 太刀筋、見切って ごらんなさい。'] },
-      { x: 8, y: 3, look: 'musume', role: 'master', job: 'ninja', ch: 3, lines: ['甲子の 湯宿の 仲居です。', '分身の 術は 速さで 見せる もの。一騎打ちで 確かめます。'] },
+      { x: 5, y: 3, look: 'onsen_wakadanna', role: 'master', job: 'bushi', ch: 3, lines: ['甲子の 湯宿の 若旦那です。剣術は 白河で 習いました。', '燕返しの 太刀筋、見切って ごらんなさい。'] },
+      { x: 8, y: 3, look: 'onsen_nakai', role: 'master', job: 'ninja', ch: 3, lines: ['甲子の 湯宿の 仲居です。', '分身の 術は 速さで 見せる もの。一騎打ちで 確かめます。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
