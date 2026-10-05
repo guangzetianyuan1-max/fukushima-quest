@@ -1,9 +1,11 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=180';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=180';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=181';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=181';
 
+// 温泉マーク（本人に頼んだ絵が届いたら 'icon_onsen' に替えて OBJECTS に足す）
+export const ONSEN_ICON = 'icon_yadoya';
 export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
 export const OBJECTS = [
   'tree', 'forest', 'rockmtn', 'rock', 'plank', 'snowmtn', 'bridge', 'vortex', 'mistwall',
@@ -114,6 +116,17 @@ export function fieldLook(game, ch, x, y, map = 'field') {
     case 's': return { ground: 'grass', objs: ['icon_mise'] }; // 須賀川の町
     case 'v': return { ground: 'grass', objs: ['shiro'] }; // 白河の町（小峰城の城下）
     case 'a': return { ground: 'grass', objs: ['toro'] }; // 須賀川の松明あかし（イベント）
+    // 温泉地（10/5 夜）＝温泉マーク（絵が届くまで 宿屋の記号を借りる・ONSEN_ICON）。名前は 立て看板と同じ 字だけ（kanban.js）
+    case 'e':
+    case 'f':
+    case 'j':
+    case 'l':
+    case 'c':
+    case 'x':
+    case 'u':
+    case 'y':
+    case 'i':
+      return { ground: 'grass', objs: [ONSEN_ICON] };
     default: return { ground: 'grass', objs: [] };
   }
 }

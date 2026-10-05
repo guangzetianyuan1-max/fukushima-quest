@@ -1,19 +1,19 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=180';
-import { kanbanAt } from './kanban.js?v=180';
-import { SOMA_ROWS } from './soma_map.js?v=180';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=180';
-import { KENCHU_ROWS } from './kenchu_map.js?v=180';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=180';
-import { TOWNS, TOWN_ENTRY, roofCells } from './towns.js?v=180';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=180';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=180';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=180';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=180';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=180';
-import { becomeKunoichi } from './kagewatari.js?v=180';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=180';
+import { IWAKI_ROWS } from './iwaki_map.js?v=181';
+import { kanbanAt } from './kanban.js?v=181';
+import { SOMA_ROWS } from './soma_map.js?v=181';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=181';
+import { KENCHU_ROWS } from './kenchu_map.js?v=181';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=181';
+import { TOWNS, TOWN_ENTRY, roofCells } from './towns.js?v=181';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=181';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=181';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=181';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=181';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=181';
+import { becomeKunoichi } from './kagewatari.js?v=181';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=181';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -156,7 +156,7 @@ export function wallQuestLines(game, ch) {
   });
   return [base[0], `しおり「まだ 習っていないのは、${left.join('・')}よ。」`];
 }
-const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', nihonmatsu: '二本松', koriyama: '郡山', sukagawa: '須賀川', shirakawa: '白河' };
+const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', nihonmatsu: '二本松', koriyama: '郡山', sukagawa: '須賀川', shirakawa: '白河', iizaka: '飯坂温泉', takayu: '高湯温泉', tsuchiyu: '土湯温泉', dake: '岳温泉', bandaiatami: '磐梯熱海温泉', bohata: '母畑温泉', nekonakiyu: '猫啼温泉', futamata: '二岐温泉', kashi: '甲子温泉' };
 
 // そのマスへ歩けるか（町の人の立つマスは画面の側で見る）
 // ⭐屋根のマス（10/5 夜 本人「町や城で、屋根の上に乗るのは辞めて」）＝町の建物の絵（props）の はみ出し
@@ -663,7 +663,7 @@ export function duelData(game, round, who = game.flags?.dojo?.who ?? 'tabi') {
   // 一騎打ちは たたかう だけ（持ち味は効く＝力士の つっぱり・忍者の 二連撃・武士の かいしん）
   const me = { ...one, spells: [], ...m, maxHp: m.hp, maxMp: m.mp, hp: m.hp, mp: m.mp, alive: true };
   return {
-    art: { dark: DOJO_ART, light: DOJO_ART, bg: (game.flags?.dojo?.ch ?? 1) >= 2 ? ZONE_BG.kenpoku : ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
+    art: { dark: DOJO_ART, light: DOJO_ART, bg: [ZONE_BG.soma, ZONE_BG.soma, ZONE_BG.kenpoku, ZONE_BG.kenchu][game.flags?.dojo?.ch ?? 1] ?? ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
     allies: [me], items: {}, spells: {}, enemy,
   };
 }

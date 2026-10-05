@@ -147,7 +147,7 @@ export const JOB_SPELLS = {
 };
 
 // 章ごとのクエスト（本人「章ごとに1つ」）。town＝師匠の立つ町・form＝試しの形（duel 一騎打ち／mondo 問答／kagura 神楽／mato 的当て／kagewatari 影渡り）
-// 段階①（10/5）＝1章・段階②（10/5 夜）＝2章。3章は段階③で足す
+// 段階①（10/5）＝1章・段階②（10/5 夜）＝2章・段階③（10/5 夜）＝3章。2章・3章の師匠は 温泉地（本人 10/5 夜「各温泉地に、必殺技クエストを散らして」）
 export const QUESTS = {
   1: {
     bushi: { town: 'nakamura', master: '道場の師範', form: 'duel' },
@@ -163,16 +163,29 @@ export const QUESTS = {
   },
   // 段階②（10/5 夜 本人「おｋ」）＝2章 県北：福島に5人・二本松に5人。忍者は 黒脛巾組の 影渡り
   2: {
-    ninja: { town: 'fukushima', master: '黒脛巾組の 頭', form: 'kagewatari' },
-    yamabushi: { town: 'fukushima', master: '信夫山の 山伏', form: 'duel' },
-    yojutsu: { town: 'fukushima', master: '狐の 術使い', form: 'duel' },
-    kusushi: { town: 'fukushima', master: '町医者', form: 'mondo' },
-    onmyo: { town: 'fukushima', master: '信夫山の 陰陽師', form: 'mondo' },
-    bushi: { town: 'nihonmatsu', master: '剣術指南', form: 'duel' },
-    rikishi: { town: 'nihonmatsu', master: '相撲の 親方', form: 'duel' },
-    yumi: { town: 'nihonmatsu', master: '安達太良の 猟師', form: 'mato' },
-    miko: { town: 'nihonmatsu', master: '二本松神社の 巫女頭', form: 'kagura' },
-    sou: { town: 'nihonmatsu', master: '観世寺の 住職', form: 'mondo' },
+    ninja: { town: 'dake', master: '仲居', form: 'kagewatari' },
+    yamabushi: { town: 'takayu', master: '湯治の 山伏', form: 'duel' },
+    yojutsu: { town: 'tsuchiyu', master: '旅の 奇術師', form: 'duel' },
+    kusushi: { town: 'tsuchiyu', master: '湯守', form: 'mondo' },
+    onmyo: { town: 'iizaka', master: '番頭', form: 'mondo' },
+    bushi: { town: 'iizaka', master: '湯治の 剣客', form: 'duel' },
+    rikishi: { town: 'dake', master: '湯治の 力士', form: 'duel' },
+    yumi: { town: 'tsuchiyu', master: '板前', form: 'mato' },
+    miko: { town: 'iizaka', master: 'おかみ', form: 'kagura' },
+    sou: { town: 'takayu', master: '湯治の 老僧', form: 'mondo' },
+  },
+  // 段階③（10/5 夜 本人「おＫ」）＝3章 県中・県南：郡山に4人・須賀川に3人・白河に3人（3章の8話の土地にちなむ）
+  3: {
+    yojutsu: { town: 'bandaiatami', master: '芸者', form: 'duel' },
+    rikishi: { town: 'bandaiatami', master: '湯治の 大関', form: 'duel' },
+    onmyo: { town: 'bandaiatami', master: '番頭', form: 'mondo' },
+    kusushi: { town: 'bohata', master: '湯治の 医者', form: 'mondo' },
+    yamabushi: { town: 'futamata', master: '湯治の 山伏', form: 'duel' },
+    sou: { town: 'bohata', master: '湯宿の 隠居', form: 'mondo' },
+    yumi: { town: 'futamata', master: '湯守', form: 'mato' },
+    bushi: { town: 'kashi', master: '若旦那', form: 'duel' },
+    ninja: { town: 'kashi', master: '仲居', form: 'duel' },
+    miko: { town: 'nekonakiyu', master: 'おかみ', form: 'kagura' },
   },
 };
 

@@ -2,16 +2,26 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=180';
-import { SOMA_ROWS } from './soma_map.js?v=180';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=180';
-import { KENCHU_ROWS } from './kenchu_map.js?v=180';
+import { IWAKI_ROWS } from './iwaki_map.js?v=181';
+import { SOMA_ROWS } from './soma_map.js?v=181';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=181';
+import { KENCHU_ROWS } from './kenchu_map.js?v=181';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
 
 // near＝目印の字（地図に1つだけの字）／at＝目印の座標（灯台など）
 export const KANBAN_DEFS = [
+  // 温泉地（10/5 夜 本人「温泉マークの上に『土湯温泉』など明記」）
+  { map: 'kenpoku', near: 'e', kind: 'meisho', name: '飯坂温泉', lines: ['福島の 北の 湯の町。奥州三名湯の ひとつと 伝わる。'] },
+  { map: 'kenpoku', near: 'f', kind: 'meisho', name: '高湯温泉', lines: ['吾妻山の ふもとの 硫黄の 湯。'] },
+  { map: 'kenpoku', near: 'j', kind: 'meisho', name: '土湯温泉', lines: ['こけしの 里の 湯の町。'] },
+  { map: 'kenpoku', near: 'l', kind: 'meisho', name: '岳温泉', lines: ['安達太良山の ふもとの 湯の町。'] },
+  { map: 'kenchu', near: 'c', kind: 'meisho', name: '磐梯熱海温泉', lines: ['郡山の 西の 湯の町。'] },
+  { map: 'kenchu', near: 'x', kind: 'meisho', name: '母畑温泉', lines: ['石川の 湯の町。'] },
+  { map: 'kenchu', near: 'u', kind: 'meisho', name: '猫啼温泉', lines: ['和泉式部の 猫が 元気を 取りもどした 湯と 伝わる。'] },
+  { map: 'kenchu', near: 'y', kind: 'meisho', name: '二岐温泉', lines: ['二岐山の ふもとの 山の湯。'] },
+  { map: 'kenchu', near: 'i', kind: 'meisho', name: '甲子温泉', lines: ['阿武隈川の 源の 近くの 山の湯。'] },
   // 序章 いわき
   { map: 'field', near: 'H', kind: 'shiro', name: '磐城平城跡', lines: ['江戸時代、平藩の 城が あった所。'] },
   { map: 'field', near: 'Y', kind: 'meisho', name: 'いわき湯本温泉', lines: ['古くから 知られた 湯の町。'] },

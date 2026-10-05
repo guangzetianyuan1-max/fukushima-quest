@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=180';
+import { makeRng } from '../battle/rules.js?v=181';
 
 export const TILE = 16;
 
@@ -96,6 +96,9 @@ export const FIELD_TERRAIN = {
   // 10/4 3章 県中・県南：I＝県北⇔県中の口・h／d／t／p／z＝蛇骨地蔵／大多鬼丸／天狗／カッパ／清姫・g／s／v＝郡山／須賀川／白河の町
   //   m／n／q＝三春駒／和泉式部の猫（猫啼温泉）／託善和尚もボス（10/4 本人「戦う形で」）・a＝松明あかし・( ) [ ] {＝もやの壁
   I: ['road', true], h: ['boss', true], d: ['boss', true], t: ['boss', true], p: ['boss', true], z: ['boss', true],
+  // 10/5 夜 温泉地（e f j l＝県北・c x u y i＝県中・県南）
+  e: ['town_yumoto', true], f: ['town_yumoto', true], j: ['town_yumoto', true], l: ['town_yumoto', true],
+  c: ['town_yumoto', true], x: ['town_yumoto', true], u: ['town_yumoto', true], y: ['town_yumoto', true], i: ['town_yumoto', true],
   g: ['town_taira', true], s: ['town_taira', true], v: ['town_taira', true], m: ['boss', true], n: ['boss', true], q: ['boss', true], a: ['grass', true],
   '(': ['mist', false], ')': ['mist', false], '[': ['mist', false], ']': ['mist', false], '{': ['mist', false], '}': ['mist', false], '<': ['mist', false], '>': ['mist', false],
 };
