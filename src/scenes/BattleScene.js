@@ -1,17 +1,17 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=185';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=185';
-import { EPISODES } from '../data/episodes.js?v=185';
-import { revealAt } from '../ui/reveal.js?v=185';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=185';
-import { chooseCommands } from '../battle/auto.js?v=185';
-import { itemNote } from '../data/items.js?v=185';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=185';
-import { STORY_FILES } from '../data/story_assets.js?v=185';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=185';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=185';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=185';
-import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=185';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=185';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=186';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=186';
+import { EPISODES } from '../data/episodes.js?v=186';
+import { revealAt } from '../ui/reveal.js?v=186';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=186';
+import { chooseCommands } from '../battle/auto.js?v=186';
+import { itemNote } from '../data/items.js?v=186';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=186';
+import { STORY_FILES } from '../data/story_assets.js?v=186';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=186';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=186';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=186';
+import { preloadKit, makeWindow, makeButton, paginate } from '../ui/kit.js?v=186';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=186';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色

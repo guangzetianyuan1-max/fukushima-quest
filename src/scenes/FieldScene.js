@@ -2,45 +2,46 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=185';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=185';
-import { EPISODES } from '../data/episodes.js?v=185';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=185';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=185';
-import { RIDERS } from '../data/nomaoi_assets.js?v=185';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=185';
-import { TILE } from '../field/tiles.js?v=185';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=185';
-import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=185';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=185';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=185';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=185';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=185';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=185';
+import { collection, PER_PAGE } from '../field/collection.js?v=186';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=186';
+import { EPISODES } from '../data/episodes.js?v=186';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=186';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=186';
+import { RIDERS } from '../data/nomaoi_assets.js?v=186';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=186';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=186';
+import { TILE } from '../field/tiles.js?v=186';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=186';
+import { preloadKit, makeWindow, makeButton, makePad, paginate } from '../ui/kit.js?v=186';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=186';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=186';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=186';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=186';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=186';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=185';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=185';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=185';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=185';
-import { membersOf } from '../battle/levels.js?v=185';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=185';
-import { ICON_IDS } from '../data/icons.js?v=185';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=185';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=185';
-import { mapPointOf } from '../field/mapcard.js?v=185';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=185';
-import { makeRng } from '../battle/rules.js?v=185';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=185';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=185';
+} from '../field/game.js?v=186';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=186';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=186';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=186';
+import { membersOf } from '../battle/levels.js?v=186';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=186';
+import { ICON_IDS } from '../data/icons.js?v=186';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=186';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=186';
+import { mapPointOf } from '../field/mapcard.js?v=186';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=186';
+import { makeRng } from '../battle/rules.js?v=186';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=186';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=186';
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=185';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=185';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=185';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=185';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=186';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=186';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=186';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=186';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -201,6 +202,7 @@ export class FieldScene extends Phaser.Scene {
     for (const id of [...ICON_IDS, ...FISHING_ICON_IDS]) if (!this.textures.exists(`icon_${id}`)) this.load.image(`icon_${id}`, `assets/icons/${id}.png`);
     if (!this.textures.exists('bg_fishing')) this.load.image('bg_fishing', 'assets/bg_fishing.png'); // 小名浜の釣り場（Gemini・夕焼けと灯台と桟橋）
     if (!this.textures.exists('bg_nomaoi')) this.load.image('bg_nomaoi', 'assets/bg_nomaoi.png');
+    if (TAIMATSU_ART) for (const [k, f] of Object.entries(TAIMATSU_ART)) if (!this.textures.exists(`taimatsu_${k}`)) this.load.image(`taimatsu_${k}`, f); // 松明あかし（Gemini・10/5 夜・art_src/prep_taimatsu.py）
     RIDERS.forEach((u, i) => { if (!this.textures.exists(`nomaoi_rider_${i}`)) this.load.image(`nomaoi_rider_${i}`, u); }); // 騎馬の絵（届いた物だけ） // 雲雀ヶ原の神旗争奪戦（Gemini・10/4・art_src/prep_nomaoi.py）
     // 一枚絵（町の入口・章の地図＝Gemini 4組目・art_src/prep_cards.py）
     for (const k of [...Object.keys(TOWNS).filter((t) => !TOWNS[t].cardPending).map((t) => `town_${t}`), 'map']) if (!this.textures.exists(`card_${k}`)) this.load.image(`card_${k}`, `assets/cards/${k}.png`);
@@ -1478,15 +1480,32 @@ export class FieldScene extends Phaser.Scene {
     let r = newTaimatsu(makeRng((Date.now() & 0x7fffffff) || 1));
     const box = this.add.container(0, 0);
     this.addUi(box);
-    const bg = this.add.graphics();
-    bg.fillGradientStyle(0x0b0a2a, 0x0b0a2a, 0x3a1a3a, 0x3a1a3a, 1).fillRect(0, 0, W, 640);
-    // 五老山の 稜線（左右対称に しない）
-    bg.fillStyle(0x140c18, 1).beginPath().moveTo(0, 470).lineTo(70, 420).lineTo(150, 440).lineTo(230, 395).lineTo(300, 430).lineTo(W, 410).lineTo(W, 640).lineTo(0, 640).closePath().fillPath();
-    box.add(bg);
-    const SPARK_Y = 250;
+    // 絵が 届いていれば 夜の五老山と 大松明の絵（10/5 夜）・無ければ 図形で描く（Artifact は 1版512まで＝絵を載せない）
+    const art = TAIMATSU_ART && ['bg', 'off', 'on'].every((k) => this.textures.exists(`taimatsu_${k}`));
+    if (art) box.add(this.add.image(0, 0, 'taimatsu_bg').setOrigin(0));
+    else {
+      const bg = this.add.graphics();
+      bg.fillGradientStyle(0x0b0a2a, 0x0b0a2a, 0x3a1a3a, 0x3a1a3a, 1).fillRect(0, 0, W, 640);
+      // 五老山の 稜線（左右対称に しない）
+      bg.fillStyle(0x140c18, 1).beginPath().moveTo(0, 470).lineTo(70, 420).lineTo(150, 440).lineTo(230, 395).lineTo(300, 430).lineTo(W, 410).lineTo(W, 640).lineTo(0, 640).closePath().fillPath();
+      box.add(bg);
+    }
+    const BASE = 548; // 大松明の 足もと（絵のとき・丘の草地の上）
+    const offH = art ? this.textures.get('taimatsu_off').getSourceImage().height : 0;
+    const onH = art ? this.textures.get('taimatsu_on').getSourceImage().height : 0;
+    const SPARK_Y = art ? BASE - onH - 22 : 250; // 火の粉は 燃えた炎の 先より 上を 走る
     const TOP = 300;
     const torches = [...Array(TAIMATSU_TORCHES).keys()].map((i) => {
       const x = torchX(i) * W;
+      if (art) {
+        // 目当ての松明＝足もとに 金の光・頭の上に ▼
+        const ring = this.add.ellipse(x, BASE - 2, 40, 12, 0xffd060, 0.55).setVisible(false);
+        const arrow = this.add.text(x, BASE - offH - 6, '▼', { fontFamily: FONT, fontSize: '16px', color: '#ffe080' }).setOrigin(0.5, 1).setStroke('#1a1030', 4).setVisible(false);
+        const pole = this.add.image(x, BASE, 'taimatsu_off').setOrigin(0.5, 1);
+        const glow = this.add.circle(x, BASE - onH + 26, 30, 0xffb040, 0.3).setVisible(false);
+        box.add([glow, ring, pole, arrow]);
+        return { pole, ring, arrow, glow, ph: i * 1.7 };
+      }
       const pole = this.add.rectangle(x, TOP + 70, 16, 140, 0x5a3a1a).setStrokeStyle(2, 0x2a1a0a);
       const ring = this.add.rectangle(x, TOP + 70, 24, 150, 0xffffff, 0).setStrokeStyle(3, 0xffe080, 0);
       const flame = this.add.circle(x, TOP - 8, 14, 0xff7a20).setVisible(false);
@@ -1508,8 +1527,14 @@ export class FieldScene extends Phaser.Scene {
       const tg = taimatsuTarget(r);
       torches.forEach((o, i) => {
         const on = r.lit.includes(i);
-        o.flame.setVisible(on);
         o.glow.setVisible(on);
+        if (art) {
+          o.pole.setTexture(on ? 'taimatsu_on' : 'taimatsu_off');
+          o.ring.setVisible(i === tg);
+          o.arrow.setVisible(i === tg);
+          return;
+        }
+        o.flame.setVisible(on);
         o.ring.setStrokeStyle(3, 0xffe080, i === tg ? 1 : 0);
       });
     };
@@ -1519,6 +1544,14 @@ export class FieldScene extends Phaser.Scene {
       spark.x = x;
       sparkGlow.x = x;
       sparkGlow.setAlpha(0.25 + 0.15 * Math.sin(this.time.now / 90));
+      if (art) {
+        // 灯った炎は ゆらぐ・目当ての光は 脈打つ
+        torches.forEach((o, i) => {
+          if (r.lit.includes(i)) o.glow.setAlpha(0.22 + 0.1 * Math.sin(this.time.now / 110 + o.ph));
+        });
+        const k = 0.4 + 0.25 * Math.sin(this.time.now / 160);
+        torches.forEach((o) => o.ring.setAlpha(k));
+      }
       showInfo();
       if (taimatsuDone(r, now())) finish();
     };
