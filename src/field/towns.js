@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=183'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=184'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。どの町も 13×14・入ると (6,12) に立つ
@@ -599,7 +599,7 @@ export const TOWNS = {
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。土湯の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['土湯の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
       { x: 5, y: 3, look: 'onsen_kijutsu', role: 'master', job: 'yojutsu', ch: 2, lines: ['旅の 奇術師さ。こけしの 里で ひと休み。', '雷を 呼ぶ 術、腕で 示して ごらん。'] },
-      { x: 8, y: 3, look: 'machibito', role: 'master', job: 'kusushi', ch: 2, lines: ['土湯の 湯守じゃ。湯の 効き目は 薬にも 通じる。', '毒の 吹き矢の 作り方、昔話の 問いに 答えられたら 教えよう。'] },
+      { x: 8, y: 3, look: 'onsen_yumori', role: 'master', job: 'kusushi', ch: 2, lines: ['土湯の 湯守じゃ。湯の 効き目は 薬にも 通じる。', '毒の 吹き矢の 作り方、昔話の 問いに 答えられたら 教えよう。'] },
       { x: 10, y: 12, look: 'onsen_itamae', role: 'master', job: 'yumi', ch: 2, lines: ['湯宿の 板前だ。もとは 安達太良の 猟師でな。', '火矢は、狙いが 定まらねば 使えぬぞ。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
@@ -750,7 +750,7 @@ export const TOWNS = {
       { x: 1, y: 7, look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。二岐の 湯宿で ございます。'] },
       { x: 11, y: 7, look: 'kaji', role: 'onsen', lines: ['二岐の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
       { x: 5, y: 3, look: 'onsen_yamabushi', role: 'master', job: 'yamabushi', ch: 3, lines: ['二岐山で 修行を する 山伏じゃ。', '火渡りの 行、受けて みるか。'] },
-      { x: 8, y: 3, look: 'machibito', role: 'master', job: 'yumi', ch: 3, lines: ['二岐の 湯守じゃ。山で 鍛えた 弓の 腕は 落ちておらん。', '満月の 一矢は、ためが いのちだ。'] },
+      { x: 8, y: 3, look: 'onsen_yumori', role: 'master', job: 'yumi', ch: 3, lines: ['二岐の 湯守じゃ。山で 鍛えた 弓の 腕は 落ちておらん。', '満月の 一矢は、ためが いのちだ。'] },
       { x: 2, y: 12, look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
     ],
   },
