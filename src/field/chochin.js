@@ -2,7 +2,7 @@
 // 確かめた事（二本松市・福島県の紹介）：二本松神社の例大祭・350年以上・宵祭りに 7つの町の太鼓台が集まり、神社の御神火を紅い提灯に灯す・太鼓台1台に 約300の提灯
 // 遊び方：太鼓の拍に合わせて さわると、太鼓台の提灯が灯る（ぴったり＝3つ・少しずれ＝1つ・大太鼓の拍は2倍）。灯した10個で 提灯点 1点 → 景品
 // 計算は画面と切り離す（画面は FieldScene の startChochin）
-import { exchangePrize } from './fishing.js?v=169';
+import { exchangePrize } from './fishing.js?v=170';
 
 export const ENTRY_PRICE = 15;
 export const BEAT_MS = 600; // 100拍/分（お囃子の太鼓くらい）
