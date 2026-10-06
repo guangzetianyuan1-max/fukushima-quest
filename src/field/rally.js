@@ -2,7 +2,7 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=203';
+import { TOWNS } from './towns.js?v=204';
 
 // 温泉めぐり（15か所）＝湯に つかると 判子
 export const ONSEN_RALLY = ['yumoto', 'iizaka', 'takayu', 'tsuchiyu', 'dake', 'bandaiatami', 'bohata', 'nekonakiyu', 'futamata', 'kashi', 'nakanosawa', 'higashiyama', 'ashinomaki', 'nishiyama', 'hayato'];

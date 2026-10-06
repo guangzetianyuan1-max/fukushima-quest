@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=203'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=204'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -363,7 +363,7 @@ export const TOWNS = {
     ],
   },
   dake: {
-    name: '岳温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '岳温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。岳の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['岳の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -384,7 +384,7 @@ export const TOWNS = {
     ],
   },
   bohata: {
-    name: '母畑温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '母畑温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。母畑の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['母畑の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -394,7 +394,7 @@ export const TOWNS = {
     ],
   },
   nekonakiyu: {
-    name: '猫啼温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '猫啼温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。猫啼の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['猫啼の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -403,7 +403,7 @@ export const TOWNS = {
     ],
   },
   futamata: {
-    name: '二岐温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '二岐温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。二岐の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['二岐の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -413,7 +413,7 @@ export const TOWNS = {
     ],
   },
   kashi: {
-    name: '甲子温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '甲子温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。甲子の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['甲子の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -476,7 +476,7 @@ export const TOWNS = {
     ],
   },
   nakanosawa: {
-    name: '中ノ沢温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    name: '中ノ沢温泉', onsen: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。中ノ沢の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['中ノ沢の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -486,7 +486,7 @@ export const TOWNS = {
     ],
   },
   higashiyama: {
-    name: '東山温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    name: '東山温泉', onsen: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。東山の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['東山の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -496,7 +496,7 @@ export const TOWNS = {
     ],
   },
   ashinomaki: {
-    name: '芦ノ牧温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    name: '芦ノ牧温泉', onsen: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。芦ノ牧の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['芦ノ牧の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -506,7 +506,7 @@ export const TOWNS = {
     ],
   },
   nishiyama: {
-    name: '西山温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    name: '西山温泉', onsen: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。西山の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['西山の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -516,7 +516,7 @@ export const TOWNS = {
     ],
   },
   hayato: {
-    name: '早戸温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    name: '早戸温泉', onsen: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。早戸の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['早戸の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
