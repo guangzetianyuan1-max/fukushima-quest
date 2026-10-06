@@ -212,6 +212,12 @@ const SFX = {
   select: (t) => tone(N(84), t, 0.05, { vol: 0.18 }),
   attack: (t) => noise(t, 0.12, { vol: 0.35, from: 6000, to: 800 }),
   hit: (t) => tone(N(52), t, 0.16, { vol: 0.35, slideTo: N(40) }),
+  // 判子「トン」（10/6 夜 本人「『祓』と効果音つきで」）＝紙を打つ短い雑音＋木の低い音＋小さな鈴2つ
+  hanko: (t) => {
+    noise(t, 0.04, { vol: 0.5, from: 3000, to: 600 });
+    tone(N(45), t, 0.12, { type: 'triangle', vol: 0.45, slideTo: N(36) });
+    arp([79, 84], t + 0.18, 0.08, 0.25, { type: 'triangle', vol: 0.18 });
+  },
   // 鉄砲「パーン」（本人 10/2）：はじける破裂音（高い音から急に落ちる雑音）＋低いドン＋山にこだまする残り
   gun: (t) => {
     noise(t, 0.05, { vol: 0.7, from: 9000, to: 2500 });

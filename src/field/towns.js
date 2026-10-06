@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=202'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=203'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -331,7 +331,7 @@ export const TOWNS = {
     ],
   },
   iizaka: {
-    name: '飯坂温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '飯坂温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。飯坂の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['飯坂の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -342,7 +342,7 @@ export const TOWNS = {
     ],
   },
   takayu: {
-    name: '高湯温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '高湯温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。高湯の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['高湯の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -352,7 +352,7 @@ export const TOWNS = {
     ],
   },
   tsuchiyu: {
-    name: '土湯温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '土湯温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。土湯の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['土湯の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
@@ -373,7 +373,7 @@ export const TOWNS = {
     ],
   },
   bandaiatami: {
-    name: '磐梯熱海温泉', onsen: true, cardPending: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
+    name: '磐梯熱海温泉', onsen: true, // 10/5 夜 温泉地（本人「番頭・おかみ・客など様々なキャラクターが師範」「温泉では回復もできるように」）
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。磐梯熱海の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['磐梯熱海の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },

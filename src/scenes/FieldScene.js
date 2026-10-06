@@ -2,49 +2,49 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=202';
-import { stampOnsen, stampGourmet, lordTalk, rallyKeys, hasStamp, stampCount, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=202';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=202';
-import { EPISODES } from '../data/episodes.js?v=202';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=202';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=202';
-import { RIDERS } from '../data/nomaoi_assets.js?v=202';
-import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=202';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=202';
-import { TILE } from '../field/tiles.js?v=202';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=202';
-import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=202';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=202';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=202';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=202';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=202';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=202';
+import { collection, PER_PAGE } from '../field/collection.js?v=203';
+import { stampOnsen, stampGourmet, lordTalk, rallyKeys, hasStamp, stampCount, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=203';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=203';
+import { EPISODES } from '../data/episodes.js?v=203';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=203';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=203';
+import { RIDERS } from '../data/nomaoi_assets.js?v=203';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=203';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=203';
+import { TILE } from '../field/tiles.js?v=203';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=203';
+import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=203';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=203';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=203';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=203';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=203';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=203';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=202';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=202';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=202';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=202';
-import { membersOf } from '../battle/levels.js?v=202';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=202';
-import { ICON_IDS } from '../data/icons.js?v=202';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=202';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=202';
-import { mapPointOf } from '../field/mapcard.js?v=202';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=202';
-import { makeRng } from '../battle/rules.js?v=202';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=202';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=202';
+} from '../field/game.js?v=203';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=203';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=203';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=203';
+import { membersOf } from '../battle/levels.js?v=203';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=203';
+import { ICON_IDS } from '../data/icons.js?v=203';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=203';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=203';
+import { mapPointOf } from '../field/mapcard.js?v=203';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=203';
+import { makeRng } from '../battle/rules.js?v=203';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=203';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=203';
 
 const STATUS_PAD = 96; // 上の札（4,4 から 高さ 16＋23×行）の下の端＋少し
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=202';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=202';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=202';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=202';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=203';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=203';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=203';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=203';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -538,19 +538,27 @@ export class FieldScene extends Phaser.Scene {
 
   // ---- コレクション（本人 10/4 夜「倒したボスのキャラクターをあつめる」）＝元に戻した昔話の主の 元の姿。まだの主は影と「？？？」 ----
   // stampId＝いま元に戻した主（影から始めて 判子を 押す）
-  showCollection(page = 0, stampId = null) {
+  // rally＝{ kind, key }：ラリーの判子を いま もらった（そのページを開いて 判子を押す・10/6 夜 本人「クエスト完成時これらの画面が出て、『祓』と効果音つきで」）
+  showCollection(page = 0, stampId = null, rally = null) {
     this.closeDialog();
     this.busy = true;
     const col = collection(this.g);
+    const draw = () => (rally ? this.drawRally(rally.kind, page, col, rally.key) : this.drawCollection(col, page, stampId));
     // 絵は開いたときに読む（まだ読んでいない主の分だけ）
     const need = col.items.filter((it) => !this.textures.exists(`col-${it.id}`));
     if (need.length) {
       need.forEach((it) => this.load.image(`col-${it.id}`, it.img));
-      this.load.once('complete', () => this.drawCollection(col, page, stampId));
+      this.load.once('complete', draw);
       this.load.start();
       return;
     }
-    this.drawCollection(col, page, stampId);
+    draw();
+  }
+
+  // ラリーの判子を もらったあと：その札の ページを開いて 判子を押す。閉じたら after
+  showRallyStamp(kind, key, after = null) {
+    this.afterCollection = after;
+    this.showCollection(Math.floor(rallyKeys(kind).indexOf(key) / PER_PAGE), null, { kind, key });
   }
 
   // 図鑑の上の札（4つ）＝さわると その ページへ
@@ -579,7 +587,7 @@ export class FieldScene extends Phaser.Scene {
   }
 
   // 温泉・グルメ・お城の ページ（判子を もらった所に 朱の判子・まだは 灰色）
-  drawRally(kind, page, col) {
+  drawRally(kind, page, col, freshKey = null) {
     this.collectionBox?.destroy();
     const box = this.add.container(0, 0).setDepth(2000);
     this.collectionBox = box;
@@ -592,6 +600,7 @@ export class FieldScene extends Phaser.Scene {
     keys.slice(page * PER_PAGE, (page + 1) * PER_PAGE).forEach((key, k) => {
       const cx = GX + (k % 3) * (CW + GX), cy = 60 + Math.floor(k / 3) * (CH + 8);
       const got = hasStamp(this.g, kind, key);
+      const fresh = key === freshKey; // いま もらった判子＝暗い札から 始めて 判子で 色が つく
       const card = this.add.graphics();
       card.fillStyle(0x15132e, 1).fillRoundedRect(cx, cy, CW, CH, 8);
       card.lineStyle(2, got ? 0xc9a24a : 0x3a3660, 1).strokeRoundedRect(cx, cy, CW, CH, 8);
@@ -607,11 +616,25 @@ export class FieldScene extends Phaser.Scene {
         const k = pic.fill ? Math.max(PW / im.width, PH / im.height) : Math.min(PW / im.width, PH / im.height, pic.max ?? 9);
         im.setScale(k);
         if (pic.fill) im.setCrop((im.width - PW / k) / 2, (im.height - PH / k) / 2, PW / k, PH / k);
-        if (!got) im.setTint(0x55536e).setAlpha(0.55);
+        if (!got || fresh) im.setTint(0x55536e).setAlpha(0.55);
         box.add(im);
+        if (fresh) this.time.delayedCall(870, () => im.clearTint().setAlpha(1)); // 判子が 当たった 瞬間に 色が つく
       }
       if (sub) box.add(txt(cx + CW / 2, cy + 92, sub, 12, got ? '#cfc4a0' : '#6a6690', { wordWrap: { width: CW - 8, useAdvancedWrap: true } }).setOrigin(0.5, 0));
-      if (got) box.add(this.seal(cx + CW - 24, cy + 74, 40));
+      if (fresh) {
+        const st = this.seal(cx + CW / 2, cy + 60, 64, '済').setScale(2.4).setAlpha(0);
+        box.add(st);
+        this.time.delayedCall(700, () => {
+          this.tweens.add({
+            targets: st, scale: 1, alpha: 1, duration: 170, ease: 'Quad.easeIn',
+            onComplete: () => {
+              sfx('hanko');
+              this.uiCam?.shake(120, 0.006);
+              this.tweens.add({ targets: st, x: cx + CW - 24, y: cy + 74, scale: 40 / 64, delay: 650, duration: 350, ease: 'Quad.easeInOut' });
+            },
+          });
+        });
+      } else if (got) box.add(this.seal(cx + CW - 24, cy + 74, 40, '済'));
       else box.add(txt(cx + CW / 2, cy + CH - 14, 'まだ', 13, '#55507a').setOrigin(0.5));
     });
     const relic = RELICS[kind];
@@ -646,16 +669,20 @@ export class FieldScene extends Phaser.Scene {
     this.collectionBox?.destroy();
     this.collectionBox = null;
     this.busy = false;
+    const after = this.afterCollection;
+    this.afterCollection = null;
+    after?.();
   }
 
   // 判子（朱の「祓」＝もやを 祓った 印）
-  seal(x, y, size) {
+  // ch＝判子の字（昔話の主＝祓・ラリー＝済・10/6 夜 本人「温泉、グルメ、お城は『祓』ではなく『済』」）
+  seal(x, y, size, ch = '祓') {
     const c = this.add.container(x, y);
     const g = this.add.graphics();
     g.fillStyle(0xc0281e, 0.92).fillRoundedRect(-size / 2, -size / 2, size, size, size * 0.18);
     g.lineStyle(Math.max(1.5, size * 0.07), 0xffe9d6, 0.9).strokeRoundedRect(-size / 2 + size * 0.12, -size / 2 + size * 0.12, size * 0.76, size * 0.76, size * 0.12);
     c.add(g);
-    c.add(this.add.text(0, 0, '祓', { fontFamily: FONT, fontSize: `${Math.round(size * 0.58)}px`, color: '#fff3e6', resolution: 3 }).setOrigin(0.5));
+    c.add(this.add.text(0, 0, ch, { fontFamily: FONT, fontSize: `${Math.round(size * 0.58)}px`, color: '#fff3e6', resolution: 3 }).setOrigin(0.5));
     c.setAngle(-8);
     return c;
   }
@@ -689,7 +716,7 @@ export class FieldScene extends Phaser.Scene {
           this.tweens.add({
             targets: st, scale: 1, alpha: 1, duration: 170, ease: 'Quad.easeIn',
             onComplete: () => {
-              sfx('hit');
+              sfx('hanko');
               this.uiCam?.shake(120, 0.006);
               im.clearTint().setAlpha(1);
               name.setText(it.name).setColor('#ffffff');
@@ -1277,14 +1304,16 @@ export class FieldScene extends Phaser.Scene {
     }
     const text = r.ok ? `${ITEMS[id].name}を 買った！（${this.g.items[id]}こ 持っている）` : '文が 足りないようだ……';
     if (r.ok) this.showGoods(id);
-    this.showMessages([{ text }, ...stamp], () => (n.role === 'equip' ? this.equipShop(n.goods, n.items) : this.shopMenu(n)));
+    const back = () => (n.role === 'equip' ? this.equipShop(n.goods, n.items) : this.shopMenu(n));
+    this.showMessages([{ text }, ...stamp], stamp.length ? () => this.showRallyStamp('gourmet', this.mapId, back) : back);
   }
 
   // お城の お殿様（10/6 本人「お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」）
   lordMeet() {
     const r = lordTalk(this.g, this.mapId);
+    const stamped = r.lines.some((text) => text.includes('判子を もらった'));
     this.setGame(r.game);
-    this.showMessages(r.lines.map((text) => ({ text, sfx: text.includes('判子を もらった') ? 'win' : undefined })));
+    this.showMessages(r.lines.map((text) => ({ text, sfx: text.includes('判子を もらった') ? 'win' : undefined })), stamped ? () => this.showRallyStamp('castle', this.mapId) : undefined);
   }
 
   // ---- 職業の師匠（10/5 本人「それぞれの職業は必殺技が3つあり、1章から3章までのどこかで、クエストを受けて習得する」）----
@@ -1822,7 +1851,7 @@ export class FieldScene extends Phaser.Scene {
           // 福島温泉めぐり（10/6）＝湯に つかると その温泉の 判子
           const st = stampOnsen(this.g, this.mapId);
           if (st.added) this.setGame(st.game);
-          this.showMessages([{ text: `${place}の 湯に ゆっくり つかった。つかれも 呪いも、すっかり 落ちた！` }, ...st.lines.map((text, i) => ({ text, sfx: i === 0 ? 'win' : undefined }))]);
+          this.showMessages([{ text: `${place}の 湯に ゆっくり つかった。つかれも 呪いも、すっかり 落ちた！` }, ...st.lines.map((text, i) => ({ text, sfx: i === 0 ? 'win' : undefined }))], st.added ? () => this.showRallyStamp('onsen', this.mapId) : undefined);
         });
       }],
       ['やめる', () => this.closeDialog()],
