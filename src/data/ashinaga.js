@@ -3,7 +3,7 @@
 // 足長は峰をまたいで雲を集め、手長は猪苗代湖の水をまき散らし、会津に日が差さず作物が取れない。旅の僧が二人を小さくして器に封じ、山頂に埋める。
 // 二人は磐梯明神として祀られ、病悩山は磐梯山と改められた。僧は弘法大師と伝わる。⚠器は「壺」とも「鉄鉢」とも＝ゲームは旅の僧が持つ「鉄鉢」
 // 2体同時（twin）。弱点＝「旅の僧の鉄鉢」。⭐弘法大師が出る3話のうち、会うのは この1話だけ（ほかは語りで）
-import { BASIC_ITEMS } from './basic_items.js?v=190';
+import { BASIC_ITEMS } from './basic_items.js?v=191';
 
 export const ASHINAGA = {
   art: {
@@ -32,13 +32,13 @@ export const ASHINAGA = {
     autoWinTarget: 0.83, // 4章 会津のボス（10/6）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 21,
-    hp: 1063, atk: 116, def: 150, agi: 12,
+    hp: 904, atk: 117, def: 150, agi: 12,
     bgm: 'ashinaga',
     weakness: 'teppatsu',
     mist: { min: 1, max: 3, rise: 0.2 },
     twin: { names: ["足長", "手長"], bites: ["長い 足で ふみつける", "長い 手で 湖の 水を あびせる"] },
-    special: { name: "雲を 集める", chance: 0.22, power: 85, flash: [160, 170, 190], sfx: 'kumoatsume', cutin: 'assets/cutin/ashinaga_kumo.png' },
-    special2: { name: "湖の 水まき", chance: 0.14, power: 101, flash: [90, 160, 255], sfx: 'mizumaki', cutin: 'assets/cutin/ashinaga_mizu.png' },
+    special: { name: "雲を 集める", chance: 0.28, power: 85, flash: [160, 170, 190], sfx: 'kumoatsume', cutin: 'assets/cutin/ashinaga_kumo.png' },
+    special2: { name: "湖の 水まき", chance: 0.12, power: 102, flash: [90, 160, 255], sfx: 'mizumaki', cutin: 'assets/cutin/ashinaga_mizu.png' },
     biteName: "長い 足で ふみつける",
     introText: "磐梯山の 頂に、峰を またぐ 足長と、湖へ 手を のばす 手長が あらわれた。……二人とも 黒い もやを まとっている！",
     tellLines: [

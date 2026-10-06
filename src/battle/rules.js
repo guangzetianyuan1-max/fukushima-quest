@@ -502,6 +502,7 @@ function jobSkill(state, a, sp, id, rng, log) {
       log.push({ text: `${e.name}は 目を まわした！` });
     }
     clearMist(e, sp.clearMist, log);
+    addOns(state, a, sp, log);
     return;
   }
   log.push({ text: sp.text });
@@ -544,7 +545,7 @@ function jobSkill(state, a, sp, id, rng, log) {
   } else if (k === 'poison') {
     e.poison = { dmg: Math.max(1, Math.round(e.maxHp * sp.frac * (closed ? BIG_UNREVEALED : 1))), turns: sp.turns };
   } else if (k === 'evade') {
-    state.evade = 1;
+    state.evade = sp.evadeTurns ?? 1; // 隠れ蓑（4章）は 2ターン
   } else if (k === 'mistall') {
     if (!(e.mistLeft > 0)) log.push({ text: 'もやは もう 晴れている。' });
     clearMist(e, 99, log);
@@ -578,6 +579,43 @@ function jobSkill(state, a, sp, id, rng, log) {
       if (!(t.maxMp > 0)) continue;
       const before = t.mp;
       t.mp = Math.min(t.maxMp, t.mp + Math.round(t.maxMp * sp.frac));
+      if (t.mp > before) log.push({ text: `${t.name}の 術の力が ${t.mp - before} もどった！`, effect: { kind: 'mp', target: t.id, mp: t.mp } });
+    }
+  }
+  addOns(state, a, sp, log);
+}
+
+// 4章の技（10/6）の 付け足しの効き目＝今の型に重ねる。addCleanse 悪い印を治す／addDaze 敵の攻撃が それる（ターン）／
+// addGuard 受ける傷を減らす／addWeak 敵の攻めを弱める／addMp 全員の術の力を戻す（最大の割合）
+function addOns(state, a, sp, log) {
+  const e = state.enemy;
+  const living = state.allies.filter((x) => x.alive);
+  if (sp.addCleanse) {
+    let n = state.blind > 0 ? 1 : 0;
+    for (const t of living) {
+      if (t.curse || t.ghost || t.stunned > 0) n += 1;
+      t.curse = false;
+      t.ghost = false;
+      t.stunned = 0;
+    }
+    state.blind = 0;
+    if (n) log.push({ text: 'みなの 悪い 印が 消えた！' });
+  }
+  if (sp.addDaze && e.hp > 0) {
+    e.dazed = Math.max(e.dazed ?? 0, sp.addDaze);
+    e.dazeText = sp.missText;
+    log.push({ text: `${e.name}は まどわされた！ しばらく 攻撃が 当たりにくい。` });
+  }
+  if (sp.addGuard) state.guard = { ...sp.addGuard };
+  if (sp.addWeak) {
+    e.weak = { ...sp.addWeak };
+    log.push({ text: `${e.name}の 力が 弱まった！` });
+  }
+  if (sp.addMp) {
+    for (const t of living) {
+      if (!(t.maxMp > 0)) continue;
+      const before = t.mp;
+      t.mp = Math.min(t.maxMp, t.mp + Math.round(t.maxMp * sp.addMp));
       if (t.mp > before) log.push({ text: `${t.name}の 術の力が ${t.mp - before} もどった！`, effect: { kind: 'mp', target: t.id, mp: t.mp } });
     }
   }

@@ -3,7 +3,7 @@
 // 崖の上へ運び上げられず困っていると、どこからか力強い赤毛の牛の群れが現れ、黒毛の牛を助けて見事に本堂が建った。その牛を「赤べこ」と呼ぶ。寺に開運「撫牛」
 // ⭐敵のいない話＝材木を引く牛たちが黒いもやに呑まれる形。⚠出どころは「群れ」（最後まで手伝った1頭は確かめられず）。⚠圓藏寺を怪異の場にしない＝只見川のほとり
 // 弱点＝「撫牛の祈り」（なでると福が来ると いわれる 撫牛）
-import { BASIC_ITEMS } from './basic_items.js?v=190';
+import { BASIC_ITEMS } from './basic_items.js?v=191';
 
 export const AKABEKO = {
   art: {
@@ -32,11 +32,11 @@ export const AKABEKO = {
     autoWinTarget: 0.85, // 4章 会津の中ボス（10/6）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 22,
-    hp: 1105, atk: 255, def: 170, agi: 11,
+    hp: 1105, atk: 252, def: 170, agi: 11,
     bgm: 'akabeko',
     weakness: 'nadeushi',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "大材の 引き落とし", chance: 0.24, power: 138, flash: [200, 140, 80], sfx: 'zaimoku', cutin: 'assets/cutin/akabeko_zaimoku.png' },
+    special: { name: "大材の 引き落とし", chance: 0.45, power: 136, flash: [200, 140, 80], sfx: 'zaimoku', cutin: 'assets/cutin/akabeko_zaimoku.png' },
     biteName: "角で 突く",
     introText: "只見川の ほとりで、材木を 引く 牛の 群れが 黒い もやに 呑まれ、あばれだした！",
     tellLines: [

@@ -3,7 +3,7 @@
 // 振り向いた顔が朱に裂けていた。若侍は気を失い、逃げこんだ家の女房にも同じ顔を見せられ、百日寝込んで亡くなる。別の話（越後の旅人）では刀で斬ると消えた。
 // ⭐朱の盤は倒されない＝紙芝居④で補う。⚠⚠諏方神社は今もある神社＝化け物の巣にしない（神社から離れた夜道に出す）。顔の細部は描かず朱の光で
 // 弱点＝「旅人の刀」（越後の旅人の話で、斬ると消えた）
-import { BASIC_ITEMS } from './basic_items.js?v=190';
+import { BASIC_ITEMS } from './basic_items.js?v=191';
 
 export const SHUNOBON = {
   art: {
@@ -32,12 +32,12 @@ export const SHUNOBON = {
     autoWinTarget: 0.85, // 4章 会津の中ボス（10/6）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 22,
-    hp: 1150, atk: 238, def: 165, agi: 14,
+    hp: 978, atk: 206, def: 165, agi: 14,
     bgm: 'shunobon',
     weakness: 'tabikatana',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "朱の 顔", chance: 0.2, power: 86, stun: 1, flash: [255, 60, 40], sfx: 'shugao', cutin: 'assets/cutin/shunobon_kao.png' },
-    special2: { name: "二度目の 顔", chance: 0.12, power: 133, flash: [255, 140, 90], sfx: 'nidome', cutin: 'assets/cutin/shunobon_nidome.png' },
+    special: { name: "朱の 顔", chance: 0.36, power: 75, stun: 1, flash: [255, 60, 40], sfx: 'shugao', cutin: 'assets/cutin/shunobon_kao.png' },
+    special2: { name: "二度目の 顔", chance: 0.18, power: 115, flash: [255, 140, 90], sfx: 'nidome', cutin: 'assets/cutin/shunobon_nidome.png' },
     biteName: "針の 髪で 打つ",
     introText: "諏方神社から 離れた 夜道で、道連れの 侍が ふり向いた。……顔が 朱に 裂け、黒い もやを 吐いている！",
     tellLines: [

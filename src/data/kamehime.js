@@ -3,7 +3,7 @@
 // 主膳は取りあわず、城に怪しいことが続いて主膳は亡くなる。その夏、水をくむ7尺の大入道を城の武士が一刀で斬ると、大きな狢だった。以後 怪異はやんだ。
 // ⭐亀姫は一度も姿を見せず、倒されない＝紙芝居④で補う。⚠城代の死の日数・場面は語らない
 // ゲームでは、忘れられて黒いもやに呑まれた城の主の影。弱点＝「城侍の一刀」（狢＝大入道の正体を斬った刀）
-import { BASIC_ITEMS } from './basic_items.js?v=190';
+import { BASIC_ITEMS } from './basic_items.js?v=191';
 
 export const KAMEHIME = {
   art: {
@@ -32,11 +32,11 @@ export const KAMEHIME = {
     autoWinTarget: 0.85, // 4章 会津の中ボス（10/6）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 20,
-    hp: 1050, atk: 230, def: 150, agi: 13,
+    hp: 1050, atk: 225, def: 150, agi: 13,
     bgm: 'kamehime',
     weakness: 'ichito',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "天守の 怪し火", chance: 0.24, power: 120, flash: [180, 120, 255], sfx: 'ayashibi', cutin: 'assets/cutin/kamehime_ayashibi.png' },
+    special: { name: "天守の 怪し火", chance: 0.36, power: 117, flash: [180, 120, 255], sfx: 'ayashibi', cutin: 'assets/cutin/kamehime_ayashibi.png' },
     biteName: "長い 袖で はらう",
     introText: "亀ヶ城の 石垣の 上に、十二単の 姫の 影が 立った。……黒い もやを まとい、こちらを 見下ろしている！",
     tellLines: [

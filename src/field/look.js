@@ -1,9 +1,9 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=190';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=190';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=190';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=191';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=191';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=191';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -146,6 +146,11 @@ export function fieldLook(game, ch, x, y, map = 'field') {
     case 'u':
     case 'y':
     case 'i':
+    case '沢':
+    case '東':
+    case '芦':
+    case '西':
+    case '早':
       return { ground: 'grass', objs: [ONSEN_ICON] };
     default: return { ground: 'grass', objs: [] };
   }

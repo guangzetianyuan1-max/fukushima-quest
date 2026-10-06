@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=190'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=191'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -469,6 +469,57 @@ export const TOWNS = {
       { spot: 'm3', look: 'kodomo', lines: ['大きな 地震の あと、赤い 毛の 牛の 群れが 材木を 運んだんだって。'] },
     ],
   },
+  nakanosawa: {
+    name: '中ノ沢温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    npcs: [
+      { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。中ノ沢の 湯宿で ございます。'] },
+      { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['中ノ沢の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
+      { spot: 'm1', look: 'onsen_rikishi', role: 'master', job: 'rikishi', ch: 4, lines: ['湯治に 来ておる 横綱だ。', '土俵入りは 綱の 重みを 背負う 技。わしと 一番 取れ。'] },
+      { spot: 'm2', look: 'onsen_nakai', role: 'master', job: 'ninja', ch: 4, lines: ['中ノ沢の 湯宿の 仲居です。', '隠れ蓑の 術、一騎打ちで 見せて いただきます。'] },
+      { spot: 'chaya', look: 'chaya', lines: ['湯けむりの 向こうに、安達太良の 山が 見えますよ。'] },
+    ],
+  },
+  higashiyama: {
+    name: '東山温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    npcs: [
+      { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。東山の 湯宿で ございます。'] },
+      { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['東山の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
+      { spot: 'm1', look: 'onsen_kenkaku', role: 'master', job: 'bushi', ch: 4, lines: ['湯治に 来ておる 剣客よ。', '一刀両断、二の太刀まで 受けきれるか。'] },
+      { spot: 'm2', look: 'onsen_geisha', role: 'master', job: 'miko', ch: 4, lines: ['東山の 芸妓で ございます。', '彼岸獅子の 舞、太鼓に 合わせて 舞えたら お教えしましょう。'] },
+      { spot: 'chaya', look: 'chaya', lines: ['若松の 城下から、ひと山 こえた 湯の町ですよ。'] },
+    ],
+  },
+  ashinomaki: {
+    name: '芦ノ牧温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    npcs: [
+      { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。芦ノ牧の 湯宿で ございます。'] },
+      { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['芦ノ牧の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
+      { spot: 'm1', look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 4, lines: ['芦ノ牧の 湯宿の 番頭で ございます。', '反閇の 歩み、会津の 昔話を 知る 方に お教えしましょう。'] },
+      { spot: 'm2', look: 'onsen_yumori', role: 'master', job: 'kusushi', ch: 4, lines: ['芦ノ牧の 湯守じゃ。', '会津の 薬用人参の 煎じ方、昔話の 問いに 答えられたら 教えよう。'] },
+      { spot: 'chaya', look: 'chaya', lines: ['大川の 渓谷を ながめて、ひと休み していって くださいな。'] },
+    ],
+  },
+  nishiyama: {
+    name: '西山温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    npcs: [
+      { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。西山の 湯宿で ございます。'] },
+      { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['西山の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
+      { spot: 'm1', look: 'onsen_rousou', role: 'master', job: 'sou', ch: 4, lines: ['西山の 湯で 体を 休めておる 老いた 僧です。', '会津の 昔話を 知る 者に、大般若の 転読を 授けましょう。'] },
+      { spot: 'm2', look: 'onsen_kijutsu', role: 'master', job: 'yojutsu', ch: 4, lines: ['旅の 奇術師さ。山奥の 湯で ひと休み。', '狐の 嫁入りを 呼ぶ 術、腕で 示して ごらん。'] },
+      { spot: 'chaya', look: 'chaya', lines: ['ここの 湯は「たん切りの湯」とも いうそうですよ。'] },
+    ],
+  },
+  hayato: {
+    name: '早戸温泉', onsen: true, cardPending: true, // 10/6 4章 会津の温泉地（本人「会津にも温泉クエスト」）＝4つ目の技
+    npcs: [
+      { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。早戸の 湯宿で ございます。'] },
+      { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['早戸の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
+      { spot: 'm1', look: 'ryoshi', role: 'master', job: 'yumi', ch: 4, lines: ['只見川の 渡し守だ。もとは 流鏑馬の 射手でな。', '的を 三つ 続けて 射ぬけるか、見せて みろ。'] },
+      { spot: 'm2', look: 'onsen_yamabushi', role: 'master', job: 'yamabushi', ch: 4, lines: ['只見川の 谷で 修行を する 山伏じゃ。', '湯殿の 行、受けて みるか。'] },
+      { spot: 'chaya', look: 'chaya', lines: ['けがを した 鶴が つかって 治ったと 伝わる 湯ですよ。'] },
+    ],
+  },
+
 };
 
 // 歩く地図の字 → 町（Q＝小高・M＝相馬は 1章の地図「相馬」・U＝福島・W＝二本松は 2章の地図「県北」）
@@ -1156,6 +1207,140 @@ export const TOWN_LAYOUTS = {
     ],
     spots: {"yado": {"x": 2, "y": 5}, "bandai": {"x": 11, "y": 5}, "m1": {"x": 6, "y": 8}, "m2": {"x": 8, "y": 6}, "m3": {"x": 12, "y": 10}, "chaya": {"x": 6, "y": 13}},
   },
+  nakanosawa: {
+    entry: {"x": 7, "y": 14},
+    rows: [
+      'TTTTTTTTTTTTTTT',
+      'TTTTTTTTTTTTTTT',
+      'T.............T',
+      'T....T...T....T',
+      'T####..=..####T',
+      'T#__#..=..#__#T',
+      'T#cc#..=..#cc#T',
+      'T......=..R...T',
+      'T......=......T',
+      'T.===========.T',
+      'T......=......T',
+      'T...R..=.Tuuu.T',
+      'T......=..uuu.T',
+      'TT.....=.....TT',
+      'T....T.=......T',
+      'TTTTTTTxTTTTTTT',
+    ],
+    props: [
+      {"img": "yadoya", "x": 1, "y": 4, "w": 4, "h": 2},
+      {"img": "counter", "x": 2, "y": 6, "w": 2, "h": 1},
+      {"img": "minka", "x": 10, "y": 4, "w": 4, "h": 2},
+      {"img": "counter", "x": 11, "y": 6, "w": 2, "h": 1},
+    ],
+    spots: {"yado": {"x": 2, "y": 5}, "bandai": {"x": 11, "y": 5}, "m1": {"x": 6, "y": 8}, "m2": {"x": 8, "y": 6}, "m3": {"x": 12, "y": 10}, "chaya": {"x": 6, "y": 13}},
+  },
+  higashiyama: {
+    entry: {"x": 4, "y": 14},
+    rows: [
+      'TTTTTTTTTTTTTTT',
+      'TTTTTTTTTTTTTTT',
+      'T......rr.....T',
+      'T####..rr.####T',
+      'T####..rr.####T',
+      'T#_##..rr.#_##T',
+      'T======bb=====T',
+      'T...=..rr.....T',
+      'T...=..rr.....T',
+      'T...=..rr.....T',
+      'T...=..bb.....T',
+      'T...=..rrRuuu.T',
+      'T.m.=..rr.uuu.T',
+      'T...=.mrr.....T',
+      'T...=..rr..m.RT',
+      'TTTTxTTTTTTTTTT',
+    ],
+    props: [
+      {"img": "yuya", "x": 1, "y": 3, "w": 4, "h": 3},
+      {"img": "hatago", "x": 10, "y": 3, "w": 4, "h": 3},
+    ],
+    spots: {"bandai": {"x": 2, "y": 5}, "yado": {"x": 11, "y": 5}, "m1": {"x": 2, "y": 10}, "m2": {"x": 11, "y": 9}, "m3": {"x": 12, "y": 7}, "chaya": {"x": 5, "y": 13}},
+  },
+  ashinomaki: {
+    entry: {"x": 4, "y": 14},
+    rows: [
+      'TTTTTTTTTTTTTTT',
+      'TTTTTTTTTTTTTTT',
+      'T......rr.....T',
+      'T####..rr.####T',
+      'T####R.rr.####T',
+      'T#_##..rr.#_##T',
+      'T......rr....RT',
+      'T......rr.....T',
+      'T......rr.....T',
+      'T======bb=====T',
+      'T...=..rr.....T',
+      'T...=..rrRuuu.T',
+      'T.k.=..rr.uuu.T',
+      'T...=.krr.....T',
+      'T...=..rr..k.RT',
+      'TTTTxTTTTTTTTTT',
+    ],
+    props: [
+      {"img": "hatago", "x": 1, "y": 3, "w": 4, "h": 3},
+      {"img": "yuya", "x": 10, "y": 3, "w": 4, "h": 3},
+    ],
+    spots: {"yado": {"x": 2, "y": 5}, "bandai": {"x": 11, "y": 5}, "m1": {"x": 2, "y": 10}, "m2": {"x": 11, "y": 9}, "m3": {"x": 12, "y": 7}, "chaya": {"x": 5, "y": 13}},
+  },
+  nishiyama: {
+    entry: {"x": 7, "y": 14},
+    rows: [
+      'TTTTTTTTTTTTTTT',
+      'TTTTTTTTTTTTTTT',
+      'TT...........TT',
+      'T.T..####...T.T',
+      'T....####.....T',
+      'T....#_##.....T',
+      'T......=......T',
+      'T..=====..R..TT',
+      'TT.=.........rT',
+      'T..=.........rT',
+      'T..=====.####rT',
+      'T......=.####rT',
+      'Tuu..R.=.#_##rT',
+      'Tuu....=.....rT',
+      'T......=....TrT',
+      'TTTTTTTxTTTTTTT',
+    ],
+    props: [
+      {"img": "tojiyado", "x": 5, "y": 3, "w": 4, "h": 3},
+      {"img": "yuya", "x": 9, "y": 10, "w": 4, "h": 3},
+    ],
+    spots: {"yado": {"x": 6, "y": 5}, "bandai": {"x": 10, "y": 12}, "m1": {"x": 5, "y": 8}, "m2": {"x": 11, "y": 6}, "m3": {"x": 4, "y": 13}, "chaya": {"x": 9, "y": 14}},
+  },
+  hayato: {
+    entry: {"x": 7, "y": 14},
+    rows: [
+      'TTTTTTTTTTTTTTT',
+      'TTTTTTTTTTTTTTT',
+      'T...........RrT',
+      'T....m...m...rT',
+      'T####..=..###rT',
+      'T#__#..=..#__rT',
+      'T#cc#..=..#ccrT',
+      'T......=.....rT',
+      'T......=.....rT',
+      'T.===========.T',
+      'T......=......T',
+      'T.ppp..=.muuu.T',
+      'T.ppp..=..uuu.T',
+      'Tm.....=.....mT',
+      'T....m.=......T',
+      'TTTTTTTxTTTTTTT',
+    ],
+    props: [
+      {"img": "yadoya", "x": 1, "y": 4, "w": 4, "h": 2},
+      {"img": "counter", "x": 2, "y": 6, "w": 2, "h": 1},
+      {"img": "minka", "x": 10, "y": 4, "w": 4, "h": 2},
+      {"img": "counter", "x": 11, "y": 6, "w": 2, "h": 1},
+    ],
+    spots: {"yado": {"x": 2, "y": 5}, "bandai": {"x": 11, "y": 5}, "m1": {"x": 6, "y": 8}, "m2": {"x": 8, "y": 6}, "m3": {"x": 12, "y": 10}, "chaya": {"x": 6, "y": 13}},
+  },
   bohata: {
     entry: {"x": 7, "y": 14},
     rows: [
@@ -1222,10 +1407,10 @@ for (const [id, t] of Object.entries(TOWNS)) {
 // 町の入口（入ると ここに立つ）。町ごとに違う（城下町は 21×24 など）
 export const townEntry = (id) => TOWNS[id]?.entry ?? TOWN_ENTRY;
 
-export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: 'nakamura', U: 'fukushima', W: 'nihonmatsu', g: 'koriyama', s: 'sukagawa', v: 'shirakawa', e: 'iizaka', f: 'takayu', j: 'tsuchiyu', l: 'dake', c: 'bandaiatami', x: 'bohata', u: 'nekonakiyu', y: 'futamata', i: 'kashi', 苗: 'inawashiro', 若: 'aizuwakamatsu', 津: 'yanaizu' }; // 苗／若／津＝4章 会津（10/6） // e〜i＝温泉地（10/5 夜） // g／s／v＝3章 県中・県南（10/4）
+export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: 'nakamura', U: 'fukushima', W: 'nihonmatsu', g: 'koriyama', s: 'sukagawa', v: 'shirakawa', e: 'iizaka', f: 'takayu', j: 'tsuchiyu', l: 'dake', c: 'bandaiatami', x: 'bohata', u: 'nekonakiyu', y: 'futamata', i: 'kashi', 苗: 'inawashiro', 若: 'aizuwakamatsu', 津: 'yanaizu', 沢: 'nakanosawa', 東: 'higashiyama', 芦: 'ashinomaki', 西: 'nishiyama', 早: 'hayato' }; // 沢東芦西早＝4章の温泉地（10/6） // 苗／若／津＝4章 会津（10/6） // e〜i＝温泉地（10/5 夜） // g／s／v＝3章 県中・県南（10/4）
 
 // 町に入った瞬間の毛筆の名前（10/4 本人「二本松に入るとイラストに『二本松』の文字が無い」＝表が1章の5つで止まっていた）
 // 表に無い町も「○○の町」で必ず出す（試験 tests/look.test.js）
-export const TOWN_CARD_NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港', odaka: '小高の町', nakamura: '相馬の城下町', fukushima: '福島の城下町', nihonmatsu: '二本松の城下町', koriyama: '郡山の町', sukagawa: '須賀川の町', shirakawa: '白河の城下町', iizaka: '飯坂温泉', takayu: '高湯温泉', tsuchiyu: '土湯温泉', dake: '岳温泉', bandaiatami: '磐梯熱海温泉', bohata: '母畑温泉', nekonakiyu: '猫啼温泉', futamata: '二岐温泉', kashi: '甲子温泉', inawashiro: '猪苗代の町', aizuwakamatsu: '会津若松の城下町', yanaizu: '柳津の門前町' };
+export const TOWN_CARD_NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港', odaka: '小高の町', nakamura: '相馬の城下町', fukushima: '福島の城下町', nihonmatsu: '二本松の城下町', koriyama: '郡山の町', sukagawa: '須賀川の町', shirakawa: '白河の城下町', iizaka: '飯坂温泉', takayu: '高湯温泉', tsuchiyu: '土湯温泉', dake: '岳温泉', bandaiatami: '磐梯熱海温泉', bohata: '母畑温泉', nekonakiyu: '猫啼温泉', futamata: '二岐温泉', kashi: '甲子温泉', inawashiro: '猪苗代の町', aizuwakamatsu: '会津若松の城下町', yanaizu: '柳津の門前町', nakanosawa: '中ノ沢温泉', higashiyama: '東山温泉', ashinomaki: '芦ノ牧温泉', nishiyama: '西山温泉', hayato: '早戸温泉' };
 export const townCardName = (id) => TOWN_CARD_NAME[id] ?? `${TOWNS[id]?.name ?? ''}の町`;
 

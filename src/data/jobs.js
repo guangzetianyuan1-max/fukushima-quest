@@ -35,56 +35,56 @@ export const JOBS = {
     name: '武士', sex: 'm', role: '斬って削る', weapon: 'katana',
     points: { chikara: 12, tairyoku: 9, chiryoku: 0, seishin: 3, hayasa: 6 },
     passive: { crit: 1 / 8 }, basicText: 'かいしんの いちげきが 出やすい',
-    skills: ['iai', 'kabutowari', 'tsubame'],
+    skills: ['iai', 'kabutowari', 'tsubame', 'ittou'],
   },
   sou: {
     name: '僧', sex: 'm', role: '回復', weapon: 'tsue',
     points: { chikara: 3, tairyoku: 6, chiryoku: 8, seishin: 11, hayasa: 2 },
-    basic: 'dokkyo', skills: ['shingon', 'fudo', 'sosei'],
+    basic: 'dokkyo', skills: ['shingon', 'fudo', 'sosei', 'tendoku'],
   },
   yojutsu: {
     name: '妖術使い', sex: 'f', role: '術で大きく削る', weapon: 'ougi',
     points: { chikara: 2, tairyoku: 4, chiryoku: 13, seishin: 9, hayasa: 2 },
-    basic: 'kitsunebi', skills: ['maboroshi', 'ikazuchi', 'oogama'],
+    basic: 'kitsunebi', skills: ['maboroshi', 'ikazuchi', 'oogama', 'yomeiri'],
   },
   ninja: {
     name: '忍者', sex: 'f', role: '速く 二度打つ', weapon: 'blade',
     points: { chikara: 9, tairyoku: 5, chiryoku: 2, seishin: 4, hayasa: 10 },
     passive: { dual: true, pierce: 0.5 }, basicText: 'たたかう＝短剣の 二連撃（守りの すきまを 突く）',
-    skills: ['kemuridama', 'kagenui', 'bunshin'],
+    skills: ['kemuridama', 'kagenui', 'bunshin', 'kakuremino'],
   },
   rikishi: {
     name: '力士', sex: 'm', role: '体力で受ける', weapon: 'bou',
     points: { chikara: 15, tairyoku: 15, chiryoku: 0, seishin: 0, hayasa: 0 },
     passive: { atkMult: 1.2 }, basicText: 'たたかう＝つっぱり（強い 一撃）',
-    skills: ['shiko', 'kabau', 'uwatenage'],
+    skills: ['shiko', 'kabau', 'uwatenage', 'dohyoiri'],
   },
   yumi: {
     name: '弓矢使い', sex: 'm', role: '遠くから射る', weapon: 'bow',
     points: { chikara: 10, tairyoku: 6, chiryoku: 2, seishin: 4, hayasa: 8 },
     passive: { pierce: 0.5 }, basicText: 'たたかう＝射る（守りの 半分を つらぬく）',
-    skills: ['kaburaya', 'hiya', 'mangetsu'],
+    skills: ['kaburaya', 'hiya', 'mangetsu', 'yabusame'],
   },
   miko: {
     name: '巫女', sex: 'f', role: '守り・お祓い', weapon: 'naginata',
     points: { chikara: 2, tairyoku: 6, chiryoku: 8, seishin: 11, hayasa: 3 },
-    basic: 'oharai', skills: ['kagura', 'omiki', 'iwato'],
+    basic: 'oharai', skills: ['kagura', 'omiki', 'iwato', 'higanjishi'],
   },
   onmyo: {
     name: '陰陽師', sex: 'm', role: '敵を弱らせる', weapon: 'shaku',
     points: { chikara: 2, tairyoku: 5, chiryoku: 11, seishin: 10, hayasa: 2 },
-    basic: 'shikigami', skills: ['jufu', 'kekkai', 'taizan'],
+    basic: 'shikigami', skills: ['jufu', 'kekkai', 'taizan', 'henbai'],
   },
   kusushi: {
     name: '薬師', sex: 'f', role: '道具と回復', weapon: 'hari',
     points: { chikara: 4, tairyoku: 7, chiryoku: 7, seishin: 8, hayasa: 4 },
     passive: { itemMult: 1.5 }, basicText: '調合＝道具の 効き目が 1.5倍',
-    skills: ['gedoku', 'fukiya', 'hiyaku'],
+    skills: ['gedoku', 'fukiya', 'hiyaku', 'ninjin'],
   },
   yamabushi: {
     name: '山伏', sex: 'm', role: '力と術の両方', weapon: 'shakujo',
     points: { chikara: 8, tairyoku: 8, chiryoku: 5, seishin: 6, hayasa: 3 },
-    basic: 'shakujo_uchi', skills: ['horagai', 'kuji', 'hiwatari'],
+    basic: 'shakujo_uchi', skills: ['horagai', 'kuji', 'hiwatari', 'yudono'],
   },
 };
 
@@ -144,6 +144,17 @@ export const JOB_SPELLS = {
   horagai: { name: '法螺貝', desc: '3ターン 攻め1.25倍・素早さも上がる', kind: 'buff', cost: 8, mult: 1.25, agi: 4, turns: 3, sfx: 'horagai', verb: '法螺貝を 吹いた', text: 'ぶおおお……！ 山に ひびく 音に、みなの 足が 軽くなる！' },
   kuji: { name: '九字を切る', desc: '術の一撃＋もやを1つ払う', kind: 'magic', cost: 12, mult: 1.6, clearMist: 1, big: true, sfx: 'kuji', verb: '「臨・兵・闘・者……」と 九字を 切った', text: '格子の 光が 敵を 打ち、もやを 切りさく！' },
   hiwatari: { name: '火渡り', desc: '全員の術の力を半分戻す（1戦1回）', kind: 'mpall', cost: 0, once: true, frac: 0.5, sfx: 'hiwatari', verb: '燃える 炭の 上を 渡った', text: '炎を 渡った 験力が、みなの 術の力を よみがえらせる！' },
+  // ---- 4章の技（10/6 本人「会津にも温泉クエスト」→案を「この案で進める」）＝会津の温泉地の師匠に習う。仕組みは今の型＋付け足しの効き目（add*）----
+  ittou: { name: '一刀両断', desc: '守りを無視して2回斬る（1戦1回）', kind: 'strike', cost: 14, mult: 1.3, defMult: 0, hits: 2, once: true, big: true, sfx: 'kabutowari', verb: '刀を 上段に かまえた', text: '一刀両断！ 二の太刀まで 一息に 振りおろす！' },
+  tendoku: { name: '大般若の転読', desc: '全員を回復し 悪い印も全部治す', kind: 'heal', cost: 14, frac: 0.4, addCleanse: true, sfx: 'sosei', verb: '経典を 扇のように ひろげた', text: '大般若経の 転読！ 経の 風が みなの 傷と 悪い 印を はらう。' },
+  yomeiri: { name: '狐の嫁入り', desc: '術の大きな一撃＋2ターン 敵の攻撃がそれる', kind: 'magic', cost: 16, mult: 2.0, big: true, addDaze: 2, missText: 'は 狐の 行列に まどわされ、攻撃が それた！', sfx: 'ikazuchi', verb: '日の照る 空に 雨を 呼んだ', text: '天気雨の 中を、狐火の 行列が 敵を つつむ！' },
+  kakuremino: { name: '隠れ蓑', desc: '2ターン 敵の攻撃を全員かわす（1戦1回）', kind: 'evade', cost: 0, once: true, evadeTurns: 2, sfx: 'kemuri', verb: '隠れ蓑を ひろげた', text: 'みなの 姿が すっと 消えた！ しばらく 攻撃が 当たらない。' },
+  dohyoiri: { name: '横綱の土俵入り', desc: '3ターン 全員の攻めと守りが上がる（1戦1回）', kind: 'buff', cost: 0, once: true, mult: 1.3, turns: 3, addGuard: { mult: 0.7, turns: 3 }, sfx: 'shiko', verb: '堂々と 土俵入りを はじめた', text: 'よいしょー！ 横綱の 四股に、みなの 体に 力と 守りが みなぎる！' },
+  yabusame: { name: '流鏑馬', desc: '3本の矢で 続けて射る', kind: 'strike', cost: 12, mult: 0.8, defMult: 0.5, hits: 3, big: true, sfx: 'kaburaya', verb: '馬を 走らせながら 弓を 引いた', text: '一の 的、二の 的、三の 的！ 矢が 続けて 突きささる！' },
+  higanjishi: { name: '彼岸獅子の舞', desc: '3ターン 全員の攻めが1.5倍', kind: 'buff', cost: 14, mult: 1.5, turns: 3, sfx: 'kagura', verb: '獅子頭を かぶって 舞いはじめた', text: '笛と 太鼓に 獅子が 舞う！ みなの 体に 春の 力が みなぎる！' },
+  henbai: { name: '反閇', desc: '敵の必殺技を封じ 3ターン攻めを弱める', kind: 'seal', cost: 12, addWeak: { mult: 0.7, turns: 3 }, sfx: 'kekkai', verb: '北斗の 形に 足を 踏んだ', text: '反閇の 歩みが 地を 鎮め、敵の 力を おさえこむ！' },
+  ninjin: { name: '会津の薬用人参', desc: '倒れた仲間を全員起こす（1戦1回）', kind: 'revive', cost: 10, once: true, all: true, frac: 0.5, sfx: 'sosei', verb: '会津の 薬用人参を 煎じた', text: '人参の 力が、倒れた 仲間の 体に しみわたる！' },
+  yudono: { name: '湯殿の行', desc: '全員のHPと術を少しずつ戻す（1戦1回）', kind: 'heal', cost: 0, once: true, frac: 0.25, addMp: 0.25, sfx: 'hiwatari', verb: '湯の 滝に 打たれた', text: '湯殿の 行で 清めた 験力が、みなを 満たす！' },
 };
 
 // 章ごとのクエスト（本人「章ごとに1つ」）。town＝師匠の立つ町・form＝試しの形（duel 一騎打ち／mondo 問答／kagura 神楽／mato 的当て／kagewatari 影渡り）
@@ -186,6 +197,19 @@ export const QUESTS = {
     bushi: { town: 'kashi', master: '若旦那', form: 'duel' },
     ninja: { town: 'kashi', master: '仲居', form: 'duel' },
     miko: { town: 'nekonakiyu', master: 'おかみ', form: 'kagura' },
+  },
+  // 4章（10/6 本人「会津にも温泉クエスト」）＝会津の温泉地5か所に2人ずつ・4つ目の技
+  4: {
+    rikishi: { town: 'nakanosawa', master: '湯治の 横綱', form: 'duel' },
+    ninja: { town: 'nakanosawa', master: '仲居', form: 'duel' },
+    bushi: { town: 'higashiyama', master: '湯治の 剣客', form: 'duel' },
+    miko: { town: 'higashiyama', master: '芸妓', form: 'kagura' },
+    onmyo: { town: 'ashinomaki', master: '番頭', form: 'mondo' },
+    kusushi: { town: 'ashinomaki', master: '湯守', form: 'mondo' },
+    sou: { town: 'nishiyama', master: '湯治の 老僧', form: 'mondo' },
+    yojutsu: { town: 'nishiyama', master: '旅の 奇術師', form: 'duel' },
+    yumi: { town: 'hayato', master: '渡し守', form: 'mato' },
+    yamabushi: { town: 'hayato', master: '湯治の 山伏', form: 'duel' },
   },
 };
 

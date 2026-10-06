@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=190';
+import { makeRng } from '../battle/rules.js?v=191';
 
 export const TILE = 16;
 
@@ -99,6 +99,7 @@ export const FIELD_TERRAIN = {
   // 10/5 夜 温泉地（e f j l＝県北・c x u y i＝県中・県南）
   e: ['town_yumoto', true], f: ['town_yumoto', true], j: ['town_yumoto', true], l: ['town_yumoto', true],
   c: ['town_yumoto', true], x: ['town_yumoto', true], u: ['town_yumoto', true], y: ['town_yumoto', true], i: ['town_yumoto', true],
+  沢: ['town_yumoto', true], 東: ['town_yumoto', true], 芦: ['town_yumoto', true], 西: ['town_yumoto', true], 早: ['town_yumoto', true], // 4章 会津の温泉地（10/6）
   g: ['town_taira', true], s: ['town_taira', true], v: ['town_taira', true], m: ['boss', true], n: ['boss', true], q: ['boss', true], a: ['grass', true],
   '(': ['mist', false], ')': ['mist', false], '[': ['mist', false], ']': ['mist', false], '{': ['mist', false], '}': ['mist', false], '<': ['mist', false], '>': ['mist', false],
   // 10/6 4章 会津（漢字1字＝英字と記号は 使い切った）：関＝3章⇔会津の口・峠＝3章の西の もや（清姫＋3章の技）・苗／若／津＝猪苗代／会津若松／柳津の町

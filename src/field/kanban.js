@@ -2,11 +2,11 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=190';
-import { SOMA_ROWS } from './soma_map.js?v=190';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=190';
-import { KENCHU_ROWS } from './kenchu_map.js?v=190';
-import { AIZU_ROWS } from './aizu_map.js?v=190';
+import { IWAKI_ROWS } from './iwaki_map.js?v=191';
+import { SOMA_ROWS } from './soma_map.js?v=191';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=191';
+import { KENCHU_ROWS } from './kenchu_map.js?v=191';
+import { AIZU_ROWS } from './aizu_map.js?v=191';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
@@ -58,6 +58,11 @@ export const KANBAN_DEFS = [
   { map: 'aizu', near: '猫', kind: 'meisho', name: '猫魔ヶ岳', lines: ['猫又が すんでいたので 名が ついたと 伝わる 山。'] },
   { map: 'aizu', near: '牛', kind: 'meisho', name: '圓藏寺', lines: ['只見川を 見下ろす 崖の 上の 寺。赤べこ 発祥の 地と いわれる。'] },
   { map: 'aizu', near: '沼', kind: 'meisho', name: '沼沢湖', lines: ['噴火で できた 湖。県内で いちばん 深い。'] },
+  { map: 'aizu', near: '沢', kind: 'meisho', name: '中ノ沢温泉', lines: ['安達太良山の 西の ふもと、高原の 湯の里。'] },
+  { map: 'aizu', near: '東', kind: 'meisho', name: '東山温泉', lines: ['若松の 東の 山あいの 湯の町。'] },
+  { map: 'aizu', near: '芦', kind: 'meisho', name: '芦ノ牧温泉', lines: ['大川の 渓谷に わく 湯の町。'] },
+  { map: 'aizu', near: '西', kind: 'meisho', name: '西山温泉', lines: ['柳津の 滝谷川の 渓谷に わく 山の湯。「たん切りの湯」とも よばれる。'] },
+  { map: 'aizu', near: '早', kind: 'meisho', name: '早戸温泉', lines: ['只見川の 谷の 湯。けがを した 鶴が つかっていたと 伝わる。'] },
 ];
 
 function anchorOf(rows, d) {

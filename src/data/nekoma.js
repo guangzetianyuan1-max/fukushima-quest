@@ -3,7 +3,7 @@
 // 山の主の猫王は仕返しに郷士の奥方を奪う。郷士は家の宝刀で猫王を討った。別の版＝弘法大師が法力で調伏した姿が猫石。慧日寺の僧がネズミ除けに猫王を祀ったとも
 // ⭐「良い存在が呑まれる」形＝慧日寺が祀った山の主の猫王。⚠奥方の場面は見せない・宝刀や郷士の名は原典に無い＝出さない
 // 弱点＝「郷士の宝刀」
-import { BASIC_ITEMS } from './basic_items.js?v=190';
+import { BASIC_ITEMS } from './basic_items.js?v=191';
 
 export const NEKOMA = {
   art: {
@@ -32,12 +32,12 @@ export const NEKOMA = {
     autoWinTarget: 0.83, // 4章 会津のボス（10/6）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 21,
-    hp: 1150, atk: 233, def: 155, agi: 15,
+    hp: 1150, atk: 217, def: 155, agi: 15,
     bgm: 'nekoma',
     weakness: 'houtou',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "猫又の 爪", chance: 0.24, power: 121, flash: [255, 220, 120], sfx: 'nekotsume', cutin: 'assets/cutin/nekoma_tsume.png' },
-    special2: { name: "魔性の 鳴き声", chance: 0.12, power: 58, stun: 1, flash: [200, 80, 255], sfx: 'mashou', cutin: 'assets/cutin/nekoma_nakigoe.png' },
+    special: { name: "猫又の 爪", chance: 0.36, power: 113, flash: [255, 220, 120], sfx: 'nekotsume', cutin: 'assets/cutin/nekoma_tsume.png' },
+    special2: { name: "魔性の 鳴き声", chance: 0.18, power: 54, stun: 1, flash: [200, 80, 255], sfx: 'mashou', cutin: 'assets/cutin/nekoma_nakigoe.png' },
     biteName: "大きな 前足で なぐる",
     introText: "猫魔ヶ岳の 大岩の 上に、山ほどの 猫の 影が 起きあがった。……黒い もやを まとい、目が 金に 光る！",
     tellLines: [
