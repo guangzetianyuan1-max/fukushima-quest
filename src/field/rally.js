@@ -2,7 +2,7 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=210';
+import { TOWNS } from './towns.js?v=211';
 
 // 温泉めぐり（15か所）＝湯に つかると 判子
 export const ONSEN_RALLY = ['yumoto', 'iizaka', 'takayu', 'tsuchiyu', 'dake', 'bandaiatami', 'bohata', 'nekonakiyu', 'futamata', 'kashi', 'nakanosawa', 'higashiyama', 'ashinomaki', 'nishiyama', 'hayato'];
@@ -54,8 +54,13 @@ export function addStamp(game, kind, key) {
 
 // 湯に つかった（その町が 温泉めぐりの 町なら 判子）
 export const stampOnsen = (game, town) => (ONSEN_RALLY.includes(town) ? addStamp(game, 'onsen', town) : { game, lines: [], added: false });
-// 名物を 買った（その町の 名物なら 判子）
-export const stampGourmet = (game, town, itemId) => (GOURMET_RALLY[town] === itemId ? addStamp(game, 'gourmet', town) : { game, lines: [], added: false });
+// 名物を 景品で もらった（その町の 名物なら 判子）。⭐10/7 本人「グルメスタンプはアトラクションの景品で出るように。例：小名浜の釣りの景品でめひかり」
+// ＝店で 買っても 判子は 出ない（店では 食べ物として 買える）。景品の 名物から その町を 引く
+export const gourmetTownOf = (itemId) => Object.keys(GOURMET_RALLY).find((t) => GOURMET_RALLY[t] === itemId) ?? null;
+export const stampGourmet = (game, itemId) => {
+  const town = gourmetTownOf(itemId);
+  return town ? { ...addStamp(game, 'gourmet', town), town } : { game, lines: [], added: false, town: null };
+};
 
 // お殿様に 話しかけた：お題が まだなら お題・果たして いれば 判子（品は 1つ 受けとる）・済んで いれば お礼
 export function lordTalk(game, town) {

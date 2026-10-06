@@ -4,7 +4,7 @@
 // 遊び方（画面は FieldScene の nomaoi*）：花火で上がった旗が ゆらゆら落ちてくる → 旅の者の馬を左右に走らせ、ほかの騎馬武者より先に受け取る
 // 旗の色：赤・青＝1点／金＝3点（金はゲームの作り。めったに上がらず、速く落ちる）。取った旗の点＝「旗点」→ 世話役が景品と換える
 // 画面と切り離す＝Node で試験する。ここの関数は game も race も書き換えずに新しい物を返す
-import { exchangePrize } from './fishing.js?v=210';
+import { exchangePrize } from './fishing.js?v=211';
 
 export const ENTRY_PRICE = 10;
 export const ROUND_MS = 30000;
@@ -137,6 +137,7 @@ export function addFlags(game, kinds) {
 
 // 景品＝どれも戦いで効く物。陣羽織は ここでしか手に入らない
 export const FLAG_PRIZES = {
+  g_hokki: { kind: 'item', id: 'g_hokki', n: 1, pts: 3 }, // 10/7 相馬の名物＝グルメの判子
   reisui: { kind: 'item', id: 'reisui', n: 1, pts: 3 },
   tama: { kind: 'item', id: 'tama', n: 3, pts: 4 },
   jouyakusou: { kind: 'item', id: 'jouyakusou', n: 1, pts: 4 },

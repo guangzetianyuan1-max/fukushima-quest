@@ -3,7 +3,7 @@
 // 釣りの手順（画面は FieldScene の fishing*）：①うきが沈んで「！」が出たら さわる（早すぎ・遅すぎは逃げる）
 //                                          ②左右に動く針が緑の帯に入ったら さわる（帯の幅と針の速さは魚しだい）
 // 画面と切り離す＝Node で試験する。ここの関数は game を書き換えずに新しい game を返す
-import { EQUIP, canWear } from '../data/equip.js?v=210';
+import { EQUIP, canWear } from '../data/equip.js?v=211';
 
 export const ROD_PRICE = 5;
 // 「！」が出てから さわれる長さ（ミリ秒）と、「！」が出るまでの待ち
@@ -53,6 +53,7 @@ export function addCatch(game, fishId) {
 // kind 'item'＝持ち物に n こ足す／'equip'＝お守り（だれが着けるかは画面で選ぶ）
 // 投網・大漁の酒・えびす様の守りは ここでしか手に入らない
 export const PRIZES = {
+  g_mehikari: { kind: 'item', id: 'g_mehikari', n: 1, pts: 3 }, // 10/7 小名浜の名物＝グルメの判子
   reisui: { kind: 'item', id: 'reisui', n: 1, pts: 5 },
   tama: { kind: 'item', id: 'tama', n: 3, pts: 6 },
   toami: { kind: 'item', id: 'toami', n: 1, pts: 6 },
