@@ -400,6 +400,71 @@ const SFX = {
     tone(N(55), t, 1.2, { type: 'triangle', vol: 0.12 });
     noise(t, 0.08, { vol: 0.3, from: 2000, to: 800 });
   },
+  // ---- 4章 会津の 必殺技（10/6）
+  // 天守の 怪し火（亀姫）＝青白い 火が ふわりと 揺れて 燃え立つ
+  ayashibi: (t) => {
+    noise(t, 0.8, { vol: 0.22, from: 900, to: 2600 });
+    tone(N(79), t, 0.9, { type: 'sine', vol: 0.12, slideTo: N(84) });
+    tone(N(55), t + 0.2, 0.7, { type: 'triangle', vol: 0.14 });
+  },
+  // 猫又の 爪（猫王）＝鋭く 三度 ひっかく
+  nekotsume: (t) => {
+    [0, 0.12, 0.24].forEach((d) => noise(t + d, 0.1, { vol: 0.42, from: 7000, to: 1500 }));
+    tone(N(84), t, 0.3, { type: 'square', vol: 0.06, slideTo: N(72) });
+  },
+  // 魔性の 鳴き声（猫王）＝ねじれた 高い 声が 長く
+  mashou: (t) => {
+    tone(N(81), t, 1.0, { type: 'sawtooth', vol: 0.09, slideTo: N(76) });
+    tone(N(88), t + 0.15, 0.8, { type: 'sine', vol: 0.08, slideTo: N(83) });
+  },
+  // 雲を 集める（手長足長）＝低く 渦を 巻く 風
+  kumoatsume: (t) => {
+    noise(t, 1.3, { vol: 0.3, from: 200, to: 700 });
+    tone(N(31), t, 1.2, { type: 'triangle', vol: 0.22 });
+  },
+  // 湖の 水まき（手長足長）＝ざばっと 水を あびせる
+  mizumaki: (t) => {
+    noise(t, 0.5, { vol: 0.45, from: 4000, to: 600 });
+    noise(t + 0.35, 0.7, { vol: 0.3, from: 1500, to: 300 });
+  },
+  // 朱の 顔（朱の盤）＝ぞっと 背すじが 凍る 不協の 和音
+  shugao: (t) => {
+    [60, 61, 66].forEach((m) => tone(N(m), t, 0.9, { type: 'square', vol: 0.06 }));
+    noise(t, 0.4, { vol: 0.15, from: 5000, to: 2000 });
+  },
+  // 二度目の 顔（朱の盤）＝間を おいて もう一度 ぞっと
+  nidome: (t) => {
+    [0, 0.5].forEach((d, i) => [62, 63, 68].forEach((m) => tone(N(m + i * 5), t + d, 0.5, { type: 'square', vol: 0.06 })));
+  },
+  // 大材の 引き落とし（赤べこ）＝材木が ごろごろ 転がり 落ちる
+  zaimoku: (t) => {
+    [0, 0.18, 0.36, 0.54].forEach((d, i) => tone(N(36 - i * 2), t + d, 0.2, { type: 'triangle', vol: 0.28 }));
+    noise(t, 0.9, { vol: 0.2, from: 400, to: 150 });
+  },
+  // 底知れぬ 渕（河童の恩返し）＝深い 渦に 引きこまれる
+  fuchi: (t) => {
+    tone(N(43), t, 1.1, { type: 'sine', vol: 0.25, slideTo: N(31) });
+    noise(t + 0.2, 0.9, { vol: 0.25, from: 1200, to: 250 });
+  },
+  // 酒の まどわし（悪狐）＝ふらりと 目が まわる
+  sakemado: (t) => {
+    [0, 0.2, 0.4, 0.6].forEach((d, i) => tone(N(72 + (i % 2) * 3), t + d, 0.25, { type: 'sine', vol: 0.11 }));
+    tone(N(60), t, 0.9, { type: 'triangle', vol: 0.12, slideTo: N(55) });
+  },
+  // 三匹の 咬みつき（悪狐）＝三度 がぶりと
+  mitsukami: (t) => {
+    [0, 0.15, 0.3].forEach((d) => { noise(t + d, 0.08, { vol: 0.45, from: 3000, to: 800 }); tone(N(45), t + d, 0.1, { type: 'square', vol: 0.12 }); });
+  },
+  // 大蛇の 毒（沼御前）＝しゅうっと 毒の 霧が ひろがる
+  jadoku: (t) => {
+    noise(t, 1.0, { vol: 0.3, from: 6000, to: 2500 });
+    tone(N(50), t + 0.2, 0.8, { type: 'sawtooth', vol: 0.07, slideTo: N(46) });
+  },
+  // 二丈の 黒髪（沼御前）＝長い 髪が しゅるしゅると 巻きつく
+  kurokami: (t) => {
+    [0, 0.1, 0.2, 0.3, 0.4].forEach((d, i) => noise(t + d, 0.12, { vol: 0.22, from: 2500 + i * 600, to: 1200 }));
+    tone(N(40), t, 0.9, { type: 'triangle', vol: 0.2 });
+  },
   // 居合い斬り（武士・本人 10/4）＝鍔の「チャキッ」→ 鋭い風切り「シュッ」→ 斬った「ザン」
   iai: (t) => {
     tone(N(96), t, 0.04, { type: 'square', vol: 0.18 });
@@ -683,6 +748,26 @@ const TAKUZEN_LEAD = [[67, 4], [69, 4], [72, 4], [69, 4], [67, 2], [69, 2], [72,
 const KAPPA_LEAD = [[72, 1], [72, 1], [74, 2], [76, 1], [79, 1], [76, 2], [74, 2], [72, 2], [69, 4], [72, 1], [74, 1], [76, 2], [79, 2], [81, 2], [79, 8], [81, 1], [79, 1], [76, 2], [74, 1], [76, 1], [79, 2], [76, 2], [74, 2], [72, 4], [69, 2], [72, 2], [74, 2], [69, 2], [72, 8]];
 // 安珍と清姫：都節で 激しく 燃え上がる（章ボス）
 const KIYOHIME_LEAD = [[76, 1], [77, 1], [81, 2], [83, 1], [84, 1], [83, 2], [81, 2], [77, 2], [76, 4], [88, 1], [89, 1], [88, 2], [84, 1], [83, 1], [81, 2], [83, 8], [84, 2], [83, 2], [81, 2], [77, 2], [76, 2], [77, 2], [81, 4], [83, 1], [81, 1], [77, 2], [76, 2], [71, 2], [76, 8]];
+// 4章 会津の地図：陽音階・紅葉の 野を ゆっくり歩く
+const AIZU_FIELD_LEAD = [[67, 2], [69, 2], [72, 4], [74, 2], [72, 1], [69, 1], [67, 4], [69, 2], [72, 2], [74, 2], [76, 2], [74, 8], [76, 2], [74, 2], [72, 2], [74, 2], [72, 2], [69, 2], [67, 4], [64, 2], [67, 2], [69, 2], [72, 2], [67, 8]];
+// 4章 会津の道中：民謡音階・速く
+const AIZU_BATTLE_LEAD = [[62, 1], [65, 1], [67, 2], [69, 1], [72, 1], [69, 2], [67, 2], [65, 2], [62, 4], [69, 1], [72, 1], [74, 2], [72, 1], [69, 1], [67, 2], [69, 8], [74, 2], [72, 2], [69, 2], [67, 2], [65, 1], [67, 1], [69, 2], [67, 2], [65, 2], [62, 2], [65, 2], [67, 2], [60, 2], [62, 8]];
+// 第二十二話 亀姫：都節・天守の 静かな 怪しさ
+const KAMEHIME_LEAD = [[76, 3], [77, 1], [81, 4], [83, 2], [81, 2], [77, 4], [76, 2], [77, 2], [81, 2], [84, 2], [83, 8], [84, 2], [83, 2], [81, 2], [77, 2], [76, 4], [71, 4], [72, 2], [76, 2], [77, 2], [81, 2], [76, 8]];
+// 第二十三話 猫魔ヶ岳の化け猫：陰音階・鋭く 跳ねる
+const NEKOMA_LEAD = [[81, 1], [82, 1], [86, 2], [88, 1], [86, 1], [82, 2], [81, 2], [77, 2], [76, 4], [81, 1], [82, 1], [86, 1], [89, 1], [88, 2], [86, 2], [88, 8], [89, 2], [88, 2], [86, 2], [82, 2], [81, 1], [82, 1], [86, 2], [82, 2], [81, 2], [76, 2], [77, 2], [81, 2], [70, 2], [69, 8]];
+// 第二十四話 磐梯山の手長足長：陽音階・のっしのっしと 大きく
+const ASHINAGA_LEAD = [[62, 4], [64, 2], [67, 2], [69, 4], [67, 4], [64, 2], [62, 2], [64, 2], [67, 2], [69, 8], [72, 4], [69, 2], [67, 2], [64, 4], [67, 4], [69, 2], [67, 2], [64, 2], [60, 2], [62, 8]];
+// 第二十五話 朱の盤：都節・夜道の 不安・ふいに 跳ぶ
+const SHUNOBON_LEAD = [[64, 2], [65, 2], [69, 2], [65, 2], [64, 4], [59, 4], [64, 1], [65, 1], [69, 2], [71, 2], [72, 2], [76, 8], [77, 2], [76, 2], [72, 2], [71, 2], [69, 2], [65, 2], [64, 4], [59, 2], [60, 2], [64, 2], [65, 2], [64, 8]];
+// 第二十六話 赤べこ：陽音階・綱を 引く 力強さ
+const AKABEKO_LEAD = [[67, 2], [67, 2], [69, 2], [72, 2], [74, 2], [72, 2], [69, 4], [67, 2], [69, 2], [72, 2], [74, 2], [76, 8], [79, 2], [76, 2], [74, 2], [72, 2], [74, 2], [72, 2], [69, 4], [67, 2], [64, 2], [67, 2], [69, 2], [67, 8]];
+// 第二十七話 河童の恩返し：民謡音階・渕の 水の ゆらぎ
+const NAWAKAPPA_LEAD = [[74, 1], [77, 1], [79, 2], [81, 2], [79, 2], [77, 2], [74, 2], [72, 4], [74, 2], [77, 2], [79, 2], [84, 2], [81, 8], [84, 2], [81, 2], [79, 2], [77, 2], [79, 1], [81, 1], [79, 2], [77, 2], [74, 2], [72, 2], [74, 2], [77, 2], [69, 2], [74, 8]];
+// 第二十八話 母子狐の仇討ち：民謡音階・野を 駆ける
+const OKON_LEAD = [[69, 1], [72, 1], [74, 1], [76, 1], [74, 2], [72, 2], [69, 2], [67, 2], [64, 4], [69, 1], [72, 1], [74, 2], [79, 2], [76, 2], [74, 8], [76, 1], [79, 1], [81, 2], [79, 2], [76, 2], [74, 2], [72, 2], [69, 4], [67, 2], [69, 2], [72, 2], [64, 2], [69, 8]];
+// 第二十九話 沼御前：都節・雪の 湖・章ボス
+const NUMAGOZEN_LEAD = [[76, 1], [77, 1], [81, 2], [83, 2], [84, 2], [83, 2], [81, 2], [77, 4], [76, 2], [77, 2], [81, 2], [84, 2], [88, 8], [89, 2], [88, 2], [84, 2], [83, 2], [81, 2], [77, 2], [76, 4], [71, 2], [72, 2], [76, 2], [77, 2], [76, 8]];
 // 第九話 飴買い幽霊：都節（ミ・ファ・ラ・シ・ド）・夜の 墓地を 静かに・もの悲しく
 const AMEKAI_LEAD = [
   [76, 3], [77, 1], [81, 4],
@@ -954,6 +1039,115 @@ const TRACKS = {
           const s = t0 + (bar * 8 + i) * eighth;
           tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.21 });
           if (i % 2 === 0) noise(s, 0.03, { vol: 0.06, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  // ---- 4章 会津（10/6）
+  aizuField: {
+    lead: AIZU_FIELD_LEAD, tempo: 88, leadType: 'triangle', leadVol: 0.16,
+    bass(t0, eighth) {
+      [43, 45, 48, 45, 43, 48, 45, 43].forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 3.8, { type: 'triangle', vol: 0.18 });
+        tone(N(r - 5), t0 + (bar * 8 + 4) * eighth, eighth * 3.8, { type: 'triangle', vol: 0.12 });
+      });
+    },
+  },
+  aizuBattle: {
+    lead: AIZU_BATTLE_LEAD, tempo: 148, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [38, 41, 43, 38, 41, 45, 43, 38].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  kamehime: {
+    lead: KAMEHIME_LEAD, tempo: 92, leadType: 'triangle', leadVol: 0.16,
+    bass(t0, eighth) {
+      [40, 41, 45, 40, 41, 40, 47, 40].forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 3.8, { type: 'triangle', vol: 0.18 });
+        tone(N(r - 5), t0 + (bar * 8 + 4) * eighth, eighth * 3.8, { type: 'triangle', vol: 0.12 });
+      });
+    },
+  },
+  nekoma: {
+    lead: NEKOMA_LEAD, tempo: 162, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [45, 46, 45, 41, 45, 46, 52, 45].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  ashinaga: {
+    lead: ASHINAGA_LEAD, tempo: 104, leadType: 'square', leadVol: 0.11,
+    bass(t0, eighth) {
+      [38, 38, 43, 45, 38, 43, 45, 38].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  shunobon: {
+    lead: SHUNOBON_LEAD, tempo: 120, leadType: 'triangle', leadVol: 0.15,
+    bass(t0, eighth) {
+      [40, 41, 40, 45, 40, 41, 47, 40].forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 3.8, { type: 'triangle', vol: 0.18 });
+        tone(N(r - 5), t0 + (bar * 8 + 4) * eighth, eighth * 3.8, { type: 'triangle', vol: 0.12 });
+      });
+    },
+  },
+  akabeko: {
+    lead: AKABEKO_LEAD, tempo: 132, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [43, 43, 45, 48, 43, 45, 48, 43].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  nawakappa: {
+    lead: NAWAKAPPA_LEAD, tempo: 116, leadType: 'triangle', leadVol: 0.15,
+    bass(t0, eighth) {
+      [38, 41, 43, 45, 38, 43, 41, 38].forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 3.8, { type: 'triangle', vol: 0.18 });
+        tone(N(r - 5), t0 + (bar * 8 + 4) * eighth, eighth * 3.8, { type: 'triangle', vol: 0.12 });
+      });
+    },
+  },
+  okon: {
+    lead: OKON_LEAD, tempo: 144, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [45, 43, 40, 45, 43, 45, 40, 45].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  numagozen: {
+    lead: NUMAGOZEN_LEAD, tempo: 160, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [40, 41, 40, 45, 40, 41, 47, 40].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
         });
       });
     },

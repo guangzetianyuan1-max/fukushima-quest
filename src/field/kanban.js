@@ -2,12 +2,13 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=189';
-import { SOMA_ROWS } from './soma_map.js?v=189';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=189';
-import { KENCHU_ROWS } from './kenchu_map.js?v=189';
+import { IWAKI_ROWS } from './iwaki_map.js?v=190';
+import { SOMA_ROWS } from './soma_map.js?v=190';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=190';
+import { KENCHU_ROWS } from './kenchu_map.js?v=190';
+import { AIZU_ROWS } from './aizu_map.js?v=190';
 
-const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS };
+const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
 
 // near＝目印の字（地図に1つだけの字）／at＝目印の座標（灯台など）
@@ -47,6 +48,16 @@ export const KANBAN_DEFS = [
   { map: 'kenchu', near: 'I', kind: 'michi', name: 'この先 二本松', lines: ['北へ 行けば 二本松の 城下。'] },
   { map: 'kenchu', near: 'm', kind: 'hana', name: '三春滝桜', lines: ['樹齢 千年を こえると いわれる しだれ桜。国の 天然記念物。'] },
   { map: 'kenchu', near: 'v', kind: 'shiro', name: '白河小峰城跡', lines: ['白河藩の 城あと。石垣と 三重櫓が ある。'] },
+  // 4章 会津（10/6・vault 2026-10-06 調べノートで 確かめた 事だけ）
+  { map: 'kenchu', near: '関', kind: 'michi', name: 'この先 会津', lines: ['西へ 峠を こえれば 会津。'] },
+  { map: 'aizu', near: '関', kind: 'michi', name: 'この先 白河', lines: ['東へ 峠を 下れば 白河。'] },
+  { map: 'aizu', near: '若', kind: 'shiro', name: '鶴ヶ城', lines: ['会津若松の 城。蒲生氏郷が 鶴ヶ城と 名づけたと 伝わる。'] },
+  { map: 'aizu', near: '亀', kind: 'shiro', name: '亀ヶ城跡', lines: ['戦国の ころ、鶴ヶ城の 支城として 築かれた 城あと。いまは 桜と 紅葉の 名所。'] },
+  { map: 'aizu', at: [32, 24], kind: 'meisho', name: '猪苗代湖', lines: ['日本で 4番目に 広い 湖。「天鏡湖」とも よばれる。'] },
+  { map: 'aizu', near: '足', kind: 'meisho', name: '磐梯山', lines: ['会津富士とも よばれる 山。むかしは「病悩山」と よばれたと 伝わる。'] },
+  { map: 'aizu', near: '猫', kind: 'meisho', name: '猫魔ヶ岳', lines: ['猫又が すんでいたので 名が ついたと 伝わる 山。'] },
+  { map: 'aizu', near: '牛', kind: 'meisho', name: '圓藏寺', lines: ['只見川を 見下ろす 崖の 上の 寺。赤べこ 発祥の 地と いわれる。'] },
+  { map: 'aizu', near: '沼', kind: 'meisho', name: '沼沢湖', lines: ['噴火で できた 湖。県内で いちばん 深い。'] },
 ];
 
 function anchorOf(rows, d) {

@@ -1,18 +1,18 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=189';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=189';
-import { EPISODES } from '../data/episodes.js?v=189';
-import { revealAt } from '../ui/reveal.js?v=189';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=189';
-import { chooseCommands } from '../battle/auto.js?v=189';
-import { itemNote } from '../data/items.js?v=189';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=189';
-import { STORY_FILES } from '../data/story_assets.js?v=189';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=189';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=189';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=189';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=189';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=189';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=189';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=190';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=190';
+import { EPISODES } from '../data/episodes.js?v=190';
+import { revealAt } from '../ui/reveal.js?v=190';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=190';
+import { chooseCommands } from '../battle/auto.js?v=190';
+import { itemNote } from '../data/items.js?v=190';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=190';
+import { STORY_FILES } from '../data/story_assets.js?v=190';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=190';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=190';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=190';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=190';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=190';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=190';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -86,6 +86,8 @@ export class BattleScene extends Phaser.Scene {
     // 元に戻ったあとに現れる人（賢沼の弁天さまなど）
     const bl = this.ep.enemy.blessing;
     if (bl && !this.textures.exists(key(this.ep, 'blessing'))) this.load.image(key(this.ep, 'blessing'), bl.image);
+    const hp = this.ep.enemy.helper; // 助っ人の絵（10/6 おこん母子から・無ければ文だけ）
+    if (hp?.image && !this.textures.exists(key(this.ep, 'helper'))) this.load.image(key(this.ep, 'helper'), hp.image);
     // 紙芝居の挿絵（届いている物だけ読む＝ STORY_FILES は art_src/prep_story.py が書く）
     for (const part of ['tell', 'after']) {
       for (const c of this.ep.enemy.story?.[part] ?? []) {
@@ -508,6 +510,8 @@ export class BattleScene extends Phaser.Scene {
     } else if (fx.kind === 'hitAlly' || fx.kind === 'heal') {
       sfx(fx.kind === 'heal' ? 'heal' : 'damage');
       this.setAllyHp(fx.target, fx.hp);
+    } else if (fx.kind === 'helper') {
+      this.showHelper();
     } else if (fx.kind === 'reveal') {
       sfx('reveal');
       this.weakBadge.setText(`弱点：${this.ep.spells[this.ep.enemy.weakness].name}`);
@@ -985,6 +989,14 @@ export class BattleScene extends Phaser.Scene {
   }
 
   // 元に戻った敵に代わって、その話の神仏などが現れる（賢沼＝弁天さま・影絵版の終幕と同じ形）
+  // 助っ人が 現れた・とびかかった：左から 絵が すべりこみ、少し とどまって 消える（10/6 おこん母子）
+  showHelper() {
+    if (!this.textures.exists(key(this.ep, 'helper'))) return;
+    const img = this.add.image(-80, ENEMY_Y + 70, key(this.ep, 'helper')).setScale(1.4).setDepth(40).setAlpha(0);
+    this.tweens.add({ targets: img, x: 90, alpha: 1, duration: 350, ease: 'Cubic.easeOut' });
+    this.tweens.add({ targets: img, alpha: 0, x: 120, delay: 1350, duration: 300, onComplete: () => img.destroy() });
+  }
+
   playBlessing(done) {
     const bl = this.ep.enemy.blessing;
     const img = this.add.image(W / 2, ENEMY_Y + 10, key(this.ep, 'blessing')).setScale(2).setAlpha(0);

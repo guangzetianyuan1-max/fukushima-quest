@@ -1,12 +1,12 @@
 // 装備（本人 10/1「武器、防具の採用は無いか？」→「3」＝刀屋と装備の回）
 // 1人に3か所：weapon 武器／armor 防具／charm お守り。who＝着けられる人。買うとその場で着け、前の品は半値で引き取ってもらう
 // 序章いわきで買える所：平の刀屋（武器）・平の荒物屋（防具）・平の八幡さま（勝守）・湯本のお寺（厄除け守）
-import { JOBS, jobOf } from './jobs.js?v=189';
+import { JOBS, jobOf } from './jobs.js?v=190';
 
 export const EQUIP = {
   // ---- 武器と防具＝職業ごと（本人 10/5「武器、防具は職業別に作ってください」）。id＝<職業>_w<段>（武器 段0〜6）／<職業>_a<段>（防具 段1〜6）
   // 強さと値段は 段ごとに どの職業も同じ（前の 刀の段・防具の 旅の笠〜当世具足と同じ数＝強さ合わせは変わらない）
-  // 段0＝はじめに持つ・段1〜2＝序章の平・段3＝1章の小高・段4＝1章の相馬・段5＝2章・段6＝3章
+  // 段0＝はじめに持つ・段1〜2＝序章の平・段3＝1章の小高・段4＝1章の相馬・段5＝2章・段6＝3章・段7＝4章 会津（10/6）
   // bushi
   bushi_w0: { name: '木の棒', slot: 'weapon', job: 'bushi', tier: 0, atk: 2, price: 0, icon: 'bou' },
   bushi_w1: { name: '木刀', slot: 'weapon', job: 'bushi', tier: 1, atk: 5, price: 30, icon: 'bokuto' },
@@ -15,12 +15,14 @@ export const EQUIP = {
   bushi_w4: { name: '野太刀', slot: 'weapon', job: 'bushi', tier: 4, atk: 24, price: 380 },
   bushi_w5: { name: '名刀', slot: 'weapon', job: 'bushi', tier: 5, atk: 33, price: 640 },
   bushi_w6: { name: '大太刀', slot: 'weapon', job: 'bushi', tier: 6, atk: 44, price: 1000 },
+  bushi_w7: { name: '名工の太刀', slot: 'weapon', job: 'bushi', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   bushi_a1: { name: '陣笠', slot: 'armor', job: 'bushi', tier: 1, def: 2, price: 15, icon: 'kasa' },
   bushi_a2: { name: '腹当', slot: 'armor', job: 'bushi', tier: 2, def: 6, price: 60 },
   bushi_a3: { name: '胴丸', slot: 'armor', job: 'bushi', tier: 3, def: 10, price: 150 },
   bushi_a4: { name: '腹巻', slot: 'armor', job: 'bushi', tier: 4, def: 15, price: 300 },
   bushi_a5: { name: '大鎧', slot: 'armor', job: 'bushi', tier: 5, def: 22, price: 520 },
   bushi_a6: { name: '当世具足', slot: 'armor', job: 'bushi', tier: 6, def: 30, price: 820 },
+  bushi_a7: { name: '黒漆の具足', slot: 'armor', job: 'bushi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // sou
   sou_w0: { name: '木の杖', slot: 'weapon', job: 'sou', tier: 0, atk: 2, price: 0 },
   sou_w1: { name: '樫の杖', slot: 'weapon', job: 'sou', tier: 1, atk: 5, price: 30, icon: 'kashizue' },
@@ -29,12 +31,14 @@ export const EQUIP = {
   sou_w4: { name: '白檀の杖', slot: 'weapon', job: 'sou', tier: 4, atk: 24, price: 380 },
   sou_w5: { name: '銀の如意', slot: 'weapon', job: 'sou', tier: 5, atk: 33, price: 640 },
   sou_w6: { name: '金の如意', slot: 'weapon', job: 'sou', tier: 6, atk: 44, price: 1000 },
+  sou_w7: { name: '白檀の如意', slot: 'weapon', job: 'sou', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   sou_a1: { name: '網代笠', slot: 'armor', job: 'sou', tier: 1, def: 2, price: 15 },
   sou_a2: { name: '墨染めの衣', slot: 'armor', job: 'sou', tier: 2, def: 6, price: 60 },
   sou_a3: { name: '木綿の法衣', slot: 'armor', job: 'sou', tier: 3, def: 10, price: 150 },
   sou_a4: { name: '絹の法衣', slot: 'armor', job: 'sou', tier: 4, def: 15, price: 300 },
   sou_a5: { name: '緋の衣', slot: 'armor', job: 'sou', tier: 5, def: 22, price: 520 },
   sou_a6: { name: '金襴の袈裟', slot: 'armor', job: 'sou', tier: 6, def: 30, price: 820 },
+  sou_a7: { name: '紫の袈裟', slot: 'armor', job: 'sou', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // yojutsu
   yojutsu_w0: { name: '檜扇', slot: 'weapon', job: 'yojutsu', tier: 0, atk: 2, price: 0 },
   yojutsu_w1: { name: '舞扇', slot: 'weapon', job: 'yojutsu', tier: 1, atk: 5, price: 30, icon: 'sensu' },
@@ -43,12 +47,14 @@ export const EQUIP = {
   yojutsu_w4: { name: '妖しの扇', slot: 'weapon', job: 'yojutsu', tier: 4, atk: 24, price: 380 },
   yojutsu_w5: { name: '九尾の扇', slot: 'weapon', job: 'yojutsu', tier: 5, atk: 33, price: 640 },
   yojutsu_w6: { name: '天狗の羽団扇', slot: 'weapon', job: 'yojutsu', tier: 6, atk: 44, price: 1000 },
+  yojutsu_w7: { name: '鳳凰の扇', slot: 'weapon', job: 'yojutsu', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   yojutsu_a1: { name: '旅の頭巾', slot: 'armor', job: 'yojutsu', tier: 1, def: 2, price: 15 },
   yojutsu_a2: { name: '藍の羽織', slot: 'armor', job: 'yojutsu', tier: 2, def: 6, price: 60 },
   yojutsu_a3: { name: '狐の羽織', slot: 'armor', job: 'yojutsu', tier: 3, def: 10, price: 150 },
   yojutsu_a4: { name: '黒の羽織', slot: 'armor', job: 'yojutsu', tier: 4, def: 15, price: 300 },
   yojutsu_a5: { name: '月の羽衣', slot: 'armor', job: 'yojutsu', tier: 5, def: 22, price: 520 },
   yojutsu_a6: { name: '九尾の羽衣', slot: 'armor', job: 'yojutsu', tier: 6, def: 30, price: 820 },
+  yojutsu_a7: { name: '天女の羽衣', slot: 'armor', job: 'yojutsu', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // ninja
   ninja_w0: { name: '小刀', slot: 'weapon', job: 'ninja', tier: 0, atk: 2, price: 0 },
   ninja_w1: { name: '短刀', slot: 'weapon', job: 'ninja', tier: 1, atk: 5, price: 30 },
@@ -57,12 +63,14 @@ export const EQUIP = {
   ninja_w4: { name: '忍び刀', slot: 'weapon', job: 'ninja', tier: 4, atk: 24, price: 380 },
   ninja_w5: { name: '鎧通し', slot: 'weapon', job: 'ninja', tier: 5, atk: 33, price: 640 },
   ninja_w6: { name: '小太刀', slot: 'weapon', job: 'ninja', tier: 6, atk: 44, price: 1000 },
+  ninja_w7: { name: '霞の忍び刀', slot: 'weapon', job: 'ninja', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   ninja_a1: { name: '黒頭巾', slot: 'armor', job: 'ninja', tier: 1, def: 2, price: 15 },
   ninja_a2: { name: '忍び装束', slot: 'armor', job: 'ninja', tier: 2, def: 6, price: 60 },
   ninja_a3: { name: '鎖の籠手', slot: 'armor', job: 'ninja', tier: 3, def: 10, price: 150 },
   ninja_a4: { name: '鎖帷子', slot: 'armor', job: 'ninja', tier: 4, def: 15, price: 300 },
   ninja_a5: { name: '黒鉄の帷子', slot: 'armor', job: 'ninja', tier: 5, def: 22, price: 520 },
   ninja_a6: { name: '影の装束', slot: 'armor', job: 'ninja', tier: 6, def: 30, price: 820 },
+  ninja_a7: { name: '闇夜の装束', slot: 'armor', job: 'ninja', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // rikishi（10/5 夕 本人「力士の武器で刃物はおかしい、素手が基本」＝手に巻く・はめる物。金剛の手甲＝力士の名の元の 金剛力士から）
   rikishi_w0: { name: '素手', slot: 'weapon', job: 'rikishi', tier: 0, atk: 2, price: 0 },
   rikishi_w1: { name: '晒しの巻き手', slot: 'weapon', job: 'rikishi', tier: 1, atk: 5, price: 30 },
@@ -71,12 +79,14 @@ export const EQUIP = {
   rikishi_w4: { name: '鋲打ちの手甲', slot: 'weapon', job: 'rikishi', tier: 4, atk: 24, price: 380 },
   rikishi_w5: { name: '黒鉄の手甲', slot: 'weapon', job: 'rikishi', tier: 5, atk: 33, price: 640 },
   rikishi_w6: { name: '金剛の手甲', slot: 'weapon', job: 'rikishi', tier: 6, atk: 44, price: 1000 },
+  rikishi_w7: { name: '鬼の手甲', slot: 'weapon', job: 'rikishi', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   rikishi_a1: { name: '稽古まわし', slot: 'armor', job: 'rikishi', tier: 1, def: 2, price: 15 },
   rikishi_a2: { name: '浴衣', slot: 'armor', job: 'rikishi', tier: 2, def: 6, price: 60 },
   rikishi_a3: { name: '化粧まわし', slot: 'armor', job: 'rikishi', tier: 3, def: 10, price: 150 },
   rikishi_a4: { name: '鉄の胸当て', slot: 'armor', job: 'rikishi', tier: 4, def: 15, price: 300 },
   rikishi_a5: { name: '大関の化粧まわし', slot: 'armor', job: 'rikishi', tier: 5, def: 22, price: 520 },
   rikishi_a6: { name: '横綱の綱', slot: 'armor', job: 'rikishi', tier: 6, def: 30, price: 820 },
+  rikishi_a7: { name: '雲竜の綱', slot: 'armor', job: 'rikishi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // yumi
   yumi_w0: { name: '竹の弓', slot: 'weapon', job: 'yumi', tier: 0, atk: 2, price: 0 },
   yumi_w1: { name: '半弓', slot: 'weapon', job: 'yumi', tier: 1, atk: 5, price: 30 },
@@ -85,12 +95,14 @@ export const EQUIP = {
   yumi_w4: { name: '強弓', slot: 'weapon', job: 'yumi', tier: 4, atk: 24, price: 380 },
   yumi_w5: { name: '塗籠籐の弓', slot: 'weapon', job: 'yumi', tier: 5, atk: 33, price: 640 },
   yumi_w6: { name: '大弓', slot: 'weapon', job: 'yumi', tier: 6, atk: 44, price: 1000 },
+  yumi_w7: { name: '梓の大弓', slot: 'weapon', job: 'yumi', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   yumi_a1: { name: '鉢巻', slot: 'armor', job: 'yumi', tier: 1, def: 2, price: 15 },
   yumi_a2: { name: '射籠手', slot: 'armor', job: 'yumi', tier: 2, def: 6, price: 60 },
   yumi_a3: { name: '狩衣', slot: 'armor', job: 'yumi', tier: 3, def: 10, price: 150 },
   yumi_a4: { name: '革の胴', slot: 'armor', job: 'yumi', tier: 4, def: 15, price: 300 },
   yumi_a5: { name: '小札の鎧', slot: 'armor', job: 'yumi', tier: 5, def: 22, price: 520 },
   yumi_a6: { name: '大将の鎧', slot: 'armor', job: 'yumi', tier: 6, def: 30, price: 820 },
+  yumi_a7: { name: '緋縅の鎧', slot: 'armor', job: 'yumi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // miko
   miko_w0: { name: '大幣', slot: 'weapon', job: 'miko', tier: 0, atk: 2, price: 0 },
   miko_w1: { name: '神楽鈴', slot: 'weapon', job: 'miko', tier: 1, atk: 5, price: 30 },
@@ -99,12 +111,14 @@ export const EQUIP = {
   miko_w4: { name: '神鉾', slot: 'weapon', job: 'miko', tier: 4, atk: 24, price: 380 },
   miko_w5: { name: '長巻', slot: 'weapon', job: 'miko', tier: 5, atk: 33, price: 640 },
   miko_w6: { name: '天の沼矛', slot: 'weapon', job: 'miko', tier: 6, atk: 44, price: 1000 },
+  miko_w7: { name: '神楽の鉾', slot: 'weapon', job: 'miko', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   miko_a1: { name: '白衣', slot: 'armor', job: 'miko', tier: 1, def: 2, price: 15 },
   miko_a2: { name: '緋袴', slot: 'armor', job: 'miko', tier: 2, def: 6, price: 60 },
   miko_a3: { name: '千早', slot: 'armor', job: 'miko', tier: 3, def: 10, price: 150 },
   miko_a4: { name: '錦の千早', slot: 'armor', job: 'miko', tier: 4, def: 15, price: 300 },
   miko_a5: { name: '天冠と千早', slot: 'armor', job: 'miko', tier: 5, def: 22, price: 520 },
   miko_a6: { name: '神衣', slot: 'armor', job: 'miko', tier: 6, def: 30, price: 820 },
+  miko_a7: { name: '白妙の神衣', slot: 'armor', job: 'miko', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // onmyo
   onmyo_w0: { name: '木の笏', slot: 'weapon', job: 'onmyo', tier: 0, atk: 2, price: 0 },
   onmyo_w1: { name: '桃の木の杖', slot: 'weapon', job: 'onmyo', tier: 1, atk: 5, price: 30 },
@@ -113,12 +127,14 @@ export const EQUIP = {
   onmyo_w4: { name: '陰陽の杖', slot: 'weapon', job: 'onmyo', tier: 4, atk: 24, price: 380 },
   onmyo_w5: { name: '七星剣', slot: 'weapon', job: 'onmyo', tier: 5, atk: 33, price: 640 },
   onmyo_w6: { name: '天文の宝剣', slot: 'weapon', job: 'onmyo', tier: 6, atk: 44, price: 1000 },
+  onmyo_w7: { name: '北斗の宝剣', slot: 'weapon', job: 'onmyo', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   onmyo_a1: { name: '烏帽子', slot: 'armor', job: 'onmyo', tier: 1, def: 2, price: 15 },
   onmyo_a2: { name: '白の狩衣', slot: 'armor', job: 'onmyo', tier: 2, def: 6, price: 60 },
   onmyo_a3: { name: '星の狩衣', slot: 'armor', job: 'onmyo', tier: 3, def: 10, price: 150 },
   onmyo_a4: { name: '五芒星の衣', slot: 'armor', job: 'onmyo', tier: 4, def: 15, price: 300 },
   onmyo_a5: { name: '陰陽の装束', slot: 'armor', job: 'onmyo', tier: 5, def: 22, price: 520 },
   onmyo_a6: { name: '天文の装束', slot: 'armor', job: 'onmyo', tier: 6, def: 30, price: 820 },
+  onmyo_a7: { name: '星辰の装束', slot: 'armor', job: 'onmyo', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // kusushi
   kusushi_w0: { name: '薬の匙', slot: 'weapon', job: 'kusushi', tier: 0, atk: 2, price: 0 },
   kusushi_w1: { name: '乳棒', slot: 'weapon', job: 'kusushi', tier: 1, atk: 5, price: 30 },
@@ -127,12 +143,14 @@ export const EQUIP = {
   kusushi_w4: { name: '銀の針', slot: 'weapon', job: 'kusushi', tier: 4, atk: 24, price: 380 },
   kusushi_w5: { name: '薬師の杖', slot: 'weapon', job: 'kusushi', tier: 5, atk: 33, price: 640 },
   kusushi_w6: { name: '神農の杖', slot: 'weapon', job: 'kusushi', tier: 6, atk: 44, price: 1000 },
+  kusushi_w7: { name: '薬王の杖', slot: 'weapon', job: 'kusushi', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   kusushi_a1: { name: '手ぬぐい', slot: 'armor', job: 'kusushi', tier: 1, def: 2, price: 15 },
   kusushi_a2: { name: '前掛け', slot: 'armor', job: 'kusushi', tier: 2, def: 6, price: 60 },
   kusushi_a3: { name: '小袖', slot: 'armor', job: 'kusushi', tier: 3, def: 10, price: 150 },
   kusushi_a4: { name: '薬師の羽織', slot: 'armor', job: 'kusushi', tier: 4, def: 15, price: 300 },
   kusushi_a5: { name: '錦の羽織', slot: 'armor', job: 'kusushi', tier: 5, def: 22, price: 520 },
   kusushi_a6: { name: '神農の衣', slot: 'armor', job: 'kusushi', tier: 6, def: 30, price: 820 },
+  kusushi_a7: { name: '薬王の衣', slot: 'armor', job: 'kusushi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // yamabushi
   yamabushi_w0: { name: '山の杖', slot: 'weapon', job: 'yamabushi', tier: 0, atk: 2, price: 0 },
   yamabushi_w1: { name: '小錫杖', slot: 'weapon', job: 'yamabushi', tier: 1, atk: 5, price: 30 },
@@ -141,12 +159,14 @@ export const EQUIP = {
   yamabushi_w4: { name: '黒鉄の錫杖', slot: 'weapon', job: 'yamabushi', tier: 4, atk: 24, price: 380 },
   yamabushi_w5: { name: '銀の錫杖', slot: 'weapon', job: 'yamabushi', tier: 5, atk: 33, price: 640 },
   yamabushi_w6: { name: '金の錫杖', slot: 'weapon', job: 'yamabushi', tier: 6, atk: 44, price: 1000 },
+  yamabushi_w7: { name: '白金の錫杖', slot: 'weapon', job: 'yamabushi', tier: 7, atk: 57, price: 1500 }, // 4章 会津（10/6）
   yamabushi_a1: { name: '頭襟', slot: 'armor', job: 'yamabushi', tier: 1, def: 2, price: 15, icon: 'kasa' },
   yamabushi_a2: { name: '鈴懸', slot: 'armor', job: 'yamabushi', tier: 2, def: 6, price: 60 },
   yamabushi_a3: { name: '結袈裟', slot: 'armor', job: 'yamabushi', tier: 3, def: 10, price: 150 },
   yamabushi_a4: { name: '笈と鈴懸', slot: 'armor', job: 'yamabushi', tier: 4, def: 15, price: 300 },
   yamabushi_a5: { name: '引敷と鈴懸', slot: 'armor', job: 'yamabushi', tier: 5, def: 22, price: 520 },
   yamabushi_a6: { name: '大峰の装束', slot: 'armor', job: 'yamabushi', tier: 6, def: 30, price: 820 },
+  yamabushi_a7: { name: '羽黒の装束', slot: 'armor', job: 'yamabushi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
   // ---- だれでも着けられる物（景品の防具・お守り）
   mino: { name: '蓑', slot: 'armor', def: 6, price: 60 }, // 小名浜の釣りの景品（店では売らない）
   kachimori: { name: '勝守', slot: 'charm', atk: 2, price: 25 }, // 八幡さま＝武運の神さまと伝わる
@@ -245,9 +265,10 @@ export function gearBonus(equip) {
 const GEAR_AT = {
   1: [0, 0], 2: [0, 0], 3: [1, 0], 4: [1, 1], 5: [2, 1], 6: [2, 2], 7: [3, 2], 8: [4, 3], 9: [4, 4],
   10: [4, 4], 11: [5, 4], 12: [5, 4], 13: [5, 5], 14: [5, 5], 15: [5, 5], 16: [6, 5], 17: [6, 6], 18: [6, 6], 19: [6, 6], 20: [6, 6],
+  21: [7, 6], 22: [7, 7], 23: [7, 7], 24: [7, 7], 25: [7, 7], // 4章 会津（10/6）＝猪苗代・若松で 7段目
 };
 export function expectEquipFor(lv, job) {
-  const [wt, at] = GEAR_AT[Math.min(20, Math.max(1, lv))];
+  const [wt, at] = GEAR_AT[Math.min(25, Math.max(1, lv))];
   return { weapon: EQUIP[`${job}_w${wt}`] ? `${job}_w${wt}` : null, armor: at ? `${job}_a${at}` : null, charm: null };
 }
 // その旅の4人ぶん（id → 装備）

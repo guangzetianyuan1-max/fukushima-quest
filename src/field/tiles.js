@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=189';
+import { makeRng } from '../battle/rules.js?v=190';
 
 export const TILE = 16;
 
@@ -101,6 +101,11 @@ export const FIELD_TERRAIN = {
   c: ['town_yumoto', true], x: ['town_yumoto', true], u: ['town_yumoto', true], y: ['town_yumoto', true], i: ['town_yumoto', true],
   g: ['town_taira', true], s: ['town_taira', true], v: ['town_taira', true], m: ['boss', true], n: ['boss', true], q: ['boss', true], a: ['grass', true],
   '(': ['mist', false], ')': ['mist', false], '[': ['mist', false], ']': ['mist', false], '{': ['mist', false], '}': ['mist', false], '<': ['mist', false], '>': ['mist', false],
+  // 10/6 4章 会津（漢字1字＝英字と記号は 使い切った）：関＝3章⇔会津の口・峠＝3章の西の もや（清姫＋3章の技）・苗／若／津＝猪苗代／会津若松／柳津の町
+  //   亀／猫／足／朱／牛／河／狐／沼＝亀姫／猫魔ヶ岳の化け猫／手長足長／朱の盤／赤べこ／河童の恩返し／母子狐／沼御前・一〜七＝もやの壁
+  関: ['road', true], 峠: ['mist', false], 苗: ['town_yumoto', true], 若: ['town_taira', true], 津: ['town_taira', true],
+  亀: ['boss', true], 猫: ['boss', true], 足: ['boss', true], 朱: ['boss', true], 牛: ['boss', true], 河: ['boss', true], 狐: ['boss', true], 沼: ['boss', true],
+  一: ['mist', false], 二: ['mist', false], 三: ['mist', false], 四: ['mist', false], 五: ['mist', false], 六: ['mist', false], 七: ['mist', false],
 };
 export const TOWN_TERRAIN = {
   '.': ['grass', true], '=': ['stone', true], ',': ['sand', true], '#': ['wall', false], _: ['floor', true],

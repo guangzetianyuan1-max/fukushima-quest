@@ -1,31 +1,32 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=189';
-import { kanbanAt } from './kanban.js?v=189';
-import { SOMA_ROWS } from './soma_map.js?v=189';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=189';
-import { KENCHU_ROWS } from './kenchu_map.js?v=189';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=189';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=189';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=189';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=189';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=189';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=189';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=189';
-import { becomeKunoichi } from './kagewatari.js?v=189';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=189';
+import { IWAKI_ROWS } from './iwaki_map.js?v=190';
+import { kanbanAt } from './kanban.js?v=190';
+import { SOMA_ROWS } from './soma_map.js?v=190';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=190';
+import { KENCHU_ROWS } from './kenchu_map.js?v=190';
+import { AIZU_ROWS } from './aizu_map.js?v=190';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=190';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=190';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=190';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=190';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=190';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=190';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=190';
+import { becomeKunoichi } from './kagewatari.js?v=190';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=190';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
 
 // 地図の字 → ボス（episodes.js の enemy.id）と、もやの壁 → 晴れる条件
-export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora', A: 'amekai', F: 'gobou', C: 'mukade', V: 'heppiri', B: 'onibaba', h: 'jakotsu', m: 'miharugoma', d: 'otakimaru', n: 'nekonaki', t: 'tengu', q: 'takuzen', p: 'kappa', z: 'kiyohime' }; // A〜B＝2章 県北（10/4）・h〜z＝3章 県中・県南（10/4）
-export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan', 4: 'ryuto', 5: 'zarukaburi', 6: 'daihisan', 7: 'tenaga', 8: 'sumitora', 9: 'amekai', 0: 'gobou', '%': 'mukade', '&': 'heppiri', '(': 'onibaba', ')': 'jakotsu', '[': 'otakimaru', ']': 'tengu', '{': 'kappa', '}': 'miharugoma', '<': 'nekonaki', '>': 'takuzen' }; // 8〜＝2章 県北（10/4）・(〜＝3章 県中・県南（}<>＝10/4 本人「戦わない3話を戦う形で」「もやで」）
+export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora', A: 'amekai', F: 'gobou', C: 'mukade', V: 'heppiri', B: 'onibaba', h: 'jakotsu', m: 'miharugoma', d: 'otakimaru', n: 'nekonaki', t: 'tengu', q: 'takuzen', p: 'kappa', z: 'kiyohime', 亀: 'kamehime', 猫: 'nekoma', 足: 'ashinaga', 朱: 'shunobon', 牛: 'akabeko', 河: 'nawakappa', 狐: 'okon', 沼: 'numagozen' }; // 亀〜沼＝4章 会津（10/6・漢字1字） // A〜B＝2章 県北（10/4）・h〜z＝3章 県中・県南（10/4）
+export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan', 4: 'ryuto', 5: 'zarukaburi', 6: 'daihisan', 7: 'tenaga', 8: 'sumitora', 9: 'amekai', 0: 'gobou', '%': 'mukade', '&': 'heppiri', '(': 'onibaba', ')': 'jakotsu', '[': 'otakimaru', ']': 'tengu', '{': 'kappa', '}': 'miharugoma', '<': 'nekonaki', '>': 'takuzen', 峠: 'kiyohime', 一: 'kamehime', 二: 'nekoma', 三: 'ashinaga', 四: 'shunobon', 五: 'akabeko', 六: 'nawakappa', 七: 'okon' }; // 峠＝4章 会津への もや（10/6） // 8〜＝2章 県北（10/4）・(〜＝3章 県中・県南（}<>＝10/4 本人「戦わない3話を戦う形で」「もやで」）
 // 元に戻すと 道が現れるマス（本人 10/3「序章の龍燈の龍を倒したら、相馬への道を繋げて欲しい。現在は草原なので、わかりずらい」）＝それまでは草原・通れるのは同じ
 export const ROAD_OPENED_BY = { r: 'ryuto' };
 
 // 歩く地図（10/3 1章〜）：field＝いわき（序章）・soma＝相馬（1章）・kenpoku＝県北（2章・10/4）。口の字で行き来する
-export const FIELDS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS }; // kenchu＝県中・県南（3章・10/4）
+export const FIELDS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS }; // kenchu＝県中・県南（3章・10/4）・aizu＝会津（4章・10/6）
 export const isField = (map) => Object.hasOwn(FIELDS, map);
 // 口：地図ごと・字ごとに、行き先と「出た先は口の1歩内側」の向き
 //   E＝いわきの北の端 ⇔ 相馬の南の端／X＝相馬の西の端（虎捕山の先）⇔ 県北の東の端（霊山）
@@ -33,7 +34,8 @@ const EXITS = {
   field: { E: { to: 'soma', dx: 0, dy: -1, dir: 'up' } },
   soma: { E: { to: 'field', dx: 0, dy: 1, dir: 'down' }, X: { to: 'kenpoku', dx: -1, dy: 0, dir: 'left' } },
   kenpoku: { X: { to: 'soma', dx: 1, dy: 0, dir: 'right' }, I: { to: 'kenchu', dx: 0, dy: 1, dir: 'down' } },
-  kenchu: { I: { to: 'kenpoku', dx: 0, dy: -1, dir: 'up' } }, // I＝二本松の南（鬼婆を戻すと開く）⇔ 県中・県南の北の端
+  kenchu: { I: { to: 'kenpoku', dx: 0, dy: -1, dir: 'up' }, 関: { to: 'aizu', dx: -1, dy: 0, dir: 'left' } }, // I＝二本松の南（鬼婆を戻すと開く）⇔ 県中・県南の北の端・関＝白河の西の甲子峠 ⇔ 会津の東の端（10/6）
+  aizu: { 関: { to: 'kenchu', dx: 1, dy: 0, dir: 'right' } },
 };
 
 // 仲間の強さ＝レベルで決まる（src/battle/levels.js）。PARTY_BASE はレベル1の強さ
@@ -132,12 +134,13 @@ export function wallOpen(game, ch) {
   return !!game.cleared[WALL_OPENED_BY[ch]] && (!WALL_NEEDS_SKILLS[ch] || chapterSkillsDone(game, WALL_NEEDS_SKILLS[ch]));
 }
 // 章の出口（本人 10/5「4人とも その章の技を習うまで通さない」）＝壁の字 → 章。8＝1章の出口（相馬→県北）。2章・3章の出口は段階②③で足す
-export const WALL_NEEDS_SKILLS = { 8: 1, '(': 2 }; // '('＝2章の出口（県北→県中・鬼婆で晴れる・10/5 夜 段階②）
+export const WALL_NEEDS_SKILLS = { 8: 1, '(': 2, 峠: 3 }; // 峠＝3章の出口（白河の西→会津・10/6） // '('＝2章の出口（県北→県中・鬼婆で晴れる・10/5 夜 段階②）
 export const WALL_NEEDS_FLAG = {}; // 前の形（武士・くノ一の印）の名残
 // ボスは戻したが、その章の技を まだ習っていない人がいるときに ぶつかると出る言葉（関所の番人）
 export const WALL_QUEST_LINES = {
   8: ['西の 口の 番人「待たれよ。相馬と 小高の 師匠に 技を 認められた 者しか、県北へは 通せぬ。」', 'しおり「4人とも、師匠の 試しを 受けましょう。」'],
   '(': ['南の 口の 番人「待たれよ。福島と 二本松の 師匠に 技を 認められた 者しか、県中へは 通せぬ。」', 'しおり「4人とも、師匠の 試しを 受けましょう。」'],
+  峠: ['甲子峠の 番人「待たれよ。県中・県南の 温泉の 師匠に 技を 認められた 者しか、会津へは 通せぬ。」', 'しおり「4人とも、温泉の 師匠の 試しを 受けましょう。」'],
 };
 // その章の技を まだ習っていない人（番人の言葉に 名前を出す）
 export function missingSkills(game, ch) {
@@ -161,7 +164,7 @@ const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', n
 // そのマスへ歩けるか（町の人の立つマスは画面の側で見る）
 // ⭐屋根のマス（10/5 夜 本人「町や城で、屋根の上に乗るのは辞めて」）＝町の建物の絵（props）の はみ出し
 // 歩く地図の城（look.js が shiro を置く字）の真上は止めない（本人「上から二本松城に入れない」）＝FieldScene が 真上に立つ間だけ 城の絵を人の手前に重ねる
-export const CASTLE_CHARS = ['H', 'M', 'W', 'v'];
+export const CASTLE_CHARS = ['H', 'M', 'W', 'v', '若']; // 若＝会津若松（鶴ヶ城の城下・10/6）
 export const ROOFS = Object.fromEntries(Object.entries(TOWNS).map(([id, t]) => [id, roofCells(t.props)]));
 
 export function canWalk(game, map, x, y) {
@@ -400,7 +403,7 @@ function settle(game, state) {
 
 // 勝った：ボスを元に戻した印・残った道具・HP（力つきた仲間は幽霊のまま）
 // ボスを元に戻したお礼の文（本人 10/2「ボスを倒した際は、お金を多めに出して。ここでは50文」＝松川様50・あとは順に増やす＝Claudeの決め）
-export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 150, daihisan: 170, tenaga: 190, sumitora: 240, amekai: 280, gobou: 300, mukade: 360, heppiri: 380, onibaba: 500, jakotsu: 540, miharugoma: 560, otakimaru: 620, nekonaki: 640, tengu: 700, takuzen: 720, kappa: 780, kiyohime: 1000 }; // 3章（10/4） // 1章は順に多め（Claudeの決め）・ザルカブリは10/4から戦う（本人）
+export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 150, daihisan: 170, tenaga: 190, sumitora: 240, amekai: 280, gobou: 300, mukade: 360, heppiri: 380, onibaba: 500, jakotsu: 540, miharugoma: 560, otakimaru: 620, nekonaki: 640, tengu: 700, takuzen: 720, kappa: 780, kiyohime: 1000, kamehime: 1050, nekoma: 1100, ashinaga: 1150, shunobon: 1200, akabeko: 1250, nawakappa: 1300, okon: 1350, numagozen: 1600 }; // 4章（10/6） // 3章（10/4） // 1章は順に多め（Claudeの決め）・ザルカブリは10/4から戦う（本人）
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
 export function afterWin(game, enemyId, state) {
@@ -475,8 +478,8 @@ export function encounterAt(game, map, x, y, rng) {
 }
 
 // 章の地図と、その章のボス（元に戻した数で 出てくる雑魚の強さの上限が上がる）
-export const CHAPTER_OF_MAP = { soma: 1, kenpoku: 2, kenchu: 3 };
-export const CHAPTER_BOSSES = { 1: ['zarukaburi', 'daihisan', 'tenaga', 'sumitora'], 2: ['amekai', 'gobou', 'mukade', 'heppiri', 'onibaba'], 3: ['jakotsu', 'miharugoma', 'otakimaru', 'nekonaki', 'tengu', 'takuzen', 'kappa', 'kiyohime'] };
+export const CHAPTER_OF_MAP = { soma: 1, kenpoku: 2, kenchu: 3, aizu: 4 };
+export const CHAPTER_BOSSES = { 1: ['zarukaburi', 'daihisan', 'tenaga', 'sumitora'], 2: ['amekai', 'gobou', 'mukade', 'heppiri', 'onibaba'], 3: ['jakotsu', 'miharugoma', 'otakimaru', 'nekonaki', 'tengu', 'takuzen', 'kappa', 'kiyohime'], 4: ['kamehime', 'nekoma', 'ashinaga', 'shunobon', 'akabeko', 'nawakappa', 'okon', 'numagozen'] };
 // 出てくる雑魚：tier が 上限（はじめ4・ボス1体ごとに+2・最大10）以下で、上限より7つ以上は下でない物＝弱い物は だんだん出なくなる
 export function chapterPool(game, chapter) {
   // その章の10体の絵が そろうまでは 使わない（1体だけ届いた所で その1体ばかり出た＝10/4 海坊主）
@@ -498,9 +501,9 @@ export function walkStep(game) {
 
 // 道中の戦いの話のデータ（ボスの話と同じ形にして、戦いの画面を使い回す）
 // 帯ごとの専用の背景（Gemini・2026-10-02。それまではボスの背景を借りていた）
-export const ZONE_BG = { ...Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`])), soma: 'assets/bg_dochu_north.png', kenpoku: 'assets/bg_dochu_north.png', kenchu: 'assets/bg_dochu_midNorth.png' };
+export const ZONE_BG = { ...Object.fromEntries(['south', 'midSouth', 'midNorth', 'north'].map((z) => [z, `assets/bg_dochu_${z}.png`])), soma: 'assets/bg_dochu_north.png', kenpoku: 'assets/bg_dochu_north.png', kenchu: 'assets/bg_dochu_midNorth.png', aizu: 'assets/bg_dochu_north.png' }; // aizu＝4章（背景の絵が届くまで 借りる）
 // 帯ごとの強さの倍率（1章の相馬・HP／攻／守を別々に・もらう経験と文も多め）
-export const ZONE_SCALE = { soma: { hp: 6, atk: 3.4, def: 3, reward: 2.5 }, kenpoku: { hp: 9, atk: 4.6, def: 4.2, reward: 3.6 }, kenchu: { hp: 15, atk: 7.0, def: 5.4, reward: 4.7 } }; // kenchu＝10/4 夜 通しの調整で 12/5.8/5.4→15/7.0/5.4（くノ一が加わり Lv15で1戦1.9T・HP減4%と易しすぎた→2.3T・9%＝tests/_zako_chapter.mjs） // kenpoku＝10/4 仮（2章のボスの試算のあとで合わせる） // 10/3 試算：1.5倍ではLv6の4人が1ターンで倒した＝この倍率で1戦2〜3ターン・HP約1割減（いわきの道中と同じ手ごたえ）
+export const ZONE_SCALE = { soma: { hp: 6, atk: 3.4, def: 3, reward: 2.5 }, kenpoku: { hp: 9, atk: 4.6, def: 4.2, reward: 3.6 }, kenchu: { hp: 15, atk: 7.0, def: 5.4, reward: 4.7 }, aizu: { hp: 21, atk: 9.4, def: 7.2, reward: 6.2 } }; // aizu＝4章（仮・ボスの試算の あとで 合わせる） // kenchu＝10/4 夜 通しの調整で 12/5.8/5.4→15/7.0/5.4（くノ一が加わり Lv15で1戦1.9T・HP減4%と易しすぎた→2.3T・9%＝tests/_zako_chapter.mjs） // kenpoku＝10/4 仮（2章のボスの試算のあとで合わせる） // 10/3 試算：1.5倍ではLv6の4人が1ターンで倒した＝この倍率で1戦2〜3ターン・HP約1割減（いわきの道中と同じ手ごたえ）
 export const HARAI = {
   name: '祓いの言葉', cost: 4, power: 14, weakMult: 1, plainMult: 1,
   weakText: '祓いの 言葉が もやを 打った！', plainText: '祓いの 言葉が もやを 打った！',
@@ -516,7 +519,7 @@ export function zakoData(game, zakoId, zone) {
     enemy: {
       id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone] ?? {}; return { hp: Math.round(z.hp * (k.hp ?? 1)), atk: Math.round(z.atk * (k.atk ?? 1)), def: Math.round(z.def * (k.def ?? 1)) }; })(), agi: z.agi,
       rewardRate: ZONE_SCALE[zone]?.reward ?? 1,
-      bgm: { soma: 'somaBattle', kenpoku: 'kenpokuBattle', kenchu: 'kenchuBattle' }[zone], // 1章の道中の曲（10/3「章ごとにBGMは新しく」） // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
+      bgm: { soma: 'somaBattle', kenpoku: 'kenpokuBattle', kenchu: 'kenchuBattle', aizu: 'aizuBattle' }[zone], // 1章の道中の曲（10/3「章ごとにBGMは新しく」） // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
       weakness: null, noWeak: true, canFlee: true, trick: z.trick ?? null, special: null,
       biteName: z.biteName, introText: z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,
       loseLines: ['旅の者たちは 力つきた……'],

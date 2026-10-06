@@ -2,46 +2,46 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=189';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=189';
-import { EPISODES } from '../data/episodes.js?v=189';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=189';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=189';
-import { RIDERS } from '../data/nomaoi_assets.js?v=189';
-import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=189';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=189';
-import { TILE } from '../field/tiles.js?v=189';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=189';
-import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=189';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=189';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=189';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=189';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=189';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=189';
+import { collection, PER_PAGE } from '../field/collection.js?v=190';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=190';
+import { EPISODES } from '../data/episodes.js?v=190';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=190';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=190';
+import { RIDERS } from '../data/nomaoi_assets.js?v=190';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=190';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=190';
+import { TILE } from '../field/tiles.js?v=190';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=190';
+import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=190';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=190';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=190';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=190';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=190';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=190';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=189';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=189';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=189';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=189';
-import { membersOf } from '../battle/levels.js?v=189';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=189';
-import { ICON_IDS } from '../data/icons.js?v=189';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=189';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=189';
-import { mapPointOf } from '../field/mapcard.js?v=189';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=189';
-import { makeRng } from '../battle/rules.js?v=189';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=189';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=189';
+} from '../field/game.js?v=190';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=190';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=190';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=190';
+import { membersOf } from '../battle/levels.js?v=190';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=190';
+import { ICON_IDS } from '../data/icons.js?v=190';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=190';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=190';
+import { mapPointOf } from '../field/mapcard.js?v=190';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=190';
+import { makeRng } from '../battle/rules.js?v=190';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=190';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=190';
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=189';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=189';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=189';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=189';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=190';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=190';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=190';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=190';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -134,13 +134,27 @@ const CLEARED_LINES = {
   tengu: ['西の 須賀川への 道の もやが 晴れたわ！', '須賀川の 町で 支度を しましょう。町の 東の 狸森に、ふしぎな お坊さまの 話が あるの。'],
   takuzen: ['天栄の 谷への もやが 晴れたわ！', '託善和尚さまが 教えてくれたわ。天栄の カッパは、石の 証文を いちばん こわがるって。'],
   kappa: ['南の 白河への 道の もやが 晴れたわ！', '白河の 町で 支度を しましょう。安珍堂に……おそろしい ものが 待っているの。'],
-  kiyohime: ['これで 県中と 県南の 昔話は みんな 元に もどったわ。', '3章「県中・県南」の 旅は ここまで。つづきは 準備中です。'],
+  kiyohime: ['これで 県中と 県南の 昔話は みんな 元に もどったわ。', '白河の 西、甲子峠を こえれば 会津よ。温泉の 師匠の 技を 4人とも 習ってから 行きましょう。'],
+  // 4章 会津（10/6）
+  kamehime: ['亀ヶ城の 北、猫魔ヶ岳への 道の もやが 晴れたわ！', '猫魔ヶ岳の 頂には、山の 主の 猫王が いると いうの。'],
+  nekoma: ['猫魔ヶ岳の 西、磐梯山への 道の もやが 晴れたわ！', '磐梯山の 頂に、手の 長い 人と 足の 長い 人が いるみたい。'],
+  ashinaga: ['磐梯山の 南、会津若松への 道の もやが 晴れたわ！', '若松は 鶴ヶ城の 城下町。支度を ととのえて、夜道には 気を つけて。'],
+  shunobon: ['若松の 南、柳津への 道の もやが 晴れたわ！', '柳津は 只見川の ほとりの 町。圓藏寺の 撫牛を 見に 行きましょう。'],
+  akabeko: ['只見川の 橋の もやが 晴れたわ！', '川の 向こうは 西会津。縄沢の 渕に、黒い うずが あるみたい。'],
+  nawakappa: ['芹沼への 道の もやが 晴れたわ！', '芹沼の 野には、三匹の 悪狐が いると いうの。'],
+  okon: ['南の 金山への 道の もやが 晴れたわ！', 'ここから 先は 雪の 国。沼沢湖に……湖の 主が 待っているの。'],
+  numagozen: ['これで 会津の 昔話は みんな 元に もどったわ。', '4章「会津」の 旅は ここまで。つづき（南会津）は 準備中です。'],
 };
 // いわきの北の口から 相馬へ入ったとき（1章の始まり）
 const CROSS_KENPOKU = [
   { text: '虎捕山を 越えて 西へ。ここから 2章「県北」。' },
   { speaker: 'しおり', text: '霊山の ふもとよ。夜に 飴を 買いに くる 女の 人の 話が 伝わっているの。' },
   { speaker: 'しおり', text: '県北の 敵は 相馬より もっと 強いわ。福島の 町で 支度を ととのえましょう。' },
+];
+const CROSS_AIZU = [
+  { text: '甲子峠を 西へ。ここから 4章「会津」。' },
+  { speaker: 'しおり', text: '会津は 紅葉の 季節ね。猪苗代湖の ほとりから、昔話を たずねて いきましょう。' },
+  { speaker: 'しおり', text: 'ここの 敵は 県中より もっと 強いわ。猪苗代の 町で 支度を ととのえましょう。' },
 ];
 const CROSS_KENCHU = [
   { text: '二本松を 南へ。ここから 3章「県中・県南」。' },
@@ -183,7 +197,7 @@ const NOMAOI_LINES = {
 };
 
 // 字体の読み込みに渡す、この画面の字
-export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, KANBAN.map((k) => [k.name, k.lines]), '立て札', WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, CROSS_KENCHU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
+export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, KANBAN.map((k) => [k.name, k.lines]), '立て札', WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, CROSS_KENCHU, CROSS_AIZU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
@@ -349,6 +363,7 @@ export class FieldScene extends Phaser.Scene {
       if (to === 'soma' && !this.g.cleared.sumitora) this.time.delayedCall(350, () => this.showMessages(CROSS_SOMA));
       if (to === 'kenpoku' && !this.g.cleared.onibaba) this.time.delayedCall(350, () => this.showMessages(CROSS_KENPOKU));
       if (to === 'kenchu' && !this.g.cleared.kiyohime) this.time.delayedCall(350, () => this.showMessages(CROSS_KENCHU));
+      if (to === 'aizu' && !this.g.cleared.numagozen) this.time.delayedCall(350, () => this.showMessages(CROSS_AIZU));
     } else if (this.g.justCleared) {
       const id = this.g.justCleared;
       // ボスを元に戻したあと、昔話の味方が加わる回はその台詞も続ける（afterWin が justJoined を付ける）
@@ -452,7 +467,7 @@ export class FieldScene extends Phaser.Scene {
   // 歩く地図の曲（本人 10/3「章ごとにBGMは新しく」）＝いわき（序章）は始まりの曲・相馬（1章）は somaField。町の中は その町のある地図の曲
   fieldBgm() {
     const map = isField(this.mapId) ? this.mapId : this.g.fieldMap ?? 'field';
-    return { soma: 'somaField', kenpoku: 'kenpokuField', kenchu: 'kenchuField' }[map] ?? 'title';
+    return { soma: 'somaField', kenpoku: 'kenpokuField', kenchu: 'kenchuField', aizu: 'aizuField' }[map] ?? 'title';
   }
 
   // ---- 町に入った瞬間の一枚絵（1.3秒・さわると飛ばす）----
@@ -657,7 +672,7 @@ export class FieldScene extends Phaser.Scene {
     // 作り直しで消えた札の字（scene が無い）には触らない。⛔isActive() で見ると、場面を始め直した直後（create の中）も止まって見えて札が空のままだった（10/2）
     if (!this.statusText?.scene) return;
     const p = this.g.party;
-    const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬', kenpoku: '県北', kenchu: '県中' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
+    const place = this.town ? this.town.name : { field: 'いわき', soma: '相馬', kenpoku: '県北', kenchu: '県中', aizu: '会津' }[this.mapId] ?? ''; // 10/3 1章の地図「相馬」
     // 2人ずつ1行（4人なら2行）・いちばん下の行に Lv と場所（右に所持金）
     // ⭐本人 10/4「憑依されると…分かりにくい。HPを赤字に」＝1人ずつ 名前（白）・印（色つき：憑＝赤／呪＝紫／霊＝水色）・HP（憑依は赤）・術 を別の字で並べる
     const ids = membersOf(this.g);
