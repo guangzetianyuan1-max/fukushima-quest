@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=211'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=212'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -471,6 +471,7 @@ export const TOWNS = {
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['柳津の 道具屋で ございます。'] },
       { spot: 'akabeko', look: 'machibito', lines: ['柳津は「赤べこ 発祥の 地」と いわれるんだ。'] },
       { spot: 'm1', look: 'toshiyori', lines: ['圓藏寺は、むかし 徳一と いう お坊さんが ひらいたと 伝わる 寺じゃ。'] },
+      { spot: 'hadaka', look: 'yakunin', role: 'hadaka', lines: ['七日堂の 世話役だ。毎年 一月七日の 夜、合図の 鐘で 男衆が 百十三段の 石段を 駆け上がる。', '世話役「本堂の 鰐口から 下がる 麻縄を よじ登って、一年の 無病息災を 願うんだ。」'] }, // 10/7 七日堂裸まいり（縄のぼり）
       { spot: 'm2', look: 'musume', lines: ['境内の 撫牛を なでると、福が くると いわれているの。'] },
       { spot: 'm3', look: 'kodomo', lines: ['大きな 地震の あと、赤い 毛の 牛の 群れが 材木を 運んだんだって。'] },
     ],
@@ -1027,7 +1028,7 @@ export const TOWN_LAYOUTS = {
       {"img": "kusuriya", "x": 1, "y": 12, "w": 4, "h": 3},
       {"img": "hokora", "x": 8, "y": 12, "w": 3, "h": 3},
     ],
-    spots: {"chaya": {"x": 2, "y": 7}, "yado": {"x": 9, "y": 7}, "dougu": {"x": 2, "y": 14}, "temple": {"x": 8, "y": 3}, "guide": {"x": 7, "y": 16}, "m1": {"x": 4, "y": 9}, "m2": {"x": 10, "y": 9}, "m3": {"x": 2, "y": 16}, "akabeko": {"x": 11, "y": 8}},
+    spots: {"chaya": {"x": 2, "y": 7}, "yado": {"x": 9, "y": 7}, "dougu": {"x": 2, "y": 14}, "temple": {"x": 8, "y": 3}, "hadaka": {"x": 5, "y": 4}, "guide": {"x": 7, "y": 16}, "m1": {"x": 4, "y": 9}, "m2": {"x": 10, "y": 9}, "m3": {"x": 2, "y": 16}, "akabeko": {"x": 11, "y": 8}},
   },
   iizaka: {
     entry: {"x": 4, "y": 14},

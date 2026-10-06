@@ -212,6 +212,12 @@ const SFX = {
   select: (t) => tone(N(84), t, 0.05, { vol: 0.18 }),
   attack: (t) => noise(t, 0.12, { vol: 0.35, from: 6000, to: 800 }),
   hit: (t) => tone(N(52), t, 0.16, { vol: 0.35, slideTo: N(40) }),
+  // 鰐口の 鐘「ゴーン」（10/7 七日堂裸まいり・縄のぼりで 鰐口に 届いたとき）
+  gong: (t) => {
+    tone(N(43), t, 1.4, { type: 'triangle', vol: 0.42 });
+    tone(N(50), t + 0.01, 1.1, { type: 'triangle', vol: 0.18 });
+    tone(N(55), t + 0.02, 0.8, { type: 'triangle', vol: 0.12 });
+  },
   // 判子「トン」（10/6 夜 本人「『祓』と効果音つきで」）＝紙を打つ短い雑音＋木の低い音＋小さな鈴2つ
   hanko: (t) => {
     noise(t, 0.04, { vol: 0.5, from: 3000, to: 600 });

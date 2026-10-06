@@ -2,49 +2,51 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=211';
-import { stampOnsen, stampGourmet, lordTalk, rallyKeys, hasStamp, stampCount, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=211';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=211';
-import { EPISODES } from '../data/episodes.js?v=211';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=211';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=211';
-import { RIDERS } from '../data/nomaoi_assets.js?v=211';
-import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=211';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=211';
-import { TILE } from '../field/tiles.js?v=211';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=211';
-import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=211';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=211';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=211';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=211';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=211';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=211';
+import { collection, PER_PAGE } from '../field/collection.js?v=212';
+import { stampOnsen, stampGourmet, lordTalk, rallyKeys, hasStamp, stampCount, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=212';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=212';
+import { EPISODES } from '../data/episodes.js?v=212';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=212';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=212';
+import { RIDERS } from '../data/nomaoi_assets.js?v=212';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=212';
+import { HADAKA_ART } from '../data/hadaka_assets.js?v=212';
+import { newRound as newHadaka, grab as grabRope, heightAt as ropeHeight, roundDone as hadakaDone, timeLeft as hadakaLeft, roundPts as hadakaPts, enterRound as enterHadaka, addRope, HADAKA_PRIZES, exchangeHadaka, ENTRY_PRICE as HADAKA_PRICE } from '../field/hadaka.js?v=212';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=212';
+import { TILE } from '../field/tiles.js?v=212';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=212';
+import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=212';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=212';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=212';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=212';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=212';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=212';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, slotKey, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=211';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=211';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=211';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=211';
-import { membersOf } from '../battle/levels.js?v=211';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=211';
-import { ICON_IDS } from '../data/icons.js?v=211';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=211';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=211';
-import { mapPointOf } from '../field/mapcard.js?v=211';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=211';
-import { makeRng } from '../battle/rules.js?v=211';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=211';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=211';
+} from '../field/game.js?v=212';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=212';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=212';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=212';
+import { membersOf } from '../battle/levels.js?v=212';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=212';
+import { ICON_IDS } from '../data/icons.js?v=212';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=212';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=212';
+import { mapPointOf } from '../field/mapcard.js?v=212';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=212';
+import { makeRng } from '../battle/rules.js?v=212';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=212';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=212';
 
 const STATUS_PAD = 96; // 上の札（4,4 から 高さ 16＋23×行）の下の端＋少し
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=211';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=211';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=211';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=211';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=212';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=212';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=212';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=212';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -52,6 +54,7 @@ const PRIZE_SHOPS = {
   fish: { key: 'fishPts', label: '釣り点', prizes: PRIZES, exchange, back: 'fishMenu', keeper: '釣り番' },
   flag: { key: 'flagPts', label: '旗点', prizes: FLAG_PRIZES, exchange: exchangeFlag, back: 'nomaoiMenu', keeper: '世話役' },
   taimatsu: { key: 'taimatsuPts', label: '松明点', prizes: TAIMATSU_PRIZES, exchange: exchangeTaimatsu, back: 'taimatsuMenu', keeper: '世話役' },
+  hadaka: { key: 'hadakaPts', label: '縄のぼり点', prizes: HADAKA_PRIZES, exchange: exchangeHadaka, back: 'hadakaMenu', keeper: '世話役' },
 };
 
 const W = 360;
@@ -220,6 +223,7 @@ const NOMAOI_LINES = {
 // 字体の読み込みに渡す、この画面の字
 export const FIELD_TEXT = JSON.stringify([WALL_HINT, TOWN_CARD_NAME, KANBAN.map((k) => [k.name, k.lines]), '立て札', WALL_QUEST_LINES, CHOCHIN_LINES, '提灯点よいまあそこまで灯した個太鼓台に乗る景品と換える', CLEARED_LINES, INTRO, CROSS_SOMA, CROSS_KENPOKU, CROSS_KENCHU, CROSS_AIZU, TOWNS, ITEMS, NOMAOI_LINES, FLAGS, CASTLE_RALLY, RELICS, RALLY_NAME, '：の判子をもらった！ぜんぶそろった授かったまだそろうと昔話温泉グルメお城「」よう来たそなたらの働き者はみな忘れぬぞ旅の者かひとつ頼みがあるおお果たしてくれたか礼を言うぞ'])
   + '装備中変わらない厄除け無しいまとくらべて右は品の強さ' // 10/3 装備の注記
+  + '縄のぼり点加わる左手右手を交互に！高さ段のこり秒ずり落ちた鰐口に届いた麻縄をのぼりきって手が一年の無病息災を願ったぶん七日堂世話役百十三石段駆け上がる本堂下がるよじ登って男衆合図鐘夜' // 10/7 縄のぼり
   + '神旗を追う旗点景品と換えるそこまで！取ったなかった金のもあった！のこり本点画面をおさえた方へ馬が走る花火が上がったら、旗の下へ！世話役陣羽織'
   + 'はなすどうぐ文HP旅の者しおりいわき何を買う？やめる買った！足りないようだ……お泊まりになりますか？はいいいえひと晩でございますお代がゆっくり湯につかってつかれがすっかりとれた！お参りして旅を記録しますか？記録を残した八幡さまは武運の神さまと伝わる端末では残せないとくに何もないみたい黒いもやが道をふさいでいるうずまいている食べた回復した使えない▼▲◀▶';
 
@@ -1292,6 +1296,7 @@ export class FieldScene extends Phaser.Scene {
     else if (n.role === 'master') this.masterTalk(n);
     else if (n.role === 'shinobi') this.shinobiTalk(n);
     else if (n.role === 'lord') this.lordMeet(); // お城の お殿様（10/6 お城クエスト）
+    else if (n.role === 'hadaka') this.showMessages(lines, () => this.hadakaMenu()); // 柳津の七日堂裸まいり（10/7）
     else if (n.role === 'onsen') this.showMessages(lines, () => this.onsenMenu(this.town?.name?.replace('温泉', '') ?? '温泉')); // 温泉地の 湯屋の 番台（10/5 夜 本人「温泉では回復もできるように」）
     else this.showMessages(lines);
   }
@@ -1841,6 +1846,116 @@ export class FieldScene extends Phaser.Scene {
     mark();
     showInfo();
     this.taimatsu = { r: () => r, tap, now, tick }; // 確かめ用の取っ手
+    t0 = this.time.now;
+    loop = this.time.addEvent({ delay: 16, loop: true, callback: tick });
+  }
+
+  // 七日堂裸まいり「縄のぼり」の選び（10/7 本人「アトラクションはもっと増やして」→ 柳津）
+  hadakaMenu() {
+    this.showMenu(`縄のぼり点 ${this.g.hadakaPts ?? 0}点（所持金 ${this.g.mon}文）`, [
+      [`縄のぼりに 加わる（${HADAKA_PRICE}文）`, () => this.startHadaka()],
+      ['景品と 換える', () => this.prizeMenu(null, 'hadaka')],
+      ['立ち去る', () => this.closeDialog()],
+    ]);
+  }
+
+  // 縄のぼりの画面：本堂の 鰐口から 麻縄。「左手」「右手」を 交互に さわって のぼる（同じ手を 続けると ずり落ちる・止めると 下がる）
+  startHadaka() {
+    const r0 = enterHadaka(this.g);
+    if (!r0.ok) {
+      this.showMessages([{ text: '文が 足りないようだ……' }], () => this.hadakaMenu());
+      return;
+    }
+    this.setGame(r0.game);
+    this.closeDialog();
+    this.busy = true;
+    stopBgm();
+    let r = newHadaka();
+    const box = this.add.container(0, 0);
+    this.addUi(box);
+    const art = HADAKA_ART && ['bg', 'climbL', 'climbR'].every((k) => this.textures.exists(`hadaka_${k}`));
+    const TOPY = 128; // 鰐口の すぐ下（のぼりきった所）
+    const FLOOR = 482; // 床（登る人が 下の 左手・右手の 札に かからない 高さ）
+    const ROPE_X = W / 2;
+    if (art) box.add(this.add.image(0, 0, 'hadaka_bg').setOrigin(0));
+    else {
+      // 絵が届くまで：夜の本堂（木の柱と梁）・鰐口・麻縄を 図形で
+      const bg = this.add.graphics();
+      bg.fillGradientStyle(0x1a0f08, 0x1a0f08, 0x3a2414, 0x3a2414, 1).fillRect(0, 0, W, 640);
+      bg.fillStyle(0x2a1a0e, 1).fillRect(24, 0, 22, 640).fillRect(W - 46, 0, 22, 640).fillRect(0, 34, W, 18);
+      bg.fillStyle(0x4a2e18, 1).fillRect(0, FLOOR + 8, W, 640 - FLOOR);
+      bg.fillStyle(0xd8b04a, 1).fillEllipse(ROPE_X, 82, 64, 40);
+      bg.fillStyle(0x6a4a1a, 1).fillEllipse(ROPE_X, 88, 26, 10);
+      bg.lineStyle(9, 0xc8a46a, 1).lineBetween(ROPE_X, 100, ROPE_X, FLOOR + 6);
+      bg.lineStyle(2, 0x8a6a3a, 1);
+      for (let y = 104; y < FLOOR; y += 12) bg.lineBetween(ROPE_X - 4, y, ROPE_X + 4, y + 6);
+      box.add(bg);
+    }
+    // のぼる人：絵が届くまでは 旅の者の 後ろ姿
+    const climber = art ? this.add.image(ROPE_X, FLOOR, 'hadaka_climbL').setOrigin(0.5, 0.15) : this.add.sprite(ROPE_X, FLOOR, 'p-tabi', frameOf('up', 0, 'tabi')).setOrigin(0.5, 0.3).setScale(2.2);
+    const say = this.add.text(W / 2, 168, '左手・右手を 交互に！', { fontFamily: FONT, fontSize: '19px', color: '#ffffff' }).setOrigin(0.5).setStroke('#1a1030', 5);
+    const info = this.add.text(W / 2, 200, '', { fontFamily: FONT, fontSize: '18px', color: '#ffe9a8' }).setOrigin(0.5).setStroke('#1a1030', 5);
+    const res = this.add.text(W / 2, 240, '', { fontFamily: FONT, fontSize: '26px', color: '#ffb040' }).setOrigin(0.5).setStroke('#1a1030', 6);
+    // 左手・右手の 札（画面の 左半分・右半分を さわっても 同じ）
+    const pad = (x, label) => {
+      const g = this.add.graphics();
+      g.fillStyle(0x2a2050, 0.85).fillRoundedRect(x - 72, 562, 144, 66, 14).lineStyle(3, 0xc9a24a, 1).strokeRoundedRect(x - 72, 562, 144, 66, 14);
+      const t = this.add.text(x, 595, label, { fontFamily: FONT, fontSize: '24px', color: '#ffffff' }).setOrigin(0.5);
+      return [g, t];
+    };
+    box.add([climber, say, info, res, ...pad(92, '左手'), ...pad(W - 92, '右手')]);
+    let t0 = this.time.now;
+    let loop = null;
+    const now = () => this.time.now - t0;
+    const yOf = (h) => FLOOR - (FLOOR - TOPY) * h;
+    const showInfo = () => info.setText(`高さ ${Math.round(ropeHeight(r, now()) * 113)}段　のこり ${Math.ceil(hadakaLeft(r, now()) / 1000)}秒`);
+    const tick = () => {
+      climber.y = yOf(ropeHeight(r, now()));
+      showInfo();
+      if (hadakaDone(r, now())) finish();
+    };
+    const tap = (side) => {
+      if (!loop) return;
+      const out = grabRope(r, side, now());
+      r = out.r;
+      if (art) climber.setTexture(side === 'L' ? 'hadaka_climbL' : 'hadaka_climbR');
+      else climber.setFrame(frameOf('up', side === 'L' ? 1 : 3, 'tabi'));
+      sfx(out.ok ? 'select' : 'damage');
+      if (!out.ok) {
+        res.setText('ずり落ちた！');
+        this.tweens.add({ targets: res, alpha: { from: 1, to: 0 }, duration: 600 });
+      }
+      if (out.top) {
+        sfx('gong');
+        res.setAlpha(1).setText('鰐口に 届いた！');
+        this.uiCam?.shake(220, 0.006);
+      }
+      tick();
+    };
+    const hit = this.add.zone(0, 0, W, 640).setOrigin(0).setInteractive();
+    hit.on('pointerdown', (p) => tap(p.x < W / 2 ? 'L' : 'R'));
+    box.add(hit);
+    const finish = () => {
+      if (!loop) return;
+      loop.remove(false);
+      loop = null;
+      hit.removeAllListeners();
+      const pts = hadakaPts(r);
+      this.setGame(addRope(this.g, r));
+      if (!r.top) sfx('select');
+      this.time.delayedCall(1200, () => {
+        box.destroy();
+        this.busy = false;
+        this.hadaka = null;
+        startBgm(this.fieldBgm());
+        this.showMessages([
+          { text: r.top ? '麻縄を のぼりきって、鰐口に 手が 届いた！ 一年の 無病息災を 願った。' : `麻縄を ${Math.round(r.best * 113)}段ぶん のぼった！` },
+          { text: `縄のぼり点を ${pts}点 もらった（いま ${this.g.hadakaPts ?? 0}点）。` },
+        ], () => this.hadakaMenu());
+      });
+    };
+    showInfo();
+    this.hadaka = { r: () => r, tap, now, tick }; // 確かめ用の取っ手
     t0 = this.time.now;
     loop = this.time.addEvent({ delay: 16, loop: true, callback: tick });
   }
