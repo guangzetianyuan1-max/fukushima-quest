@@ -1,8 +1,8 @@
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=191';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=191';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=191';
-import { load, SAVE_KEY } from '../field/game.js?v=191';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=191';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=192';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=192';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=192';
+import { load, SAVE_KEY } from '../field/game.js?v=192';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=192';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）

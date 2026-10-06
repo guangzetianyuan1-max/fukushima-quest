@@ -6,7 +6,7 @@
 // 弱点＝「主の名乗り」（どちらが主かと問うと、二匹は にらみあって ぶつかる）。明かされたあとは ときどき二匹が かみつきあう（helper の作りを使う）
 // 原典では人は関わらず相打ち＝紙芝居④で しおりが語る
 // 絵＝まだ（仮に道中のムカデの絵）。二匹を1枚に描く。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=191';
+import { BASIC_ITEMS } from './basic_items.js?v=192';
 
 export const MUKADE = {
   art: {
@@ -34,7 +34,7 @@ export const MUKADE = {
     autoWinTarget: 0.91,
     // 強さ＝試算（node tests/_autotune.mjs <id>・その話に着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 12,
-    hp: 900, atk: 56, def: 92, agi: 11, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp720 atk49） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す）
+    hp: 900, atk: 51, def: 92, agi: 11, // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp720 atk49） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す）
     bgm: 'mukade',
     weakness: 'nanori',
     // 2体同時（本人 10/4）：毎ターン 二匹とも動く。かみつく名前は 二匹それぞれ
@@ -46,8 +46,8 @@ export const MUKADE = {
       text: '大ムカデと 大オロチが、たがいに かみつきあった！',
     },
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '七曲りの 毒', chance: 0.22, power: 31, flash: [170, 120, 255], sfx: 'doku', cutin: 'assets/cutin/mukade_doku.png' },
-    special2: { name: '黒沼の 大水', chance: 0.14, power: 37, flash: [90, 140, 255], sfx: 'kuronuma', cutin: 'assets/cutin/mukade_oomizu.png' },
+    special: { name: '七曲りの 毒', chance: 0.22, power: 28, flash: [170, 120, 255], sfx: 'doku', cutin: 'assets/cutin/mukade_doku.png' },
+    special2: { name: '黒沼の 大水', chance: 0.14, power: 33, flash: [90, 140, 255], sfx: 'kuronuma', cutin: 'assets/cutin/mukade_oomizu.png' },
     biteName: 'かみつき',
     introText: '信夫山の 北の 坂から 大ムカデが、南の 黒沼から 大オロチが、同時に あらわれた！',
     tellLines: [
