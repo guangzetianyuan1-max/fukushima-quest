@@ -2,11 +2,11 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=197';
-import { SOMA_ROWS } from './soma_map.js?v=197';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=197';
-import { KENCHU_ROWS } from './kenchu_map.js?v=197';
-import { AIZU_ROWS } from './aizu_map.js?v=197';
+import { IWAKI_ROWS } from './iwaki_map.js?v=198';
+import { SOMA_ROWS } from './soma_map.js?v=198';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=198';
+import { KENCHU_ROWS } from './kenchu_map.js?v=198';
+import { AIZU_ROWS } from './aizu_map.js?v=198';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
@@ -40,7 +40,7 @@ export const KANBAN_DEFS = [
   { map: 'soma', near: 'E', kind: 'michi', name: 'この先 いわき', lines: ['南へ 行けば いわきの 里。'] },
   { map: 'soma', near: 'X', kind: 'michi', name: 'この先 県北', lines: ['西へ 山を こえれば 福島・二本松。'] },
   // 2章 県北
-  { map: 'kenpoku', near: 'U', kind: 'meisho', name: '信夫山', lines: ['福島の 町の なかに ある 山。'] },
+  { map: 'kenpoku', near: 'U', kind: 'meisho', name: '福島・信夫山', lines: ['福島の 町の なかに ある 山。'] },
   { map: 'kenpoku', near: 'W', kind: 'shiro', name: '二本松城跡（霞ヶ城）', lines: ['石垣の 残る 城あと。いまは 霞ヶ城公園。', '春は 桜の 名所。'] },
   { map: 'kenpoku', near: 'X', kind: 'michi', name: 'この先 相馬', lines: ['東へ 山を こえれば 相馬の 里。'] },
   { map: 'kenpoku', near: 'I', kind: 'michi', name: 'この先 郡山', lines: ['南へ 行けば 郡山・須賀川・白河。'] },
@@ -51,8 +51,13 @@ export const KANBAN_DEFS = [
   // 4章 会津（10/6・vault 2026-10-06 調べノートで 確かめた 事だけ）
   { map: 'kenchu', near: '関', kind: 'michi', name: 'この先 会津', lines: ['西へ 峠を こえれば 会津。'] },
   { map: 'aizu', near: '関', kind: 'michi', name: 'この先 白河', lines: ['東へ 峠を 下れば 白河。'] },
-  { map: 'aizu', near: '若', kind: 'shiro', name: '鶴ヶ城', lines: ['会津若松の 城。蒲生氏郷が 鶴ヶ城と 名づけたと 伝わる。'] },
+  { map: 'aizu', near: '若', kind: 'shiro', name: '会津若松・鶴ヶ城', lines: ['会津若松の 城。蒲生氏郷が 鶴ヶ城と 名づけたと 伝わる。'] },
   { map: 'aizu', near: '亀', kind: 'shiro', name: '亀ヶ城跡', lines: ['戦国の ころ、鶴ヶ城の 支城として 築かれた 城あと。いまは 桜と 紅葉の 名所。'] },
+  // 町の名前（10/6 本人「会津で町やお城の名前が表記されていない」）
+  { map: 'aizu', near: '苗', kind: 'meisho', name: '猪苗代', lines: ['猪苗代湖の 北の 町。'] },
+  { map: 'aizu', near: '津', kind: 'meisho', name: '柳津', lines: ['只見川の ほとりの 門前町。'] },
+  { map: 'kenchu', near: 'g', kind: 'meisho', name: '郡山', lines: ['県の まんなかの 町。'] },
+  { map: 'kenchu', near: 's', kind: 'meisho', name: '須賀川', lines: ['松明あかしの 町。'] },
   { map: 'aizu', at: [32, 24], kind: 'meisho', name: '猪苗代湖', lines: ['日本で 4番目に 広い 湖。「天鏡湖」とも よばれる。'] },
   { map: 'aizu', near: '足', kind: 'meisho', name: '磐梯山', lines: ['会津富士とも よばれる 山。むかしは「病悩山」と よばれたと 伝わる。'] },
   { map: 'aizu', near: '猫', kind: 'meisho', name: '猫魔ヶ岳', lines: ['猫又が すんでいたので 名が ついたと 伝わる 山。'] },
