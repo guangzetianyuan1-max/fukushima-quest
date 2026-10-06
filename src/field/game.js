@@ -1,23 +1,34 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=208';
-import { kanbanAt } from './kanban.js?v=208';
-import { SOMA_ROWS } from './soma_map.js?v=208';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=208';
-import { KENCHU_ROWS } from './kenchu_map.js?v=208';
-import { AIZU_ROWS } from './aizu_map.js?v=208';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=208';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=208';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=208';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=208';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=208';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=208';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=208';
-import { becomeKunoichi } from './kagewatari.js?v=208';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=208';
+import { IWAKI_ROWS } from './iwaki_map.js?v=209';
+import { kanbanAt } from './kanban.js?v=209';
+import { SOMA_ROWS } from './soma_map.js?v=209';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=209';
+import { KENCHU_ROWS } from './kenchu_map.js?v=209';
+import { AIZU_ROWS } from './aizu_map.js?v=209';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=209';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=209';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=209';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=209';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=209';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=209';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=209';
+import { becomeKunoichi } from './kagewatari.js?v=209';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=209';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
+// 記憶①〜③（10/7 本人「冒頭に『記憶①』～『記憶③』を。いろいろな組み合わせで楽しむため」）。①は前からの置き場＝今までの記録はそのまま①
+export const SLOT_COUNT = 3;
+export const slotKey = (n) => (n > 1 ? `${SAVE_KEY}-${n}` : SAVE_KEY);
+// 題の画面の札に出す ひと言（名前・職業・Lv・元に戻した主の数）。記録が無ければ null
+export function slotSummary(g) {
+  if (!g) return null;
+  const name = g.heroName || '旅の者';
+  const job = JOBS[g.jobs?.tabi]?.name ?? '';
+  const n = Object.keys(g.cleared ?? {}).length;
+  return `${name}（${job}）Lv${g.lv ?? 1}・主 ${n}体`;
+}
 
 // 地図の字 → ボス（episodes.js の enemy.id）と、もやの壁 → 晴れる条件
 export const BOSS_AT = { S: 'matsukawa', K: 'kashinuma', J: 'jagan', R: 'ryuto', Z: 'zarukaburi', D: 'daihisan', L: 'tenaga', G: 'sumitora', A: 'amekai', F: 'gobou', C: 'mukade', V: 'heppiri', B: 'onibaba', h: 'jakotsu', m: 'miharugoma', d: 'otakimaru', n: 'nekonaki', t: 'tengu', q: 'takuzen', p: 'kappa', z: 'kiyohime', 亀: 'kamehime', 猫: 'nekoma', 足: 'ashinaga', 朱: 'shunobon', 牛: 'akabeko', 河: 'nawakappa', 狐: 'okon', 沼: 'numagozen' }; // 亀〜沼＝4章 会津（10/6・漢字1字） // A〜B＝2章 県北（10/4）・h〜z＝3章 県中・県南（10/4）

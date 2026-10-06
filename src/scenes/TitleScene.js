@@ -1,8 +1,8 @@
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=208';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=208';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=208';
-import { load, SAVE_KEY } from '../field/game.js?v=208';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=208';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=209';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=209';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=209';
+import { load, SLOT_COUNT, slotKey, slotSummary } from '../field/game.js?v=209';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=209';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -69,13 +69,32 @@ export class TitleScene extends Phaser.Scene {
     title('福島昔話', 72, 58);
     title('クエストRPG', 136, 46);
 
-    // 記録があれば「つづきから」を押せる
-    try {
-      this.saved = load(localStorage.getItem(SAVE_KEY) ?? '');
-    } catch {
-      this.saved = null;
-    }
+    // 記憶①〜③（10/7 本人「いろいろな組み合わせで楽しむため」）＝3つの札。選んだ記憶で はじめる・つづける
+    const read = (n) => {
+      try {
+        return load(localStorage.getItem(slotKey(n)) ?? '');
+      } catch {
+        return null;
+      }
+    };
+    this.slots = Array.from({ length: SLOT_COUNT }, (_, i) => read(i + 1));
+    let last = 1;
+    try { last = Number(localStorage.getItem('fq-slot')) || 1; } catch { /* 残せない端末 */ }
+    this.slot = Math.min(Math.max(last, 1), SLOT_COUNT);
+    this.saved = this.slots[this.slot - 1];
     this.fresh = false;
+    this.confirmAt = null; // 記録のある記憶で「はじめから」＝もう一度 押して決める
+    const SL = { w: 304, h: 40, y0: 446, gap: 46 };
+    const MARK = ['①', '②', '③'];
+    this.slotUi = this.slots.map((g, i) => {
+      const cy = SL.y0 + i * SL.gap;
+      const win = makeWindow(this, W / 2 - SL.w / 2, cy - SL.h / 2, SL.w, SL.h);
+      const frame = this.add.graphics();
+      const label = this.add.text(W / 2 - SL.w / 2 + 14, cy, `記憶${MARK[i]}`, { fontFamily: DOT, fontSize: '17px', color: '#ffffff', resolution: 3 }).setOrigin(0, 0.5);
+      const sum = this.add.text(W / 2 - SL.w / 2 + 92, cy, slotSummary(g) ?? '― 空き ―', { fontFamily: DOT, fontSize: '14px', color: g ? '#ffffff' : '#8a8fa8', resolution: 3 }).setOrigin(0, 0.5);
+      if (sum.width > SL.w - 102) sum.setScale((SL.w - 102) / sum.width);
+      return { cy, win, frame, label, sum, hit: (x, y) => Math.abs(x - W / 2) <= SL.w / 2 && Math.abs(y - cy) <= SL.gap / 2 };
+    });
     // 2つの札（左＝はじめから・右＝つづきから）。親指で押しやすい大きさ
     const BTN = { w: 156, h: 50, y: 592 };
     const makeBtn = (cx, label, enabled) => {
@@ -85,8 +104,29 @@ export class TitleScene extends Phaser.Scene {
     };
     this.btns = { fresh: makeBtn(W / 2 - 84, 'はじめから', true), cont: makeBtn(W / 2 + 84, 'つづきから', !!this.saved) };
     // 記録がある時は「つづきから」をそっと光らせる（押す先の目印）
-    const glow = this.saved ? this.btns.cont.t : this.btns.fresh.t;
-    this.tweens.add({ targets: glow, alpha: 0.4, duration: 900, yoyo: true, repeat: -1 });
+    let glow = null;
+    const pickSlot = (n) => {
+      this.slot = n;
+      this.saved = this.slots[n - 1];
+      this.confirmAt = null;
+      try { localStorage.setItem('fq-slot', String(n)); } catch { /* 残せない端末 */ }
+      this.slotUi.forEach((s, i) => {
+        const on = i === n - 1;
+        s.win.setAlpha(on ? 1 : 0.55);
+        s.label.setColor(on ? '#ffd98a' : '#cfd3e6');
+        s.frame.clear();
+        if (on) s.frame.lineStyle(2, 0xffd98a, 1).strokeRoundedRect(W / 2 - SL.w / 2 + 2, s.cy - SL.h / 2 + 2, SL.w - 4, SL.h - 4, 6);
+      });
+      const c = this.btns.cont;
+      c.enabled = !!this.saved;
+      c.win.setAlpha(c.enabled ? 1 : 0.45);
+      c.t.setColor(c.enabled ? '#ffffff' : '#8a8fa8');
+      if (glow) { this.tweens.killTweensOf(glow); glow.setAlpha(1); }
+      glow = this.saved ? c.t : this.btns.fresh.t;
+      this.tweens.add({ targets: glow, alpha: 0.4, duration: 900, yoyo: true, repeat: -1 });
+      this.prompt?.setText('');
+    };
+    pickSlot(this.slot);
     this.prompt = this.add.text(W / 2, 628, '', { fontFamily: DOT, fontSize: '16px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
 
     this.stage = 0;
@@ -96,13 +136,14 @@ export class TitleScene extends Phaser.Scene {
       this.fresh = fresh;
       unlock();
       this.registry.set('started', true);
+      this.registry.set('slot', this.slot); // 地図の記録は この記憶へ
       startBgm('title');
       sfx('select');
       this.tweens.killTweensOf(glow);
       glow.setAlpha(1);
       const chosen = fresh ? this.btns.fresh : this.btns.cont;
       chosen.t.setColor('#ffd98a');
-      this.prompt.setText(fresh ? '旅に 出る……' : '旅の つづきへ……');
+      this.prompt.setText(`記憶${MARK[this.slot - 1]}：${fresh ? '旅に 出る……' : '旅の つづきへ……'}`);
       this.cameras.main.fadeOut(1200, 0, 0, 0); // 10/2 2.4秒→1.2秒（待たされて もう一度さわる人がいた）
       this.cameras.main.once('camerafadeoutcomplete', () => this.go());
       this.skipAt = this.time.now + 400; // 同じ指の二度押しで飛ばさない
@@ -111,9 +152,18 @@ export class TitleScene extends Phaser.Scene {
     const press = (x, y) => {
       if (this.stage === 1 && this.time.now >= this.skipAt) { this.go(); return; }
       if (this.stage !== 0) return;
+      // 記憶の札：さわると その記憶を選ぶ
+      const s = this.slotUi.findIndex((u) => u.hit(x, y));
+      if (s >= 0) { if (this.slot !== s + 1) { sfx('select'); pickSlot(s + 1); } return; }
+      // 記録のある記憶で「はじめから」＝1回目は知らせるだけ（同じ指の二度押し＝0.35秒以内は数えない）
+      const freshFor = (go) => {
+        if (!this.saved) return go();
+        if (this.confirmAt !== null && this.time.now - this.confirmAt > 350) return go();
+        if (this.confirmAt === null) { this.confirmAt = this.time.now; sfx('select'); this.prompt.setText(`もう一度 押すと 記憶${MARK[this.slot - 1]}を 上書き`); }
+      };
       // 2つの札の当たりは真ん中の1列で重なる＝近い方の札（同じ近さなら つづきから＝記録を捨てない向き・10/4 試運転）
       const nearCont = Math.abs(x - this.btns.cont.cx) <= Math.abs(x - this.btns.fresh.cx);
-      if (this.btns.fresh.hit(x, y) && !(this.btns.cont.enabled && nearCont && this.btns.cont.hit(x, y))) begin(true);
+      if (this.btns.fresh.hit(x, y) && !(this.btns.cont.enabled && nearCont && this.btns.cont.hit(x, y))) freshFor(() => begin(true));
       else if (this.btns.cont.enabled && this.btns.cont.hit(x, y)) begin(false);
       else if (this.btns.cont.hit(x, y)) this.prompt.setText('まだ 旅の 記録が ありません');
     };
