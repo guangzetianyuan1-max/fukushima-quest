@@ -1,20 +1,20 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=195';
-import { kanbanAt } from './kanban.js?v=195';
-import { SOMA_ROWS } from './soma_map.js?v=195';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=195';
-import { KENCHU_ROWS } from './kenchu_map.js?v=195';
-import { AIZU_ROWS } from './aizu_map.js?v=195';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=195';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=195';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=195';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=195';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=195';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=195';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=195';
-import { becomeKunoichi } from './kagewatari.js?v=195';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=195';
+import { IWAKI_ROWS } from './iwaki_map.js?v=196';
+import { kanbanAt } from './kanban.js?v=196';
+import { SOMA_ROWS } from './soma_map.js?v=196';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=196';
+import { KENCHU_ROWS } from './kenchu_map.js?v=196';
+import { AIZU_ROWS } from './aizu_map.js?v=196';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=196';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=196';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=196';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=196';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=196';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=196';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=196';
+import { becomeKunoichi } from './kagewatari.js?v=196';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=196';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -137,9 +137,11 @@ export function wallOpen(game, ch) {
 export const WALL_NEEDS_SKILLS = { 8: 1, '(': 2, 峠: 3, 七: 4 }; // 七＝金山への山（沼御前の手前・10/6 本人「沼御前の手前で必要」＝4人とも 会津の温泉で 4つ目の技） // 峠＝3章の出口（白河の西→会津・10/6） // '('＝2章の出口（県北→県中・鬼婆で晴れる・10/5 夜 段階②）
 // 技の要る壁の 向こう側（もう越えた側）＝そこに立つ人は 戻れる（10/6 本人「会津で閉じ込められた」＝v190・v191 で 七を 越えたあと、v192 から 4つ目の技が要る 決まりが入り、金山から 北の 温泉地へ 戻れなかった）
 const WALL_FAR = { 七: (pos, x, y) => pos.y > y }; // 七＝金山への山（横一列）。南が 向こう側
-export function onFarSide(game, map, ch, x, y) {
+export function onFarSide(game, map, ch, x, y, from = null) {
   const far = WALL_FAR[ch];
-  return !!far && game.pos?.map === map && far(game.pos, x, y);
+  if (!far) return false;
+  if (from) return far(from, x, y);
+  return game.pos?.map === map && far(game.pos, x, y);
 }
 export const WALL_NEEDS_FLAG = {}; // 前の形（武士・くノ一の印）の名残
 // ボスは戻したが、その章の技を まだ習っていない人がいるときに ぶつかると出る言葉（関所の番人）
@@ -174,11 +176,12 @@ const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', n
 export const CASTLE_CHARS = ['H', 'M', 'W', 'v', '若']; // 若＝会津若松（鶴ヶ城の城下・10/6）
 export const ROOFS = Object.fromEntries(Object.entries(TOWNS).map(([id, t]) => [id, roofCells(t.props)]));
 
-export function canWalk(game, map, x, y) {
+// from＝いま立っている所（画面の居場所。無ければ game.pos）＝技の要る壁の 向こう側から 戻れるかに使う
+export function canWalk(game, map, x, y, from = null) {
   const t = terrainAt(map, x, y);
   if (!t) return false;
   if (ROOFS[map]?.has(`${x},${y}`)) return false;
-  if (isField(map) && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch) || (!!game.cleared[WALL_OPENED_BY[t.ch]] && onFarSide(game, map, t.ch, x, y));
+  if (isField(map) && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch) || (!!game.cleared[WALL_OPENED_BY[t.ch]] && onFarSide(game, map, t.ch, x, y, from));
   return t.walk;
 }
 
