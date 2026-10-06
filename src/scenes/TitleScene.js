@@ -1,8 +1,8 @@
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=209';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=209';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=209';
-import { load, SLOT_COUNT, slotKey, slotSummary } from '../field/game.js?v=209';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=209';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=210';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=210';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=210';
+import { load, SLOT_COUNT, slotKey, slotSummary } from '../field/game.js?v=210';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=210';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -77,6 +77,9 @@ export class TitleScene extends Phaser.Scene {
         return null;
       }
     };
+    // ⛔10/7 本人「セーブして終了を押したら、フリーズ」＝2回目に開いた題の画面で、前の回の（消えた）知らせの字に setText して create が止まった
+    //   ＝前の回の部品は ここで 手放す（題の画面は 同じ遊びの中で 何度も 作り直される）
+    this.prompt = null;
     this.slots = Array.from({ length: SLOT_COUNT }, (_, i) => read(i + 1));
     let last = 1;
     try { last = Number(localStorage.getItem('fq-slot')) || 1; } catch { /* 残せない端末 */ }
