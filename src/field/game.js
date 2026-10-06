@@ -1,20 +1,20 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=194';
-import { kanbanAt } from './kanban.js?v=194';
-import { SOMA_ROWS } from './soma_map.js?v=194';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=194';
-import { KENCHU_ROWS } from './kenchu_map.js?v=194';
-import { AIZU_ROWS } from './aizu_map.js?v=194';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=194';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=194';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=194';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=194';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=194';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=194';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=194';
-import { becomeKunoichi } from './kagewatari.js?v=194';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=194';
+import { IWAKI_ROWS } from './iwaki_map.js?v=195';
+import { kanbanAt } from './kanban.js?v=195';
+import { SOMA_ROWS } from './soma_map.js?v=195';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=195';
+import { KENCHU_ROWS } from './kenchu_map.js?v=195';
+import { AIZU_ROWS } from './aizu_map.js?v=195';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=195';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=195';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=195';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=195';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=195';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=195';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=195';
+import { becomeKunoichi } from './kagewatari.js?v=195';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=195';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -135,12 +135,19 @@ export function wallOpen(game, ch) {
 }
 // 章の出口（本人 10/5「4人とも その章の技を習うまで通さない」）＝壁の字 → 章。8＝1章の出口（相馬→県北）。2章・3章の出口は段階②③で足す
 export const WALL_NEEDS_SKILLS = { 8: 1, '(': 2, 峠: 3, 七: 4 }; // 七＝金山への山（沼御前の手前・10/6 本人「沼御前の手前で必要」＝4人とも 会津の温泉で 4つ目の技） // 峠＝3章の出口（白河の西→会津・10/6） // '('＝2章の出口（県北→県中・鬼婆で晴れる・10/5 夜 段階②）
+// 技の要る壁の 向こう側（もう越えた側）＝そこに立つ人は 戻れる（10/6 本人「会津で閉じ込められた」＝v190・v191 で 七を 越えたあと、v192 から 4つ目の技が要る 決まりが入り、金山から 北の 温泉地へ 戻れなかった）
+const WALL_FAR = { 七: (pos, x, y) => pos.y > y }; // 七＝金山への山（横一列）。南が 向こう側
+export function onFarSide(game, map, ch, x, y) {
+  const far = WALL_FAR[ch];
+  return !!far && game.pos?.map === map && far(game.pos, x, y);
+}
 export const WALL_NEEDS_FLAG = {}; // 前の形（武士・くノ一の印）の名残
 // ボスは戻したが、その章の技を まだ習っていない人がいるときに ぶつかると出る言葉（関所の番人）
 export const WALL_QUEST_LINES = {
   8: ['西の 口の 番人「待たれよ。相馬と 小高の 師匠に 技を 認められた 者しか、県北へは 通せぬ。」', 'しおり「4人とも、師匠の 試しを 受けましょう。」'],
   '(': ['南の 口の 番人「待たれよ。福島と 二本松の 師匠に 技を 認められた 者しか、県中へは 通せぬ。」', 'しおり「4人とも、師匠の 試しを 受けましょう。」'],
   峠: ['甲子峠の 番人「待たれよ。県中・県南の 温泉の 師匠に 技を 認められた 者しか、会津へは 通せぬ。」', 'しおり「4人とも、温泉の 師匠の 試しを 受けましょう。」'],
+  七: ['金山への 山の 番人「待たれよ。会津の 温泉の 師匠に 技を 認められた 者しか、沼沢湖へは 通せぬ。」', 'しおり「4人とも、会津の 温泉の 師匠の 試しを 受けましょう。」'],
 };
 // その章の技を まだ習っていない人（番人の言葉に 名前を出す）
 export function missingSkills(game, ch) {
@@ -159,7 +166,7 @@ export function wallQuestLines(game, ch) {
   });
   return [base[0], `しおり「まだ 習っていないのは、${left.join('・')}よ。」`];
 }
-const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', nihonmatsu: '二本松', koriyama: '郡山', sukagawa: '須賀川', shirakawa: '白河', iizaka: '飯坂温泉', takayu: '高湯温泉', tsuchiyu: '土湯温泉', dake: '岳温泉', bandaiatami: '磐梯熱海温泉', bohata: '母畑温泉', nekonakiyu: '猫啼温泉', futamata: '二岐温泉', kashi: '甲子温泉' };
+const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', nihonmatsu: '二本松', koriyama: '郡山', sukagawa: '須賀川', shirakawa: '白河', iizaka: '飯坂温泉', takayu: '高湯温泉', tsuchiyu: '土湯温泉', dake: '岳温泉', bandaiatami: '磐梯熱海温泉', bohata: '母畑温泉', nekonakiyu: '猫啼温泉', futamata: '二岐温泉', kashi: '甲子温泉', nakanosawa: '中ノ沢温泉', higashiyama: '東山温泉', ashinomaki: '芦ノ牧温泉', nishiyama: '西山温泉', hayato: '早戸温泉' };
 
 // そのマスへ歩けるか（町の人の立つマスは画面の側で見る）
 // ⭐屋根のマス（10/5 夜 本人「町や城で、屋根の上に乗るのは辞めて」）＝町の建物の絵（props）の はみ出し
@@ -171,7 +178,7 @@ export function canWalk(game, map, x, y) {
   const t = terrainAt(map, x, y);
   if (!t) return false;
   if (ROOFS[map]?.has(`${x},${y}`)) return false;
-  if (isField(map) && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch);
+  if (isField(map) && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch) || (!!game.cleared[WALL_OPENED_BY[t.ch]] && onFarSide(game, map, t.ch, x, y));
   return t.walk;
 }
 
