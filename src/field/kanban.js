@@ -2,11 +2,11 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=196';
-import { SOMA_ROWS } from './soma_map.js?v=196';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=196';
-import { KENCHU_ROWS } from './kenchu_map.js?v=196';
-import { AIZU_ROWS } from './aizu_map.js?v=196';
+import { IWAKI_ROWS } from './iwaki_map.js?v=197';
+import { SOMA_ROWS } from './soma_map.js?v=197';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=197';
+import { KENCHU_ROWS } from './kenchu_map.js?v=197';
+import { AIZU_ROWS } from './aizu_map.js?v=197';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
@@ -28,7 +28,7 @@ export const KANBAN_DEFS = [
   { map: 'kenchu', near: 'y', kind: 'meisho', name: '二岐温泉', lines: ['二岐山の ふもとの 山の湯。'] },
   { map: 'kenchu', near: 'i', kind: 'meisho', name: '甲子温泉', lines: ['阿武隈川の 源の 近くの 山の湯。'] },
   // 序章 いわき
-  { map: 'field', near: 'H', kind: 'shiro', name: '磐城平城跡', lines: ['江戸時代、平藩の 城が あった所。'] },
+  { map: 'field', near: 'H', kind: 'shiro', name: '磐城平城', lines: ['江戸時代、平藩の 城。'] }, // 10/6 本人「平城跡の跡は消して、お城扱いに」
   { map: 'field', near: 'Y', kind: 'meisho', name: 'いわき湯本温泉', lines: ['古くから 知られた 湯の町。'] },
   { map: 'field', near: 'O', kind: 'meisho', name: '小名浜港', lines: ['いわきの 漁と 船の 港。'] },
   { map: 'field', at: [31, 26], kind: 'meisho', name: '塩屋埼灯台', lines: ['いわきの 岬に 立つ 白い 灯台。'] },

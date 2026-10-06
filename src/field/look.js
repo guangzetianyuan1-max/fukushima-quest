@@ -1,9 +1,9 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=196';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=196';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=196';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=197';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=197';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=197';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -114,7 +114,7 @@ export function fieldLook(game, ch, x, y, map = 'field') {
     case '^': return { ground: 'grass', objs: [mountainPiece(map, x, y)] };
     case 'N': return { ground: 'road', objs: ['sekisho'] };
     case 'H': return { ground: 'grass', objs: ['shiro'] };
-    case 'Y': return { ground: 'grass', objs: ['icon_yadoya'] };
+    case 'Y': return { ground: 'grass', objs: [ONSEN_ICON] }; // 湯本温泉（10/6 本人「いわき湯本温泉は温泉です。温泉マークに」）
     case 'O': return { ground: 'sand', objs: ['icon_mise'] };
     case 'Q': return { ground: 'grass', objs: ['icon_yadoya'] }; // 小高の町（10/3 1章）
     case 'M': return { ground: 'grass', objs: ['shiro'] }; // 相馬の町（中村城の城下・10/3 1章）
