@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=198'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=199'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -54,9 +54,10 @@ export const TOWNS = {
         '負けても、記録した 所から やり直せるんだ。ただし 文は 半分に なっちゃうけどね。',
       ] },
       // ⭐10/5 夜 本人「お城、城下町は大きいので、店を増やしてほしい」＝道具屋・宿・お城の番兵
-      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['yakusou', 'reisui'], lines: ['平の 道具屋で ございます。薬草と 霊水は 旅の おともに。'] },
+      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['yakusou', 'reisui', 'g_unikai'], lines: ['平の 道具屋で ございます。薬草と 霊水は 旅の おともに。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。平の 宿で ございます。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「この 奥は 平の お城だ。城の 中の 桜は 見て いって かまわんぞ。」'] },
+      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 平の お殿様（10/6 お城クエスト・src/field/rally.js）
     ],
   },
   yumoto: {
@@ -66,7 +67,7 @@ export const TOWNS = {
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「ここ 湯本の 湯宿で 休んでいってね。」', '湯めぐりの 案内人「県北には 飯坂・高湯・土湯・岳、県中には 磐梯熱海や 二岐の 温泉が あるのよ。」'] },
       { spot: 'temple', look: 'osho', role: 'temple', lines: ['湯本の 寺じゃ。迷うた 霊が 憑いたら、供養して 進ぜよう。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。湯本の いで湯の 宿で ございます。'] },
-      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['yakusou', 'reisui'], lines: ['道具屋で ございます。薬草は いかが？'] },
+      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['yakusou', 'reisui', 'g_manju'], lines: ['道具屋で ございます。薬草は いかが？'] },
       { spot: 'm1', look: 'machibito', lines: ['湯に つかると、旅の 疲れが すっかり とれるよ。'] },
       { spot: 'm2', look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
       // 湯本＝語りと術・もや・回復・呪い
@@ -82,6 +83,7 @@ export const TOWNS = {
         '術を 使うと「術の力」が へるんだよ。霊水を 飲むか、湯本の 宿に 泊まれば 満タンに なるよ。',
         '呪われたら 平の 八幡さまで お祓い、霊が 憑いたら この お寺で 供養だって。',
       ] },
+      { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['湯本の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] }, // 10/6 本人「いわき湯本温泉は温泉です」＝温泉めぐりの 1か所
     ],
   },
   onahama: {
@@ -89,7 +91,7 @@ export const TOWNS = {
     npcs: [
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「港の 仕事の あとは、湯本温泉で ひと風呂よ。」', '湯めぐりの 案内人「県北の 温泉地には、番頭さんや 湯治の お客さんの 師匠が いるらしいわ。」'] },
-      { spot: 'shop', look: 'shonin', role: 'shop', goods: ['yakusou', 'jouyakusou', 'reisui'], lines: ['へい らっしゃい！ 小名浜の 道具屋だ。'] },
+      { spot: 'shop', look: 'shonin', role: 'shop', goods: ['yakusou', 'jouyakusou', 'reisui', 'g_mehikari'], lines: ['へい らっしゃい！ 小名浜の 道具屋だ。'] },
       { spot: 'bansho', look: 'yakunin', role: 'bansho', lines: ['番屋だ。盗まれた 物は ここに 届く。いまは 何も 預かって おらん。'] },
       // 釣り番（本人 10/2「小名浜のまちがあまり機能しない」→「漁港で釣り＋景品」）
       { spot: 'fishing', look: 'ryoshi', role: 'fishing', lines: ['小名浜は 港町。めひかりも カツオも ここで 揚がるんだ。', '竿を 貸すぜ。釣れた 魚で 釣り点が たまる。点は 景品と 換えて やろう。'] },
@@ -157,7 +159,7 @@ export const TOWNS = {
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「県北の 温泉地には、職業の 技を 教える 師匠が いるらしいわ。」', '湯めぐりの 案内人「湯に つかれば 傷も 呪いも 落ちるから、旅の 合間に 寄ってね。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 相馬の 神社へ。'] },
       { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([4]), items: ['tama'], lines: ['相馬の 刀屋だ。職人ごとの 得物と 防具を そろえて あるぜ。'] },
-      { spot: 'dougu', look: 'shonin', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['相馬の 道具屋だ。薬箱は 皆の 傷を いっぺんに 手当て できるぜ。'] }, // 10/3 本人「道具も強く」
+      { spot: 'dougu', look: 'shonin', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako', 'g_hokki'], lines: ['相馬の 道具屋だ。薬箱は 皆の 傷を いっぺんに 手当て できるぜ。'] }, // 10/3 本人「道具も強く」
       { spot: 'yado', look: 'okami', role: 'inn', price: 18, lines: ['いらっしゃいませ。相馬の 宿で ございます。'] },
       { spot: 'm1', look: 'ryoshi', lines: [
         '海から 帰る 舟は、北の 鹿狼山を 目印に するんだ。',
@@ -183,6 +185,7 @@ export const TOWNS = {
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [3, 4]), lines: ['相馬の 具足屋だ。職ごとの 防具を そろえて あるぜ。'] },
       { spot: 'temple', look: 'osho', role: 'temple', lines: ['相馬の 寺じゃ。迷うた 霊が 憑いたら、供養して 進ぜよう。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「堀に かかる 橋を わたれば 相馬の お城だ。」'] },
+      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 相馬の お殿様（10/6 お城クエスト・src/field/rally.js）
     ],
   },
   // ---- 2章 県北（10/4・本人「順番に制作を」）。町の形は小高・相馬と同じ。話の手がかりは出どころで確かめた筋だけ（vault 日本昔話/2026-10-04-調査-福島昔話クエスト2章県北5話.md）----
@@ -219,7 +222,7 @@ export const TOWNS = {
       ] },
       // ⭐10/5 夜 本人「店を増やしてほしい」＝刀屋・具足屋・道具屋を 分けた・お城の番兵
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [4, 5]), lines: ['福島の 具足屋だ。体を 守る 物を そろえて いきな。'] },
-      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['福島の 道具屋で ございます。薬箱は 皆の 傷を いっぺんに 手当て できますよ。'] },
+      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako', 'g_momo'], lines: ['福島の 道具屋で ございます。薬箱は 皆の 傷を いっぺんに 手当て できますよ。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「川の 向こうが 福島の お城だ。橋を わたって 来たな。」'] },
     ],
   },
@@ -244,6 +247,7 @@ export const TOWNS = {
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['二本松の 道具屋で ございます。'] },
       { spot: 'kashi', look: 'chaya', role: 'shop', goods: ['tamayokan'], lines: ['二本松の 菓子屋です。名物の 玉羊羹は いかが？ 丸い 玉の 羊羹ですよ。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「霞ヶ城の 石垣は 見事だろう。春は 桜で いっぱいに なるぞ。」'] },
+      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 二本松の お殿様（10/6 お城クエスト・src/field/rally.js）
     ],
   },
   // ---- 3章 県中・県南（10/4）。町の人の話＝vault 日本昔話/2026-10-04-調査-福島昔話クエスト3章県中県南.md の「町で話せる事実」（確かめた物だけ）----
@@ -270,7 +274,7 @@ export const TOWNS = {
       // ⭐10/5 夜 本人「店を増やしてほしい」＝街道に 具足屋・道具屋・茶屋・お寺
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [5, 6]), lines: ['郡山の 具足屋だ。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['郡山の 道具屋で ございます。'] },
-      { spot: 'chaya', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou'], lines: ['街道の 茶屋です。ひと休み して いって くださいな。'] },
+      { spot: 'chaya', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou', 'g_usukawa'], lines: ['街道の 茶屋です。ひと休み して いって くださいな。'] },
       { spot: 'temple', look: 'osho', role: 'temple', lines: ['郡山の 寺じゃ。迷うた 霊が 憑いたら、供養して 進ぜよう。'] },
     ],
   },
@@ -321,8 +325,9 @@ export const TOWNS = {
       ] },
       // ⭐10/5 夜 本人「店を増やしてほしい」＝具足屋・道具屋・お城の番兵
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [5, 6]), lines: ['白河の 具足屋だ。'] },
-      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['白河の 道具屋で ございます。'] },
+      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako', 'g_ramen'], lines: ['白河の 道具屋で ございます。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「小峰城の 三重櫓だ。白河藩の お城よ。」'] },
+      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 白河の お殿様（10/6 お城クエスト・src/field/rally.js）
     ],
   },
   iizaka: {
@@ -427,7 +432,7 @@ export const TOWNS = {
       { spot: 'yado', look: 'okami', role: 'inn', price: 30, lines: ['いらっしゃいませ。湖の ほとりの 宿で ございます。'] },
       { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7]), items: ['tama'], lines: ['猪苗代の 刀屋だ。会津の 化け物に 負けない 得物を そろえて いけ。'] },
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [6, 7]), lines: ['猪苗代の 具足屋だ。会津は 敵が 強い。体を 守る 物を そろえな。'] },
-      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['猪苗代の 道具屋で ございます。'] },
+      { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako', 'g_soba'], lines: ['猪苗代の 道具屋で ございます。'] },
       { spot: 'm1', look: 'ryoshi', lines: ['猪苗代湖は 日本で 4番目に 広い 湖。水が 澄んでいて「天鏡湖」とも よばれるんだ。'] },
       { spot: 'm2', look: 'toshiyori', lines: ['亀ヶ城の あとは、桜と 紅葉の 名所じゃ。戦国の ころ、鶴ヶ城の 支城として 築かれたと いう。'] },
       { spot: 'm3', look: 'kodomo', lines: ['冬でも 湖は 凍りきらないから、白鳥や 鴨が 来るんだよ。'] },
@@ -445,12 +450,13 @@ export const TOWNS = {
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [6, 7]), lines: ['会津の 具足屋だ。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['若松の 道具屋で ございます。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 32, lines: ['いらっしゃいませ。若松の 旅籠で ございます。'] },
-      { spot: 'kashi', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou'], lines: ['城下の 茶屋です。ひと休み して いって くださいな。'] },
+      { spot: 'kashi', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou', 'g_kozuyu'], lines: ['城下の 茶屋です。ひと休み して いって くださいな。'] },
       { spot: 'ezuke', look: 'okami', lines: ['張り子の 工房「赤べこは、木の 型に 和紙を 何枚も 張って 作るのよ。」', '工房「赤は 魔除け。黒い 斑点は 疱瘡を 表すと いわれるの。病が 軽く 済むようにって。」'] },
       { spot: 'm1', look: 'toshiyori', lines: ['鶴ヶ城は、葦名の ころに 築かれた 館が はじまりと 伝わるんじゃ。'] },
       { spot: 'm2', look: 'musume', lines: ['張り子の 赤べこは、400年 以上も 作られてきた 会津の おもちゃなの。'] },
       { spot: 'm3', look: 'machibito', lines: ['町はずれの 夜道には、朱の盤と いう 化け物が 出ると いう うわさだ。気を つけな。'] },
       { spot: 'm4', look: 'kodomo', lines: ['猪苗代湖の 水は、むかし 郡山の ほうへ 引かれたんだって。'] },
+      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 会津の お殿様（10/6 お城クエスト・src/field/rally.js）
     ],
   },
   yanaizu: {
@@ -460,7 +466,7 @@ export const TOWNS = {
     npcs: [
       { spot: 'guide', look: 'kannushi', role: 'shrine', lines: ['ようこそ 柳津の 祠へ。'] },
       { spot: 'temple', look: 'osho', role: 'temple', lines: ['柳津の 寺じゃ。迷うた 霊が 憑いたら、供養して 進ぜよう。'] },
-      { spot: 'chaya', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou'], lines: ['只見川を 見ながら、ひと休み して いって くださいな。'] },
+      { spot: 'chaya', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou', 'g_awaman'], lines: ['只見川を 見ながら、ひと休み して いって くださいな。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 32, lines: ['いらっしゃいませ。門前の 旅籠で ございます。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['柳津の 道具屋で ございます。'] },
       { spot: 'akabeko', look: 'machibito', lines: ['柳津は「赤べこ 発祥の 地」と いわれるんだ。'] },
@@ -570,7 +576,7 @@ export const TOWN_LAYOUTS = {
       {"img": "machiya", "x": 11, "y": 15, "w": 3, "h": 3},
       {"img": "jinja", "x": 6, "y": 20, "w": 3, "h": 2},
     ],
-    spots: {"katana": {"x": 3, "y": 11}, "gusoku": {"x": 16, "y": 11}, "dougu": {"x": 3, "y": 18}, "yado": {"x": 16, "y": 18}, "banpei": {"x": 9, "y": 7}, "guide": {"x": 11, "y": 21}, "shrine": {"x": 5, "y": 21}, "m1": {"x": 7, "y": 12}, "m2": {"x": 12, "y": 19}, "m3": {"x": 13, "y": 8}, "m4": {"x": 6, "y": 9}, "m5": {"x": 17, "y": 13}},
+    spots: {"katana": {"x": 3, "y": 11}, "gusoku": {"x": 16, "y": 11}, "dougu": {"x": 3, "y": 18}, "yado": {"x": 16, "y": 18}, "banpei": {"x": 9, "y": 7}, "guide": {"x": 11, "y": 21}, "shrine": {"x": 5, "y": 21}, "m1": {"x": 7, "y": 12}, "m2": {"x": 12, "y": 19}, "m3": {"x": 13, "y": 8}, "m4": {"x": 6, "y": 9}, "m5": {"x": 17, "y": 13}, "lord": {"x": 11, "y": 7}},
   },
   nakamura: {
     entry: {"x": 10, "y": 22},
@@ -611,7 +617,7 @@ export const TOWN_LAYOUTS = {
       {"img": "minka", "x": 16, "y": 21, "w": 3, "h": 2},
       {"img": "machiya", "x": 11, "y": 15, "w": 3, "h": 3},
     ],
-    spots: {"katana": {"x": 2, "y": 14}, "gusoku": {"x": 6, "y": 14}, "yado": {"x": 15, "y": 14}, "dougu": {"x": 15, "y": 19}, "shrine": {"x": 13, "y": 4}, "banpei": {"x": 4, "y": 9}, "temple": {"x": 5, "y": 19}, "guide": {"x": 11, "y": 22}, "m1": {"x": 7, "y": 16}, "m2": {"x": 3, "y": 16}, "m3": {"x": 12, "y": 8}, "m4": {"x": 8, "y": 20}, "bushi": {"x": 13, "y": 22}, "miko": {"x": 17, "y": 5}, "onmyo": {"x": 7, "y": 9}, "rikishi": {"x": 19, "y": 22}, "yumi": {"x": 2, "y": 10}},
+    spots: {"katana": {"x": 2, "y": 14}, "gusoku": {"x": 6, "y": 14}, "yado": {"x": 15, "y": 14}, "dougu": {"x": 15, "y": 19}, "shrine": {"x": 13, "y": 4}, "banpei": {"x": 4, "y": 9}, "temple": {"x": 5, "y": 19}, "guide": {"x": 11, "y": 22}, "m1": {"x": 7, "y": 16}, "m2": {"x": 3, "y": 16}, "m3": {"x": 12, "y": 8}, "m4": {"x": 8, "y": 20}, "bushi": {"x": 13, "y": 22}, "miko": {"x": 17, "y": 5}, "onmyo": {"x": 7, "y": 9}, "rikishi": {"x": 19, "y": 22}, "yumi": {"x": 2, "y": 10}, "lord": {"x": 6, "y": 9}},
   },
   fukushima: {
     entry: {"x": 8, "y": 22},
@@ -695,7 +701,7 @@ export const TOWN_LAYOUTS = {
       {"img": "hatago", "x": 4, "y": 19, "w": 4, "h": 3},
       {"img": "jinja", "x": 12, "y": 19, "w": 3, "h": 2},
     ],
-    spots: {"katana": {"x": 2, "y": 11}, "gusoku": {"x": 16, "y": 11}, "kashi": {"x": 2, "y": 17}, "dougu": {"x": 16, "y": 17}, "yado": {"x": 5, "y": 21}, "banpei": {"x": 9, "y": 8}, "shrine": {"x": 15, "y": 20}, "guide": {"x": 11, "y": 22}, "m1": {"x": 7, "y": 13}, "m2": {"x": 13, "y": 13}},
+    spots: {"katana": {"x": 2, "y": 11}, "gusoku": {"x": 16, "y": 11}, "kashi": {"x": 2, "y": 17}, "dougu": {"x": 16, "y": 17}, "yado": {"x": 5, "y": 21}, "banpei": {"x": 9, "y": 8}, "shrine": {"x": 15, "y": 20}, "guide": {"x": 11, "y": 22}, "m1": {"x": 7, "y": 13}, "m2": {"x": 13, "y": 13}, "lord": {"x": 11, "y": 8}},
   },
   shirakawa: {
     entry: {"x": 10, "y": 22},
@@ -737,7 +743,7 @@ export const TOWN_LAYOUTS = {
       {"img": "machiya", "x": 6, "y": 15, "w": 3, "h": 3},
       {"img": "hinomi", "x": 17, "y": 19, "w": 2, "h": 3},
     ],
-    spots: {"katana": {"x": 12, "y": 9}, "gusoku": {"x": 16, "y": 9}, "dougu": {"x": 3, "y": 16}, "yado": {"x": 15, "y": 17}, "shrine": {"x": 13, "y": 3}, "banpei": {"x": 5, "y": 9}, "guide": {"x": 11, "y": 22}, "m1": {"x": 8, "y": 19}, "m2": {"x": 12, "y": 13}, "m3": {"x": 8, "y": 5}},
+    spots: {"katana": {"x": 12, "y": 9}, "gusoku": {"x": 16, "y": 9}, "dougu": {"x": 3, "y": 16}, "yado": {"x": 15, "y": 17}, "shrine": {"x": 13, "y": 3}, "banpei": {"x": 5, "y": 9}, "guide": {"x": 11, "y": 22}, "m1": {"x": 8, "y": 19}, "m2": {"x": 12, "y": 13}, "m3": {"x": 8, "y": 5}, "lord": {"x": 6, "y": 5}},
   },
   yumoto: {
     entry: {"x": 8, "y": 16},
@@ -768,7 +774,7 @@ export const TOWN_LAYOUTS = {
       {"img": "hokora", "x": 13, "y": 2, "w": 3, "h": 3},
       {"img": "yugoya", "x": 13, "y": 14, "w": 3, "h": 3},
     ],
-    spots: {"yado": {"x": 2, "y": 8}, "dougu": {"x": 13, "y": 8}, "temple": {"x": 6, "y": 3}, "guide": {"x": 9, "y": 16}, "m1": {"x": 10, "y": 11}, "m2": {"x": 6, "y": 15}, "m3": {"x": 9, "y": 5}, "m4": {"x": 7, "y": 5}, "m5": {"x": 12, "y": 15}},
+    spots: {"yado": {"x": 2, "y": 8}, "dougu": {"x": 13, "y": 8}, "temple": {"x": 6, "y": 3}, "guide": {"x": 9, "y": 16}, "m1": {"x": 10, "y": 11}, "m2": {"x": 6, "y": 15}, "m3": {"x": 9, "y": 5}, "m4": {"x": 7, "y": 5}, "m5": {"x": 12, "y": 15}, "bandai": {"x": 6, "y": 12}},
   },
   onahama: {
     entry: {"x": 8, "y": 16},
@@ -956,7 +962,7 @@ export const TOWN_LAYOUTS = {
       {"img": "counter", "x": 6, "y": 21, "w": 2, "h": 1},
       {"img": "kashiya", "x": 11, "y": 19, "w": 4, "h": 3},
     ],
-    spots: {"katana": {"x": 2, "y": 14}, "gusoku": {"x": 17, "y": 14}, "dougu": {"x": 2, "y": 21}, "yado": {"x": 17, "y": 21}, "ezuke": {"x": 6, "y": 20}, "kashi": {"x": 12, "y": 21}, "banpei": {"x": 9, "y": 10}, "shrine": {"x": 4, "y": 6}, "guide": {"x": 11, "y": 23}, "m1": {"x": 8, "y": 17}, "m2": {"x": 13, "y": 17}, "m3": {"x": 17, "y": 23}, "m4": {"x": 18, "y": 9}},
+    spots: {"katana": {"x": 2, "y": 14}, "gusoku": {"x": 17, "y": 14}, "dougu": {"x": 2, "y": 21}, "yado": {"x": 17, "y": 21}, "ezuke": {"x": 6, "y": 20}, "kashi": {"x": 12, "y": 21}, "banpei": {"x": 9, "y": 10}, "shrine": {"x": 4, "y": 6}, "guide": {"x": 11, "y": 23}, "m1": {"x": 8, "y": 17}, "m2": {"x": 13, "y": 17}, "m3": {"x": 17, "y": 23}, "m4": {"x": 18, "y": 9}, "lord": {"x": 11, "y": 10}},
   },
   inawashiro: {
     entry: {"x": 15, "y": 8},
