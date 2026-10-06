@@ -1,18 +1,18 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=192';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=192';
-import { EPISODES } from '../data/episodes.js?v=192';
-import { revealAt } from '../ui/reveal.js?v=192';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=192';
-import { chooseCommands } from '../battle/auto.js?v=192';
-import { itemNote } from '../data/items.js?v=192';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=192';
-import { STORY_FILES } from '../data/story_assets.js?v=192';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=192';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=192';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=192';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=192';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=192';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=192';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=193';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=193';
+import { EPISODES } from '../data/episodes.js?v=193';
+import { revealAt } from '../ui/reveal.js?v=193';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=193';
+import { chooseCommands } from '../battle/auto.js?v=193';
+import { itemNote } from '../data/items.js?v=193';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=193';
+import { STORY_FILES } from '../data/story_assets.js?v=193';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=193';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=193';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=193';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=193';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=193';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=193';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -660,13 +660,27 @@ export class BattleScene extends Phaser.Scene {
         parts.push(eye);
       }
       // 太い習字（10/5 夜 本人）＝後ろに濃い縁の字、前に白い縁で太らせた字を重ねる
-      const ink = (t, size, y) => {
+      // ⭐縦書きで 左の端（10/6 本人「イラストの顔にかかるケースが多い。全て縦書きで左に」）＝右の列に 話数、その左の列に 題（縦書きは 右から 左へ 読む）
+      const titleSize = (t, max, h) => Math.max(18, Math.min(max, Math.floor(h / ([...t].length * 1.04))));
+      // 1字ずつ 置く＝縁の太さで 行の高さが ずれない（⛔1つの字に 改行で 並べると、後ろの 太い縁の 字と 前の 字の 行の高さが 違い、二重に 見えた）
+      const ink = (t, size, x, y) => {
         const st = { fontFamily: EYE_FONT, fontSize: `${size}px`, color: '#ffffff', resolution: 3 };
-        const back = this.add.text(W / 2, y, t, st).setOrigin(0.5).setStroke('#120a20', 14).setShadow(0, 2, '#000000', 6, true, true);
-        const front = this.add.text(W / 2, y, t, st).setOrigin(0.5).setStroke('#ffffff', 3);
-        return [back, front];
+        const out = [];
+        [...t].forEach((ch, i) => {
+          const cy = y + i * Math.round(size * 1.04) + size / 2;
+          out.push(this.add.text(x, cy, ch, st).setOrigin(0.5).setStroke('#120a20', 14).setShadow(0, 2, '#000000', 6, true, true));
+        });
+        [...t].forEach((ch, i) => {
+          const cy = y + i * Math.round(size * 1.04) + size / 2;
+          out.push(this.add.text(x, cy, ch, st).setOrigin(0.5).setStroke('#ffffff', 3));
+        });
+        return out;
       };
-      parts.push(...ink(e.episode, 26, 48), ...ink(e.tale, [...e.tale].length > 8 ? 28 : [...e.tale].length > 5 ? 34 : 44, 96));
+      const TOP = 38;
+      const H = 300; // 挿絵の枠の 上から 下まで
+      const taleSize = titleSize(e.tale, 42, H);
+      const epSize = titleSize(e.episode, 24, H * 0.6);
+      parts.push(...ink(e.tale, taleSize, 30 + taleSize / 2, TOP), ...ink(e.episode, epSize, 30 + taleSize + 8 + epSize / 2, TOP));
       const card = this.add.container(0, 0, parts).setAlpha(0);
       box.addAt(card, box.list.indexOf(sh?.scene ? sh : win)); // しおりと窓の後ろ・挿絵の枠の前（10/5 夜 本人「アイキャッチ画像の前にしおり」＝前は しおりの頭が絵に隠れた）
       let done = false;
