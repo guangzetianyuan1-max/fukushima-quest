@@ -1,4 +1,4 @@
-import { gearAt } from '../data/equip.js?v=213'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=214'; // 10/5 武器と防具は職業ごと＝店は段で並べる
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -32,6 +32,7 @@ export const TOWNS = {
   taira: {
     name: '平',
     npcs: [
+      { spot: 'attr', look: 'machibito', role: 'attr', attr: 'jangara', lines: ['じゃんがらの 世話役だ。鉦と 太鼓を 打ち鳴らし、新盆の 家を 供養して 回る 踊り念仏だ。', '世話役「いわきでは、鉦と 太鼓の 音から「じゃんがら」と 呼ばれて 親しまれて いるんだ。」'] }, // 10/7 町の催し（attractions.js）
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「いわきの 湯本温泉は、古くから 知られた 湯の町よ。旅の つかれは 湯で 落としてね。」', '湯めぐりの 案内人「北の 県北や 県中には、職業の 技を 教えて くれる 温泉が あるんだって。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 八幡さまへ。'] },
@@ -63,6 +64,7 @@ export const TOWNS = {
   yumoto: {
     name: '湯本',
     npcs: [
+      { spot: 'attr', look: 'toshiyori', role: 'attr', attr: 'yukagen', lines: ['湯本の 湯守じゃ。ここの 湯は「三函の御湯」と 呼ばれ、延喜式にも 名が 載る 古い 湯じゃ。', '湯守「湧く 湯の 量も 多い。湯加減を 見て いかんか。」'] }, // 10/7 町の催し（attractions.js）
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「ここ 湯本の 湯宿で 休んでいってね。」', '湯めぐりの 案内人「県北には 飯坂・高湯・土湯・岳、県中には 磐梯熱海や 二岐の 温泉が あるのよ。」'] },
       { spot: 'temple', look: 'osho', role: 'temple', lines: ['湯本の 寺じゃ。迷うた 霊が 憑いたら、供養して 進ぜよう。'] },
@@ -194,6 +196,7 @@ export const TOWNS = {
     shrineName: '福島の 神社',
     shrineLine: '福島の 神社で 旅の 無事を お願いしましょう。北の 信夫山は すぐそこよ。',
     npcs: [
+      { spot: 'attr', look: 'machibito', role: 'attr', attr: 'waraji', lines: ['わらじまつりの 世話役だ。長さ 十二メートルの 大わらじを、信夫山の 羽黒神社に 納めるんだ。', '世話役「足の 丈夫さと 旅の 安全を 願って、わらじを 納めたのが はじまりと 伝わる。」'] }, // 10/7 町の催し（attractions.js）
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「福島の まわりには、北に 飯坂温泉、西に 高湯温泉と 土湯温泉が あるわ。」', '湯めぐりの 案内人「番頭さんや おかみさん、湯治の お客さんが、技を 教えて くれるって。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 福島の 神社へ。'] },
@@ -256,6 +259,7 @@ export const TOWNS = {
     shrineName: '郡山の 神社',
     shrineLine: '郡山の 神社で 旅の 無事を お願いしましょう。東の 三春に、木の 馬の 話が 伝わっているの。',
     npcs: [
+      { spot: 'attr', look: 'musume', role: 'attr', attr: 'hanakatsumi', lines: ['うねめまつりの 世話役です。都に 仕えた 采女・春姫の 伝説を しのぶ 祭りです。', '世話役「春姫と 次郎の 泉の まわりに、薄紫の 花かつみが 咲いたと 伝わって いるんです。」'] }, // 10/7 町の催し（attractions.js）
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「郡山の 西の 磐梯熱海温泉には、芸者さん・湯治の 大関・番頭さんが いるわ。」', '湯めぐりの 案内人「3章の 技は、県中と 県南の 温泉地で 習えるのよ。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 郡山の 神社へ。'] },
@@ -308,6 +312,7 @@ export const TOWNS = {
     shrineName: '白河の 神社',
     shrineLine: '白河の 神社で 旅の 無事を お願いしましょう。安珍堂は 町の 南東よ。',
     npcs: [
+      { spot: 'attr', look: 'shonin', role: 'attr', attr: 'daruma', lines: ['だるま市の 世話役だ。白河だるまの 顔は、まゆが 鶴、ひげが 亀、耳ひげが 松と 梅、あごひげが 竹。', '世話役「松平定信公が 絵師の 谷文晁に 絵付けを させたのが はじまりと 伝わるぞ。」'] }, // 10/7 町の催し（attractions.js）
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「白河の 西の 甲子温泉には、若旦那と 仲居さんが いるわ。」', '湯めぐりの 案内人「安珍堂へ 行く 前に、湯で 体を 整えてね。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 白河の 神社へ。'] },
@@ -428,6 +433,7 @@ export const TOWNS = {
     shrineName: '猪苗代の 社',
     shrineLine: '猪苗代の 社で 旅の 無事を お願いしましょう。亀ヶ城跡は 町の 北東よ。',
     npcs: [
+      { spot: 'attr', look: 'toshiyori', role: 'attr', attr: 'hakucho', lines: ['湖の 番人じゃ。冬の 猪苗代湖には、三千羽ほどの 白鳥が 飛んで 来る。', '番人「湖に 降りた 白鳥の 数を、数えて みんか。」'] }, // 10/7 町の催し（attractions.js）
       { spot: 'guide', look: 'kannushi', role: 'shrine', lines: ['ようこそ 猪苗代の 社へ。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 30, lines: ['いらっしゃいませ。湖の ほとりの 宿で ございます。'] },
       { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7]), items: ['tama'], lines: ['猪苗代の 刀屋だ。会津の 化け物に 負けない 得物を そろえて いけ。'] },
@@ -444,6 +450,7 @@ export const TOWNS = {
     shrineName: '若松の 神社',
     shrineLine: '若松の 神社で 旅の 無事を お願いしましょう。柳津へは 町の 南の 道からよ。',
     npcs: [
+      { spot: 'attr', look: 'musume', role: 'attr', attr: 'kobosi', lines: ['十日市の 世話役です。起き上がり小法師は、家族の 人数より 一つ 多く 買って 神棚に 飾るのが 習わしです。', '世話役「子孫繁栄と 無病息災を 願うんです。台の 上で 起き上がるように 投げて みてください。」'] }, // 10/7 町の催し（attractions.js）
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 若松の 神社へ。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「鶴ヶ城だ。蒲生氏郷さまが、黒川を 若松と あらため、城を 鶴ヶ城と 名づけたと 伝わる。」'] },
       { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7]), items: ['tama'], lines: ['会津の 刀屋だ。'] },
@@ -577,7 +584,7 @@ export const TOWN_LAYOUTS = {
       {"img": "machiya", "x": 11, "y": 15, "w": 3, "h": 3},
       {"img": "jinja", "x": 6, "y": 20, "w": 3, "h": 2},
     ],
-    spots: {"katana": {"x": 3, "y": 11}, "gusoku": {"x": 16, "y": 11}, "dougu": {"x": 3, "y": 18}, "yado": {"x": 16, "y": 18}, "banpei": {"x": 9, "y": 7}, "guide": {"x": 11, "y": 21}, "shrine": {"x": 5, "y": 21}, "m1": {"x": 7, "y": 12}, "m2": {"x": 12, "y": 19}, "m3": {"x": 13, "y": 8}, "m4": {"x": 6, "y": 9}, "m5": {"x": 17, "y": 13}, "lord": {"x": 11, "y": 7}},
+    spots: {"attr": {"x": 10, "y": 12}, "katana": {"x": 3, "y": 11}, "gusoku": {"x": 16, "y": 11}, "dougu": {"x": 3, "y": 18}, "yado": {"x": 16, "y": 18}, "banpei": {"x": 9, "y": 7}, "guide": {"x": 11, "y": 21}, "shrine": {"x": 5, "y": 21}, "m1": {"x": 7, "y": 12}, "m2": {"x": 12, "y": 19}, "m3": {"x": 13, "y": 8}, "m4": {"x": 6, "y": 9}, "m5": {"x": 17, "y": 13}, "lord": {"x": 11, "y": 7}},
   },
   nakamura: {
     entry: {"x": 10, "y": 22},
@@ -659,7 +666,7 @@ export const TOWN_LAYOUTS = {
       {"img": "kura", "x": 5, "y": 8, "w": 3, "h": 3},
       {"img": "machiya", "x": 5, "y": 15, "w": 3, "h": 3},
     ],
-    spots: {"katana": {"x": 2, "y": 10}, "gusoku": {"x": 10, "y": 10}, "dougu": {"x": 2, "y": 17}, "yado": {"x": 10, "y": 17}, "shrine": {"x": 6, "y": 5}, "banpei": {"x": 16, "y": 8}, "guide": {"x": 9, "y": 22}, "m1": {"x": 6, "y": 13}, "m2": {"x": 3, "y": 11}, "m3": {"x": 11, "y": 4}, "m4": {"x": 5, "y": 18}, "m5": {"x": 17, "y": 13}},
+    spots: {"attr": {"x": 10, "y": 12}, "katana": {"x": 2, "y": 10}, "gusoku": {"x": 10, "y": 10}, "dougu": {"x": 2, "y": 17}, "yado": {"x": 10, "y": 17}, "shrine": {"x": 6, "y": 5}, "banpei": {"x": 16, "y": 8}, "guide": {"x": 9, "y": 22}, "m1": {"x": 6, "y": 13}, "m2": {"x": 3, "y": 11}, "m3": {"x": 11, "y": 4}, "m4": {"x": 5, "y": 18}, "m5": {"x": 17, "y": 13}},
   },
   nihonmatsu: {
     entry: {"x": 10, "y": 22},
@@ -744,7 +751,7 @@ export const TOWN_LAYOUTS = {
       {"img": "machiya", "x": 6, "y": 15, "w": 3, "h": 3},
       {"img": "hinomi", "x": 17, "y": 19, "w": 2, "h": 3},
     ],
-    spots: {"katana": {"x": 12, "y": 9}, "gusoku": {"x": 16, "y": 9}, "dougu": {"x": 3, "y": 16}, "yado": {"x": 15, "y": 17}, "shrine": {"x": 13, "y": 3}, "banpei": {"x": 5, "y": 9}, "guide": {"x": 11, "y": 22}, "m1": {"x": 8, "y": 19}, "m2": {"x": 12, "y": 13}, "m3": {"x": 8, "y": 5}, "lord": {"x": 6, "y": 5}},
+    spots: {"attr": {"x": 10, "y": 12}, "katana": {"x": 12, "y": 9}, "gusoku": {"x": 16, "y": 9}, "dougu": {"x": 3, "y": 16}, "yado": {"x": 15, "y": 17}, "shrine": {"x": 13, "y": 3}, "banpei": {"x": 5, "y": 9}, "guide": {"x": 11, "y": 22}, "m1": {"x": 8, "y": 19}, "m2": {"x": 12, "y": 13}, "m3": {"x": 8, "y": 5}, "lord": {"x": 6, "y": 5}},
   },
   yumoto: {
     entry: {"x": 8, "y": 16},
@@ -775,7 +782,7 @@ export const TOWN_LAYOUTS = {
       {"img": "hokora", "x": 13, "y": 2, "w": 3, "h": 3},
       {"img": "yugoya", "x": 13, "y": 14, "w": 3, "h": 3},
     ],
-    spots: {"yado": {"x": 2, "y": 8}, "dougu": {"x": 13, "y": 8}, "temple": {"x": 6, "y": 3}, "guide": {"x": 9, "y": 16}, "m1": {"x": 10, "y": 11}, "m2": {"x": 6, "y": 15}, "m3": {"x": 9, "y": 5}, "m4": {"x": 7, "y": 5}, "m5": {"x": 12, "y": 15}, "bandai": {"x": 6, "y": 12}},
+    spots: {"attr": {"x": 8, "y": 9}, "yado": {"x": 2, "y": 8}, "dougu": {"x": 13, "y": 8}, "temple": {"x": 6, "y": 3}, "guide": {"x": 9, "y": 16}, "m1": {"x": 10, "y": 11}, "m2": {"x": 6, "y": 15}, "m3": {"x": 9, "y": 5}, "m4": {"x": 7, "y": 5}, "m5": {"x": 12, "y": 15}, "bandai": {"x": 6, "y": 12}},
   },
   onahama: {
     entry: {"x": 8, "y": 16},
@@ -884,7 +891,7 @@ export const TOWN_LAYOUTS = {
       {"img": "gusokuya", "x": 10, "y": 19, "w": 4, "h": 3},
       {"img": "sakaya", "x": 1, "y": 22, "w": 4, "h": 3},
     ],
-    spots: {"katana": {"x": 2, "y": 8}, "yado": {"x": 11, "y": 9}, "dougu": {"x": 2, "y": 14}, "chaya": {"x": 11, "y": 15}, "gusoku": {"x": 11, "y": 21}, "shrine": {"x": 5, "y": 3}, "temple": {"x": 5, "y": 19}, "guide": {"x": 8, "y": 24}, "m1": {"x": 5, "y": 9}, "m2": {"x": 9, "y": 17}, "m3": {"x": 5, "y": 22}},
+    spots: {"attr": {"x": 7, "y": 13}, "katana": {"x": 2, "y": 8}, "yado": {"x": 11, "y": 9}, "dougu": {"x": 2, "y": 14}, "chaya": {"x": 11, "y": 15}, "gusoku": {"x": 11, "y": 21}, "shrine": {"x": 5, "y": 3}, "temple": {"x": 5, "y": 19}, "guide": {"x": 8, "y": 24}, "m1": {"x": 5, "y": 9}, "m2": {"x": 9, "y": 17}, "m3": {"x": 5, "y": 22}},
   },
   sukagawa: {
     entry: {"x": 8, "y": 18},
@@ -963,7 +970,7 @@ export const TOWN_LAYOUTS = {
       {"img": "counter", "x": 6, "y": 21, "w": 2, "h": 1},
       {"img": "kashiya", "x": 11, "y": 19, "w": 4, "h": 3},
     ],
-    spots: {"katana": {"x": 2, "y": 14}, "gusoku": {"x": 17, "y": 14}, "dougu": {"x": 2, "y": 21}, "yado": {"x": 17, "y": 21}, "ezuke": {"x": 6, "y": 20}, "kashi": {"x": 12, "y": 21}, "banpei": {"x": 9, "y": 10}, "shrine": {"x": 4, "y": 6}, "guide": {"x": 11, "y": 23}, "m1": {"x": 8, "y": 17}, "m2": {"x": 13, "y": 17}, "m3": {"x": 17, "y": 23}, "m4": {"x": 18, "y": 9}, "lord": {"x": 11, "y": 10}},
+    spots: {"attr": {"x": 11, "y": 14}, "katana": {"x": 2, "y": 14}, "gusoku": {"x": 17, "y": 14}, "dougu": {"x": 2, "y": 21}, "yado": {"x": 17, "y": 21}, "ezuke": {"x": 6, "y": 20}, "kashi": {"x": 12, "y": 21}, "banpei": {"x": 9, "y": 10}, "shrine": {"x": 4, "y": 6}, "guide": {"x": 11, "y": 23}, "m1": {"x": 8, "y": 17}, "m2": {"x": 13, "y": 17}, "m3": {"x": 17, "y": 23}, "m4": {"x": 18, "y": 9}, "lord": {"x": 11, "y": 10}},
   },
   inawashiro: {
     entry: {"x": 15, "y": 8},
@@ -997,7 +1004,7 @@ export const TOWN_LAYOUTS = {
       {"img": "kusuriya", "x": 1, "y": 10, "w": 4, "h": 3},
       {"img": "gusokuya", "x": 12, "y": 10, "w": 4, "h": 3},
     ],
-    spots: {"yado": {"x": 2, "y": 6}, "katana": {"x": 13, "y": 6}, "dougu": {"x": 2, "y": 12}, "gusoku": {"x": 13, "y": 12}, "guide": {"x": 11, "y": 7}, "m1": {"x": 6, "y": 7}, "m2": {"x": 10, "y": 10}, "m3": {"x": 10, "y": 13}, "m4": {"x": 6, "y": 11}},
+    spots: {"attr": {"x": 9, "y": 9}, "yado": {"x": 2, "y": 6}, "katana": {"x": 13, "y": 6}, "dougu": {"x": 2, "y": 12}, "gusoku": {"x": 13, "y": 12}, "guide": {"x": 11, "y": 7}, "m1": {"x": 6, "y": 7}, "m2": {"x": 10, "y": 10}, "m3": {"x": 10, "y": 13}, "m4": {"x": 6, "y": 11}},
   },
   yanaizu: {
     entry: {"x": 6, "y": 16},
