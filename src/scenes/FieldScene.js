@@ -2,49 +2,49 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=200';
-import { stampOnsen, stampGourmet, lordTalk, rallyKeys, hasStamp, stampCount, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=200';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=200';
-import { EPISODES } from '../data/episodes.js?v=200';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=200';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=200';
-import { RIDERS } from '../data/nomaoi_assets.js?v=200';
-import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=200';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=200';
-import { TILE } from '../field/tiles.js?v=200';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=200';
-import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=200';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=200';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=200';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=200';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=200';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=200';
+import { collection, PER_PAGE } from '../field/collection.js?v=201';
+import { stampOnsen, stampGourmet, lordTalk, rallyKeys, hasStamp, stampCount, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=201';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=201';
+import { EPISODES } from '../data/episodes.js?v=201';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=201';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=201';
+import { RIDERS } from '../data/nomaoi_assets.js?v=201';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=201';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=201';
+import { TILE } from '../field/tiles.js?v=201';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=201';
+import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker } from '../ui/kit.js?v=201';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=201';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName } from '../field/towns.js?v=201';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=201';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=201';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=201';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, SAVE_KEY, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
   wallQuestLines, startDuel, learnSkill,
-} from '../field/game.js?v=200';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=200';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=200';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=200';
-import { membersOf } from '../battle/levels.js?v=200';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=200';
-import { ICON_IDS } from '../data/icons.js?v=200';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=200';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=200';
-import { mapPointOf } from '../field/mapcard.js?v=200';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=200';
-import { makeRng } from '../battle/rules.js?v=200';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=200';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=200';
+} from '../field/game.js?v=201';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=201';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=201';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=201';
+import { membersOf } from '../battle/levels.js?v=201';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=201';
+import { ICON_IDS } from '../data/icons.js?v=201';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=201';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=201';
+import { mapPointOf } from '../field/mapcard.js?v=201';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=201';
+import { makeRng } from '../battle/rules.js?v=201';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=201';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=201';
 
 const STATUS_PAD = 96; // 上の札（4,4 から 高さ 16＋23×行）の下の端＋少し
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=200';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=200';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=200';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=200';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS } from '../field/game.js?v=201';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds } from '../audio/chip.js?v=201';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=201';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=201';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -86,6 +86,13 @@ const ownLook = (id) => EXTRA_LOOKS.includes(`job_${id}`);
 const lookOf = (id, g) => (id === 'tabi' || id === 'shiori' ? id : ownLook(id) ? `job_${id}` : JOB_LOOK[id]?.[0] ?? COMPANIONS[id]?.look ?? id);
 const tintOf = (id) => (id === 'tabi' || id === 'shiori' || ownLook(id) ? null : JOB_LOOK[id]?.[1] ?? null);
 const HAS_GHOST = ['tabi', 'shiori', 'kariudo', 'sou'];
+// 歩くとき いまの武器を手に持つ（10/6 本人「4人が歩いているときも、現在の装備に変えて欲しい」）＝武器の品の絵を小さくして手もとに重ねる
+// 手に何も持たない絵だけ（武器を描きこんだ絵に重ねると2本になる）。職業の歩く絵は しおりの頭身で 手ぶらに描き直して ここへ足す
+export const EMPTY_HANDS = ['shiori'];
+// 向きごとの手の位置（足もとの点＝絵の origin からのずれ）・裏返し・人の後ろに隠すか
+// しおりの絵で測った（肌の色の点）：正面の手＝(10,32)・横＝(17,30)・後ろ＝(25,31)／足もとの点＝(18,28)。刃先は体の外へ向ける
+const HAND = { down: [-8, 4, true, false], up: [7, 3, false, false], left: [-1, 3, true, false], right: [1, 3, false, false] };
+const HELD_SCALE = 0.32;
 
 // もやの壁にぶつかったとき、しおりが言う手がかり
 const WALL_HINT = {
@@ -290,6 +297,9 @@ export class FieldScene extends Phaser.Scene {
     this.shiori = this.followers[0].sprite;
     this.player = this.add.sprite(...this.center(x, y), 'p-tabi', frameOf(this.facing, 0, 'tabi')).setOrigin(0.5, ORIGIN_Y);
     this.refreshGhosts();
+    this.heldWeapons = [['tabi', this.player], ...this.followers.map((f) => [f.id, f.sprite])].map(([id, sprite]) => ({
+      id, sprite, img: this.add.image(sprite.x, sprite.y, '__WHITE').setOrigin(0.25, 0.8).setScale(HELD_SCALE).setVisible(false),
+    }));
     // ⭐地図の城（10/5 夜 本人「上から二本松城に入れない」）：城の真上のマスは通れる（北から城下へ入る道）。
     // 真上に人が立つ間だけ 城の絵を人の手前に重ねる＝屋根に乗って見えない（城の下や横では 人が手前のまま）
     this.castleCovers = [];
@@ -322,7 +332,7 @@ export class FieldScene extends Phaser.Scene {
     this.ui = this.add.container(0, 0);
     this.uiCam = this.cameras.add(0, 0, W, 640);
     cam.ignore(this.ui);
-    this.uiCam.ignore([this.layer, ...this.castleCovers.map((c) => c.img), this.hereMark, this.hereRing, this.player, ...this.followers.map((f) => f.sprite), ...this.npcs.map((n) => n.sprite), ...this.makeMistArrows(), ...this.makeKanbanLabels()]);
+    this.uiCam.ignore([this.layer, ...this.castleCovers.map((c) => c.img), this.hereMark, this.hereRing, this.player, ...this.followers.map((f) => f.sprite), ...this.heldWeapons.map((w) => w.img), ...this.npcs.map((n) => n.sprite), ...this.makeMistArrows(), ...this.makeKanbanLabels()]);
 
     this.buildUi();
     this.refreshStatus();
@@ -1033,7 +1043,27 @@ export class FieldScene extends Phaser.Scene {
     return this.mapId === 'soma' && this.px >= 16 ? -SEA_SHIFT : 0;
   }
 
+  // 手に持つ武器を 人に合わせて動かす（装備を替えたら絵も替わる・幽霊は持たない）
+  updateHeldWeapons() {
+    for (const w of this.heldWeapons ?? []) {
+      const look = lookOf(w.id, this.g);
+      // 力士の武器は 手甲（手に はめる物）＝手に 持たせない
+      const weapon = this.g.equip?.[w.id]?.weapon;
+      const key = EMPTY_HANDS.includes(look) && !this.g.party[w.id]?.dead && EQUIP[weapon]?.job !== 'rikishi' ? this.gearIcon(weapon) : null;
+      if (!key || !w.sprite.visible) { if (w.img.visible) w.img.setVisible(false); continue; }
+      if (w.img.texture.key !== key) w.img.setTexture(key);
+      const dir = w.id === 'tabi' ? this.facing : this.followers.find((f) => f.id === w.id)?.dir ?? 'down';
+      const [dx, dy, flip, behind] = HAND[dir];
+      w.img.setVisible(true).setFlipX(flip).setOrigin(flip ? 0.7 : 0.3, 0.72).setPosition(w.sprite.x + dx, w.sprite.y + dy + (this.step % 2));
+      if (w.behind !== behind) {
+        w.behind = behind;
+        if (behind) this.children.moveBelow(w.img, w.sprite); else this.children.moveAbove(w.img, w.sprite);
+      }
+    }
+  }
+
   update() {
+    this.updateHeldWeapons();
     // 城の真上に だれかが立っているか（旅の者・後ろの仲間）
     for (const c of this.castleCovers ?? []) {
       const on = (this.px === c.x && this.py === c.y - 1) || this.followers.some((f) => f.x === c.x && f.y === c.y - 1);
@@ -2372,7 +2402,7 @@ export class FieldScene extends Phaser.Scene {
 
   // 買った品の絵を、地図の真ん中に少しだけ出す（本人 10/2「買ったときにイラストを添えて」）。絵の無い品は出さない
   showGoods(id0) {
-    const id = EQUIP[id0]?.icon ?? id0; // 職業ごとの品は 前の品の絵を使い回す（10/5）
+    const id = this.textures.exists(`icon_${id0}`) ? id0 : EQUIP[id0]?.icon ?? id0; // 自分の絵が 届いて いれば それ（10/6）・無ければ 前の品の絵を使い回す（10/5）
     if (!this.textures.exists(`icon_${id}`)) return;
     const box = this.add.container(W / 2, 200);
     box.add(makeWindow(this, -64, -64, 128, 128));
@@ -2480,20 +2510,62 @@ export class FieldScene extends Phaser.Scene {
 
 
 
-  showGear() {
-    // 10/6 本人「そうびを見るで重なり」＝1人ぶん 6〜8行を 顔の 横の 狭い 窓に 詰めていた（名前は 顔の 下から 本文へ はみ出し、本文は 窓の 下を 越えた）
-    // ⇒ 1人ぶんを「強さ」「装備」「技」の 3枚に 分ける。名前は 職業まで（Lv は 本文へ）
-    const lines = partyView(this.g).flatMap((p) => {
-      const speaker = `${nameOf(this.g, p.id)}${p.job && (p.id === 'tabi' || p.id === 'shiori') ? `（${JOBS[p.job].name}）` : ''}`; // 10/5 主人公・しおりは 職業を 添える
-      const face = p.id === 'shiori' ? 'normal' : FACE_IDS.includes(`job_${p.id}`) ? `job_${p.id}` : p.id; // 本人 10/3「しおり以外顔が無い。みんな顔をつけて」・10/5 職業の人物の顔が届いたら job_<職業>
-      const skills = p.job ? [JOBS[p.job].basic, ...(this.g.skills?.[p.id] ?? [])].filter(Boolean).map((id) => JOB_SPELLS[id].name) : [];
-      return [
-        { speaker, face, text: `Lv ${p.lv}\n攻 ${p.atk}　守 ${p.def}\n速 ${p.agi}　知 ${p.int}` },
-        { speaker, face, text: SLOTS.map((sl) => `${SLOT_NAME[sl]}：${p.gear[sl] ? EQUIP[p.gear[sl]].name : 'なし'}`).join('\n') },
-        ...(p.job ? [{ speaker, face, text: `技：${skills.join('・') || 'まだ ない'}` }] : []),
-      ];
+  // 品の絵の名前（自分の絵が 届いて いれば それ・無ければ 前の品の 絵を 借りる）
+  gearIcon(id) {
+    if (!id) return null;
+    if (this.textures.exists(`icon_${id}`)) return `icon_${id}`;
+    const alt = EQUIP[id]?.icon;
+    return alt && this.textures.exists(`icon_${alt}`) ? `icon_${alt}` : null;
+  }
+
+  // そうびを見る（10/6 本人「装備画面でこれらの装備を見せて欲しい」）＝1人 1ページの 札（名前・強さ・武器と防具と お守りの 絵・技）
+  showGear(page = 0) {
+    this.closeDialog();
+    this.busy = true;
+    const views = partyView(this.g);
+    const p = views[page];
+    this.gearBox?.destroy();
+    const box = this.add.container(0, 0).setDepth(2000);
+    this.gearBox = box;
+    box.add(this.add.rectangle(0, 0, W, 640, 0x07061a, 1).setOrigin(0).setInteractive());
+    const txt = (x, y, t, size, color = '#ffffff', o = {}) => this.add.text(x, y, t, { fontFamily: FONT, fontSize: `${size}px`, color, resolution: 3, ...o });
+    const name = `${nameOf(this.g, p.id)}${p.job && (p.id === 'tabi' || p.id === 'shiori') ? `（${JOBS[p.job].name}）` : ''}`;
+    box.add(makeWindow(this, 8, 10, W - 16, 96));
+    const face = p.id === 'shiori' ? 'face_normal' : FACE_IDS.includes(`job_${p.id}`) ? `face_job_${p.id}` : `face_${p.id}`;
+    if (this.textures.exists(face)) box.add(this.add.image(52, 58, face).setDisplaySize(72, 72));
+    box.add(txt(100, 22, name, 20, '#ffd27a'));
+    box.add(txt(100, 52, `Lv ${p.lv}　攻 ${p.atk}　守 ${p.def}
+速 ${p.agi}　知 ${p.int}`, 15, '#ffffff', { lineSpacing: 4 }));
+    box.add(makeWindow(this, 8, 114, W - 16, 300));
+    SLOTS.forEach((sl, k) => {
+      const y = 158 + k * 92;
+      const id = p.gear[sl];
+      const ic = this.gearIcon(id);
+      const frame = this.add.graphics();
+      frame.fillStyle(0x15132e, 1).fillRoundedRect(22, y - 38, 76, 76, 8);
+      frame.lineStyle(2, id ? 0xc9a24a : 0x3a3660, 1).strokeRoundedRect(22, y - 38, 76, 76, 8);
+      box.add(frame);
+      if (ic) box.add(this.add.image(60, y, ic).setScale(1.5));
+      box.add(txt(112, y - 24, SLOT_NAME[sl], 14, '#cfc4a0'));
+      box.add(txt(112, y - 2, id ? EQUIP[id].name : 'なし', 20, id ? '#ffffff' : '#8a86b0'));
     });
-    this.showMessages(lines);
+    const skills = p.job ? [JOBS[p.job].basic, ...(this.g.skills?.[p.id] ?? [])].filter(Boolean).map((sid) => JOB_SPELLS[sid].name) : [];
+    box.add(makeWindow(this, 8, 422, W - 16, 140));
+    box.add(txt(24, 434, '技', 14, '#cfc4a0'));
+    box.add(txt(24, 456, skills.join('・') || 'まだ ない', 16, '#ffffff', { wordWrap: { width: W - 48, useAdvancedWrap: true }, lineSpacing: 6 }));
+    const btn = (x, label, on, enabled = true) => {
+      const t = txt(x, 600, label, 20, enabled ? '#ffffff' : '#555070').setOrigin(0.5);
+      box.add(t);
+      if (!enabled) return;
+      const z = this.add.zone(x - 55, 578, 110, 44).setOrigin(0).setInteractive();
+      z.on('pointerup', () => { sfx('select'); on(); });
+      box.add(z);
+    };
+    btn(60, '◀ まえ', () => this.showGear(page - 1), page > 0);
+    btn(W / 2, 'とじる', () => { box.destroy(); this.gearBox = null; this.busy = false; });
+    btn(W - 60, 'つぎ ▶', () => this.showGear(page + 1), page < views.length - 1);
+    box.add(txt(W / 2, 572, `${page + 1} / ${views.length}`, 13, '#8a86b0').setOrigin(0.5, 1));
+    this.cameras.main.ignore(box);
   }
 
   foodMenu() {
