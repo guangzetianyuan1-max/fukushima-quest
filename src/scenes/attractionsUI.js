@@ -1,9 +1,9 @@
 // 町の催し7つの 画面（10/7・計算は src/field/attractions.js）。FieldScene の startAttr が 呼ぶ
 // play(scene, box, { rng, done }) → 確かめ用の 取っ手。終わったら done(結果) を 1回だけ 呼ぶ（点の 計算と 文は FieldScene）
 // 背景は Gemini の絵（ATTR_ART・届いて いれば）／無ければ 図形。部品は どれも box に 入れる（box ごと 消える）
-import { GAME_FONT } from '../ui/fonts.js?v=226';
-import { sfx } from '../audio/chip.js?v=226';
-import * as A from '../field/attractions.js?v=226';
+import { GAME_FONT } from '../ui/fonts.js?v=227';
+import { sfx } from '../audio/chip.js?v=227';
+import * as A from '../field/attractions.js?v=227';
 
 const W = 360;
 const FONT = GAME_FONT;
