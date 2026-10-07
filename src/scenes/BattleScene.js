@@ -1,18 +1,18 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=249';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=249';
-import { EPISODES } from '../data/episodes.js?v=249';
-import { revealAt } from '../ui/reveal.js?v=249';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=249';
-import { chooseCommands } from '../battle/auto.js?v=249';
-import { itemNote } from '../data/items.js?v=249';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=249';
-import { STORY_FILES } from '../data/story_assets.js?v=249';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=249';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=249';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=249';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=249';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=249';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=249';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=250';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=250';
+import { EPISODES } from '../data/episodes.js?v=250';
+import { revealAt } from '../ui/reveal.js?v=250';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=250';
+import { chooseCommands } from '../battle/auto.js?v=250';
+import { itemNote } from '../data/items.js?v=250';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=250';
+import { STORY_FILES } from '../data/story_assets.js?v=250';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=250';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=250';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=250';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=250';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=250';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=250';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -231,7 +231,9 @@ export class BattleScene extends Phaser.Scene {
   // ＝敵の横に縦の巻物を置き続けるのをやめた。①始めに大きな巻物を真ん中に出して 約2秒で消す ②戦いの間は 敵の足もと（下の窓のすぐ上）に横書きの細い帯
   drawTalePlaque() {
     const e = this.ep.enemy;
-    const label = `${e.episode}「${e.tale}」`;
+    // お城クエストの 5話（side）は 話数を 出さない＝題の 名前だけ（10/7 本人「巻物に『おしろのおだい』は入れないで」）
+    const epLabel = e.side ? '' : e.episode;
+    const label = epLabel ? `${epLabel}「${e.tale}」` : e.tale;
     const band = this.add.rectangle(W / 2, TALE_BAND_Y, W, 26, 0x0a0614, 0.62).setDepth(3);
     const txt = smooth(this.add.text(W / 2, TALE_BAND_Y, label, {
       fontFamily: BRUSH_FONT, fontSize: '18px', color: '#ffe9b0', resolution: 3, stroke: '#1a1008', strokeThickness: 4,
@@ -244,7 +246,7 @@ export class BattleScene extends Phaser.Scene {
     if (e.story?.tell?.length) return;
     const before = this.children.list.length;
     const shade = this.add.rectangle(0, 0, W, MSG_Y, 0x05030c, 0.55).setOrigin(0);
-    drawScroll(this, W / 2, 128, fitScroll(128, MSG_Y - 16, { episode: e.episode, tale: e.tale, epSize: 20, taleSize: 38 }));
+    drawScroll(this, W / 2, 128, fitScroll(128, MSG_Y - 16, { episode: epLabel, tale: e.tale, epSize: 20, taleSize: 38 }));
     const card = this.add.container(0, 0, this.children.list.slice(before)).setDepth(900);
     this.taleCard = card;
     this.tweens.add({ targets: card, alpha: { from: 0, to: 1 }, duration: 300 });
