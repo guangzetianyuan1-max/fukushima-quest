@@ -1,8 +1,9 @@
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=252';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=252';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=252';
-import { load, SLOT_COUNT, slotKey, slotSummary } from '../field/game.js?v=252';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=252';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=253';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=253';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=253';
+import { load, SLOT_COUNT, slotKey, slotSummary } from '../field/game.js?v=253';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=253';
+import { CURRENT } from '../ui/update.js?v=253';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -31,6 +32,8 @@ export class TitleScene extends Phaser.Scene {
 
   create() {
     this.add.image(0, 0, 'title_still').setOrigin(0);
+    // いま 動いている 版（10/7 本人「未だUP出来てない」＝スマホが 古い 版の ままか 見分けられなかった）＝右下に 小さく
+    if (CURRENT) this.add.text(354, 634, `版 ${CURRENT}`, { fontFamily: GAME_FONT, fontSize: '12px', color: '#ffffff', resolution: 3, stroke: '#000000', strokeThickness: 3 }).setOrigin(1, 1).setDepth(1000).setAlpha(0.75);
     // 舞の動画（8秒でつながる・音なし）。⚠読み込みを preload に入れない＝iPhone で動画の読み込みが終わらず題の画面が出ないことがある
     try {
       const v = this.add.video(0, 0).setOrigin(0).setVisible(false);
