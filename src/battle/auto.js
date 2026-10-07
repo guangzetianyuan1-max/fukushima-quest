@@ -3,7 +3,7 @@
 // それ以外：弱った味方（HP4割未満）がいれば HP の道具 → 術の力が足りなければ術の道具 → もやが無ければ明かされた弱点の術 → たたかう（もやを払う）。
 // 道具は1ターンに1つだけ使う。
 // 10/5 職業の技（jobs.js の JOB_SPELLS）：起こす・回復・お祓い・守り・かばう・弱らせる・封じる・毒・かわす・もや払い・殴る技・術を 場面で選ぶ
-import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK } from './rules.js?v=257';
+import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK, VOICELESS } from './rules.js?v=258';
 
 const WEAK = 0.4;
 const VERY_WEAK = 0.25;
@@ -64,7 +64,7 @@ export function chooseCommands(state, data) {
   const ratio = (x) => x.hp / x.maxHp;
   const lowest0 = Math.min(...living0.map(ratio));
   // 倒れた仲間を起こす（ボスのとき・起こせる者がいれば 先に決める）
-  if (boss && dead0.length) {
+  if (boss && dead0.length && !silent) { // 10/7 夜 声が 届かない 間は 起こせない（選んでも かき消された）
     const r = living0.find((x) => !x.stunned && spellOf(x, data, 'revive'));
     if (r) cmds[r.id] = { type: 'spell', spellId: spellOf(r, data, 'revive') };
   }
@@ -99,6 +99,8 @@ export function chooseCommands(state, data) {
   let mist = e.mistLeft ?? 0;
   for (const a of [...state.allies].sort((x, y) => y.agi - x.agi)) {
     if (!a.alive || cmds[a.id]) continue;
+    // 10/7 夜 動けない者は 技の 枠を 取らない（取ると 動ける 仲間が 同じ技を 選べなかった）
+    if (a.stunned > 0) { cmds[a.id] = { type: 'attack' }; continue; }
     // 道中の敵（noWeak）には語らない＝明かす弱点が無いので、語ると毎ターン語り続けていた（本人 10/2「雑魚キャラでしおりが昔話を未だ語っている」）
     if (a.canTell && !e.noWeak && !e.revealed && !silent) {
       cmds[a.id] = { type: 'tell' };
@@ -109,7 +111,7 @@ export function chooseCommands(state, data) {
     const healCost = Math.min(...(a.spells ?? []).map((id) => (isHeal(data.spells[id]) ? data.spells[id].cost : Infinity)));
     const reserve = Number.isFinite(healCost) ? healCost : 0; // 回復役は 回復の分の術を残す
     const pick = (kind, ok = true) => {
-      if (!ok || cast.has(kind)) return null;
+      if (!ok || cast.has(kind) || (silent && !VOICELESS.has(kind))) return null; // 10/7 夜 声が 届かない 間は 声の 要る 技を 選ばない
       const id = spellOf(a, data, kind, reserve);
       if (id) {
         cmds[a.id] = { type: 'spell', spellId: id };

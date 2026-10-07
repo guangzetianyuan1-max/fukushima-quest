@@ -2,8 +2,8 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=257';
-import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=257';
+import { TOWNS } from './towns.js?v=258';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=258';
 const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
 const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
@@ -68,7 +68,8 @@ export function lordTalk(game, town) {
   const cq = CASTLE_QUESTS[town];
   if (!q) return { game, lines: [], done: false };
   const say = (t) => `${q.lord}「${t}」`;
-  if (hasStamp(game, 'castle', town)) return { game, lines: [say(`よう 来た。そなたらの 働き、${q.castle}の 者は みな 忘れぬぞ。`)], done: true };
+  // 10/7 夜 判子が あっても 怪物を 戻して いなければ お題へ（10/6 の 決まりで 先に 判子を もらった 記録は、お題を 受けられず 鬼ヶ城山に 入れなかった）
+  if (hasStamp(game, 'castle', town) && game.cleared?.[cq.boss]) return { game, lines: [say(`よう 来た。そなたらの 働き、${q.castle}の 者は みな 忘れぬぞ。`)], done: true };
   if (game.cleared?.[cq.boss]) {
     const r = addStamp(game, 'castle', town);
     return { game: r.game, lines: [say(`おお、${cq.place}の もやを はらって くれたか。礼を 言うぞ。`), ...r.lines], done: true };

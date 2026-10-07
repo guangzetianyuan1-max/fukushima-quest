@@ -2,13 +2,13 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=257';
-import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=257';
-import { sfx } from '../audio/chip.js?v=257';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=257';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=257';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=257';
-import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=257';
+import { GAME_FONT } from '../ui/fonts.js?v=258';
+import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=258';
+import { sfx } from '../audio/chip.js?v=258';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=258';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=258';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=258';
+import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=258';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -317,7 +317,7 @@ export class JobScene extends Phaser.Scene {
     const showSex = () => sexUi.forEach((u) => { u.t.setColor(u.s === sex ? '#ffd98a' : '#8a8aa8'); u.win.setAlpha(u.s === sex ? 1 : 0.55); });
     showSex();
     btn(224, 128, 'きめる', () => {
-      if (!validHeroName(name)) { sfx('cancel'); shown.setText('名前を いれてね'); this.time.delayedCall(900, show); return; }
+      if (!validHeroName(name)) { sfx('cancel'); shown.setText('名前を いれてね'); this.time.delayedCall(900, () => { if (shown.active) show(); }); return; } // 10/7 夜 0.9秒の 間に もどるで 消えた 字に 触らない
       this.go({ ...pick, name, sex });
     });
     // 確かめ用の取っ手（遊ぶ人には見えない）

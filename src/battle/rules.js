@@ -41,7 +41,7 @@ const healScale = (a) => HEAL_BASE + (a.int ?? 0) / HEAL_DIV;
 // 道中の敵か、語って弱点が明かされた昔話の主
 const opened = (e) => !!(e.noWeak || e.revealed);
 // 声を使わない技（爆音の間も出せる）
-const VOICELESS = new Set(['iai', 'strike', 'evade', 'cover', 'mistall', 'poison', 'healOne', 'counter', 'decoy', 'hpstrike', 'charge', 'medAll']);
+export const VOICELESS = new Set(['iai', 'strike', 'evade', 'cover', 'mistall', 'poison', 'healOne', 'counter', 'decoy', 'hpstrike', 'charge', 'medAll']);
 // 急所（本人 10/3「1/10の確率で敵の急所にあたり、一発でしとめる」→ 10/4 夜「10回に1回ランダムに急所に一発で当たり、敵が倒れる」）
 // ＝撃った10発に1発は 急所。道中の敵は一発で倒れる。昔話の主（ボス）は 体力の GUN_KYUSHO_BOSS（2割）の大きな傷（10/4 夜 本人「道中の敵だけ一発」
 //   ＝ボスにも一発を効かせたら 玉3発で ボス戦の勝率が約98%になった）。ボスは語って弱点を明かしたあとだけ（明かす前は 黒いもやが玉を呑む）
@@ -537,6 +537,8 @@ function jobSkill(state, a, sp, id, rng, log) {
       t.alive = true;
       t.hp = Math.max(1, Math.round(t.maxHp * sp.frac));
       t.stunned = 0;
+      t.poison = 0; // 10/7 夜 起きあがると 毒と 構えた矢は 消える（倒れる前の 毒が 残り、起きた ターンに むしばんだ）
+      t.charged = null;
       log.push({ text: `${t.name}が 起きあがった！`, effect: { kind: 'heal', target: t.id, hp: t.hp }, sfx: 'heal' });
     }
   } else if (k === 'cleanse') {
@@ -795,7 +797,7 @@ function doTrick(state, e, living, rng, log) {
     const t = living.filter((a) => !(a.poison > 0));
     if (!t.length) return false;
     log.push({ text: e.trick.text ?? `${e.name}は 毒の 息を 吐いた！`, effect: { kind: 'shake' } });
-    poisonAll(t, log, 'みんな 毒に おかされた！');
+    poisonAll(t, log, t.length === living.length ? 'みんな 毒に おかされた！' : `${t.map((a) => a.name).join('と ')}は 毒に おかされた！`); // 10/7 夜 毒に なったのが 一部なら その人の 名前
     return true;
   }
   if (k === 'curse' || k === 'possess') {
@@ -930,10 +932,11 @@ export function resolveTurn(state0, commands, data, rng) {
   // 味方の 毒（10/7）＝ターンの 終わりに むしばむ・毒では 倒れない
   if (!state.over) {
     for (const a of state.allies.filter((x) => x.alive && x.poison > 0)) {
-      const d = Math.max(1, Math.round(a.maxHp * POISON_FRAC));
-      a.hp = Math.max(1, a.hp - d);
+      const before = a.hp;
+      a.hp = Math.max(1, a.hp - Math.max(1, Math.round(a.maxHp * POISON_FRAC)));
+      const d = before - a.hp; // 10/7 夜 HP1 では 減らない＝減った分だけ 書く
       a.poison -= 1;
-      log.push({ text: `${a.name}は 毒で ${d}の ダメージ！${a.poison > 0 ? '' : `（${a.name}の 毒が ぬけた）`}`, effect: { kind: 'hitAlly', target: a.id, hp: a.hp } });
+      log.push({ text: `${a.name}は ${d > 0 ? `毒で ${d}の ダメージ！` : '毒に むしばまれて いる……'}${a.poison > 0 ? '' : `（${a.name}の 毒が ぬけた）`}`, effect: { kind: 'hitAlly', target: a.id, hp: a.hp } });
     }
   }
   for (const key of ['buff', 'guard', 'cover', 'counter']) if (state[key]?.turns > 0) state[key].turns -= 1;

@@ -1,7 +1,7 @@
 // 装備（本人 10/1「武器、防具の採用は無いか？」→「3」＝刀屋と装備の回）
 // 1人に3か所：weapon 武器／armor 防具／charm お守り。who＝着けられる人。買うとその場で着け、前の品は半値で引き取ってもらう
 // 序章いわきで買える所：平の刀屋（武器）・平の荒物屋（防具）・平の八幡さま（勝守）・湯本のお寺（厄除け守）
-import { JOBS, jobOf } from './jobs.js?v=257';
+import { JOBS, jobOf } from './jobs.js?v=258';
 
 export const EQUIP = {
   // ---- 武器と防具＝職業ごと（本人 10/5「武器、防具は職業別に作ってください」）。id＝<職業>_w<段>（武器 段0〜6）／<職業>_a<段>（防具 段1〜6）
@@ -212,7 +212,7 @@ export function migrateEquip(game) {
     const job = jobOf(game, who);
     const w = g?.weapon && !EQUIP[g.weapon] && OLD_WEAPON_TIER[g.weapon] != null ? `${job}_w${OLD_WEAPON_TIER[g.weapon]}` : g?.weapon;
     const a = g?.armor && !EQUIP[g.armor] && OLD_ARMOR_TIER[g.armor] ? `${job}_a${OLD_ARMOR_TIER[g.armor]}` : g?.armor;
-    return [who, { ...g, weapon: EQUIP[w] ? w : null, armor: EQUIP[a] ? a : null }];
+    return [who, { ...g, weapon: EQUIP[w] ? w : null, armor: EQUIP[a] ? a : null, charm: EQUIP[g?.charm] ? g.charm : null }]; // 10/7 夜 お守りも 無い品は 外す（そうびを見るで 止まらない）
   }));
   return { ...game, equip };
 }

@@ -75,8 +75,11 @@ export function enterCastle(game, town, entry) {
   const q = CASTLE_QUESTS[town];
   return { ...game, castleFrom: { map: game.pos.map, x: game.pos.x, y: game.pos.y }, pos: { map: q.hall, ...entry, dir: 'up' }, justEntered: q.hall };
 }
-export function leaveCastle(game) {
-  const f = game.castleFrom;
+// entryOf＝町の 入口（towns.js の townEntry・ここで 読むと towns.js と 読み合う）
+export function leaveCastle(game, entryOf = null) {
+  // 10/7 夜 戻り先が 無い（大広間で 記録して 負けた 前の 記録など）＝その城の 城下町の 入口へ（前は ここで 止まり、大広間から 出られなかった）
+  const town = Object.keys(CASTLE_QUESTS).find((t) => CASTLE_QUESTS[t].hall === game.pos?.map);
+  const f = game.castleFrom ?? (town ? { map: town, ...(entryOf?.(town) ?? { x: 0, y: 0 }) } : { map: game.fieldMap ?? 'field', ...(game.fieldPos ?? { x: 0, y: 0 }) });
   return { ...game, castleFrom: null, pos: { map: f.map, x: f.x, y: f.y, dir: 'down' } };
 }
 
