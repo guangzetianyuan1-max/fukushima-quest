@@ -50,6 +50,8 @@ export const GATE_OF = Object.fromEntries(QUEST_TOWNS.map((t) => [CASTLE_QUESTS[
 // お題を 受けた か（受けると 入口が ひらく）
 export const questAccepted = (game, town) => !!game?.castleQuest?.[town];
 export const acceptQuest = (game, town) => ({ ...game, castleQuest: { ...(game.castleQuest ?? {}), [town]: true } });
+// 入口の字を 踏んだ：お殿様の 依頼が 出て いれば 新しい場所の id・まだなら null（10/7 本人「殿から依頼が出るまでは、入れないように」）
+export const gateGround = (game, ch) => (GATE_OF[ch] && questAccepted(game, GATE_OF[ch]) ? CASTLE_QUESTS[GATE_OF[ch]].ground : null);
 
 // 章の地図に 入口の字を 重ねる（地図の書き出し道具 make_*_map.py には 触らない）
 export function withGates(map, rows) {
