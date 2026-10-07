@@ -1,9 +1,9 @@
 // 町の催し7つの 画面（10/7・計算は src/field/attractions.js）。FieldScene の startAttr が 呼ぶ
 // play(scene, box, { rng, done }) → 確かめ用の 取っ手。終わったら done(結果) を 1回だけ 呼ぶ（点の 計算と 文は FieldScene）
 // 背景は Gemini の絵（ATTR_ART・届いて いれば）／無ければ 図形。部品は どれも box に 入れる（box ごと 消える）
-import { GAME_FONT } from '../ui/fonts.js?v=218';
-import { sfx } from '../audio/chip.js?v=218';
-import * as A from '../field/attractions.js?v=218';
+import { GAME_FONT } from '../ui/fonts.js?v=219';
+import { sfx } from '../audio/chip.js?v=219';
+import * as A from '../field/attractions.js?v=219';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -286,7 +286,11 @@ function daruma(s, box, { rng, done }) {
 // ---- 猪苗代：白鳥 かぞえ ----
 function hakucho(s, box, { rng, done }) {
   backdrop(s, box, 'hakucho', 0x9ac0e0, 0x3a6aa0);
-  const fin = once(done);
+  const FLAP = [P(s, 'hakucho', 'up'), P(s, 'hakucho', 'down')];
+  // 羽ばたき（2コマを 交互に）・終わったら 止める
+  const flap = s.time.addEvent({ delay: 170, loop: true, callback: () => swans.forEach((g) => { if (g.flap) g.setTexture(FLAP[(g.fi = (g.fi + 1) % 2)]); }) });
+  const fin0 = once(done);
+  const fin = (r) => { flap.remove(false); fin0(r); };
   box.add(txt(s, W / 2, 64, '湖に 降りた 白鳥を 数える', 18)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 98, '', 18, '#ffe9a8');
   const res = txt(s, W / 2, 470, '', 26, '#ffb040');
@@ -302,6 +306,14 @@ function hakucho(s, box, { rng, done }) {
   let cur = null;
   const swans = [];
   const swan = () => {
+    if (FLAP[0] && FLAP[1]) {
+      const im = s.add.image(0, 0, FLAP[0]);
+      im.setScale(52 / Math.max(im.width, im.height));
+      im.flap = true; im.fi = 0;
+      box.add(im);
+      swans.push(im);
+      return im;
+    }
     const g = s.add.graphics();
     g.fillStyle(0xffffff, 1).fillEllipse(0, 0, 30, 14).fillEllipse(-8, -6, 22, 8).fillEllipse(8, -6, 22, 8);
     g.fillStyle(0xffa020, 1).fillTriangle(15, 0, 21, -2, 15, 3);
@@ -318,7 +330,8 @@ function hakucho(s, box, { rng, done }) {
     for (const f of R.flights) {
       const g = swan().setVisible(false);
       const fromX = f.from === 'L' ? -30 : W + 30;
-      g.setScale(f.from === 'L' ? 1 : -1, 1);
+      if (g.flap) g.setFlipX(f.from !== 'L'); // 絵は 右向き
+      else g.setScale(f.from === 'L' ? 1 : -1, 1);
       const dur = 1800 / f.speed;
       last = Math.max(last, f.delay + dur);
       s.time.delayedCall(f.delay, () => {

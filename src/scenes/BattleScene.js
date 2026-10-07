@@ -1,18 +1,18 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=218';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=218';
-import { EPISODES } from '../data/episodes.js?v=218';
-import { revealAt } from '../ui/reveal.js?v=218';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=218';
-import { chooseCommands } from '../battle/auto.js?v=218';
-import { itemNote } from '../data/items.js?v=218';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=218';
-import { STORY_FILES } from '../data/story_assets.js?v=218';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=218';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=218';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=218';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=218';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=218';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=218';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=219';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=219';
+import { EPISODES } from '../data/episodes.js?v=219';
+import { revealAt } from '../ui/reveal.js?v=219';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=219';
+import { chooseCommands } from '../battle/auto.js?v=219';
+import { itemNote } from '../data/items.js?v=219';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=219';
+import { STORY_FILES } from '../data/story_assets.js?v=219';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=219';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=219';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=219';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=219';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=219';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=219';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
