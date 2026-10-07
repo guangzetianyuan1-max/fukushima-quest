@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=222';
+import { makeRng } from '../battle/rules.js?v=223';
 
 export const TILE = 16;
 
@@ -107,6 +107,7 @@ export const FIELD_TERRAIN = {
   関: ['road', true], 峠: ['mist', false], 苗: ['town_yumoto', true], 若: ['town_taira', true], 津: ['town_taira', true],
   亀: ['boss', true], 猫: ['boss', true], 足: ['boss', true], 朱: ['boss', true], 牛: ['boss', true], 河: ['boss', true], 狐: ['boss', true], 沼: ['boss', true],
   一: ['mist', false], 二: ['mist', false], 三: ['mist', false], 四: ['mist', false], 五: ['mist', false], 六: ['mist', false], 七: ['mist', false],
+  ア: ['grass', true], イ: ['grass', true], ウ: ['grass', true], エ: ['grass', true], オ: ['grass', true], // 10/7 お城クエストの 入口（お題を 受けると ひらく・castle.js）
 };
 export const TOWN_TERRAIN = {
   '.': ['grass', true], '=': ['stone', true], ',': ['sand', true], '#': ['wall', false], _: ['floor', true],
@@ -115,6 +116,9 @@ export const TOWN_TERRAIN = {
   // 10/5 夜 町の形を作り直した（art_src/make_towns.py）
   k: ['tree', false], K: ['tree', false], m: ['tree', false], Y: ['tree', false], S: ['tree', false], R: ['wall', false], l: ['wall', false],
   r: ['sea', false], p: ['sea', false], b: ['stone', true], d: ['stone', true], H: ['wall', false], a: ['wall', false], P: ['stone', true], w: ['wall', false],
+  // 10/7 お城クエスト（src/field/castle.js）：N＝襖の壁・上＝上段の間・J＝畳・B＝板の間／鬼〜鏡＝お題の 怪物の 場所
+  N: ['wall', false], 上: ['floor', true], J: ['floor', true], B: ['floor', true],
+  鬼: ['stone', true], 臼: ['stone', true], 石: ['stone', true], 剣: ['stone', true], 鏡: ['stone', true],
 };
 
 // 絵の帯を1枚作って Phaser に登録する（1度だけ）

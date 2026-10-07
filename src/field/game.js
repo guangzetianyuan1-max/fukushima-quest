@@ -1,20 +1,21 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=222';
-import { kanbanAt } from './kanban.js?v=222';
-import { SOMA_ROWS } from './soma_map.js?v=222';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=222';
-import { KENCHU_ROWS } from './kenchu_map.js?v=222';
-import { AIZU_ROWS } from './aizu_map.js?v=222';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=222';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=222';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=222';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=222';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=222';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=222';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=222';
-import { becomeKunoichi } from './kagewatari.js?v=222';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=222';
+import { IWAKI_ROWS } from './iwaki_map.js?v=223';
+import { kanbanAt } from './kanban.js?v=223';
+import { SOMA_ROWS } from './soma_map.js?v=223';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=223';
+import { KENCHU_ROWS } from './kenchu_map.js?v=223';
+import { AIZU_ROWS } from './aizu_map.js?v=223';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=223';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=223';
+import { withGates } from './castle.js?v=223';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=223';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=223';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=223';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=223';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=223';
+import { becomeKunoichi } from './kagewatari.js?v=223';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=223';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -37,7 +38,7 @@ export const WALL_OPENED_BY = { 1: 'matsukawa', 2: 'kashinuma', 3: 'jagan', 4: '
 export const ROAD_OPENED_BY = { r: 'ryuto' };
 
 // 歩く地図（10/3 1章〜）：field＝いわき（序章）・soma＝相馬（1章）・kenpoku＝県北（2章・10/4）。口の字で行き来する
-export const FIELDS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS }; // kenchu＝県中・県南（3章・10/4）・aizu＝会津（4章・10/6）
+export const FIELDS = { field: withGates('field', IWAKI_ROWS), soma: withGates('soma', SOMA_ROWS), kenpoku: withGates('kenpoku', KENPOKU_ROWS), kenchu: withGates('kenchu', KENCHU_ROWS), aizu: withGates('aizu', AIZU_ROWS) }; // 10/7 お城クエストの 入口の字を 重ねる（castle.js） // kenchu＝県中・県南（3章・10/4）・aizu＝会津（4章・10/6）
 export const isField = (map) => Object.hasOwn(FIELDS, map);
 // 口：地図ごと・字ごとに、行き先と「出た先は口の1歩内側」の向き
 //   E＝いわきの北の端 ⇔ 相馬の南の端／X＝相馬の西の端（虎捕山の先）⇔ 県北の東の端（霊山）
@@ -424,7 +425,7 @@ function settle(game, state) {
 
 // 勝った：ボスを元に戻した印・残った道具・HP（力つきた仲間は幽霊のまま）
 // ボスを元に戻したお礼の文（本人 10/2「ボスを倒した際は、お金を多めに出して。ここでは50文」＝松川様50・あとは順に増やす＝Claudeの決め）
-export const BOSS_MON = { matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 150, daihisan: 170, tenaga: 190, sumitora: 240, amekai: 280, gobou: 300, mukade: 360, heppiri: 380, onibaba: 500, jakotsu: 540, miharugoma: 560, otakimaru: 620, nekonaki: 640, tengu: 700, takuzen: 720, kappa: 780, kiyohime: 1000, kamehime: 1050, nekoma: 1100, ashinaga: 1150, shunobon: 1200, akabeko: 1250, nawakappa: 1300, okon: 1350, numagozen: 1600 }; // 4章（10/6） // 3章（10/4） // 1章は順に多め（Claudeの決め）・ザルカブリは10/4から戦う（本人）
+export const BOSS_MON = { onigajo: 160, usunuma: 280, oniishi: 560, kenkatsura: 1050, kagaminuma: 1700, matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 150, daihisan: 170, tenaga: 190, sumitora: 240, amekai: 280, gobou: 300, mukade: 360, heppiri: 380, onibaba: 500, jakotsu: 540, miharugoma: 560, otakimaru: 620, nekonaki: 640, tengu: 700, takuzen: 720, kappa: 780, kiyohime: 1000, kamehime: 1050, nekoma: 1100, ashinaga: 1150, shunobon: 1200, akabeko: 1250, nawakappa: 1300, okon: 1350, numagozen: 1600 }; // 4章（10/6） // 3章（10/4） // 1章は順に多め（Claudeの決め）・ザルカブリは10/4から戦う（本人）
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
 export function afterWin(game, enemyId, state) {

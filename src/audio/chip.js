@@ -477,6 +477,55 @@ const SFX = {
     [0, 0.1, 0.2, 0.3, 0.4].forEach((d, i) => noise(t + d, 0.12, { vol: 0.22, from: 2500 + i * 600, to: 1200 }));
     tone(N(40), t, 0.9, { type: 'triangle', vol: 0.2 });
   },
+  // ---- お城クエストの 怪物（10/7）----
+  // 大岩 投げ（鬼ヶ城山の鬼）＝岩が うなって 飛び、どすんと 落ちる
+  oiwa: (t) => {
+    tone(N(55), t, 0.4, { type: 'triangle', vol: 0.18, slideTo: N(40) });
+    noise(t + 0.4, 0.5, { vol: 0.5, from: 600, to: 120 });
+    tone(N(31), t + 0.4, 0.4, { type: 'square', vol: 0.25, slideTo: N(26) });
+  },
+  // 大蛇の 巻きつき（臼沼の大蛇）＝ぎりぎりと しめつける
+  makitsuki: (t) => {
+    [0, 0.16, 0.32, 0.48].forEach((d, i) => tone(N(41 + i), t + d, 0.18, { type: 'sawtooth', vol: 0.1 }));
+    noise(t, 0.8, { vol: 0.16, from: 900, to: 400 });
+  },
+  // 沼の 大渦（臼沼の大蛇）＝ぐるぐると 水が 回る
+  ouzu: (t) => {
+    [0, 0.25, 0.5].forEach((d) => noise(t + d, 0.3, { vol: 0.25, from: 300, to: 1500 }));
+    tone(N(38), t, 1.0, { type: 'sine', vol: 0.22, slideTo: N(33) });
+  },
+  // 鬼の 大石（安達太良山の鬼）＝重い 石が ずしんと
+  oishi: (t) => {
+    noise(t, 0.15, { vol: 0.3, from: 2000, to: 600 });
+    tone(N(28), t + 0.12, 0.6, { type: 'square', vol: 0.3, slideTo: N(24) });
+    noise(t + 0.12, 0.7, { vol: 0.45, from: 400, to: 90 });
+  },
+  // 山の おたけび（安達太良山の鬼）＝低い 声が 山に こだまする
+  otakebi: (t) => {
+    [0, 0.35].forEach((d, i) => tone(N(43 - i * 5), t + d, 0.5, { type: 'sawtooth', vol: 0.14 - i * 0.05, slideTo: N(38 - i * 5) }));
+  },
+  // 森の 嵐（剣桂の鬼神）＝木の葉が ざあっと 鳴る
+  moriarashi: (t) => {
+    noise(t, 1.1, { vol: 0.3, from: 1500, to: 5000 });
+    noise(t + 0.4, 0.7, { vol: 0.25, from: 5000, to: 800 });
+  },
+  // 鬼神の 雷（剣桂の鬼神）＝ぴしゃっ・ごろごろ
+  kishinrai: (t) => {
+    noise(t, 0.08, { vol: 0.55, from: 12000, to: 6000 });
+    noise(t + 0.08, 1.0, { vol: 0.35, from: 500, to: 80 });
+    tone(N(30), t + 0.08, 0.8, { type: 'triangle', vol: 0.2 });
+  },
+  // 大風と 稲妻（鏡ヶ沼の大蛇）＝風が うなり、稲妻が 走る
+  inazuma: (t) => {
+    noise(t, 0.6, { vol: 0.22, from: 800, to: 2500 });
+    noise(t + 0.45, 0.06, { vol: 0.5, from: 14000, to: 7000 });
+    tone(N(88), t + 0.45, 0.12, { type: 'square', vol: 0.12, slideTo: N(60) });
+  },
+  // 沼の 大雨（鏡ヶ沼の大蛇）＝ざあざあと 雨が 打つ
+  ooame: (t) => {
+    for (let i = 0; i < 10; i++) noise(t + i * 0.09, 0.06, { vol: 0.2, from: 7000 - i * 300, to: 3000 });
+    noise(t, 1.0, { vol: 0.15, from: 3000, to: 1500 });
+  },
   // 居合い斬り（武士・本人 10/4）＝鍔の「チャキッ」→ 鋭い風切り「シュッ」→ 斬った「ザン」
   iai: (t) => {
     tone(N(96), t, 0.04, { type: 'square', vol: 0.18 });

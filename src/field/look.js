@@ -1,13 +1,14 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=222';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=222';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=222';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=223';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=223';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=223';
+import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=223';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
-export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen'];
+export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen', 'tatami', 'jodan', 'fusuma', 'itama'];
 export const OBJECTS = [
   'tree', 'forest', 'rockmtn', 'rock', 'plank', 'snowmtn', 'bridge', 'vortex', 'mistwall',
   'minka', 'mise', 'yadoya', 'torii', 'jinja', 'tera', 'shiro', 'sekisho', 'counter', 'hei', 'fune', 'toro',
@@ -90,6 +91,8 @@ export function mountainPiece(map, x, y) {
 export function fieldLook(game, ch, x, y, map = 'field') {
   // 名所の立て看板は 10/5 に消した（名前は 字だけ＝FieldScene.makeKanbanLabels）
   if (ROAD_OPENED_BY[ch]) return { ground: game.cleared?.[ROAD_OPENED_BY[ch]] ? 'road' : 'grass', objs: [] }; // 龍燈を戻すと現れる相馬への道（10/3）
+  // お城クエストの 入口（10/7）＝お題を 受けるまでは ただの 草地・受けると 道しるべ
+  if (GATE_OF[ch]) return { ground: 'grass', objs: questAccepted(game, GATE_OF[ch]) ? ['kanban_michi'] : [] };
   const boss = BOSS_AT[ch];
   if (boss) {
     const ground = ch === 'S' ? 'sand' : 'grass';
@@ -159,9 +162,12 @@ export function fieldLook(game, ch, x, y, map = 'field') {
 // 町の中：字 → 地面と小物（建物は towns.js の props で、何マスかにまたがって置く）
 // 10/5 夜 町の形を作り直した（art_src/make_towns.py の GROUND・OBJ と同じ）。堀と池（p）は 川の水の色（沼の色は 黒く沈んだ）
 const TOWN_GROUND = { '.': 'grass', '=': 'stone', ',': 'sand', '#': 'grass', _: 'floor', c: 'floor', T: 'grass', '~': 'sea', u: 'onsen', z: 'grass', t: 'stone', x: 'stone',
-  k: 'grass', K: 'grass', m: 'grass', Y: 'grass', R: 'grass', l: 'stone', r: 'river', b: 'river', p: 'river', d: 'road', H: 'sand', a: 'sand', P: 'sea', S: 'grass', w: 'paddy' };
+  k: 'grass', K: 'grass', m: 'grass', Y: 'grass', R: 'grass', l: 'stone', r: 'river', b: 'river', p: 'river', d: 'road', H: 'sand', a: 'sand', P: 'sea', S: 'grass', w: 'paddy',
+  N: 'fusuma', 上: 'jodan', J: 'tatami', B: 'itama', 鬼: 'stone', 臼: 'stone', 石: 'stone', 剣: 'stone', 鏡: 'stone' }; // 10/7 お城の 大広間（絵は art_src/make_castle_tiles.py）
 const TOWN_OBJ = { T: 'tree', t: 'torii', k: 'sakura', K: 'kaki', m: 'momo_hana', Y: 'yukisugi', R: 'rock', l: 'toro', b: 'bridge', H: 'hoshidana', a: 'ami', P: 'plank', S: 'shidare' };
-export function townLook(ch, x, y) {
+export function townLook(ch, x, y, game = null) {
+  // お題の 怪物の 場所（10/7）：もやの 渦・元に戻すと 鳥居
+  if (QUEST_BOSS_AT[ch]) return { ground: 'stone', objs: [game?.cleared?.[QUEST_BOSS_AT[ch]] ? 'icon_torii' : 'vortex'] };
   const objs = TOWN_OBJ[ch] ? [TOWN_OBJ[ch]] : [];
   return { ground: TOWN_GROUND[ch] ?? 'grass', objs };
 }

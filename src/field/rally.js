@@ -2,7 +2,10 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=222';
+import { TOWNS } from './towns.js?v=223';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=223';
+const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
+const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
 // 温泉めぐり（15か所）＝湯に つかると 判子
 export const ONSEN_RALLY = ['yumoto', 'iizaka', 'takayu', 'tsuchiyu', 'dake', 'bandaiatami', 'bohata', 'nekonakiyu', 'futamata', 'kashi', 'nakanosawa', 'higashiyama', 'ashinomaki', 'nishiyama', 'hayato'];
@@ -13,14 +16,11 @@ export const GOURMET_RALLY = {
   koriyama: 'g_usukawa', shirakawa: 'g_ramen', inawashiro: 'g_soba', aizuwakamatsu: 'g_kozuyu', yanaizu: 'g_awaman',
 };
 
-// お城クエスト（5つ）＝お殿様の お題を 果たして 話しかけると 判子。need＝boss（その主を 元に戻す）か item（その品を 1つ 届ける）
-export const CASTLE_RALLY = {
-  taira: { castle: '磐城平城', lord: '平の お殿様', need: { boss: 'ryuto' }, ask: '磐城の 海に 灯を ともす 龍が、黒い もやに 呑まれて おる。龍燈の 龍を 鎮めて まいれ。' },
-  nakamura: { castle: '相馬中村城', lord: '相馬の お殿様', need: { boss: 'sumitora' }, ask: '虎捕山に ひそむ 山賊、橘墨虎を 鎮めて まいれ。' },
-  nihonmatsu: { castle: '二本松城', lord: '二本松の お殿様', need: { item: 'g_usukawa' }, ask: '郡山の 宿場で 生まれた 薄皮饅頭を、ひとつ 届けて くれぬか。' },
-  shirakawa: { castle: '白河小峰城', lord: '白河の お殿様', need: { boss: 'kiyohime' }, ask: '安珍を 追う 清姫の 炎が、もやに 呑まれて 荒れて おる。鎮めて まいれ。' },
-  aizuwakamatsu: { castle: '鶴ヶ城', lord: '会津の お殿様', need: { item: 'g_awaman' }, ask: '柳津の あわまんじゅうを、ひとつ 届けて くれぬか。二度と 災難に あわぬ ように との 菓子じゃ。' },
-};
+// お城クエスト（5つ）＝お殿様の お題を 果たして 話しかけると 判子
+// ⭐10/7 作り直し（本人「お城の中に入って、お殿様よりクエストを受ける。新しい場所でモンスターを倒す」）＝お題は 言い伝えの 怪物（src/field/castle.js の CASTLE_QUESTS）
+export const CASTLE_RALLY = Object.fromEntries(Object.entries(CASTLE_QUESTS).map(([t, q]) => [t, {
+  castle: CASTLE_NAME[t], lord: `${LORD_NAME[t]}の お殿様`, need: { boss: q.boss }, ask: q.ask.join(''),
+}]));
 
 // そろうと もらえる 道具（終章 檜枝岐の 舞台に 供える）
 export const RELICS = {
@@ -62,15 +62,26 @@ export const stampGourmet = (game, itemId) => {
   return town ? { ...addStamp(game, 'gourmet', town), town } : { game, lines: [], added: false, town: null };
 };
 
-// お殿様に 話しかけた：お題が まだなら お題・果たして いれば 判子（品は 1つ 受けとる）・済んで いれば お礼
+// お殿様に 話しかけた（城の 大広間で）：はじめは お題を 授かる（入口が ひらく）・怪物を 元に戻して いれば 判子・済んで いれば お礼
 export function lordTalk(game, town) {
   const q = CASTLE_RALLY[town];
+  const cq = CASTLE_QUESTS[town];
   if (!q) return { game, lines: [], done: false };
-  if (hasStamp(game, 'castle', town)) return { game, lines: [`${q.lord}「よう 来た。そなたらの 働き、${q.castle}の 者は みな 忘れぬぞ。」`], done: true };
-  const met = q.need.boss ? !!game.cleared?.[q.need.boss] : (game.items?.[q.need.item] ?? 0) > 0;
-  if (!met) return { game, lines: [`${q.lord}「旅の 者か。ひとつ 頼みが ある。」`, `${q.lord}「${q.ask}」`], done: false };
-  let g = game;
-  if (q.need.item) g = { ...g, items: { ...g.items, [q.need.item]: g.items[q.need.item] - 1 } };
-  const r = addStamp(g, 'castle', town);
-  return { game: r.game, lines: [`${q.lord}「おお、果たして くれたか。礼を 言うぞ。」`, ...r.lines], done: true };
+  const say = (t) => `${q.lord}「${t}」`;
+  if (hasStamp(game, 'castle', town)) return { game, lines: [say(`よう 来た。そなたらの 働き、${q.castle}の 者は みな 忘れぬぞ。`)], done: true };
+  if (game.cleared?.[cq.boss]) {
+    const r = addStamp(game, 'castle', town);
+    return { game: r.game, lines: [say(`おお、${cq.place}の もやを はらって くれたか。礼を 言うぞ。`), ...r.lines], done: true };
+  }
+  if (!questAccepted(game, town)) {
+    return { game: acceptQuest(game, town), lines: [say('旅の 者か。よう 来た。ひとつ 頼みが ある。'), ...cq.ask.map(say), say(cq.hint), `お題を 受けた！ ${cq.place}への 入口が ひらいた。`], done: false, accepted: true };
+  }
+  return { game, lines: [say(`${cq.place}の 件、たのんだぞ。`), say(cq.hint)], done: false };
+}
+
+// 家老：お題を 受けて いれば 行き先を、まだなら ひと言
+export function karoTalk(game, town, lines) {
+  const cq = CASTLE_QUESTS[town];
+  if (questAccepted(game, town) && !game.cleared?.[cq.boss]) return [`家老「${cq.place}へは、${cq.hint}」`];
+  return lines;
 }

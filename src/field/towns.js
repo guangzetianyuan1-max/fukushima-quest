@@ -1,4 +1,5 @@
-import { gearAt } from '../data/equip.js?v=222'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { gearAt } from '../data/equip.js?v=223'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=223'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -58,7 +59,7 @@ export const TOWNS = {
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['yakusou', 'reisui'], lines: ['平の 道具屋で ございます。薬草と 霊水は 旅の おともに。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。平の 宿で ございます。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「この 奥は 平の お城だ。城の 中の 桜は 見て いって かまわんぞ。」'] },
-      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 平の お殿様（10/6 お城クエスト・src/field/rally.js）
+      { spot: 'lord', look: 'yakunin', role: 'castle_gate', lines: [] }, // お城の 門番＝話すと 城の 大広間へ（10/7 お城クエスト・src/field/castle.js）
     ],
   },
   yumoto: {
@@ -187,7 +188,7 @@ export const TOWNS = {
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [3, 4]), lines: ['相馬の 具足屋だ。職ごとの 防具を そろえて あるぜ。'] },
       { spot: 'temple', look: 'osho', role: 'temple', lines: ['相馬の 寺じゃ。迷うた 霊が 憑いたら、供養して 進ぜよう。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「堀に かかる 橋を わたれば 相馬の お城だ。」'] },
-      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 相馬の お殿様（10/6 お城クエスト・src/field/rally.js）
+      { spot: 'lord', look: 'yakunin', role: 'castle_gate', lines: [] }, // お城の 門番＝話すと 城の 大広間へ（10/7 お城クエスト・src/field/castle.js）
     ],
   },
   // ---- 2章 県北（10/4・本人「順番に制作を」）。町の形は小高・相馬と同じ。話の手がかりは出どころで確かめた筋だけ（vault 日本昔話/2026-10-04-調査-福島昔話クエスト2章県北5話.md）----
@@ -250,7 +251,7 @@ export const TOWNS = {
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['二本松の 道具屋で ございます。'] },
       { spot: 'kashi', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou'], lines: ['二本松の 菓子屋です。名物の 玉羊羹は、提灯祭りの 景品に 出して いますよ。'] }, // 10/7 本人「店ではスタンプラリーの食事は出さない」
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「霞ヶ城の 石垣は 見事だろう。春は 桜で いっぱいに なるぞ。」'] },
-      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 二本松の お殿様（10/6 お城クエスト・src/field/rally.js）
+      { spot: 'lord', look: 'yakunin', role: 'castle_gate', lines: [] }, // お城の 門番＝話すと 城の 大広間へ（10/7 お城クエスト・src/field/castle.js）
     ],
   },
   // ---- 3章 県中・県南（10/4）。町の人の話＝vault 日本昔話/2026-10-04-調査-福島昔話クエスト3章県中県南.md の「町で話せる事実」（確かめた物だけ）----
@@ -332,7 +333,7 @@ export const TOWNS = {
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [5, 6]), lines: ['白河の 具足屋だ。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['白河の 道具屋で ございます。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「小峰城の 三重櫓だ。白河藩の お城よ。」'] },
-      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 白河の お殿様（10/6 お城クエスト・src/field/rally.js）
+      { spot: 'lord', look: 'yakunin', role: 'castle_gate', lines: [] }, // お城の 門番＝話すと 城の 大広間へ（10/7 お城クエスト・src/field/castle.js）
     ],
   },
   iizaka: {
@@ -463,7 +464,7 @@ export const TOWNS = {
       { spot: 'm2', look: 'musume', lines: ['張り子の 赤べこは、400年 以上も 作られてきた 会津の おもちゃなの。'] },
       { spot: 'm3', look: 'machibito', lines: ['町はずれの 夜道には、朱の盤と いう 化け物が 出ると いう うわさだ。気を つけな。'] },
       { spot: 'm4', look: 'kodomo', lines: ['猪苗代湖の 水は、むかし 郡山の ほうへ 引かれたんだって。'] },
-      { spot: 'lord', look: 'bushi', role: 'lord', lines: [] }, // 会津の お殿様（10/6 お城クエスト・src/field/rally.js）
+      { spot: 'lord', look: 'yakunin', role: 'castle_gate', lines: [] }, // お城の 門番＝話すと 城の 大広間へ（10/7 お城クエスト・src/field/castle.js）
     ],
   },
   yanaizu: {
@@ -1418,6 +1419,9 @@ for (const [id, t] of Object.entries(TOWNS)) {
   Object.assign(t, { rows: L.rows, props: L.props, entry: L.entry });
   t.npcs = t.npcs.map((n) => (n.spot ? { ...n, ...L.spots[n.spot] } : n));
 }
+// お城の 大広間と、お題の 新しい場所（10/7 お城クエスト・src/field/castle.js）。町の 表には 入れるが、町の 一覧（TOWN_IDS）には 数えない
+Object.assign(TOWNS, castleMaps());
+export const TOWN_IDS = Object.keys(TOWNS).filter((id) => !TOWNS[id].inside);
 // 町の入口（入ると ここに立つ）。町ごとに違う（城下町は 21×24 など）
 export const townEntry = (id) => TOWNS[id]?.entry ?? TOWN_ENTRY;
 
@@ -1426,5 +1430,7 @@ export const TOWN_OF = { H: 'taira', Y: 'yumoto', O: 'onahama', Q: 'odaka', M: '
 // 町に入った瞬間の毛筆の名前（10/4 本人「二本松に入るとイラストに『二本松』の文字が無い」＝表が1章の5つで止まっていた）
 // 表に無い町も「○○の町」で必ず出す（試験 tests/look.test.js）
 export const TOWN_CARD_NAME = { taira: '平の城下町', yumoto: '湯本の湯の町', onahama: '小名浜の港', odaka: '小高の町', nakamura: '相馬の城下町', fukushima: '福島の城下町', nihonmatsu: '二本松の城下町', koriyama: '郡山の町', sukagawa: '須賀川の町', shirakawa: '白河の城下町', iizaka: '飯坂温泉', takayu: '高湯温泉', tsuchiyu: '土湯温泉', dake: '岳温泉', bandaiatami: '磐梯熱海温泉', bohata: '母畑温泉', nekonakiyu: '猫啼温泉', futamata: '二岐温泉', kashi: '甲子温泉', inawashiro: '猪苗代の町', aizuwakamatsu: '会津若松の城下町', yanaizu: '柳津の門前町', nakanosawa: '中ノ沢温泉', higashiyama: '東山温泉', ashinomaki: '芦ノ牧温泉', nishiyama: '西山温泉', hayato: '早戸温泉' };
+// 城の 大広間と お題の 場所（10/7）
+for (const [id, t] of Object.entries(TOWNS)) if (t.inside) TOWN_CARD_NAME[id] = t.inside === 'castle' ? `${t.name} 大広間` : t.name;
 export const townCardName = (id) => TOWN_CARD_NAME[id] ?? `${TOWNS[id]?.name ?? ''}の町`;
 
