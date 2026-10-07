@@ -2,11 +2,11 @@
 // 話（安達地方広域行政組合「あだち野のむかし物語」）：原瀬村才木から深堀へ行く街道に安達太良山の鬼が現れ、旅人や村人を襲う。若者の大三が名乗り出て、酒や魚を背負って行く。
 // 川辺で水を飲む鬼に食べさせ飲ませながら静かに言い聞かせると、鬼は改心し、自分に似た石を道の端に置いて山へ帰った＝鬼石。のち大江山の酒呑童子に（語りだけ）
 // ⚠首をはねる場面と墓（寺）は出さない。弱点＝「大三の もてなし」
-import { BASIC_ITEMS } from './basic_items.js?v=230';
+import { BASIC_ITEMS } from './basic_items.js?v=231';
 
 export const ONIISHI = {
   art: {
-    // 10/7 ①呑まれた姿が 届いた（②元の姿が 届くまでは ①を 両方に）・⏳背景は 届くまで shunobon を 借りる
+    // 10/7 ①②と 必殺技の 挿絵2枚が 届いた・⏳背景は 届くまで shunobon を 借りる
     dark: 'assets/oniishi_dark.png', light: 'assets/oniishi_light.png', bg: 'assets/bg_shunobon.png',
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
