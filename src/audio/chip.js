@@ -261,7 +261,12 @@ const SFX = {
   yuami: (t) => {
     SFX.chapon(t);
     SFX.kapon(t + 0.35);
-    arp([72, 76, 79, 81, 79, 76], t + 1.4, 0.32, 0.5, { type: 'triangle', vol: 0.1 }); // ゆったり（ド・ミ・ソ・ラ・ソ・ミ）
+    // 10/8 本人「効果音＋短いほのぼのした音楽 5秒」＝琴の つま弾き（ド・レ・ミ・ソ・ラ）と 低い 音の 支え。0.9秒から 約5.1秒まで
+    const mel = [76, 79, 81, 79, 76, 74, 72, 74, 76, 79, 76];
+    mel.forEach((m, i) => pluck(N(m), t + 0.9 + i * 0.36, i === mel.length - 1 ? 1.2 : 0.8, { vol: 0.11 }));
+    tone(N(48), t + 0.9, 1.9, { type: 'triangle', vol: 0.07 });
+    tone(N(43), t + 2.7, 1.8, { type: 'triangle', vol: 0.07 });
+    tone(N(48), t + 4.5, 1.0, { type: 'triangle', vol: 0.07 });
   },
   eat: (t) => arp([76, 72, 76, 72], t, 0.08, 0.07, { type: 'square', vol: 0.15 }), // もぐもぐ
   flee: (t) => arp([72, 67, 60], t, 0.07, 0.08, { vol: 0.2 }),
