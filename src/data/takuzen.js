@@ -5,7 +5,7 @@
 // ⚠悪い狸ではない（修行したい一心）・最期は直接見せない（碑で語る）・「狸」と書いて「むじな」・子ども向けの たぬきの絵柄にしない
 // ゲームでは、忘れられて黒いもやに呑まれ、化けたまま正体を失った託善。弱点＝「手さぐりの歌」（目の見えない僧が触れて正体を知り、歌に書き残した）
 // 勝つと、託善が カッパの弱みを教えてくれる（kappa.js の hint）・天栄の谷への もやが晴れる
-import { BASIC_ITEMS } from './basic_items.js?v=224';
+import { BASIC_ITEMS } from './basic_items.js?v=225';
 
 export const TAKUZEN = {
   art: {
