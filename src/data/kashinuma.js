@@ -3,7 +3,7 @@
 // 沼の主は大人の背丈より大きなうなぎで、弁天さまのお使い。猟師が沼のカモを撃ち、取りに水へ入ると、水が重くなって動けず、
 // 足の下を大きなものが静かに通った。猟師が心の中で詫びると体が軽くなった。それから里の人は沼のものを捕らなくなった。
 // 倒すと元の姿に戻り、弁天さまが姿を見せる（本人 10/1「弁天がでるところはありませんか？」・影絵版 8/3 の終幕と同じ形）
-import { BASIC_ITEMS } from './basic_items.js?v=241';
+import { BASIC_ITEMS } from './basic_items.js?v=242';
 
 export const KASHINUMA = {
   art: {
@@ -36,7 +36,7 @@ export const KASHINUMA = {
     // 黒いもや：始めは min〜max を運で・毎ターン rise の見込みで ふいに濃くなる・必殺技でも1つ戻る（本人 10/1「もやはランダムに」）
     mist: { min: 1, max: 2, rise: 0.2 },
     // 必殺技（本人 10/1「うなぎの必殺技は電気ショック」）。flash＝画面の光る色（黄色い稲光）
-    special: { name: '電気ショック', chance: 0.25, power: 11, flash: [255, 230, 80], sfx: 'shock' },
+    special: { name: '電気ショック', chance: 0.25, power: 11, flash: [255, 230, 80], sfx: 'shock', cutin: 'assets/cutin/kashinuma_denki.png' },
     biteName: 'しめつけ',
     introText: '静かな 水面が、黒く 濁って うねりはじめた……',
     tellLines: [

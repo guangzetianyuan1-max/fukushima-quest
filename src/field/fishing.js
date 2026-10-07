@@ -3,7 +3,7 @@
 // 釣りの手順（画面は FieldScene の fishing*）：①うきが沈んで「！」が出たら さわる（早すぎ・遅すぎは逃げる）
 //                                          ②左右に動く針が緑の帯に入ったら さわる（帯の幅と針の速さは魚しだい）
 // 画面と切り離す＝Node で試験する。ここの関数は game を書き換えずに新しい game を返す
-import { EQUIP, canWear } from '../data/equip.js?v=241';
+import { EQUIP, canWear } from '../data/equip.js?v=242';
 
 export const ROD_PRICE = 5;
 // 「！」が出てから さわれる長さ（ミリ秒）と、「！」が出るまでの待ち
@@ -11,9 +11,11 @@ export const BITE_WINDOW_MS = 700;
 export const WAIT_MS = [1200, 3500];
 
 // w＝出やすさ・pt＝釣り点・zone＝緑の帯の幅（0〜1）・speed＝針が端から端まで動く秒数（小さいほど速い）
-// 小名浜で揚がる魚（めひかり＝いわき市の魚・アイナメ・カレイ・カツオ）と、たまに大ダコ・古い長靴
+// 小名浜で揚がる魚（アジ・アイナメ・カレイ・カツオ）と、たまに大ダコ・古い長靴
+// ⭐10/7 本人「目光釣って、目光をもらうはおかしい」＝めひかりは 景品（グルメの判子）だけ・釣れる魚は アジに 替えた
+//   （小名浜港の 釣り場で アジ・サバ・カレイ・アイナメが 釣れる＝国交省 みなとオアシス いわき・小名浜の 資料）
 export const FISH = {
-  mehikari: { name: 'めひかり', w: 40, pt: 1, zone: 0.32, speed: 1.4, line: 'めひかりは いわき市の 魚。唐揚げが おいしいのよ。' },
+  aji: { name: 'アジ', w: 40, pt: 1, zone: 0.32, speed: 1.4, line: 'アジは 小名浜の 港で よく 釣れる 魚よ。' },
   ainame: { name: 'アイナメ', w: 24, pt: 2, zone: 0.24, speed: 1.2, line: '岩の かげに すむ 魚ね。' },
   karei: { name: 'カレイ', w: 18, pt: 3, zone: 0.19, speed: 1.0, line: '砂に もぐって かくれるの。よく 見つけたわね！' },
   katsuo: { name: 'カツオ', w: 8, pt: 5, zone: 0.13, speed: 0.8, line: 'いわきでは にんにく醤油で 食べるのよ。' },
@@ -28,7 +30,7 @@ export function rollFish(rng) {
     r -= f.w;
     if (r < 0) return id;
   }
-  return 'mehikari';
+  return 'aji';
 }
 
 // 緑の帯の位置（左端 0〜1-zone）を運で決める

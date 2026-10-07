@@ -1,5 +1,5 @@
-import { gearAt } from '../data/equip.js?v=241'; // 10/5 武器と防具は職業ごと＝店は段で並べる
-import { castleMaps } from './castle.js?v=241'; // 10/7 お城の 大広間と お題の 場所
+import { gearAt } from '../data/equip.js?v=242'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=242'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -97,7 +97,7 @@ export const TOWNS = {
       { spot: 'shop', look: 'shonin', role: 'shop', goods: ['yakusou', 'jouyakusou', 'reisui'], lines: ['へい らっしゃい！ 小名浜の 道具屋だ。'] },
       { spot: 'bansho', look: 'yakunin', role: 'bansho', lines: ['番屋だ。盗まれた 物は ここに 届く。いまは 何も 預かって おらん。'] },
       // 釣り番（本人 10/2「小名浜のまちがあまり機能しない」→「漁港で釣り＋景品」）
-      { spot: 'fishing', look: 'ryoshi', role: 'fishing', lines: ['小名浜は 港町。めひかりも カツオも ここで 揚がるんだ。', '竿を 貸すぜ。釣れた 魚で 釣り点が たまる。点は 景品と 換えて やろう。'] },
+      { spot: 'fishing', look: 'ryoshi', role: 'fishing', lines: ['小名浜は 港町。港では アジや カレイが 釣れるぜ。', '沖の めひかりは 釣り点の 景品で 渡して いるよ。', '竿を 貸すぜ。釣れた 魚で 釣り点が たまる。点は 景品と 換えて やろう。'] },
       { spot: 'm1', look: 'kodomo', lines: ['鮫川の 河口に、黒い もやが うずまいてたんだって！'] },
       // 閼伽井嶽の龍燈＝海から山の お堂へ 灯が のぼる言い伝え（第四話の手がかり）
       { spot: 'm2', look: 'toshiyori', lines: ['海から 山の お堂へ、灯が のぼっていく……。', 'わしが 若いころは、閼伽井嶽の 龍の 灯を 見た 者も おったもんじゃ。'] },

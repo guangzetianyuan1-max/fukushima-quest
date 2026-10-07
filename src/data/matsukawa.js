@@ -2,7 +2,7 @@
 // 話（出どころ uminominwa.jp/animation/19）：漁師に「松川様」と敬われていた、背中に藻の生えた大ザメ。
 // 殿様が人に害があると聞いて弓で射たが死なず、矢が刺さったまま、川を渡る殿様に襲いかかり、殿様は愛馬を失った。
 // 数値は試算（500戦）で決める。第一話なので序章でいちばん勝ちやすく（autoWinTarget 1.0）
-import { BASIC_ITEMS } from './basic_items.js?v=241';
+import { BASIC_ITEMS } from './basic_items.js?v=242';
 
 export const MATSUKAWA = {
   art: {
@@ -34,7 +34,7 @@ export const MATSUKAWA = {
     weakness: 'uyamai',
     // 黒いもや：始めは min〜max を運で・毎ターン rise の見込みで ふいに濃くなる・必殺技でも1つ戻る（本人 10/1「もやはランダムに」）
     mist: { min: 1, max: 2, rise: 0.2 },
-    special: { name: '荒波', chance: 0.25, power: 10, flash: [120, 180, 255], sfx: 'wave' }, // 必殺技：毎ターン2割5分で全員に（青白い光と波の音）
+    special: { name: '荒波', chance: 0.25, power: 10, flash: [120, 180, 255], sfx: 'wave', cutin: 'assets/cutin/matsukawa_aranami.png' }, // 必殺技：毎ターン2割5分で全員に（青白い光と波の音）
     biteName: 'かみつき',
     introText: '背に 古い矢が 刺さったまま、黒い もやを まとっている……',
     tellLines: [

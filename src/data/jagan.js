@@ -5,7 +5,7 @@
 // 淵は川の改修でいまは無い（＝忘れられた話）。ゲームでは忘れられて暴れる淵の主（若侍の姿）。倒すと元に戻る
 // ⭐10/2 敵は若侍→大蛇へ（本人「話からすると、男子と戦いではなく、蛇と戦ったほうが良い」＝紙芝居で若者の正体は大蛇と語るため）。
 // うなぎ・龍と見分けるため、とぐろを巻いて鎌首をもたげた蛇・元の姿は白銀（art_src/Geminiプロンプト_蛇岸淵.md）
-import { BASIC_ITEMS } from './basic_items.js?v=241';
+import { BASIC_ITEMS } from './basic_items.js?v=242';
 
 export const JAGAN = {
   art: {
@@ -40,7 +40,7 @@ export const JAGAN = {
     mist: { min: 1, max: 2, rise: 0.2 },
     // 必殺技＝鉄砲水（淵の主が守っていた大水を、忘れられて自分で起こす）。濁った茶色の光
     // 10/3 大蛇へ替えても必殺技は鉄砲水のまま（本人 A 案。とぐろ締めは入れない）
-    special: { name: '鉄砲水', chance: 0.25, power: 11, flash: [170, 130, 70], sfx: 'flood' },
+    special: { name: '鉄砲水', chance: 0.25, power: 11, flash: [170, 130, 70], sfx: 'flood', cutin: 'assets/cutin/jagan_teppou.png' },
     biteName: '水の むち',
     introText: '淵の 渦から、大蛇が 鎌首を もたげた……！',
     tellLines: [

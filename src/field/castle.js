@@ -11,9 +11,9 @@
 export const CASTLE_QUESTS = {
   taira: {
     hall: 'jo_taira', boss: 'onigajo', after: 'ryuto', busy: '海の 龍燈', ground: 'q_onigajo', side: 0,
-    gate: { map: 'field', ch: 'ア', x: 5, y: 8 }, place: '鬼ヶ城山',
+    gate: { map: 'field', ch: 'ア', x: 4, y: 11 }, place: '鬼ヶ城山', // ⛔10/7 (5,8) は 池と川と山に 囲まれて 歩いて 行けなかった（本人「鬼ヶ城山が分からない」）
     ask: ['川前の 鬼ヶ城山の 頂に、大岩に すむ 鬼が おる。', '黒い もやに 呑まれ、また 里に 岩を 投げて おるそうじゃ。鎮めて まいれ。'],
-    hint: 'いわきの 北西、山の ふもとに 登り口が ある。賢沼より 先じゃ。',
+    hint: '平から 北西へ ゆき、川の 手前の 山すそに 登り口が ある。',
   },
   nakamura: {
     hall: 'jo_nakamura', boss: 'usunuma', after: 'sumitora', busy: '虎捕山の 墨虎', ground: 'q_usunuma', side: 1,
@@ -53,6 +53,11 @@ export const questAccepted = (game, town) => !!game?.castleQuest?.[town];
 export const acceptQuest = (game, town) => ({ ...game, castleQuest: { ...(game.castleQuest ?? {}), [town]: true } });
 // 入口の字を 踏んだ：お殿様の 依頼が 出て いれば 新しい場所の id・まだなら null（10/7 本人「殿から依頼が出るまでは、入れないように」）
 export const gateGround = (game, ch) => (GATE_OF[ch] && questAccepted(game, GATE_OF[ch]) ? CASTLE_QUESTS[GATE_OF[ch]].ground : null);
+
+// 地図に 目印を 出す 入口（お題を 受けて、怪物が まだ）＝{ x, y, name }（赤い 矢印と 名前・10/7 本人「鬼ヶ城山が分からない」）
+export const gateMarks = (game, map) => QUEST_TOWNS
+  .filter((t) => CASTLE_QUESTS[t].gate.map === map && questAccepted(game, t) && !game?.cleared?.[CASTLE_QUESTS[t].boss])
+  .map((t) => ({ x: CASTLE_QUESTS[t].gate.x, y: CASTLE_QUESTS[t].gate.y, name: CASTLE_QUESTS[t].place }));
 
 // 章の地図に 入口の字を 重ねる（地図の書き出し道具 make_*_map.py には 触らない）
 export function withGates(map, rows) {
