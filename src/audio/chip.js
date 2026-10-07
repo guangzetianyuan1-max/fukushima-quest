@@ -246,6 +246,23 @@ const SFX = {
   tell: (t) => arp([79, 74], t, 0.18, 0.45, { type: 'sine', vol: 0.25 }),
   reveal: (t) => arp([84, 88, 91, 96], t, 0.09, 0.5, { type: 'sine', vol: 0.22 }),
   heal: (t) => arp([67, 71, 74, 79], t, 0.07, 0.15, { type: 'triangle', vol: 0.28 }),
+  // 10/8 温泉に つかる（本人「しおりのイラスト＋ほのぼのした効果音」）：ちゃぽん＝湯に 入る しずく／カポーン＝湯殿に 響く 木の 桶（こだまが 3つ）／湯あみ＝その2つと ゆったりした 笛の ひと節
+  chapon: (t) => {
+    tone(420, t, 0.09, { type: 'sine', vol: 0.32, slideTo: 1300 });
+    tone(900, t + 0.1, 0.12, { type: 'sine', vol: 0.12, slideTo: 1600 });
+  },
+  kapon: (t) => {
+    for (let k = 0; k < 4; k++) {
+      const v = 0.3 * 0.45 ** k;
+      tone(980, t + k * 0.24, 0.05, { type: 'triangle', vol: v, slideTo: 760 }); // 桶の 縁を 打つ「カ」
+      tone(520, t + k * 0.24 + 0.03, 0.35, { type: 'sine', vol: v * 0.9, slideTo: 470 }); // 湯殿に 響く「ポーン」
+    }
+  },
+  yuami: (t) => {
+    SFX.chapon(t);
+    SFX.kapon(t + 0.35);
+    arp([72, 76, 79, 81, 79, 76], t + 1.4, 0.32, 0.5, { type: 'triangle', vol: 0.1 }); // ゆったり（ド・ミ・ソ・ラ・ソ・ミ）
+  },
   eat: (t) => arp([76, 72, 76, 72], t, 0.08, 0.07, { type: 'square', vol: 0.15 }), // もぐもぐ
   flee: (t) => arp([72, 67, 60], t, 0.07, 0.08, { vol: 0.2 }),
   down: (t) => tone(N(60), t, 0.5, { type: 'triangle', vol: 0.3, slideTo: N(36) }),
