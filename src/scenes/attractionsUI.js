@@ -1,9 +1,9 @@
 // 町の催し7つの 画面（10/7・計算は src/field/attractions.js）。FieldScene の startAttr が 呼ぶ
 // play(scene, box, { rng, done }) → 確かめ用の 取っ手。終わったら done(結果) を 1回だけ 呼ぶ（点の 計算と 文は FieldScene）
 // 背景は Gemini の絵（ATTR_ART・届いて いれば）／無ければ 図形。部品は どれも box に 入れる（box ごと 消える）
-import { GAME_FONT } from '../ui/fonts.js?v=214';
-import { sfx } from '../audio/chip.js?v=214';
-import * as A from '../field/attractions.js?v=214';
+import { GAME_FONT } from '../ui/fonts.js?v=215';
+import { sfx } from '../audio/chip.js?v=215';
+import * as A from '../field/attractions.js?v=215';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -39,7 +39,7 @@ const once = (done) => { let used = false; return (r) => { if (used) return; use
 function jangara(s, box, { rng, done }) {
   backdrop(s, box, 'jangara', 0x101a2a, 0x2a1a10);
   const fin = once(done);
-  txt(s, W / 2, 70, '鉦と 太鼓の 打ち方を 覚えて 真似る', 18);
+  box.add(txt(s, W / 2, 70, '鉦と 太鼓の 打ち方を 覚えて 真似る', 18)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 110, '', 18, '#ffe9a8');
   const res = txt(s, W / 2, 300, '', 28, '#ffb040');
   let len = A.JANGARA_START;
@@ -83,7 +83,7 @@ function jangara(s, box, { rng, done }) {
 function yukagen(s, box, { rng, done }) {
   backdrop(s, box, 'yukagen', 0x2a1e34, 0x4a3020);
   const fin = once(done);
-  txt(s, W / 2, 70, '湯加減を ちょうど良く 保つ', 18);
+  box.add(txt(s, W / 2, 70, '湯加減を ちょうど良く 保つ', 18)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 106, '', 18, '#ffe9a8');
   // 温度計（28〜55℃）・ちょうど良い 帯
   const X0 = W / 2 - 22, Y0 = 150, H0 = 330;
@@ -116,7 +116,7 @@ function yukagen(s, box, { rng, done }) {
 function waraji(s, box, { rng, done }) {
   backdrop(s, box, 'waraji', 0x5aa0d8, 0xc8b88a);
   const fin = once(done);
-  txt(s, W / 2, 64, '低い 側を 押さえて 水平に', 18);
+  box.add(txt(s, W / 2, 64, '低い 側を 押さえて 水平に', 18)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 98, '', 18, '#ffe9a8');
   // 道のり（羽黒神社まで）
   const road = s.add.graphics();
@@ -162,7 +162,7 @@ function waraji(s, box, { rng, done }) {
 function hanakatsumi(s, box, { rng, done }) {
   backdrop(s, box, 'hanakatsumi', 0x8ac0e8, 0x5a8a3a);
   const fin = once(done);
-  txt(s, W / 2, 64, '薄紫の 花かつみだけを 摘む', 18);
+  box.add(txt(s, W / 2, 64, '薄紫の 花かつみだけを 摘む', 18)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 98, '', 18, '#ffe9a8');
   const res = txt(s, W / 2, 132, '', 22, '#ffb040');
   box.add([info, res]);
@@ -212,7 +212,7 @@ function hanakatsumi(s, box, { rng, done }) {
 function daruma(s, box, { rng, done }) {
   backdrop(s, box, 'daruma', 0x1a2a4a, 0x4a2a2a);
   const fin = once(done);
-  txt(s, W / 2, 64, '伏せた だるまを 2つずつ めくって 合わせる', 16);
+  box.add(txt(s, W / 2, 64, '伏せた だるまを 2つずつ めくって 合わせる', 16)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 98, '', 18, '#ffe9a8');
   box.add(info);
   let st = A.darumaDeck(rng);
@@ -261,7 +261,7 @@ function daruma(s, box, { rng, done }) {
 function hakucho(s, box, { rng, done }) {
   backdrop(s, box, 'hakucho', 0x9ac0e0, 0x3a6aa0);
   const fin = once(done);
-  txt(s, W / 2, 64, '湖に 降りた 白鳥を 数える', 18);
+  box.add(txt(s, W / 2, 64, '湖に 降りた 白鳥を 数える', 18)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 98, '', 18, '#ffe9a8');
   const res = txt(s, W / 2, 470, '', 26, '#ffb040');
   // 湖と 奥の 霧（降りた 白鳥は 霧に 入って 見えなく なる）
@@ -327,7 +327,7 @@ function hakucho(s, box, { rng, done }) {
 function kobosi(s, box, { done }) {
   backdrop(s, box, 'kobosi', 0x2a1e3a, 0x6a3a2a);
   const fin = once(done);
-  txt(s, W / 2, 64, '目盛りを 止めて 台へ 投げる', 18);
+  box.add(txt(s, W / 2, 64, '目盛りを 止めて 台へ 投げる', 18)); // 説明（⛔10/7 入れ物に 入れ忘れて 地図に 残った）
   const info = txt(s, W / 2, 98, '', 18, '#ffe9a8');
   const res = txt(s, W / 2, 200, '', 26, '#ffb040');
   // 台（右）・投げる所（左）
