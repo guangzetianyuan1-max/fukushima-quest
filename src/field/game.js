@@ -1,21 +1,21 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=228';
-import { kanbanAt } from './kanban.js?v=228';
-import { SOMA_ROWS } from './soma_map.js?v=228';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=228';
-import { KENCHU_ROWS } from './kenchu_map.js?v=228';
-import { AIZU_ROWS } from './aizu_map.js?v=228';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=228';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=228';
-import { withGates } from './castle.js?v=228';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=228';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=228';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=228';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=228';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=228';
-import { becomeKunoichi } from './kagewatari.js?v=228';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=228';
+import { IWAKI_ROWS } from './iwaki_map.js?v=229';
+import { kanbanAt } from './kanban.js?v=229';
+import { SOMA_ROWS } from './soma_map.js?v=229';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=229';
+import { KENCHU_ROWS } from './kenchu_map.js?v=229';
+import { AIZU_ROWS } from './aizu_map.js?v=229';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=229';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=229';
+import { withGates } from './castle.js?v=229';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=229';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=229';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=229';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=229';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=229';
+import { becomeKunoichi } from './kagewatari.js?v=229';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=229';
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';

@@ -2,12 +2,12 @@
 // 話（妖怪DB『伝承文芸』2号 國學院大學民俗文学研究会 1964・話者 山田武高）：麦つきの手伝いに、どこから来たかわからない若者が来ると必ず臼がなくなる。若者は臼沼に住む大蛇だった。
 // 弓の名手が大蛇を射止め、大蛇は痛みで大道巡りをしながら山を登った＝巡り平。射止めた矢を持っていくと子どもの夜泣きがやむとも。
 // ⚠臼沼の今の場所は確かめられなかった＝鹿島の西の山すそに置く（ゲームの見立て）。弱点＝「名手の矢」
-import { BASIC_ITEMS } from './basic_items.js?v=228';
+import { BASIC_ITEMS } from './basic_items.js?v=229';
 
 export const USUNUMA = {
   art: {
-    // 10/7 ①②と 必殺技の 挿絵2枚が 届いた・⏳背景は 届くまで daihisan を 借りる
-    dark: 'assets/usunuma_dark.png', light: 'assets/usunuma_light.png', bg: 'assets/bg_daihisan.png',
+    // 10/7 本人の Gemini の絵（①②・必殺技の 挿絵2枚・背景）
+    dark: 'assets/usunuma_dark.png', light: 'assets/usunuma_light.png', bg: 'assets/bg_usunuma.png',
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
   allies: [
