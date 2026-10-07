@@ -1,3 +1,3 @@
 // 温泉に つかる 場面の 絵（art_src/prep_bath.py が 書く・手で 直さない）
 // <町>＝その 温泉で 湯に つかる しおりの 1枚絵（正方形・360×360 に 縮める）
-export const BATH_ART = {};
+export const BATH_ART = { yumoto: 'assets/onsen/bath_yumoto.png', iizaka: 'assets/onsen/bath_iizaka.png', takayu: 'assets/onsen/bath_takayu.png', tsuchiyu: 'assets/onsen/bath_tsuchiyu.png', dake: 'assets/onsen/bath_dake.png' };
