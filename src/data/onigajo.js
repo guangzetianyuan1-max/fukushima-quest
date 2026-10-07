@@ -2,12 +2,12 @@
 // 話（広報いわき 2023年3月号「鬼ヶ城山と地域づくり」）：川前町上桶売の鬼ヶ城山（標高887m）は矢大臣山に次ぐ市第二の高峰。山頂の大岩に鬼が住み、村人に岩を投げつけたり悪さをしたりしていたという鬼伝説。
 // 地方自治研究機構「鬼の条例」（孫引き）：朝廷の圧政に抵抗したといわれる大多鬼丸の一味とも
 // ⚠退治の話・鬼の名前・岩を投げた理由は 公的な資料に無い＝紙芝居④で「伝わっていない」と補う。弱点＝「里の語り」（いまも川前の人が語り継ぐ＝忘れの もやに効く）
-import { BASIC_ITEMS } from './basic_items.js?v=225';
+import { BASIC_ITEMS } from './basic_items.js?v=226';
 
 export const ONIGAJO = {
   art: {
-    // 10/7 ①②と 必殺技の 挿絵が 届いた（②は 左の 脚の かけらと もやを fix_keep_largest.py で 消した）・⏳背景は 届くまで otakimaru を 借りる
-    dark: 'assets/onigajo_dark.png', light: 'assets/onigajo_light.png', bg: 'assets/bg_otakimaru.png',
+    // 10/7 本人の Gemini の絵（②は 左の 脚の かけらと もやを fix_keep_largest.py で 消した）
+    dark: 'assets/onigajo_dark.png', light: 'assets/onigajo_light.png', bg: 'assets/bg_onigajo.png',
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
   allies: [
