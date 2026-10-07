@@ -22,9 +22,9 @@ export function townSigns(t) {
     const text = SIGN_OF[n.spot];
     if (!text || n.role === 'master' || n.guide) continue;
     const b = buildingOf(t.props, n);
-    // 建物の 入口の 上（入口の 行の 1つ上の 行の 下の 辺）＝建物の 横幅の 真ん中
-    if (b) out.push({ text, x: b.x + b.w / 2, y: b.y + b.h - 1, spot: n.spot });
-    else out.push({ text, x: n.x + 0.5, y: n.y, spot: n.spot }); // 建物が 無い＝人の 頭の 上
+    // ⭐10/7 本人「文字を頭ひとつ上に。人物に被ります」＝人の 頭（1マス）より 上＝入口の 行の 2つ上の 行の 下の 辺
+    if (b) out.push({ text, x: b.x + b.w / 2, y: b.y + b.h - 2, spot: n.spot });
+    else out.push({ text, x: n.x + 0.5, y: n.y - 1, spot: n.spot }); // 建物が 無い＝人の 頭の さらに 上
   }
   return out;
 }
