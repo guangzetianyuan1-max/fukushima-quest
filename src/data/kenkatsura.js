@@ -2,11 +2,11 @@
 // 話（福島県「しらかわ 史跡」）：高さ45m・幹の太さ9.7mの桂の木（推定樹齢370年）。この地に住み人々を苦しめた鬼神が、白河藩主・松平定信公の剣によってこの桂の木に封じ込められたとされる。
 // 後に旅人などから「剣桂」と呼ばれ、厚い信仰を集めた。森の巨人たち100選。奇岩や滝が点在する新甲子遊歩道から見られる
 // ⚠話は短い・そばに祠（祠は出さない）。弱点＝「定信公の剣」
-import { BASIC_ITEMS } from './basic_items.js?v=233';
+import { BASIC_ITEMS } from './basic_items.js?v=234';
 
 export const KENKATSURA = {
   art: {
-    // 10/7 ①呑まれた姿が 届いた（②元の姿が 届くまでは ①を 両方に）・⏳背景は 届くまで tengu を 借りる
+    // 10/7 ①②と 必殺技の 挿絵2枚が 届いた（黄金の 葉を 残す degreen_keep_yellow）・⏳背景は 届くまで tengu を 借りる
     dark: 'assets/kenkatsura_dark.png', light: 'assets/kenkatsura_light.png', bg: 'assets/bg_tengu.png',
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
