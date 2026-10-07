@@ -1,9 +1,10 @@
+import { hitBox } from '../ui/kit.js?v=245'; // 10/7 押せる 当たり（Zone は 背景に 負ける）
 // 町の催し7つの 画面（10/7・計算は src/field/attractions.js）。FieldScene の startAttr が 呼ぶ
 // play(scene, box, { rng, done }) → 確かめ用の 取っ手。終わったら done(結果) を 1回だけ 呼ぶ（点の 計算と 文は FieldScene）
 // 背景は Gemini の絵（ATTR_ART・届いて いれば）／無ければ 図形。部品は どれも box に 入れる（box ごと 消える）
-import { GAME_FONT } from '../ui/fonts.js?v=244';
-import { sfx } from '../audio/chip.js?v=244';
-import * as A from '../field/attractions.js?v=244';
+import { GAME_FONT } from '../ui/fonts.js?v=245';
+import { sfx } from '../audio/chip.js?v=245';
+import * as A from '../field/attractions.js?v=245';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -29,7 +30,7 @@ function pad(s, box, x, y, w, h, label, color, on, icon = null) {
   box.add(g);
   if (icon) pic(s, box, icon, x, y - 10, h * 0.62);
   const t = txt(s, x, icon ? y + h / 2 - 15 : y, label, icon ? 17 : 24);
-  const z = s.add.zone(x - w / 2, y - h / 2, w, h).setOrigin(0).setInteractive();
+  const z = hitBox(s, x - w / 2, y - h / 2, w, h).setOrigin(0).setInteractive();
   if (on) z.on('pointerdown', on);
   box.add([t, z]);
   return { g, t, z, lit: (v) => draw(v) };
@@ -146,8 +147,8 @@ function waraji(s, box, { rng, done }) {
   box.add([road, mark, prog, sandal, info, warn]);
   let st = A.warajiNew(rng);
   let hold = null;
-  const zl = s.add.zone(0, 160, W / 2, 480).setOrigin(0).setInteractive();
-  const zr = s.add.zone(W / 2, 160, W / 2, 480).setOrigin(0).setInteractive();
+  const zl = hitBox(s, 0, 160, W / 2, 480).setOrigin(0).setInteractive();
+  const zr = hitBox(s, W / 2, 160, W / 2, 480).setOrigin(0).setInteractive();
   const setHold = (h) => { hold = h; };
   zl.on('pointerdown', () => setHold('L')); zr.on('pointerdown', () => setHold('R'));
   for (const z of [zl, zr]) { z.on('pointerup', () => setHold(null)); z.on('pointerout', () => setHold(null)); }
@@ -186,7 +187,7 @@ function hanakatsumi(s, box, { rng, done }) {
   const flowers = [...Array(A.HANA_CELLS).keys()].map((c) => {
     const g = s.add.graphics().setPosition(cx(c), cy(c));
     const im = ART ? s.add.image(cx(c), cy(c) - 2, ART.katsumi).setVisible(false) : null;
-    const z = s.add.zone(cx(c) - 50, cy(c) - 48, 100, 96).setOrigin(0).setInteractive();
+    const z = hitBox(s, cx(c) - 50, cy(c) - 48, 100, 96).setOrigin(0).setInteractive();
     z.on('pointerdown', () => pick(c));
     box.add([g, ...(im ? [im] : []), z]);
     if (im) g.im = im;
@@ -243,7 +244,7 @@ function daruma(s, box, { rng, done }) {
     const im = art ? s.add.image(cx(i), cy(i), P(s, 'daruma', 'back')) : null;
     if (im) im.setScale(100 / im.height);
     const t = txt(s, cx(i), cy(i) + 4, '', 28, '#1a1030').setStroke('#ffffff', 0);
-    const z = s.add.zone(cx(i) - 40, cy(i) - 52, 80, 104).setOrigin(0).setInteractive();
+    const z = hitBox(s, cx(i) - 40, cy(i) - 52, 80, 104).setOrigin(0).setInteractive();
     z.on('pointerdown', () => flip(i));
     box.add([g, ...(im ? [im] : []), t, z]);
     return { g, t, im };
@@ -419,7 +420,7 @@ function kobosi(s, box, { done }) {
       if (n >= A.KOBO_THROWS) s.time.delayedCall(900, () => fin({ stood }));
     });
   };
-  const z = s.add.zone(0, 120, W, 520).setOrigin(0).setInteractive();
+  const z = hitBox(s, 0, 120, W, 520).setOrigin(0).setInteractive();
   z.on('pointerdown', throwNow);
   box.add(z);
   const tk = ticker(s, () => {

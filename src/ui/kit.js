@@ -3,12 +3,17 @@
 // ・窓＝四隅の飾りはそのまま、辺と中だけを伸ばす（9つに分けて並べる。NineSlice は WebGL だけなので使わない）
 // ・丸いボタン＝押すと凹んだ絵に替わり2ドット沈む。離す・指が外れると戻る
 // ・十字キー＝押したキーだけ凹む。当たりはキーより広め（親指で外さない）
-import { GAME_FONT } from './fonts.js?v=244';
-import { KEY_POS } from './kit_layout.js?v=244';
+import { GAME_FONT } from './fonts.js?v=245';
+import { KEY_POS } from './kit_layout.js?v=245';
 
 export const BTN_COLORS = ['orange', 'purple', 'red', 'green', 'blue', 'gray']; // gray＝戦いの「戻る」（art_src/make_btn_gray.py）
 const DIRS = ['up', 'down', 'left', 'right'];
 const FONT = GAME_FONT; // ui/fonts.js
+
+// 押せる 見えない 当たり（10/7 本人「とじるのボタンが押せない」）：Zone は 描かれない＝Phaser が 指の 当たりの 上下を
+// 「その画面で 描いた 順」で 決めるとき いつも 一番下に 回り、押せる印の 背景（画面いっぱいの 四角）に 負けた。
+// ほぼ透明の 四角は 描かれる＝置いた 順に 上へ 並ぶ。Zone と 同じく 真ん中が 原点
+export const hitBox = (scene, x, y, w, h) => scene.add.rectangle(x, y, w, h, 0x000000, 0.001);
 
 export function preloadKit(scene) {
   const names = ['window', 'tab', 'bar', 'pad',
@@ -100,7 +105,7 @@ export function makePad(scene, cx, cy, onDir, scale = 1) {
     const keyImg = scene.textures.get(`ui_key_${d}`).getSourceImage();
     const kw = keyImg.width * scale * 1.6;
     const kh = keyImg.height * scale * 1.6;
-    const hit = scene.add.zone(left + (kx + keyImg.width / 2) * scale, top + (ky + keyImg.height / 2) * scale, kw, kh).setInteractive();
+    const hit = hitBox(scene, left + (kx + keyImg.width / 2) * scale, top + (ky + keyImg.height / 2) * scale, kw, kh).setInteractive();
     hit.on('pointerdown', () => { downs[d].setVisible(true); onDir(d); });
     const release = () => { downs[d].setVisible(false); onDir(null); };
     hit.on('pointerup', release);

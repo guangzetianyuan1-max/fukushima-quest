@@ -2,12 +2,12 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=244';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=244';
-import { sfx } from '../audio/chip.js?v=244';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=244';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=244';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=244';
+import { GAME_FONT } from '../ui/fonts.js?v=245';
+import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=245';
+import { sfx } from '../audio/chip.js?v=245';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=245';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=245';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=245';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -46,7 +46,7 @@ export class JobScene extends Phaser.Scene {
       const win = makeWindow(this, x, SLOT.y, SLOT.w, SLOT.h);
       const lab = this.add.text(x + SLOT.w / 2, SLOT.y + 21, label, { fontFamily: FONT, fontSize: '14px', color: '#b8bcd8', resolution: 3 }).setOrigin(0.5);
       const name = this.add.text(x + SLOT.w / 2, SLOT.y + 45, '？', { fontFamily: FONT, fontSize: '18px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
-      const hit = this.add.zone(x + SLOT.w / 2, SLOT.y + SLOT.h / 2, SLOT.w, SLOT.h).setInteractive();
+      const hit = hitBox(this, x + SLOT.w / 2, SLOT.y + SLOT.h / 2, SLOT.w, SLOT.h).setInteractive();
       this.onTap(hit, () => {
         this.active = i;
         sfx('select');
@@ -62,7 +62,7 @@ export class JobScene extends Phaser.Scene {
       const win = makeWindow(this, x, y, GRID.w, GRID.h);
       const t = this.add.text(x + GRID.w / 2, y + GRID.h / 2, JOBS[id].name, { fontFamily: FONT, fontSize: '19px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
       const who = this.add.text(x + 13, y + GRID.h / 2, '', { fontFamily: FONT, fontSize: '11px', color: '#ffd98a', resolution: 3 }).setOrigin(0, 0.5); // 枠の左に 入った枠の名前（名前の長い 弓矢使いとも重ならない）
-      const hit = this.add.zone(x + GRID.w / 2, y + GRID.h / 2, GRID.w, GRID.h).setInteractive();
+      const hit = hitBox(this, x + GRID.w / 2, y + GRID.h / 2, GRID.w, GRID.h).setInteractive();
       this.onTap(hit, () => {
         this.history.push(this.active);
         const r = choose(this.slots, this.active, id);
@@ -81,20 +81,20 @@ export class JobScene extends Phaser.Scene {
     // 戻る（本人 10/5「職業選択の画面で『戻る』のボタン」）＝題の画面へ。左に小さく・旅に出るは右に大きく（押しまちがえないよう間を空ける）
     makeWindow(this, BACK.x, GO.y, BACK.w, GO.h);
     this.add.text(BACK.x + BACK.w / 2, GO.y + GO.h / 2, '戻る', { fontFamily: FONT, fontSize: '20px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
-    const backHit = this.add.zone(BACK.x + BACK.w / 2, GO.y + GO.h / 2, BACK.w, GO.h).setInteractive();
+    const backHit = hitBox(this, BACK.x + BACK.w / 2, GO.y + GO.h / 2, BACK.w, GO.h).setInteractive();
     this.onTap(backHit, () => this.undo());
     // アドバイス（本人 10/5「4人を選んだところで『アドバイス』のボタン・PTのバランス解説」）＝4人そろったら押せる
     const ax = BACK.x + BACK.w + 8;
     const aw = 116;
     this.advWin = makeWindow(this, ax, GO.y, aw, GO.h);
     this.advText = this.add.text(ax + aw / 2, GO.y + GO.h / 2, 'アドバイス', { fontFamily: FONT, fontSize: '18px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
-    const advHit = this.add.zone(ax + aw / 2, GO.y + GO.h / 2, aw, GO.h).setInteractive();
+    const advHit = hitBox(this, ax + aw / 2, GO.y + GO.h / 2, aw, GO.h).setInteractive();
     this.onTap(advHit, () => this.showAdvice());
     const gx = ax + aw + 8;
     const gw = W - 8 - gx;
     this.goWin = makeWindow(this, gx, GO.y, gw, GO.h);
     this.goText = this.add.text(gx + gw / 2, GO.y + GO.h / 2, '旅に出る', { fontFamily: FONT, fontSize: '19px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
-    const goHit = this.add.zone(gx + gw / 2, GO.y + GO.h / 2, gw, GO.h).setInteractive();
+    const goHit = hitBox(this, gx + gw / 2, GO.y + GO.h / 2, gw, GO.h).setInteractive();
     this.onTap(goHit, () => this.start());
     this.showInfo(null);
     this.refresh();
@@ -217,7 +217,7 @@ export class JobScene extends Phaser.Scene {
     }
     box.add(makeWindow(this, W / 2 - 70, 590, 140, 44));
     box.add(this.add.text(W / 2, 612, 'とじる', { fontFamily: FONT, fontSize: '19px', color: '#ffffff', resolution: 3 }).setOrigin(0.5));
-    const z = this.add.zone(W / 2, 612, 140, 44).setInteractive();
+    const z = hitBox(this, W / 2, 612, 140, 44).setInteractive();
     this.onTap(z, () => { sfx('select'); box.destroy(); this.advising = false; });
     box.add(z);
     this.adviceBox = box; // 確かめ用
@@ -271,7 +271,7 @@ export class JobScene extends Phaser.Scene {
     const show = () => shown.setText([...name].concat(Array(HERO_NAME_MAX - [...name].length).fill('＿')).join(' '));
     show();
     const tapZone = (x, y, w, h, fn) => {
-      const z = this.add.zone(x, y, w, h).setOrigin(0).setInteractive();
+      const z = hitBox(this, x, y, w, h).setOrigin(0).setInteractive();
       this.onTap(z, fn);
       box.add(z);
       return z;
