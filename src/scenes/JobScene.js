@@ -2,13 +2,13 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=267';
-import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=267';
-import { sfx } from '../audio/chip.js?v=267';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=267';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=267';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=267';
-import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=267';
+import { GAME_FONT } from '../ui/fonts.js?v=268';
+import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=268';
+import { sfx } from '../audio/chip.js?v=268';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=268';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=268';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=268';
+import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=268';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -83,6 +83,7 @@ export class JobScene extends Phaser.Scene {
     const maskG = this.make.graphics({ x: 0, y: 0, add: false });
     maskG.fillStyle(0xffffff).fillRect(view.x, view.y, view.w, view.h);
     this.info.setMask(maskG.createGeometryMask());
+    this.infoView = view; // 確かめ用（字の 点検が 欄の 外の 字を 数えない）
     this.infoScroll = 0;
     this.infoMax = 0;
     // 指で なぞる（欄の 中・▲▼ の 下に 置く）
@@ -224,7 +225,7 @@ export class JobScene extends Phaser.Scene {
     this.advising = true;
     const a = adviceOf(pick);
     const box = this.add.container(0, 0).setDepth(100);
-    box.add(this.add.rectangle(0, 0, W, 640, 0x05030c, 0.75).setOrigin(0).setInteractive());
+    box.add(this.add.rectangle(0, 0, W, 640, 0x05030c, 0.96).setOrigin(0).setInteractive()); // 10/8 字の 点検：0.75 だと 下の「アドバイス」の 字が「とじる」に 透けて 重なった
     box.add(makeWindow(this, 8, 60, W - 16, 520));
     if (this.textures.exists('face_normal')) box.add(this.add.image(58, 112, 'face_normal').setDisplaySize(72, 72));
     box.add(this.add.text(102, 92, 'しおりの アドバイス', { fontFamily: FONT, fontSize: '20px', color: '#ffd98a', resolution: 3 }));
