@@ -2,13 +2,13 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=260';
-import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=260';
-import { sfx } from '../audio/chip.js?v=260';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=260';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=260';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=260';
-import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=260';
+import { GAME_FONT } from '../ui/fonts.js?v=261';
+import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=261';
+import { sfx } from '../audio/chip.js?v=261';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=261';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=261';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=261';
+import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=261';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -78,6 +78,31 @@ export class JobScene extends Phaser.Scene {
     // くわしく
     makeWindow(this, 4, INFO.y, W - 8, INFO.h);
     this.info = this.add.container(0, 0);
+    // ⭐10/8 本人「各キャラクターの説明の字がはみ出ている。カーソルで下に行くようにしてほしい」＝欄の中だけ見せ、はみ出す分は ▲▼（と 指で なぞる）で 送る
+    const view = { x: 4, y: INFO.y + 6, w: W - 8, h: INFO.h - 12 };
+    const maskG = this.make.graphics({ x: 0, y: 0, add: false });
+    maskG.fillStyle(0xffffff).fillRect(view.x, view.y, view.w, view.h);
+    this.info.setMask(maskG.createGeometryMask());
+    this.infoScroll = 0;
+    this.infoMax = 0;
+    // 指で なぞる（欄の 中・▲▼ の 下に 置く）
+    const drag = hitBox(this, view.x + (view.w - 44) / 2, view.y + view.h / 2, view.w - 44, view.h).setInteractive();
+    let dragY = null;
+    drag.on('pointerdown', (p) => { dragY = p.y; });
+    drag.on('pointerup', () => { dragY = null; });
+    drag.on('pointerout', () => { dragY = null; });
+    drag.on('pointermove', (p) => {
+      if (dragY === null || !p.isDown) return;
+      this.setInfoScroll(this.infoScroll + (dragY - p.y));
+      dragY = p.y;
+    });
+    const arrow = (y, label, d) => {
+      const t = this.add.text(W - 24, y, label, { fontFamily: FONT, fontSize: '22px', color: '#ffd98a', resolution: 3 }).setOrigin(0.5).setStroke('#14122a', 4);
+      const hit = hitBox(this, W - 24, y, 40, 44).setInteractive();
+      this.onTap(hit, () => { if (this.scrollInfo(d)) sfx('select'); });
+      return t;
+    };
+    this.infoArrows = { up: arrow(INFO.y + 26, '▲', -1), down: arrow(INFO.y + INFO.h - 26, '▼', 1) };
     // 旅に出る
     // 戻る（本人 10/5「職業選択の画面で『戻る』のボタン」）＝題の画面へ。左に小さく・旅に出るは右に大きく（押しまちがえないよう間を空ける）
     makeWindow(this, BACK.x, GO.y, BACK.w, GO.h);
@@ -133,9 +158,25 @@ export class JobScene extends Phaser.Scene {
   }
 
   // 職業の くわしく：名前と役目・武器・能力の点（棒）・はじめからの技・章ごとに習う技
+  // 説明の 欄を 送る（d＝−1 上／+1 下・1回 60ドット）。動いたら true
+  scrollInfo(d) {
+    const before = this.infoScroll;
+    this.setInfoScroll(this.infoScroll + d * 60);
+    return this.infoScroll !== before;
+  }
+  setInfoScroll(v) {
+    this.infoScroll = Math.max(0, Math.min(this.infoMax, Math.round(v)));
+    this.info.y = -this.infoScroll;
+    const { up, down } = this.infoArrows;
+    up.setVisible(this.infoMax > 0).setAlpha(this.infoScroll > 0 ? 1 : 0.3);
+    down.setVisible(this.infoMax > 0).setAlpha(this.infoScroll < this.infoMax ? 1 : 0.3);
+  }
+
   showInfo(id) {
     this.shown = id;
     this.info.removeAll(true);
+    this.infoMax = 0;
+    this.setInfoScroll(0);
     const add = (o) => { this.info.add(o); return o; };
     const txt = (x, y, s, size = 15, color = '#ffffff', o = 0) => add(this.add.text(x, y, s, { fontFamily: FONT, fontSize: `${size}px`, color, resolution: 3 }).setOrigin(o, 0));
     const top = INFO.y + 12;
@@ -146,7 +187,7 @@ export class JobScene extends Phaser.Scene {
     }
     const j = JOBS[id];
     txt(14, top, `${j.name}　${j.role}`, 19, '#ffd98a');
-    txt(W - 14, top + 3, `武器：${WEAPON_NAMES[j.weapon]}`, 14, '#b8bcd8', 1);
+    txt(W - 48, top + 3, `武器：${WEAPON_NAMES[j.weapon]}`, 14, '#b8bcd8', 1); // 右は ▲▼ の 場所（10/8）
     // 能力の点（合計30）：棒の長さ＝点（15で いっぱい）
     Object.entries(POINT_NAMES).forEach(([k, name], r) => {
       const y = top + 26 + r * 15;
@@ -160,16 +201,19 @@ export class JobScene extends Phaser.Scene {
     // 技ごとに 名前（14）と その下に 効き目（12・水色）＝10/5 本人「必殺技の効果を入れて」
     let y = top + 100;
     const line = (head, sp, fallback) => {
-      const t = txt(14, y, `${head}：${sp ? sp.name : fallback}`, 14, '#ffffff').setWordWrapWidth(W - 36, true); // 長い持ち味の文は折り返す
+      const t = txt(14, y, `${head}：${sp ? sp.name : fallback}`, 14, '#ffffff').setWordWrapWidth(W - 64, true); // 長い持ち味の文は折り返す（右は ▲▼）
       y += t.height + 1;
       const d = sp?.desc;
       if (d) {
-        txt(26, y, d, 12, '#b8d8ff');
-        y += 14;
+        const dt = txt(26, y, d, 12, '#b8d8ff').setWordWrapWidth(W - 76, true); // 10/8 長い 効き目も 折り返す
+        y += dt.height + 2;
       }
     };
     line('はじめから', j.basic ? JOB_SPELLS[j.basic] : null, j.basicText);
     j.skills.forEach((s, c) => line(`${c + 1}章で習う`, JOB_SPELLS[s]));
+    // はみ出す 分だけ 送れる（欄の 下の 端＝INFO.y + INFO.h − 12）
+    this.infoMax = Math.max(0, y + 4 - (INFO.y + INFO.h - 12));
+    this.setInfoScroll(0);
   }
 
   // しおりの アドバイス：4人の 釣り合い（◎○△）と 短い 助言
