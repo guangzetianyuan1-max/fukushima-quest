@@ -1,8 +1,8 @@
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=220';
-import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=220';
-import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=220';
-import { load, SLOT_COUNT, slotKey, slotSummary } from '../field/game.js?v=220';
-import { preloadKit, makeWindow } from '../ui/kit.js?v=220';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=221';
+import { unlock, startBgm, stopBgm, sfx } from '../audio/chip.js?v=221';
+import { BRUSH_FONT, smooth } from '../ui/scroll.js?v=221';
+import { load, SLOT_COUNT, slotKey, slotSummary } from '../field/game.js?v=221';
+import { preloadKit, makeWindow } from '../ui/kit.js?v=221';
 
 // 題の画面（本人 10/1「さわってはじめる、から音楽が欲しい」）
 // ⭐10/3 本人「アイコンクリック後、『はじめから』『つづきから』を加えてほしい」＝下に2つの札。押した札で始まる（1回で）
@@ -132,6 +132,50 @@ export class TitleScene extends Phaser.Scene {
     pickSlot(this.slot);
     this.prompt = this.add.text(W / 2, 628, '', { fontFamily: DOT, fontSize: '16px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
 
+    // 記憶を消す（10/7 本人「記憶①～③は削除できるように。『本当に削除していいですか？』の念押しを」）
+    // 「記憶を消す」を押す → 消す記憶を選ぶ → 念押しの窓「はい／いいえ」。同じ指の二度押し（0.35秒）は数えない
+    const DEL = { w: 104, h: 30, x: W / 2 + SL.w / 2 - 52, y: SL.y0 - SL.h / 2 - 22 };
+    const delWin = makeWindow(this, DEL.x - DEL.w / 2, DEL.y - DEL.h / 2, DEL.w, DEL.h);
+    const delTxt = this.add.text(DEL.x, DEL.y, '記憶を 消す', { fontFamily: DOT, fontSize: '14px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
+    const delHit = (x, y) => Math.abs(x - DEL.x) <= DEL.w / 2 + 4 && Math.abs(y - DEL.y) <= DEL.h / 2 + 6;
+    this.delMode = false;
+    this.modal = null;
+    this.actAt = -1000;
+    const ready = () => { if (this.time.now - this.actAt < 350) return false; this.actAt = this.time.now; return true; };
+    const setDelMode = (on) => {
+      this.delMode = on;
+      delTxt.setText(on ? 'やめる' : '記憶を 消す').setColor(on ? '#ffb0a0' : '#ffffff');
+      this.slotUi.forEach((s) => s.frame.lineStyle(2, 0xff8070, on ? 1 : 0));
+      if (on) this.slotUi.forEach((s) => s.frame.strokeRoundedRect(W / 2 - SL.w / 2 + 2, s.cy - SL.h / 2 + 2, SL.w - 4, SL.h - 4, 6));
+      else pickSlot(this.slot);
+      this.prompt.setText(on ? '消す 記憶を 選んで ください' : '');
+    };
+    const openModal = (n) => {
+      const box = this.add.container(0, 0).setDepth(50);
+      box.add(this.add.rectangle(0, 0, W, 640, 0x000000, 0.55).setOrigin(0));
+      box.add(makeWindow(this, 30, 250, W - 60, 150));
+      box.add(this.add.text(W / 2, 296, `記憶${MARK[n - 1]}を
+本当に 削除して いいですか？`, { fontFamily: DOT, fontSize: '18px', color: '#ffffff', align: 'center', resolution: 3, lineSpacing: 6 }).setOrigin(0.5));
+      const yes = { x: W / 2 - 64, y: 362 }, no = { x: W / 2 + 64, y: 362 };
+      for (const [b, label, col] of [[yes, 'はい', '#ffb0a0'], [no, 'いいえ', '#ffffff']]) {
+        box.add(makeWindow(this, b.x - 50, b.y - 20, 100, 40));
+        box.add(this.add.text(b.x, b.y, label, { fontFamily: DOT, fontSize: '19px', color: col, resolution: 3 }).setOrigin(0.5));
+      }
+      const hit = (b, x, y) => Math.abs(x - b.x) <= 54 && Math.abs(y - b.y) <= 24;
+      this.modal = { box, n, yes: (x, y) => hit(yes, x, y), no: (x, y) => hit(no, x, y) };
+    };
+    const closeModal = () => { this.modal?.box.destroy(); this.modal = null; };
+    const eraseSlot = (n) => {
+      try { localStorage.removeItem(slotKey(n)); } catch { /* 残せない端末 */ }
+      this.slots[n - 1] = null;
+      const u = this.slotUi[n - 1];
+      u.sum.setText('― 空き ―').setColor('#8a8fa8').setScale(1);
+      closeModal();
+      setDelMode(false);
+      this.prompt.setText(`記憶${MARK[n - 1]}を 削除しました`);
+    };
+    this.erase = { setDelMode, openModal, eraseSlot }; // 確かめ用の 取っ手
+
     this.stage = 0;
     const begin = (fresh) => {
       if (this.stage !== 0) return;
@@ -155,9 +199,30 @@ export class TitleScene extends Phaser.Scene {
     const press = (x, y) => {
       if (this.stage === 1 && this.time.now >= this.skipAt) { this.go(); return; }
       if (this.stage !== 0) return;
-      // 記憶の札：さわると その記憶を選ぶ
+      // 念押しの窓が 出て いる 間は「はい／いいえ」だけ
+      if (this.modal) {
+        if (this.modal.yes(x, y) && ready()) { sfx('damage'); eraseSlot(this.modal.n); }
+        else if (this.modal.no(x, y) && ready()) { sfx('select'); closeModal(); setDelMode(false); }
+        return;
+      }
+      if (delHit(x, y)) {
+        if (!ready()) return;
+        sfx('select');
+        if (!this.delMode && !this.slots.some(Boolean)) { this.prompt.setText('消せる 記憶が ありません'); return; }
+        setDelMode(!this.delMode);
+        return;
+      }
+      // 記憶の札：さわると その記憶を選ぶ（消す 記憶を 選ぶ 時は 念押しの 窓）
       const s = this.slotUi.findIndex((u) => u.hit(x, y));
+      if (s >= 0 && this.delMode) {
+        if (!ready()) return;
+        if (!this.slots[s]) { this.prompt.setText('空きの 記憶です'); return; }
+        sfx('select');
+        openModal(s + 1);
+        return;
+      }
       if (s >= 0) { if (this.slot !== s + 1) { sfx('select'); pickSlot(s + 1); } return; }
+      if (this.delMode) return; // 消す 記憶を 選ぶ 間は はじめから・つづきからを 押さない
       // 記録のある記憶で「はじめから」＝1回目は知らせるだけ（同じ指の二度押し＝0.35秒以内は数えない）
       const freshFor = (go) => {
         if (!this.saved) return go();
