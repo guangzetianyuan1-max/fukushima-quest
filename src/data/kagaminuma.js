@@ -2,12 +2,12 @@
 // 話（下郷町観光協会 ガイド資料「鏡ヶ沼の怪」・妖怪DB）：狩人の大蔵が愛犬と三本槍ヶ岳へ鹿狩りに行き、霧で迷って沼に出る。蛙の皮の笛を吹くと霧が晴れ、沼の真ん中の美しい女性がニッと笑う。
 // 犬が吠えて我に返った大蔵が撃つと、大風・稲妻・雷・豪雨になり、女性は青白い大蛇に変わる。逃げる途中で転げ込んだ温かい水たまりが後の甲子温泉の湯。家に子蛇が見え、大峠に石の祠を造り「お仙の宮」と祀ると見えなくなった
 // ⚠裸身の描写は出さない（「沼の真ん中に立つ」まで）・祠は供養の場（巣にしない）。弱点＝「蛙の皮の笛」
-import { BASIC_ITEMS } from './basic_items.js?v=235';
+import { BASIC_ITEMS } from './basic_items.js?v=236';
 
 export const KAGAMINUMA = {
   art: {
-    // ⏳絵が 届くまで kiyohime の 絵を 借りる（10/7）
-    dark: 'assets/kiyohime_dark.png', light: 'assets/kiyohime_light.png', bg: 'assets/bg_kiyohime.png',
+    // 10/7 ①呑まれた姿が 届いた（②元の姿が 届くまでは ①を 両方に）・⏳背景は 届くまで kiyohime を 借りる
+    dark: 'assets/kagaminuma_dark.png', light: 'assets/kagaminuma_light.png', bg: 'assets/bg_kiyohime.png',
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
   allies: [
