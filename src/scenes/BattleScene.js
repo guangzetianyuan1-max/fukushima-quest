@@ -1,18 +1,19 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=271';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=271';
-import { EPISODES } from '../data/episodes.js?v=271';
-import { revealAt } from '../ui/reveal.js?v=271';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=271';
-import { chooseCommands } from '../battle/auto.js?v=271';
-import { itemNote } from '../data/items.js?v=271';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=271';
-import { STORY_FILES } from '../data/story_assets.js?v=271';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=271';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=271';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=271';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=271';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=271';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=271';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=272';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=272';
+import { EPISODES } from '../data/episodes.js?v=272';
+import { revealAt } from '../ui/reveal.js?v=272';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=272';
+import { chooseCommands } from '../battle/auto.js?v=272';
+import { itemNote } from '../data/items.js?v=272';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=272';
+import { STORY_FILES } from '../data/story_assets.js?v=272';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=272';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=272';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=272';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=272';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=272';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=272';
+import { DUEL_BIG } from '../data/duel_assets.js?v=272';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -78,6 +79,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.duel) for (const part of ['dark', 'light']) if (this.textures.exists(key(this.ep, part))) this.textures.remove(key(this.ep, part));
     const look = this.ep.art.look;
     if (look && !this.textures.exists(`p-${look}`)) this.load.spritesheet(`p-${look}`, `assets/people/${look}.png`, { frameWidth: FRAME_W, frameHeight: FRAME_H });
+    if (look && DUEL_BIG.includes(look) && !this.textures.exists(`big-${look}`)) this.load.image(`big-${look}`, `assets/people/big_${look}.png`); // 10/8 一騎打ちの 師匠の 大きい 絵
     for (const part of ['dark', 'light', 'bg']) {
       const k = key(this.ep, part);
       if (String(this.ep.art[part]).startsWith('people:')) continue;
@@ -117,6 +119,19 @@ export class BattleScene extends Phaser.Scene {
   makeLookArt() {
     const look = this.ep.art.look;
     if (!look || !this.textures.exists(`p-${look}`)) return;
+    // ⭐10/8 本人「師匠の絵が、ぼかしにされているところがある」＝細かい 絵を 縮めた 歩く絵（温泉地の 人）は 6倍で にじむ
+    //   ⇒ 元の 絵から 3倍で 切り出した 大きい 絵（big-）が あれば それを そのまま（画面で 2倍）
+    if (this.textures.exists(`big-${look}`)) {
+      const src = this.textures.get(`big-${look}`).getSourceImage();
+      for (const part of ['dark', 'light']) {
+        const k = key(this.ep, part);
+        if (this.textures.exists(k)) this.textures.remove(k);
+        const t = this.textures.createCanvas(k, src.width, src.height);
+        t.getContext().drawImage(src, 0, 0);
+        t.refresh();
+      }
+      return;
+    }
     const f = this.textures.getFrame(`p-${look}`, frameOf('down', 0, look));
     for (const part of ['dark', 'light']) {
       const k = key(this.ep, part);
