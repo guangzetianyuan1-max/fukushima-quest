@@ -3,7 +3,7 @@
 // それ以外：弱った味方（HP4割未満）がいれば HP の道具 → 術の力が足りなければ術の道具 → もやが無ければ明かされた弱点の術 → たたかう（もやを払う）。
 // 道具は1ターンに1つだけ使う。
 // 10/5 職業の技（jobs.js の JOB_SPELLS）：起こす・回復・お祓い・守り・かばう・弱らせる・封じる・毒・かわす・もや払い・殴る技・術を 場面で選ぶ
-import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK } from './rules.js?v=250';
+import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK } from './rules.js?v=251';
 
 const WEAK = 0.4;
 const VERY_WEAK = 0.25;
@@ -118,7 +118,7 @@ export function chooseCommands(state, data) {
       return id;
     };
     // お祓い・解毒：呪い・取り憑き・目くらまし・気絶が あれば
-    const sick = state.blind > 0 || living.some((x) => x.curse || x.ghost || x.stunned > 0);
+    const sick = state.blind > 0 || living.some((x) => x.curse || x.ghost || x.stunned > 0) || living.filter((x) => x.poison > 0).length >= 2; // 毒は 2人 以上で（10/7）
     if (!silent && pick('cleanse', sick)) continue;
     if (boss) {
       const hasWeak0 = e.revealed && (a.spells ?? []).includes(e.weakness);

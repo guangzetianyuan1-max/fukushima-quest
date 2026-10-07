@@ -3,7 +3,7 @@
 // 兜に縫いつけた金の観音が大蛇の毒から守った。大蛇は討たれ、祟りを恐れた人々が社を建てて祀った＝沼御前神社。
 // ⭐八蛇沼の大蛇（広報にしあいづ「その46」）は紙芝居②に1行＝「沼沢沼から水路を流れた織物」。⚠⚠八蛇沼の版では沼沢沼の大蛇は「雄」＝性別は言わない。
 // ⚠斬る場面は見せない（観音の光と社まで）。⚠佐原義連は実在の人物＝「伝わる」で語る。弱点＝「金の観音」
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const NUMAGOZEN = {
   art: {
@@ -32,12 +32,12 @@ export const NUMAGOZEN = {
     autoWinTarget: 0.88, // 10/6 0.80→0.88＝4つ目の技を必須にした章の最後・傷を減らす技の無い組（薬師・山伏・武士・巫女）が 0.35 だった // 4章 会津の章ボス（10/6）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 24,
-    hp: 810, atk: 328, def: 180, agi: 15,
+    hp: 810, atk: 417, def: 180, agi: 15,
     bgm: 'numagozen',
     weakness: 'kinkannon',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "大蛇の 毒", chance: 0.3, power: 122, flash: [140, 220, 90], sfx: 'jadoku', cutin: 'assets/cutin/numagozen_doku.png' },
-    special2: { name: "二丈の 黒髪", chance: 0.15, power: 130, flash: [60, 60, 90], sfx: 'kurokami', cutin: 'assets/cutin/numagozen_kurokami.png' },
+    special: { name: "大蛇の 毒", kind: 'poison', hit: 1, chance: 0.3, power: 155, flash: [140, 220, 90], sfx: 'jadoku', cutin: 'assets/cutin/numagozen_doku.png' },
+    special2: { name: "二丈の 黒髪", kind: 'one', chance: 0.15, power: 165, flash: [60, 60, 90], sfx: 'kurokami', cutin: 'assets/cutin/numagozen_kurokami.png' },
     biteName: "大蛇の 尾で 打つ",
     introText: "雪の 沼沢湖の 水面が 割れ、二丈の 黒髪の 女性が あらわれた。……髪の 先から、大蛇の 影が のびていく！",
     tellLines: [

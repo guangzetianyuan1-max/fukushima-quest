@@ -3,7 +3,7 @@
 // 打ち殺そうとする村人に、河童は「桶が欲しかっただけ。助けてくれれば村の水難をなくす」と頼み、渕へ帰される。村は水害に遭わなくなり、凶作の翌年には
 // 神社の池に稲束が沈んでいて、その籾で大豊作に。種籾池は今も御稷神社の境内に残る。⚠3章の天栄のカッパ（大将と一族・約束させて許す）と姿も筋も分ける
 // 弱点＝「飼葉桶」（河童が欲しかった物）
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const NAWAKAPPA = {
   art: {
@@ -32,11 +32,11 @@ export const NAWAKAPPA = {
     autoWinTarget: 0.85, // 4章 会津の中ボス（10/6）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 23,
-    hp: 1300, atk: 257, def: 175, agi: 14,
+    hp: 1300, atk: 269, def: 175, agi: 14,
     bgm: 'nawakappa',
     weakness: 'kaibaoke',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "底知れぬ 渕", chance: 0.45, power: 133, flash: [70, 120, 200], sfx: 'fuchi', cutin: 'assets/cutin/nawakappa_fuchi.png' },
+    special: { name: "底知れぬ 渕", kind: 'one', chance: 0.45, power: 139, flash: [70, 120, 200], sfx: 'fuchi', cutin: 'assets/cutin/nawakappa_fuchi.png' },
     biteName: "水かきで はたく",
     introText: "縄沢の 渕の 水が 黒く にごり、小さな 河童の 影が 山ほどに ふくれあがった！",
     tellLines: [

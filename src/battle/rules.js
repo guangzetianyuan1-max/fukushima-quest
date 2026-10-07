@@ -104,6 +104,24 @@ function lowestMpAlly(state) {
     .sort((a, b) => a.mp / a.maxMp - b.mp / b.maxMp)[0];
 }
 
+// ---- ボスの 必殺技の 形（10/7 本人「必殺技マンネリ化してませんか？4人全員に攻撃だけでなく、一人に大ダメージなど工夫して。蛇のボスは全員に毒など」）----
+//   kind 'all'（既定）＝全員に power／'one'＝1人に power×ONE_MULT（かばう・分身は 効く）／'poison'＝全員に power×POISON_HIT と 毒
+//   'silence'＝全員に power×SILENCE_HIT と 術封じ。stun は 'one' なら その1人だけ
+export const ONE_MULT = 2.5;
+// 一人に大技は 最大HPの ONE_CAP まで（満タンの 人を 一撃では 倒さない＝守りの 技の 無い 組でも 立て直せる・10/7 試算で 4章の 3体が 0.39〜0.43 だった）
+export const ONE_CAP = 0.7;
+export const POISON_HIT = 0.5;
+export const SILENCE_HIT = 0.6;
+export const SILENCE_TURNS = 2;
+// 毒（戦いの 中だけ）＝ターンの 終わりに 最大HPの POISON_FRAC を 失う・POISON_TURNS で 消える・毒では 倒れない（1で 止まる）・お祓いで 治る
+export const POISON_FRAC = 0.06;
+export const POISON_TURNS = 3;
+function poisonAll(targets, log, text) {
+  const hit = targets.filter((a) => a.alive);
+  for (const a of hit) a.poison = POISON_TURNS;
+  if (hit.length) log.push({ text, sfx: 'dokuiki' });
+}
+
 function hurt(a, d, log) {
   a.hp = Math.max(0, a.hp - d);
   // 泰山府君の祭（陰陽師・10/5）：この戦いで 一度だけ 倒れずに 踏みとどまる
@@ -524,10 +542,11 @@ function jobSkill(state, a, sp, id, rng, log) {
   } else if (k === 'cleanse') {
     let n = state.blind > 0 ? 1 : 0;
     for (const t of living) {
-      if (t.curse || t.ghost || t.stunned > 0) n += 1;
+      if (t.curse || t.ghost || t.stunned > 0 || t.poison > 0) n += 1;
       t.curse = false;
       t.ghost = false;
       t.stunned = 0;
+      t.poison = 0;
     }
     state.blind = 0;
     log.push({ text: n ? 'みなの 悪い 印が 消えた！' : 'みなの 体が 軽く なった。' });
@@ -593,10 +612,11 @@ function addOns(state, a, sp, log) {
   if (sp.addCleanse) {
     let n = state.blind > 0 ? 1 : 0;
     for (const t of living) {
-      if (t.curse || t.ghost || t.stunned > 0) n += 1;
+      if (t.curse || t.ghost || t.stunned > 0 || t.poison > 0) n += 1;
       t.curse = false;
       t.ghost = false;
       t.stunned = 0;
+      t.poison = 0;
     }
     state.blind = 0;
     if (n) log.push({ text: 'みなの 悪い 印が 消えた！' });
@@ -689,20 +709,46 @@ function enemyStrike(state, rng, log, name, bite) {
   if (sp) {
     // cutin＝技の挿絵（本人 10/3「今回から、ボスの必殺技は別のアクション(挿絵)を」）。挿絵のある技は文を長めに止める（hold）
     log.push({ text: `${name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin, solo: !!sp.sfxSolo }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
-    for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * weakMult * guardMult * spread(rng))), log);
-    if (state.decoy?.count > 0) {
-      state.decoy.count = 0;
-      log.push({ text: '分身は 技に 巻きこまれて 消えた……' });
+    const kind = sp.kind ?? 'all';
+    let stunned = living;
+    if (kind === 'one') {
+      // 1人に 大技（かばう・分身は かみつきと 同じく 効く）
+      let t = living[Math.floor(rng() * living.length)];
+      const cov = state.cover?.turns > 0 ? living.find((x) => x.id === state.cover.id) : null;
+      if (cov && cov !== t) {
+        log.push({ text: `${cov.name}が ${t.name}を かばった！` });
+        t = cov;
+      }
+      if (state.decoy?.count > 0) {
+        state.decoy.count -= 1;
+        log.push({ text: `分身が 技を 受けて、煙と なって 消えた！（のこり ${state.decoy.count}）`, sfx: 'kemuri' });
+        stunned = [];
+      } else {
+        hurt(t, Math.max(1, Math.min(Math.round(t.maxHp * ONE_CAP), Math.round(sp.power * ONE_MULT * weakMult * guardMult * spread(rng)))), log);
+        stunned = [t];
+      }
+    } else {
+      const k = sp.hit ?? (kind === 'poison' ? POISON_HIT : kind === 'silence' ? SILENCE_HIT : 1); // hit＝その技だけの 傷の 割合（沼御前の 大蛇の毒＝満額＋毒・10/7）
+      for (const a of living) hurt(a, Math.max(1, Math.round(sp.power * k * weakMult * guardMult * spread(rng))), log);
+      if (state.decoy?.count > 0) {
+        state.decoy.count = 0;
+        log.push({ text: '分身は 技に 巻きこまれて 消えた……' });
+      }
+      if (kind === 'poison') poisonAll(living, log, 'みんな 毒に おかされた！');
+      if (kind === 'silence' && living.some((a) => a.alive)) {
+        state.silence = Math.max(state.silence ?? 0, SILENCE_TURNS + 1); // ターンの 終わりに 1つ 減る＝つぎの 2ターン
+        log.push({ text: '声が かき消されて、術も 語りも とどかない！', sfx: 'down' });
+      }
     }
     counterStrike(state, rng, log);
-    // 気絶（本人 10/4「おならをくらったら全員しばらくの間、気絶」）＝生き残った全員が stun 回 自分の番を休む
+    // 気絶（本人 10/4「おならをくらったら全員しばらくの間、気絶」）＝生き残った全員が stun 回 自分の番を休む（'one' は その1人だけ）
     if (sp.stun) {
-      const hit = living.filter((a) => a.alive);
+      const hit = stunned.filter((a) => a.alive);
       for (const a of hit) {
         a.stunned = Math.max(a.stunned ?? 0, sp.stun);
         a.stunText = `${a.name}は 気絶して 動けない……`;
       }
-      if (hit.length) log.push({ text: 'みんな 目を まわして 気絶して しまった！', sfx: 'down' });
+      if (hit.length) log.push({ text: hit.length > 1 ? 'みんな 目を まわして 気絶して しまった！' : `${hit[0].name}は 動けなく なった！`, sfx: 'down' });
     }
     // 必殺技をくらうと、もやが1つ立ちこめる（最大 max まで・本人 10/1「敵の必殺技をくらうとモヤがかかる」）
     if (e.mist && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive)) {
@@ -742,6 +788,14 @@ function doTrick(state, e, living, rng, log) {
     state.stolen.push(id);
     log.push({ text: `${e.name}は ${e.itemNames?.[id] ?? id}を ${e.trick.verb ?? '盗んで 逃げていった'}！`, sfx: 'flee' });
     state.over = 'fled';
+    return true;
+  }
+  // 毒の息（10/7 蛇の ボス）＝全員を 毒に（もう 全員 毒なら 出さない）
+  if (k === 'poisonall') {
+    const t = living.filter((a) => !(a.poison > 0));
+    if (!t.length) return false;
+    log.push({ text: e.trick.text ?? `${e.name}は 毒の 息を 吐いた！`, effect: { kind: 'shake' } });
+    poisonAll(t, log, 'みんな 毒に おかされた！');
     return true;
   }
   if (k === 'curse' || k === 'possess') {
@@ -872,6 +926,15 @@ export function resolveTurn(state0, commands, data, rng) {
     sm.turns -= 1;
     log.push({ text: `${sm.name}の 体当たり！ ${state.enemy.name}に ${d}の ダメージ！${sm.turns > 0 ? '' : `（${sm.name}は 煙と なって 帰っていった）`}`, effect: { kind: 'hitEnemy' }, sfx: 'oogama' });
     state.over = isOver(state);
+  }
+  // 味方の 毒（10/7）＝ターンの 終わりに むしばむ・毒では 倒れない
+  if (!state.over) {
+    for (const a of state.allies.filter((x) => x.alive && x.poison > 0)) {
+      const d = Math.max(1, Math.round(a.maxHp * POISON_FRAC));
+      a.hp = Math.max(1, a.hp - d);
+      a.poison -= 1;
+      log.push({ text: `${a.name}は 毒で ${d}の ダメージ！${a.poison > 0 ? '' : `（${a.name}の 毒が ぬけた）`}`, effect: { kind: 'hitAlly', target: a.id, hp: a.hp } });
+    }
   }
   for (const key of ['buff', 'guard', 'cover', 'counter']) if (state[key]?.turns > 0) state[key].turns -= 1;
   if (state.enemy.weak?.turns > 0) state.enemy.weak.turns -= 1;

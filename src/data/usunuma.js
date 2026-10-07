@@ -2,7 +2,7 @@
 // 話（妖怪DB『伝承文芸』2号 國學院大學民俗文学研究会 1964・話者 山田武高）：麦つきの手伝いに、どこから来たかわからない若者が来ると必ず臼がなくなる。若者は臼沼に住む大蛇だった。
 // 弓の名手が大蛇を射止め、大蛇は痛みで大道巡りをしながら山を登った＝巡り平。射止めた矢を持っていくと子どもの夜泣きがやむとも。
 // ⚠臼沼の今の場所は確かめられなかった＝鹿島の西の山すそに置く（ゲームの見立て）。弱点＝「名手の矢」
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const USUNUMA = {
   art: {
@@ -31,13 +31,14 @@ export const USUNUMA = {
     autoWinTarget: 0.85, // お城クエスト（相馬中村城）（10/7）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 11,
-    hp: 585, atk: 63, def: 115, agi: 12,
+    hp: 585, atk: 106, def: 115, agi: 12,
     bgm: 'usunuma', // 自分の 戦いの曲（10/7 本人「BGMを変えて」）
     side: true, // お城クエストの 寄り道（castle.js の SIDE_BOSSES）
     weakness: 'meishu',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "大蛇の 巻きつき", chance: 0.22, power: 46, stun: 1, flash: [120, 200, 160], sfx: 'makitsuki', cutin: 'assets/cutin/usunuma_maki.png' },
-    special2: { name: "沼の 大渦", chance: 0.14, power: 55, flash: [80, 140, 220], sfx: 'ouzu', cutin: 'assets/cutin/usunuma_uzu.png' },
+    special: { name: "大蛇の 巻きつき", kind: 'one', chance: 0.22, power: 78, flash: [120, 200, 160], sfx: 'makitsuki', cutin: 'assets/cutin/usunuma_maki.png' },
+    special2: { name: "沼の 大渦", chance: 0.14, power: 93, flash: [80, 140, 220], sfx: 'ouzu', cutin: 'assets/cutin/usunuma_uzu.png' },
+    trick: { kind: 'poisonall', chance: 0.12, text: '臼沼の大蛇は 毒の 息を 吐いた！' }, // 蛇の ボスは 毒の 息で 全員を 毒に（10/7 本人「蛇のボスは全員に毒」）
     biteName: "大きな 口で かみつく",
     introText: "臼沼の 水面が ふくらみ、大きな 蛇が 鎌首を もたげた。……黒い もやを まとっている！",
     tellLines: [

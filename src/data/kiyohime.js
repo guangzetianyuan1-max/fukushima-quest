@@ -4,7 +4,7 @@
 // 白河の大清水には花の咲かない「咲かずのフジ」が生えた。⭐白河では安珍を故郷の若い僧として、命日（3月27日）に根田の安珍堂の前で念仏踊りを奉納して弔う（県の重要無形民俗文化財）
 // ⭐清姫を罰する敵にしない＝「蛇の姿から戻す」。原典では戻らない＝紙芝居⑤で しおりが補う。⚠道成寺の能・歌舞伎の筋や台詞は借りない
 // 弱点＝白河の「安珍念仏踊り」（安珍を弔う念仏の声）
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const KIYOHIME = {
   art: {
@@ -32,12 +32,13 @@ export const KIYOHIME = {
     autoWinTarget: 0.85, // 3章の章ボス
     // 強さ＝試算（node tests/_autotune.mjs <id>・着くころの4人・Lv・EXPECT_GEAR）で目安に合わせた（10/4）
     expectLv: 19,
-    hp: 923, atk: 214, def: 146, agi: 14, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp820 atk112） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp577 atk157） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す） // 10/5 夜 段階②（2章の技が入った）で 5組の平均に合わせ直した（_autotune・前 atk158 必殺技85/94） // 10/5 夜 段階③（3章の技が入った）で合わせ直した（前 atk186 必殺技100/111）
+    hp: 923, atk: 224, def: 146, agi: 14, // 10/4 夜 くノ一・僧の如意輪の経・鉄砲2倍で合わせ直した（_autotune・前 hp820 atk112） // 10/4 夜 通しの調整＝猟師の玉3発を持つ前提で合わせ直した（前 hp577 atk157） ⭐10/5 職業の旅＝代表の5組の平均で仮に合わせ直した（1章の技まで・2章3章の技は段階②③で合わせ直す） // 10/5 夜 段階②（2章の技が入った）で 5組の平均に合わせ直した（_autotune・前 atk158 必殺技85/94） // 10/5 夜 段階③（3章の技が入った）で合わせ直した（前 atk186 必殺技100/111）
     bgm: 'kiyohime',
     weakness: 'nenbutsu',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '恋の 炎', chance: 0.24, power: 115, flash: [255, 110, 50], sfx: 'honoo', cutin: 'assets/cutin/kiyohime_honoo.png' },
-    special2: { name: '鐘に 巻きつく', chance: 0.14, power: 127, flash: [255, 200, 120], sfx: 'tsurigane', cutin: 'assets/cutin/kiyohime_kane.png' },
+    special: { name: '恋の 炎', chance: 0.24, power: 120, flash: [255, 110, 50], sfx: 'honoo', cutin: 'assets/cutin/kiyohime_honoo.png' },
+    special2: { name: '鐘に 巻きつく', kind: 'one', chance: 0.14, power: 133, flash: [255, 200, 120], sfx: 'tsurigane', cutin: 'assets/cutin/kiyohime_kane.png' },
+    trick: { kind: 'poisonall', chance: 0.12, text: '清姫は 蛇の 毒の 息を 吐いた！' }, // 蛇の ボスは 毒の 息で 全員を 毒に（10/7 本人「蛇のボスは全員に毒」）
     biteName: '炎の 牙で かみつく',
     introText: '安珍堂の 前に、炎を まとった 大蛇が とぐろを 巻いていた。……その 目は、だれかを さがしている。',
     tellLines: [

@@ -2,7 +2,7 @@
 // 話（下郷町観光協会 ガイド資料「鏡ヶ沼の怪」・妖怪DB）：狩人の大蔵が愛犬と三本槍ヶ岳へ鹿狩りに行き、霧で迷って沼に出る。蛙の皮の笛を吹くと霧が晴れ、沼の真ん中の美しい女性がニッと笑う。
 // 犬が吠えて我に返った大蔵が撃つと、大風・稲妻・雷・豪雨になり、女性は青白い大蛇に変わる。逃げる途中で転げ込んだ温かい水たまりが後の甲子温泉の湯。家に子蛇が見え、大峠に石の祠を造り「お仙の宮」と祀ると見えなくなった
 // ⚠裸身の描写は出さない（「沼の真ん中に立つ」まで）・祠は供養の場（巣にしない）。弱点＝「蛙の皮の笛」
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const KAGAMINUMA = {
   art: {
@@ -38,6 +38,7 @@ export const KAGAMINUMA = {
     mist: { min: 1, max: 3, rise: 0.2 },
     special: { name: "大風と 稲妻", chance: 0.26, power: 122, flash: [220, 220, 255], sfx: 'inazuma', cutin: 'assets/cutin/kagaminuma_inazuma.png' },
     special2: { name: "沼の 大雨", chance: 0.14, power: 132, flash: [90, 140, 230], sfx: 'ooame', cutin: 'assets/cutin/kagaminuma_ooame.png' },
+    trick: { kind: 'poisonall', chance: 0.12, text: '鏡ヶ沼の大蛇は 青白い 毒の 霧を 吐いた！' }, // 蛇の ボスは 毒の 息で 全員を 毒に（10/7 本人「蛇のボスは全員に毒」）
     biteName: "青白い 尾で 打つ",
     introText: "霧の 鏡ヶ沼の まん中に、女性の 影が 立ち、ニッと 笑った。……影は みるみる 青白い 大蛇に 変わっていく！",
     tellLines: [

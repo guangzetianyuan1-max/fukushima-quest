@@ -2,7 +2,7 @@
 // 話（福島県「しらかわ 史跡」）：高さ45m・幹の太さ9.7mの桂の木（推定樹齢370年）。この地に住み人々を苦しめた鬼神が、白河藩主・松平定信公の剣によってこの桂の木に封じ込められたとされる。
 // 後に旅人などから「剣桂」と呼ばれ、厚い信仰を集めた。森の巨人たち100選。奇岩や滝が点在する新甲子遊歩道から見られる
 // ⚠話は短い・そばに祠（祠は出さない）。弱点＝「定信公の剣」
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const KENKATSURA = {
   art: {
@@ -37,7 +37,7 @@ export const KENKATSURA = {
     weakness: 'sadanobu',
     mist: { min: 1, max: 3, rise: 0.2 },
     special: { name: "森の 嵐", chance: 0.24, power: 125, flash: [120, 200, 120], sfx: 'moriarashi', cutin: 'assets/cutin/kenkatsura_arashi.png' },
-    special2: { name: "鬼神の 雷", chance: 0.14, power: 146, flash: [255, 255, 160], sfx: 'kishinrai', cutin: 'assets/cutin/kenkatsura_kaminari.png' },
+    special2: { name: "鬼神の 雷", kind: 'one', chance: 0.14, power: 146, flash: [255, 255, 160], sfx: 'kishinrai', cutin: 'assets/cutin/kenkatsura_kaminari.png' },
     biteName: "大きな 腕で なぎはらう",
     introText: "新甲子の 森の 奥、天を つく 桂の 大木が ゆれ、幹から 鬼神の 影が ぬけ出した。……黒い もやを まとっている！",
     tellLines: [

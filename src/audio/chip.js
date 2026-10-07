@@ -472,6 +472,11 @@ const SFX = {
     noise(t, 1.0, { vol: 0.3, from: 6000, to: 2500 });
     tone(N(50), t + 0.2, 0.8, { type: 'sawtooth', vol: 0.07, slideTo: N(46) });
   },
+  // 毒が まわる（10/7 必殺技の 毒・蛇の 毒の息）＝しゅわしゅわと 泡立ち、低く 沈む
+  dokuiki: (t) => {
+    noise(t, 0.7, { vol: 0.22, from: 900, to: 2600 });
+    [0, 0.18, 0.36].forEach((d, i) => tone(N(55 - i * 3), t + d, 0.28, { type: 'sine', vol: 0.12, slideTo: N(50 - i * 3) }));
+  },
   // 二丈の 黒髪（沼御前）＝長い 髪が しゅるしゅると 巻きつく
   kurokami: (t) => {
     [0, 0.1, 0.2, 0.3, 0.4].forEach((d, i) => noise(t + d, 0.12, { vol: 0.22, from: 2500 + i * 600, to: 1200 }));

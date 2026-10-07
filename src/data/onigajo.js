@@ -2,7 +2,7 @@
 // 話（広報いわき 2023年3月号「鬼ヶ城山と地域づくり」）：川前町上桶売の鬼ヶ城山（標高887m）は矢大臣山に次ぐ市第二の高峰。山頂の大岩に鬼が住み、村人に岩を投げつけたり悪さをしたりしていたという鬼伝説。
 // 地方自治研究機構「鬼の条例」（孫引き）：朝廷の圧政に抵抗したといわれる大多鬼丸の一味とも
 // ⚠退治の話・鬼の名前・岩を投げた理由は 公的な資料に無い＝紙芝居④で「伝わっていない」と補う。弱点＝「里の語り」（いまも川前の人が語り継ぐ＝忘れの もやに効く）
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const ONIGAJO = {
   art: {
@@ -31,12 +31,12 @@ export const ONIGAJO = {
     autoWinTarget: 0.85, // お城クエスト（磐城平城）（10/7）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 7,
-    hp: 420, atk: 83, def: 66, agi: 10,
+    hp: 420, atk: 101, def: 66, agi: 10,
     bgm: 'onigajo', // 自分の 戦いの曲（10/7 本人「BGMを変えて」）
     side: true, // お城クエストの 寄り道（castle.js の SIDE_BOSSES）
     weakness: 'satogatari',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "大岩 投げ", chance: 0.24, power: 45, flash: [200, 170, 120], sfx: 'oiwa', cutin: 'assets/cutin/onigajo_iwa.png' },
+    special: { name: "大岩 投げ", kind: 'one', chance: 0.24, power: 55, flash: [200, 170, 120], sfx: 'oiwa', cutin: 'assets/cutin/onigajo_iwa.png' },
     biteName: "太い 腕で なぐる",
     introText: "鬼ヶ城山の 頂の 大岩の 上に、大きな 鬼の 影が 立ちあがった。……黒い もやを まとい、岩を つかんでいる！",
     tellLines: [

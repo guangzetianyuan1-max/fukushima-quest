@@ -2,7 +2,7 @@
 // 題の画面の前に HTML で出す：最新の版を確かめる → 字 → よく使う絵（何%）。終わったら消してゲームを始める
 // 全部を毎回読み直すと約35MB＝通信量と待ち時間が大きい ⇒ 毎回するのは「新しい版が出ていないか」の確かめ（小さな version.json）だけ。出ていれば読み直す
 
-import { GAME_FONT } from './fonts.js?v=250';
+import { GAME_FONT } from './fonts.js?v=251';
 export function showLoading() {
   const font = GAME_FONT;
   const wrap = document.createElement('div');

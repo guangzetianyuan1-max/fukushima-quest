@@ -1,17 +1,17 @@
-import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=250';
-import { TitleScene } from './scenes/TitleScene.js?v=250';
-import { JobScene } from './scenes/JobScene.js?v=250';
-import { BattleScene } from './scenes/BattleScene.js?v=250';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=250';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=250';
-import { HARAI } from './field/game.js?v=250';
-import { EQUIP } from './data/equip.js?v=250';
-import { EPISODES } from './data/episodes.js?v=250';
-import { unlock, isUnlocked } from './audio/chip.js?v=250';
-import { askTerms } from './ui/terms.js?v=250';
-import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=250';
-import { showLoading, preloadImages } from './ui/loading.js?v=250';
-import { PRELOAD_ASSETS } from './data/preload_assets.js?v=250';
+import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=251';
+import { TitleScene } from './scenes/TitleScene.js?v=251';
+import { JobScene } from './scenes/JobScene.js?v=251';
+import { BattleScene } from './scenes/BattleScene.js?v=251';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=251';
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=251';
+import { HARAI } from './field/game.js?v=251';
+import { EQUIP } from './data/equip.js?v=251';
+import { EPISODES } from './data/episodes.js?v=251';
+import { unlock, isUnlocked } from './audio/chip.js?v=251';
+import { askTerms } from './ui/terms.js?v=251';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=251';
+import { showLoading, preloadImages } from './ui/loading.js?v=251';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=251';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）

@@ -2,7 +2,7 @@
 // 話（安達地方広域行政組合「あだち野のむかし物語」）：原瀬村才木から深堀へ行く街道に安達太良山の鬼が現れ、旅人や村人を襲う。若者の大三が名乗り出て、酒や魚を背負って行く。
 // 川辺で水を飲む鬼に食べさせ飲ませながら静かに言い聞かせると、鬼は改心し、自分に似た石を道の端に置いて山へ帰った＝鬼石。のち大江山の酒呑童子に（語りだけ）
 // ⚠首をはねる場面と墓（寺）は出さない。弱点＝「大三の もてなし」
-import { BASIC_ITEMS } from './basic_items.js?v=250';
+import { BASIC_ITEMS } from './basic_items.js?v=251';
 
 export const ONIISHI = {
   art: {
@@ -31,13 +31,13 @@ export const ONIISHI = {
     autoWinTarget: 0.85, // お城クエスト（二本松城）（10/7）
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 16,
-    hp: 950, atk: 143, def: 120, agi: 12,
+    hp: 950, atk: 165, def: 120, agi: 12,
     bgm: 'oniishi', // 自分の 戦いの曲（10/7 本人「BGMを変えて」）
     side: true, // お城クエストの 寄り道（castle.js の SIDE_BOSSES）
     weakness: 'motenashi',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: "鬼の 大石", chance: 0.24, power: 107, flash: [190, 170, 140], sfx: 'oishi', cutin: 'assets/cutin/oniishi_ishi.png' },
-    special2: { name: "山の おたけび", chance: 0.12, power: 54, stun: 1, flash: [255, 120, 80], sfx: 'otakebi', cutin: 'assets/cutin/oniishi_otakebi.png' },
+    special: { name: "鬼の 大石", kind: 'one', chance: 0.24, power: 123, flash: [190, 170, 140], sfx: 'oishi', cutin: 'assets/cutin/oniishi_ishi.png' },
+    special2: { name: "山の おたけび", chance: 0.12, power: 62, stun: 1, flash: [255, 120, 80], sfx: 'otakebi', cutin: 'assets/cutin/oniishi_otakebi.png' },
     biteName: "太い 腕で なぐる",
     introText: "安達太良山の ふもとの 川辺で、大きな 鬼が 水を 飲んでいた。……黒い もやを まとい、こちらを にらんだ！",
     tellLines: [
