@@ -238,7 +238,7 @@ export function castleMaps() {
     maps[q.hall] = {
       name: p.castle, inside: 'castle', castleOf: town, cardPending: true, rows: HALL_ROWS, props: [], entry: HALL_ENTRY,
       npcs: [
-        { x: 7, y: 3, look: 'bushi', role: 'lord', castleOf: town, lines: [] },
+        { x: 7, y: 3, look: 'tono', role: 'lord', castleOf: town, lines: [] }, // お殿様の 歩く絵（10/7 本人の Gemini）
         { x: 4, y: 5, look: 'yakunin', role: 'karo', castleOf: town, lines: [`家老「${p.karo}」`] },
         { x: 10, y: 5, look: 'bushi', lines: [`侍「${p.samurai}」`] },
       ],
