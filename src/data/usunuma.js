@@ -2,7 +2,7 @@
 // 話（妖怪DB『伝承文芸』2号 國學院大學民俗文学研究会 1964・話者 山田武高）：麦つきの手伝いに、どこから来たかわからない若者が来ると必ず臼がなくなる。若者は臼沼に住む大蛇だった。
 // 弓の名手が大蛇を射止め、大蛇は痛みで大道巡りをしながら山を登った＝巡り平。射止めた矢を持っていくと子どもの夜泣きがやむとも。
 // ⚠臼沼の今の場所は確かめられなかった＝鹿島の西の山すそに置く（ゲームの見立て）。弱点＝「名手の矢」
-import { BASIC_ITEMS } from './basic_items.js?v=240';
+import { BASIC_ITEMS } from './basic_items.js?v=241';
 
 export const USUNUMA = {
   art: {
@@ -32,7 +32,7 @@ export const USUNUMA = {
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 11,
     hp: 585, atk: 63, def: 115, agi: 12,
-    bgm: 'daihisan', // ⏳曲は daihisan を 借りる
+    bgm: 'usunuma', // 自分の 戦いの曲（10/7 本人「BGMを変えて」）
     side: true, // お城クエストの 寄り道（castle.js の SIDE_BOSSES）
     weakness: 'meishu',
     mist: { min: 1, max: 3, rise: 0.2 },
@@ -45,16 +45,7 @@ export const USUNUMA = {
       "麦つきの 手伝いに、どこから 来たか わからない 若者が 来ると、きまって 臼が なくなったのよ。",
       "……その 若者こそ 臼沼の 大蛇。弓の 名手が 射止めたと 伝わるわ。",
     ],
-    story: {
-      tell: [
-        { img: 'assets/story/usunuma_1.png', voice: 'assets/story/usunuma_1.mp3', text: "鹿島の 里では、麦を 臼で ついて 粉に するの。そこへ、どこから 来たか わからない 若者が、手伝いに やって来たわ。" },
-        { img: 'assets/story/usunuma_2.png', voice: 'assets/story/usunuma_2.mp3', text: "ところが、若者が 来ると、きまって 臼が なくなるの。わけを 調べてみると、若者は 臼沼に すむ 大蛇だったのよ。" },
-        { img: 'assets/story/usunuma_3.png', voice: 'assets/story/usunuma_3.mp3', text: "いまは 話も 忘れられて、大蛇は 黒い もやに 呑まれて しまった……。思い出させて あげましょう。弓の 名手の 矢を。" },
-      ],
-      after: [
-        { img: 'assets/story/usunuma_4.png', voice: 'assets/story/usunuma_4.mp3', text: "ほんとうの お話では、弓の 名手が 大蛇を 射止めたの。大蛇は 痛みで 大きく 回りながら 山を 登り、そこは「巡り平」と よばれた。射止めた 矢を 持っていくと、子どもの 夜泣きが やむとも いわれたわ。" },
-      ],
-    },
+    // 紙芝居は 出さない（10/7 本人「お城クエストで紙芝居は要らない」）＝語りは tellLines・結末は hosoku の 文で
     revealText: "臼沼の大蛇の 弱点が 明かされた！ 名手の矢が よく効くように なった。",
     restoreLines: [
       "沼の 風に、黒い もやが ほどけていく……",

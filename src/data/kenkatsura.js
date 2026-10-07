@@ -2,7 +2,7 @@
 // 話（福島県「しらかわ 史跡」）：高さ45m・幹の太さ9.7mの桂の木（推定樹齢370年）。この地に住み人々を苦しめた鬼神が、白河藩主・松平定信公の剣によってこの桂の木に封じ込められたとされる。
 // 後に旅人などから「剣桂」と呼ばれ、厚い信仰を集めた。森の巨人たち100選。奇岩や滝が点在する新甲子遊歩道から見られる
 // ⚠話は短い・そばに祠（祠は出さない）。弱点＝「定信公の剣」
-import { BASIC_ITEMS } from './basic_items.js?v=240';
+import { BASIC_ITEMS } from './basic_items.js?v=241';
 
 export const KENKATSURA = {
   art: {
@@ -32,7 +32,7 @@ export const KENKATSURA = {
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 21,
     hp: 1000, atk: 240, def: 150, agi: 14,
-    bgm: 'tengu', // ⏳曲は tengu を 借りる
+    bgm: 'kenkatsura', // 自分の 戦いの曲（10/7 本人「BGMを変えて」）
     side: true, // お城クエストの 寄り道（castle.js の SIDE_BOSSES）
     weakness: 'sadanobu',
     mist: { min: 1, max: 3, rise: 0.2 },
@@ -45,16 +45,7 @@ export const KENKATSURA = {
       "むかし この 地に すみ、人びとを 苦しめた 鬼神が いたと 伝わるわ。",
       "……白河藩主・松平定信公の 剣が、鬼神を 桂の 木に 封じこめたと いうの。",
     ],
-    story: {
-      tell: [
-        { img: 'assets/story/kenkatsura_1.png', voice: 'assets/story/kenkatsura_1.mp3', text: "白河の 西、西郷村の 森の 奥に、高さ 45メートル、幹の 太さ 9.7メートルもの 桂の 大木が 立っているの。奇岩や 滝の ある 新甲子の 遊歩道から 見られるわ。" },
-        { img: 'assets/story/kenkatsura_2.png', voice: 'assets/story/kenkatsura_2.mp3', text: "むかし、この 地に すむ 鬼神が、人びとを 苦しめていたと 伝わるの。" },
-        { img: 'assets/story/kenkatsura_3.png', voice: 'assets/story/kenkatsura_3.mp3', text: "いまは 話も 忘れられて、鬼神は 黒い もやに 呑まれ、桂の 木から ぬけ出して しまった……。思い出させて あげましょう。定信公の 剣を。" },
-      ],
-      after: [
-        { img: 'assets/story/kenkatsura_4.png', voice: 'assets/story/kenkatsura_4.mp3', text: "ほんとうの お話では、白河藩主・松平定信公の 剣によって、鬼神は この 桂の 木に 封じこめられたと されるの。のちに 旅人たちは この 木を「剣桂」と よび、あつく 信仰したわ。いまは 森の 巨人たち 百選にも えらばれているの。" },
-      ],
-    },
+    // 紙芝居は 出さない（10/7 本人「お城クエストで紙芝居は要らない」）＝語りは tellLines・結末は hosoku の 文で
     revealText: "剣桂の鬼神の 弱点が 明かされた！ 定信公の剣が よく効くように なった。",
     restoreLines: [
       "森の 風に、黒い もやが ほどけていく……",

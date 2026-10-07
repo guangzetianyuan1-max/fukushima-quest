@@ -2,12 +2,12 @@
 // 話（下郷町観光協会 ガイド資料「鏡ヶ沼の怪」・妖怪DB）：狩人の大蔵が愛犬と三本槍ヶ岳へ鹿狩りに行き、霧で迷って沼に出る。蛙の皮の笛を吹くと霧が晴れ、沼の真ん中の美しい女性がニッと笑う。
 // 犬が吠えて我に返った大蔵が撃つと、大風・稲妻・雷・豪雨になり、女性は青白い大蛇に変わる。逃げる途中で転げ込んだ温かい水たまりが後の甲子温泉の湯。家に子蛇が見え、大峠に石の祠を造り「お仙の宮」と祀ると見えなくなった
 // ⚠裸身の描写は出さない（「沼の真ん中に立つ」まで）・祠は供養の場（巣にしない）。弱点＝「蛙の皮の笛」
-import { BASIC_ITEMS } from './basic_items.js?v=240';
+import { BASIC_ITEMS } from './basic_items.js?v=241';
 
 export const KAGAMINUMA = {
   art: {
-    // 10/7 ①②と 必殺技の 挿絵2枚が 届いた・⏳背景は 届くまで kiyohime を 借りる
-    dark: 'assets/kagaminuma_dark.png', light: 'assets/kagaminuma_light.png', bg: 'assets/bg_kiyohime.png',
+    // 10/7 本人の Gemini の絵（①②・必殺技の 挿絵2枚・背景）
+    dark: 'assets/kagaminuma_dark.png', light: 'assets/kagaminuma_light.png', bg: 'assets/bg_kagaminuma.png',
     glowDark: 0x9fb4ff, glowLight: 0xffd27a,
   },
   allies: [
@@ -32,7 +32,7 @@ export const KAGAMINUMA = {
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 25,
     hp: 900, atk: 343, def: 190, agi: 15,
-    bgm: 'kiyohime', // ⏳曲は kiyohime を 借りる
+    bgm: 'kagaminuma', // 自分の 戦いの曲（10/7 本人「BGMを変えて」）
     side: true, // お城クエストの 寄り道（castle.js の SIDE_BOSSES）
     weakness: 'kaerubue',
     mist: { min: 1, max: 3, rise: 0.2 },
@@ -45,16 +45,7 @@ export const KAGAMINUMA = {
       "狩人の 大蔵は 霧で 道に 迷い、沼に 出た。蛙の 皮の 笛を 吹くと、霧が 晴れたのよ。",
       "……沼の 主は、青白い 大蛇だったと 伝わるわ。",
     ],
-    story: {
-      tell: [
-        { img: 'assets/story/kagaminuma_1.png', voice: 'assets/story/kagaminuma_1.mp3', text: "下郷の 山の 奥、三本槍ヶ岳の 北に、岩に かこまれた 手鏡の 形の 沼が あるの。鏡ヶ沼よ。狩人の 大蔵は 愛犬を つれて 鹿狩りに 出かけ、深い 霧で 道に 迷って しまったの。" },
-        { img: 'assets/story/kagaminuma_2.png', voice: 'assets/story/kagaminuma_2.mp3', text: "大蔵が 蛙の 皮の 笛を 吹くと、霧が 晴れた。沼の まん中に 美しい 女性が 立っていて、ニッと 笑ったの。犬が 吠えて、大蔵は われに かえったわ。" },
-        { img: 'assets/story/kagaminuma_3.png', voice: 'assets/story/kagaminuma_3.mp3', text: "いまは 話も 忘れられて、沼の 主は 黒い もやに 呑まれて しまった……。思い出させて あげましょう。蛙の 皮の 笛を。" },
-      ],
-      after: [
-        { img: 'assets/story/kagaminuma_4.png', voice: 'assets/story/kagaminuma_4.mp3', text: "ほんとうの お話では、大蔵が 鉄砲を 撃つと、大風と 雷と 大雨に なり、女性は 青白い 大蛇に 変わったの。逃げる とちゅうで ころげこんだ 温かい 水たまりが、のちの 甲子温泉の 湯だと いうわ。家に 帰ると 子蛇の 影が 見え、大峠に 石の 祠を 造って「お仙の宮」と まつると、子蛇は 見えなくなったと 伝わるの。" },
-      ],
-    },
+    // 紙芝居は 出さない（10/7 本人「お城クエストで紙芝居は要らない」）＝語りは tellLines・結末は hosoku の 文で
     revealText: "鏡ヶ沼の大蛇の 弱点が 明かされた！ 蛙の皮の笛が よく効くように なった。",
     restoreLines: [
       "沼の 霧が 晴れ、黒い もやが ほどけていく……",

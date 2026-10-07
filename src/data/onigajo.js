@@ -2,7 +2,7 @@
 // 話（広報いわき 2023年3月号「鬼ヶ城山と地域づくり」）：川前町上桶売の鬼ヶ城山（標高887m）は矢大臣山に次ぐ市第二の高峰。山頂の大岩に鬼が住み、村人に岩を投げつけたり悪さをしたりしていたという鬼伝説。
 // 地方自治研究機構「鬼の条例」（孫引き）：朝廷の圧政に抵抗したといわれる大多鬼丸の一味とも
 // ⚠退治の話・鬼の名前・岩を投げた理由は 公的な資料に無い＝紙芝居④で「伝わっていない」と補う。弱点＝「里の語り」（いまも川前の人が語り継ぐ＝忘れの もやに効く）
-import { BASIC_ITEMS } from './basic_items.js?v=240';
+import { BASIC_ITEMS } from './basic_items.js?v=241';
 
 export const ONIGAJO = {
   art: {
@@ -32,7 +32,7 @@ export const ONIGAJO = {
     // 強さ＝仮（10/6）。tests/_autotune.mjs で 代表の5組の平均を 目安に 合わせる
     expectLv: 7,
     hp: 420, atk: 83, def: 66, agi: 10,
-    bgm: 'otakimaru', // ⏳曲は otakimaru を 借りる
+    bgm: 'onigajo', // 自分の 戦いの曲（10/7 本人「BGMを変えて」）
     side: true, // お城クエストの 寄り道（castle.js の SIDE_BOSSES）
     weakness: 'satogatari',
     mist: { min: 1, max: 3, rise: 0.2 },
@@ -44,16 +44,7 @@ export const ONIGAJO = {
       "山頂の 大岩には 鬼が すんでいて、村の 人に 岩を 投げつけたり、悪さを したと 伝わるわ。",
       "……川前の 里の 人たちは、いまも この 鬼の 話を 語り継いでいるの。",
     ],
-    story: {
-      tell: [
-        { img: 'assets/story/onigajo_1.png', voice: 'assets/story/onigajo_1.mp3', text: "いわきの 川前に そびえる 鬼ヶ城山。高さ 887メートル、いわきで 二番目に 高い 山よ。その 頂には、大きな 岩が あるの。" },
-        { img: 'assets/story/onigajo_2.png', voice: 'assets/story/onigajo_2.mp3', text: "むかし、その 大岩には 鬼が すんでいて、ふもとの 村の 人に 岩を 投げつけたり、悪さを したりしたと 伝わるわ。朝廷に 逆らった 大多鬼丸の 一味だったとも いわれるの。" },
-        { img: 'assets/story/onigajo_3.png', voice: 'assets/story/onigajo_3.mp3', text: "いまは 話も 忘れられかけて、鬼は 黒い もやに 呑まれて しまった……。思い出させて あげましょう。里の 人の 語りを。" },
-      ],
-      after: [
-        { img: 'assets/story/onigajo_4.png', voice: 'assets/story/onigajo_4.mp3', text: "ほんとうの お話では、鬼が 退治された 話は 伝わっていないの。鬼の 名前も、なぜ 岩を 投げたのかも わからない。それでも 川前の 人たちは、山の 名と いっしょに 鬼の 話を 語り継いで、いまも 地域づくりに 生かしているわ。" },
-      ],
-    },
+    // 紙芝居は 出さない（10/7 本人「お城クエストで紙芝居は要らない」）＝語りは tellLines・結末は hosoku の 文で
     revealText: "鬼ヶ城山の鬼の 弱点が 明かされた！ 里の語りが よく効くように なった。",
     restoreLines: [
       "山頂の 風に、黒い もやが ほどけていく……",

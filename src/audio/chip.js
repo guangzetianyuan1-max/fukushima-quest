@@ -885,6 +885,18 @@ const ONIBABA_LEAD = [
   [76, 6], [null, 2],
 ];
 
+// ---- お城クエストの 怪物（10/7 本人「お城クエストで紙芝居は要らない。BGMを変えて」）＝1体ずつ 自分の 戦いの曲 ----
+// 鬼ヶ城山の鬼：陽音階（レ・ミ・ソ・ラ・シ）・太鼓の 力強い 曲
+const ONIGAJO_LEAD = [[74, 2], [74, 1], [76, 1], [79, 2], [81, 2], [83, 4], [81, 2], [79, 2], [76, 2], [79, 2], [81, 4], [79, 2], [76, 2], [74, 4], [86, 2], [83, 2], [81, 2], [83, 2], [86, 4], [83, 2], [81, 2], [79, 2], [81, 2], [79, 2], [76, 2], [74, 8]];
+// 臼沼の大蛇：都節・沼の 水が うねる
+const USUNUMA_LEAD = [[76, 4], [77, 2], [76, 2], [72, 4], [71, 4], [69, 2], [71, 2], [72, 2], [76, 2], [77, 8], [81, 2], [83, 2], [84, 4], [83, 2], [81, 2], [77, 4], [76, 2], [77, 2], [72, 2], [71, 2], [76, 8]];
+// 鬼石の鬼：陽音階の 行進・街道を ゆく
+const ONIISHI_LEAD = [[74, 2], [76, 2], [74, 2], [71, 2], [69, 4], [71, 4], [74, 2], [76, 2], [79, 4], [76, 2], [74, 2], [71, 4], [79, 2], [81, 2], [79, 2], [76, 2], [74, 4], [76, 4], [74, 2], [71, 2], [69, 2], [71, 2], [67, 8]];
+// 剣桂の鬼神：都節（ラ・シ♭・レ・ミ・ファ）・森の 嵐と 雷
+const KENKATSURA_LEAD = [[81, 1], [82, 1], [81, 2], [77, 2], [76, 2], [74, 4], [76, 4], [77, 2], [81, 2], [82, 2], [86, 2], [82, 4], [81, 4], [86, 2], [82, 2], [81, 2], [77, 2], [76, 2], [77, 2], [81, 4], [82, 2], [81, 2], [77, 2], [76, 2], [74, 8]];
+// 鏡ヶ沼の大蛇：都節の 高い 旋律・霧と 稲妻（お城クエストの いちばん 強い 怪物）
+const KAGAMINUMA_LEAD = [[88, 2], [89, 2], [88, 2], [84, 2], [83, 4], [81, 4], [77, 2], [81, 2], [83, 2], [84, 2], [88, 4], [89, 4], [93, 4], [89, 2], [88, 2], [84, 4], [83, 4], [81, 2], [83, 2], [84, 2], [83, 2], [76, 8]];
+
 const TRACKS = {
   battle: {
     lead: BATTLE_LEAD, tempo: 132, leadType: 'square', leadVol: 0.1,
@@ -1209,6 +1221,65 @@ const TRACKS = {
           const s = t0 + (bar * 8 + i) * eighth;
           tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
           if (i % 2 === 0) noise(s, 0.03, { vol: 0.05, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  // ---- お城クエストの 怪物（10/7）----
+  onigajo: {
+    lead: ONIGAJO_LEAD, tempo: 150, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [50, 50, 55, 57, 50, 55, 57, 50].forEach((r, bar) => {
+        [0, 3, 4, 6].forEach((i, k) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(r - 12 + (k === 3 ? 7 : 0)), s, eighth * 0.9, { type: 'square', vol: 0.11 });
+          noise(s, 0.07, { vol: k % 2 ? 0.08 : 0.15, from: 600, to: 120 }); // 太鼓
+        });
+      });
+    },
+  },
+  usunuma: {
+    lead: USUNUMA_LEAD, tempo: 132, leadType: 'triangle', leadVol: 0.17,
+    bass(t0, eighth) {
+      [40, 40, 45, 41, 40, 45, 41, 40].forEach((r, bar) => {
+        [r, r + 7, r + 12, r + 7, r, r + 7, r + 12, r + 7].forEach((m, i) => {
+          tone(N(m), t0 + (bar * 8 + i) * eighth, eighth * 0.85, { type: 'triangle', vol: 0.18 });
+        });
+      });
+    },
+  },
+  oniishi: {
+    lead: ONIISHI_LEAD, tempo: 144, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [43, 43, 48, 50, 43, 48, 50, 43].forEach((r, bar) => {
+        [0, 2, 4, 6].forEach((i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(i % 4 === 0 ? r - 12 : r - 5), s, eighth * 1.6, { type: 'triangle', vol: 0.2 });
+          if (i % 4 === 2) noise(s, 0.05, { vol: 0.08, from: 5000, to: 2000 }); // 小太鼓
+        });
+      });
+    },
+  },
+  kenkatsura: {
+    lead: KENKATSURA_LEAD, tempo: 168, leadType: 'sawtooth', leadVol: 0.07,
+    bass(t0, eighth) {
+      [45, 46, 45, 50, 45, 46, 52, 45].forEach((r, bar) => {
+        for (let i = 0; i < 8; i++) {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(i % 2 ? r : r - 12), s, eighth * 0.7, { type: 'triangle', vol: 0.19 });
+          noise(s, 0.03, { vol: i % 2 ? 0.04 : 0.07, from: 9000, to: 4000 }); // 葉の ざわめき
+        }
+      });
+    },
+  },
+  kagaminuma: {
+    lead: KAGAMINUMA_LEAD, tempo: 172, leadType: 'square', leadVol: 0.09,
+    bass(t0, eighth) {
+      [40, 41, 40, 45, 40, 41, 47, 40].forEach((r, bar) => {
+        [0, 2, 3, 5, 6].forEach((i, k) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(k % 2 ? r + 12 : r), s, eighth * 0.8, { type: 'triangle', vol: 0.2 });
+          noise(s, 0.04, { vol: k === 0 ? 0.12 : 0.05, from: k === 0 ? 700 : 7000, to: k === 0 ? 150 : 3000 });
         });
       });
     },

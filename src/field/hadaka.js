@@ -2,7 +2,7 @@
 // 確かめた事（10/7 ネット）：毎年1月7日の夜、合図の鐘で 下帯姿の男たちが 113段の石段を 駆け上がり、圓藏寺の本堂の 鰐口から 下がる 麻縄を よじ登る。無病息災を願う
 // 遊び方：「左手」「右手」を 交互に さわると 縄を のぼる。同じ手を 続けると ずり落ちる。手を 止めると じわじわ 下がる。時間内に 鰐口まで 届けば おまけ
 // 計算は画面と切り離す（画面は FieldScene の startHadaka）。高さ h は 0（床）〜1（鰐口）
-import { exchangePrize } from './fishing.js?v=240';
+import { exchangePrize } from './fishing.js?v=241';
 
 export const ENTRY_PRICE = 20;
 export const TIME_MS = 20000;
