@@ -1,9 +1,9 @@
 // 町の催し7つの 画面（10/7・計算は src/field/attractions.js）。FieldScene の startAttr が 呼ぶ
 // play(scene, box, { rng, done }) → 確かめ用の 取っ手。終わったら done(結果) を 1回だけ 呼ぶ（点の 計算と 文は FieldScene）
 // 背景は Gemini の絵（ATTR_ART・届いて いれば）／無ければ 図形。部品は どれも box に 入れる（box ごと 消える）
-import { GAME_FONT } from '../ui/fonts.js?v=217';
-import { sfx } from '../audio/chip.js?v=217';
-import * as A from '../field/attractions.js?v=217';
+import { GAME_FONT } from '../ui/fonts.js?v=218';
+import { sfx } from '../audio/chip.js?v=218';
+import * as A from '../field/attractions.js?v=218';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -17,15 +17,21 @@ function backdrop(s, box, id, top, bottom) {
   box.add(g);
   return false;
 }
-// 押す 札（角丸）。on(pointer) は 押した 瞬間
-function pad(s, box, x, y, w, h, label, color, on) {
+// 催しの 中の 絵（Gemini・10/7・art_src/prep_attr_parts.py）。届いて いれば 鍵・無ければ null＝図形で 描く
+const P = (s, id, name) => (s.textures.exists(`attrp_${id}_${name}`) ? `attrp_${id}_${name}` : null);
+// 絵を 長い 辺 size に 合わせて 置く
+const pic = (s, box, key, x, y, size) => { const im = s.add.image(x, y, key); im.setScale(size / Math.max(im.width, im.height)); box.add(im); return im; };
+// 押す 札（角丸）。on(pointer) は 押した 瞬間。icon＝札の 上に 置く 絵の 鍵（あれば 字は 下へ）
+function pad(s, box, x, y, w, h, label, color, on, icon = null) {
   const g = s.add.graphics();
   const draw = (lit) => { g.clear(); g.fillStyle(lit ? 0xffe08a : color, 0.92).fillRoundedRect(x - w / 2, y - h / 2, w, h, 14).lineStyle(3, 0xc9a24a, 1).strokeRoundedRect(x - w / 2, y - h / 2, w, h, 14); };
   draw(false);
-  const t = txt(s, x, y, label, 24);
+  box.add(g);
+  if (icon) pic(s, box, icon, x, y - 10, h * 0.62);
+  const t = txt(s, x, icon ? y + h / 2 - 15 : y, label, icon ? 17 : 24);
   const z = s.add.zone(x - w / 2, y - h / 2, w, h).setOrigin(0).setInteractive();
   if (on) z.on('pointerdown', on);
-  box.add([g, t, z]);
+  box.add([t, z]);
   return { g, t, z, lit: (v) => draw(v) };
 }
 // 毎コマ 回す 時計（16ms）。stop() で 止まる
@@ -62,8 +68,8 @@ function jangara(s, box, { rng, done }) {
       s.time.delayedCall(800, show);
     }
   };
-  const kane = pad(s, box, 95, 520, 150, 110, '鉦', 0x6a5a20, () => press('K'));
-  const taiko = pad(s, box, W - 95, 520, 150, 110, '太鼓', 0x6a2020, () => press('T'));
+  const kane = pad(s, box, 95, 520, 150, 130, '鉦', 0x6a5a20, () => press('K'), P(s, 'jangara', 'kane'));
+  const taiko = pad(s, box, W - 95, 520, 150, 130, '太鼓', 0x6a2020, () => press('T'), P(s, 'jangara', 'taiko'));
   box.add([info, res]);
   function show() {
     phase = 'show'; input = []; res.setText('');
@@ -97,8 +103,9 @@ function yukagen(s, box, { rng, done }) {
   let st = A.yuNew(rng);
   let lock = 0;
   const press = (k) => { if (s.time.now < lock || A.yuDone(st)) return; lock = s.time.now + 110; st = A.yuPress(st, k); sfx(k === 'hot' ? 'flame' : 'select'); };
-  pad(s, box, 95, 572, 150, 84, '源泉', 0x7a2a1a, () => press('hot'));
-  pad(s, box, W - 95, 572, 150, 84, '水', 0x1a3a7a, () => press('cold'));
+  pad(s, box, 95, 572, 150, 96, '源泉', 0x7a2a1a, () => press('hot'), P(s, 'yukagen', 'yuguchi'));
+  pad(s, box, W - 95, 572, 150, 96, '水', 0x1a3a7a, () => press('cold'), P(s, 'yukagen', 'oke'));
+  if (P(s, 'yukagen', 'yubune')) pic(s, box, P(s, 'yukagen', 'yubune'), 72, 320, 110); // 湯船（飾り）
   let last = s.time.now;
   const tk = ticker(s, () => {
     const now = s.time.now; const dt = Math.max(0, Math.min(50, now - last)); last = now; // 時計が 戻っても 逆に 進めない
@@ -122,15 +129,19 @@ function waraji(s, box, { rng, done }) {
   const road = s.add.graphics();
   road.fillStyle(0x1a1420, 0.7).fillRoundedRect(30, 124, W - 60, 14, 7);
   const mark = txt(s, W - 30, 150, '羽黒神社', 13, '#ffd27a');
+  if (P(s, 'waraji', 'torii')) { mark.setY(190); pic(s, box, P(s, 'waraji', 'torii'), W - 30, 162, 40); }
   const prog = s.add.graphics();
   // 大わらじ（長さ12mを 横向きに）
   const sandal = s.add.container(W / 2, 330);
-  const sg = s.add.graphics();
-  sg.fillStyle(0xd8c070, 1).fillRoundedRect(-150, -26, 300, 52, 24).lineStyle(3, 0x8a6a2a, 1).strokeRoundedRect(-150, -26, 300, 52, 24);
-  sg.lineStyle(2, 0xa8884a, 1);
-  for (let x = -130; x < 140; x += 16) sg.lineBetween(x, -20, x + 8, 20);
-  sg.fillStyle(0xb02020, 1).fillRect(-60, -4, 120, 8);
-  sandal.add(sg);
+  if (P(s, 'waraji', 'waraji')) { const im = s.add.image(0, 0, P(s, 'waraji', 'waraji')); im.setScale(290 / im.width); sandal.add(im); }
+  else {
+    const sg = s.add.graphics();
+    sg.fillStyle(0xd8c070, 1).fillRoundedRect(-150, -26, 300, 52, 24).lineStyle(3, 0x8a6a2a, 1).strokeRoundedRect(-150, -26, 300, 52, 24);
+    sg.lineStyle(2, 0xa8884a, 1);
+    for (let x = -130; x < 140; x += 16) sg.lineBetween(x, -20, x + 8, 20);
+    sg.fillStyle(0xb02020, 1).fillRect(-60, -4, 120, 8);
+    sandal.add(sg);
+  }
   const warn = txt(s, W / 2, 230, '', 24, '#ffb040');
   box.add([road, mark, prog, sandal, info, warn]);
   let st = A.warajiNew(rng);
@@ -171,11 +182,14 @@ function hanakatsumi(s, box, { rng, done }) {
   let good = 0; let bad = 0;
   const cx = (c) => 70 + (c % 3) * 110, cy = (c) => 210 + Math.floor(c / 3) * 105;
   const OTHER = [0xf0e060, 0xffffff, 0xe86a6a];
+  const ART = P(s, 'hanakatsumi', 'katsumi') ? { katsumi: P(s, 'hanakatsumi', 'katsumi'), other: ['yellow', 'white', 'red'].map((n) => P(s, 'hanakatsumi', n)) } : null;
   const flowers = [...Array(A.HANA_CELLS).keys()].map((c) => {
     const g = s.add.graphics().setPosition(cx(c), cy(c));
+    const im = ART ? s.add.image(cx(c), cy(c) - 2, ART.katsumi).setVisible(false) : null;
     const z = s.add.zone(cx(c) - 50, cy(c) - 48, 100, 96).setOrigin(0).setInteractive();
     z.on('pointerdown', () => pick(c));
-    box.add([g, z]);
+    box.add([g, ...(im ? [im] : []), z]);
+    if (im) g.im = im;
     return g;
   });
   const t0 = s.time.now;
@@ -193,7 +207,9 @@ function hanakatsumi(s, box, { rng, done }) {
       g.clear();
       g.fillStyle(0x3a6a2a, 1).fillEllipse(0, 34, 70, 16);
       const f = open.find((x) => x.cell === c);
+      if (g.im) g.im.setVisible(!!f);
       if (!f) return;
+      if (g.im) { g.im.setTexture(f.katsumi ? ART.katsumi : ART.other[(f.t / 7) % 3 | 0]); g.im.setScale(78 / g.im.height); return; }
       const col = f.katsumi ? 0xc8a8f0 : OTHER[(f.t / 7) % 3 | 0];
       g.lineStyle(3, 0x3a7a2a, 1).lineBetween(0, 30, 0, 4);
       for (let k = 0; k < 5; k++) { const a = (k / 5) * Math.PI * 2; g.fillStyle(col, 1).fillCircle(Math.cos(a) * 11, -6 + Math.sin(a) * 11, 9); }
@@ -220,17 +236,27 @@ function daruma(s, box, { rng, done }) {
   const TIME = 60000;
   const t0 = s.time.now;
   const cx = (i) => 48 + (i % 4) * 88, cy = (i) => 200 + Math.floor(i / 4) * 120;
+  const FACE = { 鶴: 'tsuru', 亀: 'kame', 松: 'matsu', 竹: 'take', 梅: 'ume' };
+  const art = !!P(s, 'daruma', 'back');
   const cards = st.cards.map((m, i) => {
     const g = s.add.graphics().setPosition(cx(i), cy(i));
+    const im = art ? s.add.image(cx(i), cy(i), P(s, 'daruma', 'back')) : null;
+    if (im) im.setScale(100 / im.height);
     const t = txt(s, cx(i), cy(i) + 4, '', 28, '#1a1030').setStroke('#ffffff', 0);
     const z = s.add.zone(cx(i) - 40, cy(i) - 52, 80, 104).setOrigin(0).setInteractive();
     z.on('pointerdown', () => flip(i));
-    box.add([g, t, z]);
-    return { g, t };
+    box.add([g, ...(im ? [im] : []), t, z]);
+    return { g, t, im };
   });
   const paint = () => cards.forEach((c, i) => {
     const up = st.done.includes(i) || st.open.includes(i);
     c.g.clear();
+    if (c.im) {
+      c.im.setTexture(up ? P(s, 'daruma', FACE[st.cards[i]]) ?? P(s, 'daruma', 'back') : P(s, 'daruma', 'back')).setScale(100 / c.im.height);
+      if (st.done.includes(i)) c.g.lineStyle(4, 0xffd27a, 1).strokeRoundedRect(-36, -52, 72, 104, 6); // そろった 札は 金の ふち
+      c.t.setText('');
+      return;
+    }
     // だるまの 形：赤い 胴・白い 顔
     c.g.fillStyle(0xc02a20, 1).fillEllipse(0, 6, 76, 96).fillCircle(0, -30, 30);
     c.g.fillStyle(up ? 0xfff4e0 : 0x8a1a14, 1).fillEllipse(0, -14, 52, 42);
@@ -333,7 +359,8 @@ function kobosi(s, box, { done }) {
   // 台（右）・投げる所（左）
   const TABLE_X0 = 220, TABLE_X1 = 320, TABLE_Y = 420;
   const g = s.add.graphics();
-  g.fillStyle(0x6a4020, 1).fillRect(TABLE_X0, TABLE_Y, TABLE_X1 - TABLE_X0, 14).fillRect(TABLE_X0 + 6, TABLE_Y + 14, 10, 80).fillRect(TABLE_X1 - 16, TABLE_Y + 14, 10, 80);
+  if (P(s, 'kobosi', 'dai')) { const im = s.add.image((TABLE_X0 + TABLE_X1) / 2, TABLE_Y - 2, P(s, 'kobosi', 'dai')).setOrigin(0.5, 0); im.setScale((TABLE_X1 - TABLE_X0 + 16) / im.width); box.add(im); }
+  else g.fillStyle(0x6a4020, 1).fillRect(TABLE_X0, TABLE_Y, TABLE_X1 - TABLE_X0, 14).fillRect(TABLE_X0 + 6, TABLE_Y + 14, 10, 80).fillRect(TABLE_X1 - 16, TABLE_Y + 14, 10, 80);
   g.fillStyle(0x3a2a1a, 1).fillRect(0, 508, W, 132);
   // 力の 目盛り
   const GX = 40, GW = W - 80, GY = 560;
@@ -343,10 +370,13 @@ function kobosi(s, box, { done }) {
   box.add([g, needle, info, res]);
   const doll = () => {
     const d = s.add.container(50, 490);
-    const dg = s.add.graphics();
-    dg.fillStyle(0xc02a20, 1).fillEllipse(0, 0, 22, 26).fillCircle(0, -14, 9);
-    dg.fillStyle(0xfff4e0, 1).fillCircle(0, -14, 6);
-    d.add(dg);
+    if (P(s, 'kobosi', 'doll')) { const im = s.add.image(0, -6, P(s, 'kobosi', 'doll')); im.setScale(40 / im.height); d.add(im); }
+    else {
+      const dg = s.add.graphics();
+      dg.fillStyle(0xc02a20, 1).fillEllipse(0, 0, 22, 26).fillCircle(0, -14, 9);
+      dg.fillStyle(0xfff4e0, 1).fillCircle(0, -14, 6);
+      d.add(dg);
+    }
     box.add(d);
     return d;
   };
