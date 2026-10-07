@@ -2,7 +2,7 @@
 // 遊び方：五老山に並ぶ 大松明（TORCHES 本）の上を、火の粉が 左右に ゆれて 動く。光っている松明の 真上に 火の粉が来た瞬間に さわると 点火。
 //   はずすと 火の粉が 散って 残り時間が 2秒 減る。点けるたびに 火の粉が 少し速くなる。時間内に 何本 灯せるか。灯した1本で 松明点 1点・全部 灯すと おまけ
 // 計算は画面と切り離す（画面は FieldScene の startTaimatsu）
-import { exchangePrize } from './fishing.js?v=221';
+import { exchangePrize } from './fishing.js?v=222';
 
 export const ENTRY_PRICE = 15;
 export const TORCHES = 10;

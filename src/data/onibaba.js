@@ -7,7 +7,7 @@
 //   1回目＝firstLose（必ず負ける・全滅しても文は減らない）→ 二本松の宿で目をさます → 祐慶が 僧に 如意輪の経を教えて 熊野へ帰る（companions.js の LEARN_AFTER_LOSS）
 //   2回目＝弱点は僧の「如意輪の経」（観音さまが 破魔の真弓で射る）。⚠語るのは しおり・経を となえるのは僧。学ぶまでは 何度でも 必ず負ける（firstLose.until）
 // 絵＝まだ（仮に道中の霊の絵）。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=221';
+import { BASIC_ITEMS } from './basic_items.js?v=222';
 
 export const ONIBABA = {
   art: {
