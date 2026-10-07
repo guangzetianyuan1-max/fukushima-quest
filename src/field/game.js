@@ -1,21 +1,22 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=269';
-import { kanbanAt } from './kanban.js?v=269';
-import { SOMA_ROWS } from './soma_map.js?v=269';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=269';
-import { KENCHU_ROWS } from './kenchu_map.js?v=269';
-import { AIZU_ROWS } from './aizu_map.js?v=269';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=269';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=269';
-import { withGates } from './castle.js?v=269';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=269';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=269';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=269';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=269';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=269';
-import { becomeKunoichi } from './kagewatari.js?v=269';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=269';
+import { IWAKI_ROWS } from './iwaki_map.js?v=270';
+import { kanbanAt } from './kanban.js?v=270';
+import { SOMA_ROWS } from './soma_map.js?v=270';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=270';
+import { KENCHU_ROWS } from './kenchu_map.js?v=270';
+import { AIZU_ROWS } from './aizu_map.js?v=270';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=270';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=270';
+import { withGates } from './castle.js?v=270';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=270';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=270';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=270';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=270';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=270';
+import { becomeKunoichi } from './kagewatari.js?v=270';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=270';
+import { QUEST_ART } from '../data/quest_assets.js?v=270'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -229,6 +230,9 @@ export function stayInn(game, price) {
   if (game.mon < price) return { ok: false, game };
   return { ok: true, game: { ...game, mon: game.mon - price, party: fullParty(game, true) } };
 }
+
+// 師匠の 試しを 受けられるか（10/8 本人「巫女のしおりが死んでいるのに巫女のクエストが受けられる、おかしい」）＝力つきた 者は 受けられない
+export const canTakeQuest = (game, who) => !!who && !game.party?.[who]?.dead;
 
 // ---- 力つきた仲間（幽霊）を生き返らせる（本人 10/2「一人死んだら、幽霊になり、神社かお寺で有償復活」）----
 // 平の八幡さま・湯本のお寺で。お代は 1人 15＋レベル×5 文。生き返ると HP・術は満タン
@@ -698,7 +702,7 @@ export function duelData(game, round, who = game.flags?.dojo?.who ?? 'tabi') {
   // 一騎打ちは たたかう だけ（持ち味は効く＝力士の つっぱり・忍者の 二連撃・武士の かいしん）
   const me = { ...one, spells: [], ...m, maxHp: m.hp, maxMp: m.mp, hp: m.hp, mp: m.mp, alive: true };
   return {
-    art: { ...art, bg: [ZONE_BG.soma, ZONE_BG.soma, ZONE_BG.kenpoku, ZONE_BG.kenchu][game.flags?.dojo?.ch ?? 1] ?? ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a },
+    art: { ...art, bg: QUEST_ART.duel_bg ?? [ZONE_BG.soma, ZONE_BG.soma, ZONE_BG.kenpoku, ZONE_BG.kenchu][game.flags?.dojo?.ch ?? 1] ?? ZONE_BG.soma, glowDark: 0xffd27a, glowLight: 0xffd27a }, // 10/8 道場の 絵（届けば）
     allies: [me], items: {}, spells: {}, enemy,
   };
 }
