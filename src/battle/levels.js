@@ -1,11 +1,11 @@
 // 仲間のレベルと強さ（道中の敵の回・本人 10/1「本来のドラクエらしく」）。序章は1→6くらい
-import { gearBonus } from '../data/equip.js?v=246';
+import { gearBonus } from '../data/equip.js?v=247';
 
 // EXP_TO[lv]＝そのレベルになるのに要る経験の合計。STATS＝レベル1の強さと、1つ上がるごとの伸び
 export const EXP_TO = [0, 0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660, 780, 910, 1050, 1200, 1360, 1530, 1710, 1900, 2110, 2340, 2590, 2860, 3150]; // 10/6 4章 会津で Lv25 まで // 10/3 1章で Lv12 まで（間は 10・20・30…と広がる）・10/4 2章で Lv16 まで・3章で Lv20 まで
 export const MAX_LV = EXP_TO.length - 1;
 
-import { JOBS, statsOfPoints } from '../data/jobs.js?v=246';
+import { JOBS, statsOfPoints } from '../data/jobs.js?v=247';
 const STATS = {
   tabi: { base: { hp: 60, mp: 20, atk: 12, def: 6, agi: 8 }, grow: { hp: 8, mp: 3, atk: 2, def: 1, agi: 1 } },
   shiori: { base: { hp: 45, mp: 0, atk: 7, def: 4, agi: 10 }, grow: { hp: 6, mp: 0, atk: 1.5, def: 1, agi: 1 } },

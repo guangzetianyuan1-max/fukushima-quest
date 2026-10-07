@@ -1,18 +1,18 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=246';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=246';
-import { EPISODES } from '../data/episodes.js?v=246';
-import { revealAt } from '../ui/reveal.js?v=246';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=246';
-import { chooseCommands } from '../battle/auto.js?v=246';
-import { itemNote } from '../data/items.js?v=246';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=246';
-import { STORY_FILES } from '../data/story_assets.js?v=246';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=246';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=246';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=246';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=246';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=246';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=246';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=247';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=247';
+import { EPISODES } from '../data/episodes.js?v=247';
+import { revealAt } from '../ui/reveal.js?v=247';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=247';
+import { chooseCommands } from '../battle/auto.js?v=247';
+import { itemNote } from '../data/items.js?v=247';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=247';
+import { STORY_FILES } from '../data/story_assets.js?v=247';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=247';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=247';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=247';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=247';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=247';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=247';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -248,7 +248,14 @@ export class BattleScene extends Phaser.Scene {
     const card = this.add.container(0, 0, this.children.list.slice(before)).setDepth(900);
     this.taleCard = card;
     this.tweens.add({ targets: card, alpha: { from: 0, to: 1 }, duration: 300 });
-    this.time.delayedCall(2200, () => this.tweens.add({ targets: card, alpha: 0, duration: 500, onComplete: () => card.destroy() }));
+    const hide = () => this.tweens.add({ targets: card, alpha: 0, duration: 500, onComplete: () => card.destroy() });
+    // 題の声（10/7 お城クエストの 紙芝居の 無い 話にも）＝届いて いれば 巻物を 出して 0.5秒後に 読み、読み終えて 0.5秒で 消す
+    const url = `assets/story/title_${e.id}.mp3`;
+    if (!STORY_FILES.includes(url)) { this.time.delayedCall(2200, hide); return; }
+    const safety = this.time.delayedCall(8000, hide); // 音の出口が開いていない端末でも 巻物が 残らない
+    this.time.delayedCall(300 + TITLE_HOLD, () => playVoice(url).then((sec) => {
+      if (!safety.hasDispatched) { safety.remove(false); this.time.delayedCall(sec > 0 ? TITLE_HOLD : TITLE_NO_VOICE, hide); }
+    }));
   }
 
   // ---- 光の輪：中心が白く、外へ透明になる丸（色は tint で付ける） ----
