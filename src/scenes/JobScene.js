@@ -2,12 +2,13 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=255';
-import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=255';
-import { sfx } from '../audio/chip.js?v=255';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=255';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=255';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=255';
+import { GAME_FONT } from '../ui/fonts.js?v=256';
+import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=256';
+import { sfx } from '../audio/chip.js?v=256';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=256';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=256';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=256';
+import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=256';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -262,7 +263,7 @@ export class JobScene extends Phaser.Scene {
     this.nameBox = box;
     const shade = this.add.rectangle(0, 0, W, 640, 0x14122a, 1).setOrigin(0).setInteractive();
     box.add(shade);
-    box.add(this.add.text(W / 2, 30, 'あなたの 名前を つけてください', { fontFamily: FONT, fontSize: '20px', color: '#ffd98a', resolution: 3 }).setOrigin(0.5));
+    box.add(this.add.text(W / 2, 30, 'あなたの 名前と 男・女', { fontFamily: FONT, fontSize: '20px', color: '#ffd98a', resolution: 3 }).setOrigin(0.5));
     box.add(this.add.text(W / 2, 56, `（ひらがな ${HERO_NAME_MAX}文字まで）`, { fontFamily: FONT, fontSize: '14px', color: '#b8bcd8', resolution: 3 }).setOrigin(0.5));
     box.add(makeWindow(this, 70, 74, W - 140, 56));
     const shown = this.add.text(W / 2, 102, '', { fontFamily: FONT, fontSize: '28px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
@@ -301,12 +302,26 @@ export class JobScene extends Phaser.Scene {
     };
     btn(8, 100, 'もどる', () => { sfx('select'); box.destroy(); this.nameBox = null; this.naming = false; });
     btn(116, 100, 'けす', () => { name = [...name].slice(0, -1).join(''); sfx('select'); show(); });
+    // あなたは 男か 女か（10/7 本人「あなたは男か女を選択できる」）＝しおりは 女・仲間①②は 職業の絵で 決まる
+    let sex = 'm';
+    const sy = by + 60;
+    box.add(this.add.text(52, sy + 23, 'あなたは', { fontFamily: FONT, fontSize: '19px', color: '#b8bcd8', resolution: 3 }).setOrigin(0.5));
+    const sexUi = HERO_SEXES.map((s, k) => {
+      const x = 104 + k * 124;
+      const win = makeWindow(this, x, sy, 116, 46);
+      const t = this.add.text(x + 58, sy + 23, SEX_NAME[s], { fontFamily: FONT, fontSize: '21px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
+      box.add([win, t]);
+      tapZone(x, sy, 116, 46, () => { sex = s; sfx('select'); showSex(); });
+      return { s, win, t };
+    });
+    const showSex = () => sexUi.forEach((u) => { u.t.setColor(u.s === sex ? '#ffd98a' : '#8a8aa8'); u.win.setAlpha(u.s === sex ? 1 : 0.55); });
+    showSex();
     btn(224, 128, 'きめる', () => {
       if (!validHeroName(name)) { sfx('cancel'); shown.setText('名前を いれてね'); this.time.delayedCall(900, show); return; }
-      this.go({ ...pick, name });
+      this.go({ ...pick, name, sex });
     });
     // 確かめ用の取っ手（遊ぶ人には見えない）
-    this.nameInput = { type: (t) => { for (const ch of t) if ([...name].length < HERO_NAME_MAX && KANA.includes(ch)) name += ch; show(); }, get: () => name };
+    this.nameInput = { type: (t) => { for (const ch of t) if ([...name].length < HERO_NAME_MAX && KANA.includes(ch)) name += ch; show(); }, get: () => name, sex: (s) => { if (HERO_SEXES.includes(s)) sex = s; showSex(); return sex; } };
   }
 
   go(pick) {
