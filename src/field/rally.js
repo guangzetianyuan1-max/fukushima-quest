@@ -2,8 +2,8 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=238';
-import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=238';
+import { TOWNS } from './towns.js?v=239';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=239';
 const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
 const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
@@ -72,6 +72,10 @@ export function lordTalk(game, town) {
   if (game.cleared?.[cq.boss]) {
     const r = addStamp(game, 'castle', town);
     return { game: r.game, lines: [say(`おお、${cq.place}の もやを はらって くれたか。礼を 言うぞ。`), ...r.lines], done: true };
+  }
+  // 依頼は その章を 終えてから（10/7 本人）＝章の 最後の ボスを 戻すまでは 断る
+  if (!questAccepted(game, town) && !game.cleared?.[cq.after]) {
+    return { game, lines: [say('旅の 者か。よう 来た。'), say(`いまは ${cq.busy}の 件で 手一杯じゃ。それが 鎮まったら、また 来て くれ。`)], done: false };
   }
   if (!questAccepted(game, town)) {
     return { game: acceptQuest(game, town), lines: [say('旅の 者か。よう 来た。ひとつ 頼みが ある。'), ...cq.ask.map(say), say(cq.hint), `お題を 受けた！ ${cq.place}への 入口が ひらいた。`], done: false, accepted: true };

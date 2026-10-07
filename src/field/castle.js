@@ -7,33 +7,34 @@
 // 城下町 → 大広間・怪物・新しい場所・章の地図の入口
 //   gate＝章の地図の入口の字と場所（地図の書き出し道具は触らず、ここで重ねる＝withGates）
 //   side＝その寄り道が どの章の終わりの あとか・after＝その章の 終わりの ボス（試験の物差し・強さの見込み＝その ボスの あとに 着く）
+//   ⭐10/7 本人「その章を終えてから」＝お殿様は after を 戻すまで 依頼を 出さない（busy＝断るときの ひと言）
 export const CASTLE_QUESTS = {
   taira: {
-    hall: 'jo_taira', boss: 'onigajo', after: 'ryuto', ground: 'q_onigajo', side: 0,
+    hall: 'jo_taira', boss: 'onigajo', after: 'ryuto', busy: '海の 龍燈', ground: 'q_onigajo', side: 0,
     gate: { map: 'field', ch: 'ア', x: 5, y: 8 }, place: '鬼ヶ城山',
     ask: ['川前の 鬼ヶ城山の 頂に、大岩に すむ 鬼が おる。', '黒い もやに 呑まれ、また 里に 岩を 投げて おるそうじゃ。鎮めて まいれ。'],
     hint: 'いわきの 北西、山の ふもとに 登り口が ある。賢沼より 先じゃ。',
   },
   nakamura: {
-    hall: 'jo_nakamura', boss: 'usunuma', after: 'sumitora', ground: 'q_usunuma', side: 1,
+    hall: 'jo_nakamura', boss: 'usunuma', after: 'sumitora', busy: '虎捕山の 墨虎', ground: 'q_usunuma', side: 1,
     gate: { map: 'soma', ch: 'イ', x: 6, y: 20 }, place: '臼沼',
     ask: ['鹿島の 臼沼に すむ 大蛇が、もやに 呑まれて 暴れて おる。', '弓の 名手が 射止めたと いう 大蛇じゃ。鎮めて まいれ。'],
     hint: '相馬の 南、鹿島の 西の 山すそに 沼への 道が ある。',
   },
   nihonmatsu: {
-    hall: 'jo_nihonmatsu', boss: 'oniishi', after: 'onibaba', ground: 'q_oniishi', side: 2,
+    hall: 'jo_nihonmatsu', boss: 'oniishi', after: 'onibaba', busy: '安達ヶ原の 鬼婆', ground: 'q_oniishi', side: 2,
     gate: { map: 'kenpoku', ch: 'ウ', x: 3, y: 32 }, place: '安達太良山の 鬼石',
     ask: ['安達太良山の 鬼が、また 街道に 出ると いう。', 'むかし 若者の 大三が 説いて 山へ 帰した 鬼じゃ。もやを はらって まいれ。'],
     hint: '二本松の 北、原瀬の 山すそに 登り口が ある。',
   },
   shirakawa: {
-    hall: 'jo_shirakawa', boss: 'kenkatsura', after: 'kiyohime', ground: 'q_kenkatsura', side: 3,
+    hall: 'jo_shirakawa', boss: 'kenkatsura', after: 'kiyohime', busy: '安珍と 清姫', ground: 'q_kenkatsura', side: 3,
     gate: { map: 'kenchu', ch: 'エ', x: 3, y: 49 }, place: '剣桂',
     ask: ['甲子の 森の 桂の 大木に 封じられた 鬼神が、もやに 呑まれて ぬけ出したと いう。', '人びとが また 苦しまぬ うちに、鎮めて まいれ。'],
     hint: '白河の 西、甲子の 山すそに 森への 道が ある。',
   },
   aizuwakamatsu: {
-    hall: 'jo_aizuwakamatsu', boss: 'kagaminuma', after: 'numagozen', ground: 'q_kagaminuma', side: 4,
+    hall: 'jo_aizuwakamatsu', boss: 'kagaminuma', after: 'numagozen', busy: '沼沢湖の 沼御前', ground: 'q_kagaminuma', side: 4,
     gate: { map: 'aizu', ch: 'オ', x: 37, y: 34 }, place: '鏡ヶ沼',
     ask: ['下郷の 山奥の 鏡ヶ沼に、沼の 主の 大蛇が おる。', 'もやに 呑まれ、霧で 人を 迷わせて おるそうじゃ。鎮めて まいれ。'],
     hint: '会津の 南東、甲子峠の 手前の 山すそに 沼への 道が ある。',
