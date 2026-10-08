@@ -84,6 +84,7 @@ export const JOBS = {
   yamabushi: {
     name: '山伏', sex: 'm', role: '力と術の両方', weapon: 'shakujo',
     points: { chikara: 8, tairyoku: 8, chiryoku: 5, seishin: 6, hayasa: 3 },
+    passive: { atkMult: 1.15 }, basicText: 'たたかう＝験力の 錫杖（強い 一撃）', // 10/8 夜 職業の 強さの 見張りで いちばん 弱かった（持ち味が 無かった）
     basic: 'shakujo_uchi', skills: ['horagai', 'kuji', 'hiwatari', 'yudono'],
   },
 };
@@ -109,7 +110,7 @@ export const JOB_SPELLS = {
   kabutowari: { name: '兜割り', desc: '守り半分で斬り もやを2つ払う', kind: 'strike', cost: 12, mult: 1.5, defMult: 0.5, clearMist: 2, big: true, sfx: 'kabutowari', verb: '刀を 大きく ふりかぶった', text: '兜ごと 割る 一撃が、もやを 切りさく！' },
   tsubame: { name: '燕返し', desc: '2ターン構え 仲間を打った敵に反撃', kind: 'counter', cost: 14, mult: 1.5, turns: 2, big: true, sfx: 'tsubame', verb: '刀を 低く 構えた', text: '燕返しの 構え！ 仲間を 打った 敵に、返す 刀で 斬りかえす。' },
   // ---- 僧 ----
-  shingon: { name: '真言', desc: '3ターン 敵の攻撃が半分それる', kind: 'daze', cost: 4, turns: 3, sfx: 'shingon', verb: '真言を となえた', text: '薬師さまの 真言に、まばゆい 光が 立ちのぼった！', hitText: 'は 光に 目が くらんだ！ しばらく 攻撃が 当たりにくい。', missText: 'は まばゆい 光に 目が くらみ、攻撃が それた！' },
+  shingon: { name: '真言', desc: '2ターン 敵の攻撃が半分それる', kind: 'daze', cost: 4, turns: 2, sfx: 'shingon', verb: '真言を となえた', text: '薬師さまの 真言に、まばゆい 光が 立ちのぼった！', hitText: 'は 光に 目が くらんだ！ しばらく 攻撃が 当たりにくい。', missText: 'は まばゆい 光に 目が くらみ、攻撃が それた！' },
   fudo: { name: '不動の結界', desc: '3ターン 受ける傷が半分', kind: 'guard', cost: 10, mult: 0.5, turns: 3, sfx: 'fudo', verb: '不動明王の 印を 結んだ', text: '炎の 光輪が みなを つつむ！ しばらく 受ける 傷が 半分に なる。' },
   sosei: { name: '蘇生の経', desc: '倒れた仲間1人を HP半分で起こす', kind: 'revive', cost: 18, frac: 0.5, sfx: 'sosei', verb: '一心に 経を となえた', text: '倒れた 仲間の 胸に、ふたたび 灯が ともった！' },
   // ---- 妖術使い ----
@@ -125,7 +126,7 @@ export const JOB_SPELLS = {
   kabau: { name: 'かばう', desc: '3ターン 仲間への攻撃を受ける（1戦1回）', kind: 'cover', cost: 0, once: true, turns: 3, sfx: 'kabau', verb: 'みなの 前に 立ちはだかった', text: 'しばらく、仲間への 攻撃を 体で 受けとめる！' },
   uwatenage: { name: '上手投げ', desc: '最大HPで投げ 目をまわす（1戦1回）', kind: 'hpstrike', cost: 0, once: true, mult: 0.55, stun: 1, noMist: true, big: true, sfx: 'nage', verb: 'がっぷり 四つに 組んだ', text: '上手投げ！ 鍛えた 体ごと、敵を 地面に たたきつけた！' },
   // ---- 弓矢使い ----
-  kaburaya: { name: '鏑矢', desc: 'もやを2つ払う 音の矢', kind: 'strike', cost: 5, mult: 0.6, defMult: 0.5, clearMist: 2, sfx: 'kaburaya', verb: '鏑矢を 放った', text: 'ひょおお……！ 鳴りひびく 矢が、もやを 散らした！' },
+  kaburaya: { name: '鏑矢', desc: 'もやを2つ払い 敵が1ターン ひるむ 音の矢', kind: 'strike', cost: 5, mult: 0.6, defMult: 0.5, clearMist: 2, addDaze: 1, missText: 'は 鏑矢の 音に ひるんだ！ 攻撃が それた！', sfx: 'kaburaya', verb: '鏑矢を 放った', text: 'ひょおお……！ 鳴りひびく 矢が、もやを 散らした！' },
   hiya: { name: '火矢', desc: '守りを ほぼ貫く 大きな一撃', kind: 'strike', cost: 12, mult: 1.8, defMult: 0.3, noMist: true, big: true, sfx: 'kaen', verb: '矢に 火を つけた', text: '燃える 矢が 敵を つらぬいた！' },
   mangetsu: { name: '満月の一矢', desc: '引きしぼり 次の番に 大きな一矢', kind: 'charge', cost: 14, mult: 3.6, big: true, sfx: 'hachiya', verb: '弓を 満月のように 引きしぼった', text: 'じっと 狙いを さだめる……（次の 番に 放つ）', shotText: '満月の 一矢が、敵の 急所を つらぬいた！' },
   // ---- 巫女 ----
@@ -141,8 +142,8 @@ export const JOB_SPELLS = {
   fukiya: { name: '毒の吹き矢', desc: '5ターン 敵に毎ターン毒の傷', kind: 'poison', cost: 8, frac: 0.035, turns: 5, sfx: 'fukiya', verb: '吹き矢を 構えた', text: 'ふっ！ 毒の 矢が 刺さった！ しばらく 毒が 敵を むしばむ。' },
   hiyaku: { name: '秘薬', desc: 'この戦い 薬が全員に効く', kind: 'medAll', cost: 10, sfx: 'hiyaku', verb: '秘伝の 調合を はじめた', text: '秘伝の 調合！ この戦いの間、薬が 全員に 効く。' },
   // ---- 山伏 ----
-  horagai: { name: '法螺貝', desc: '3ターン 攻め1.25倍・素早さも上がる', kind: 'buff', cost: 8, mult: 1.25, agi: 4, turns: 3, sfx: 'horagai', verb: '法螺貝を 吹いた', text: 'ぶおおお……！ 山に ひびく 音に、みなの 足が 軽くなる！' },
-  kuji: { name: '九字を切る', desc: '術の一撃＋もやを1つ払う', kind: 'magic', cost: 12, mult: 1.6, clearMist: 1, big: true, sfx: 'kuji', verb: '「臨・兵・闘・者……」と 九字を 切った', text: '格子の 光が 敵を 打ち、もやを 切りさく！' },
+  horagai: { name: '法螺貝', desc: '3ターン 攻め1.35倍・素早さも上がる', kind: 'buff', cost: 8, mult: 1.35, agi: 4, turns: 3, sfx: 'horagai', verb: '法螺貝を 吹いた', text: 'ぶおおお……！ 山に ひびく 音に、みなの 足が 軽くなる！' }, // 10/8 夜 1.25→1.35（回復の おまけは 術の 組を 弱めた＝付けない）
+  kuji: { name: '九字を切る', desc: '術の一撃・もや払い・2ターン傷3割減', kind: 'magic', cost: 12, mult: 1.9, clearMist: 1, addGuard: { mult: 0.7, turns: 2 }, big: true, sfx: 'kuji', verb: '「臨・兵・闘・者……」と 九字を 切った', text: '格子の 光が 敵を 打ち、もやを 切りさく！' },
   hiwatari: { name: '火渡り', desc: '全員の術の力を半分戻す（1戦1回）', kind: 'mpall', cost: 0, once: true, frac: 0.5, sfx: 'hiwatari', verb: '燃える 炭の 上を 渡った', text: '炎を 渡った 験力が、みなの 術の力を よみがえらせる！' },
   // ---- 4章の技（10/6 本人「会津にも温泉クエスト」→案を「この案で進める」）＝会津の温泉地の師匠に習う。仕組みは今の型＋付け足しの効き目（add*）----
   ittou: { name: '一刀両断', desc: '守りを無視して2回斬る（1戦1回）', kind: 'strike', cost: 14, mult: 1.3, defMult: 0, hits: 2, once: true, big: true, sfx: 'kabutowari', verb: '刀を 上段に かまえた', text: '一刀両断！ 二の太刀まで 一息に 振りおろす！' },
@@ -154,7 +155,7 @@ export const JOB_SPELLS = {
   higanjishi: { name: '彼岸獅子の舞', desc: '3ターン 全員の攻めが1.5倍', kind: 'buff', cost: 14, mult: 1.5, turns: 3, sfx: 'kagura', verb: '獅子頭を かぶって 舞いはじめた', text: '笛と 太鼓に 獅子が 舞う！ みなの 体に 春の 力が みなぎる！' },
   henbai: { name: '反閇', desc: '敵の必殺技を封じ 3ターン攻めを弱める', kind: 'seal', cost: 12, addWeak: { mult: 0.7, turns: 3 }, sfx: 'kekkai', verb: '北斗の 形に 足を 踏んだ', text: '反閇の 歩みが 地を 鎮め、敵の 力を おさえこむ！' },
   ninjin: { name: '会津の薬用人参', desc: '倒れた仲間を全員起こす（1戦1回）', kind: 'revive', cost: 10, once: true, all: true, frac: 0.5, sfx: 'sosei', verb: '会津の 薬用人参を 煎じた', text: '人参の 力が、倒れた 仲間の 体に しみわたる！' },
-  yudono: { name: '湯殿の行', desc: '全員のHPと術を少しずつ戻す（1戦1回）', kind: 'heal', cost: 0, once: true, frac: 0.25, addMp: 0.25, sfx: 'hiwatari', verb: '湯の 滝に 打たれた', text: '湯殿の 行で 清めた 験力が、みなを 満たす！' },
+  yudono: { name: '湯殿の行', desc: '全員のHPと術を戻す（1戦1回）', kind: 'heal', cost: 0, once: true, frac: 0.35, addMp: 0.25, sfx: 'hiwatari', verb: '湯の 滝に 打たれた', text: '湯殿の 行で 清めた 験力が、みなを 満たす！' }, // 10/8 夜 HPの 戻りを 25→35%（1戦1回と 術の力の 戻りは 前の まま＝外すと 術の 組が 弱った）
 };
 
 // 技の 強さの 段（10/8 本人「強い必殺技ほど派手に」）＝はじめの技・1章の技＝1／2章＝2／3章の 奥義＝3／4章（会津）の 技＝4

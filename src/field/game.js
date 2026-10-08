@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=275';
-import { kanbanAt } from './kanban.js?v=275';
-import { SOMA_ROWS } from './soma_map.js?v=275';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=275';
-import { KENCHU_ROWS } from './kenchu_map.js?v=275';
-import { AIZU_ROWS } from './aizu_map.js?v=275';
-import { MINAMI_ROWS } from './minami_map.js?v=275';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=275';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=275';
-import { withGates } from './castle.js?v=275';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=275';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=275';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=275';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=275';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=275';
-import { becomeKunoichi } from './kagewatari.js?v=275';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=275';
-import { RELIC_OF_BOSS } from './rally.js?v=275'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=275'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=276';
+import { kanbanAt } from './kanban.js?v=276';
+import { SOMA_ROWS } from './soma_map.js?v=276';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=276';
+import { KENCHU_ROWS } from './kenchu_map.js?v=276';
+import { AIZU_ROWS } from './aizu_map.js?v=276';
+import { MINAMI_ROWS } from './minami_map.js?v=276';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=276';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=276';
+import { withGates } from './castle.js?v=276';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=276';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=276';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=276';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=276';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=276';
+import { becomeKunoichi } from './kagewatari.js?v=276';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=276';
+import { RELIC_OF_BOSS } from './rally.js?v=276'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=276'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -286,7 +286,8 @@ export function load(text) {
 
 // ⭐10/8 道具3つは 戦って もらう 形に 変えた（本人「もらいかたは全て戦い」）＝前の 形（ラリーが そろうと 授かる）の 記録は 道具を 外す。判子は そのまま
 export function relicsByBattle(g) {
-  return g.relicsV === 2 ? g : { ...g, relics: {}, relicsV: 2 };
+  // 10/8 夜 道具を 守る ボスを もう 戻した 記録は、その 道具を 持たせる（外すと 二度と 取れず 舞台が 開かない＝読み手の 指摘）
+  return g.relicsV === 2 ? g : { ...g, relics: Object.fromEntries(Object.entries(RELIC_OF_BOSS).filter(([boss]) => g.cleared?.[boss]).map(([, r]) => [r, true])), relicsV: 2 };
 }
 
 // ⭐10/5 夜 町の形を作り直した（本人「街並みがパターン化してつまらない」）＝前の記録の 町の中の位置が 建物・屋根・水に なったら、その町の入口へ

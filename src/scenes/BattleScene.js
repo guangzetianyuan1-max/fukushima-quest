@@ -1,20 +1,20 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=275';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=275';
-import { EPISODES } from '../data/episodes.js?v=275';
-import { revealAt } from '../ui/reveal.js?v=275';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=275';
-import { chooseCommands } from '../battle/auto.js?v=275';
-import { itemNote } from '../data/items.js?v=275';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=275';
-import { STORY_FILES } from '../data/story_assets.js?v=275';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=275';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=275';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=275';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=275';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=275';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=275';
-import { DUEL_BIG } from '../data/duel_assets.js?v=275';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=275';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=276';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=276';
+import { EPISODES } from '../data/episodes.js?v=276';
+import { revealAt } from '../ui/reveal.js?v=276';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=276';
+import { chooseCommands } from '../battle/auto.js?v=276';
+import { itemNote } from '../data/items.js?v=276';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=276';
+import { STORY_FILES } from '../data/story_assets.js?v=276';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=276';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=276';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=276';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=276';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=276';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=276';
+import { DUEL_BIG } from '../data/duel_assets.js?v=276';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=276';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -447,11 +447,12 @@ export class BattleScene extends Phaser.Scene {
       let delay = Math.max(STEP_MS, [...pages[0]].length * MS_PER_CHAR); // 見せているページの字数で
       if (this.auto) delay = Math.max(600, delay / 2);
       if (m.hold) delay = Math.max(delay, m.hold); // 必殺技の挿絵を見せるあいだ（自動でも短くしない）
-      let timer = this.time.delayedCall(delay, next);
+      // 10/8 夜 声の ある 文は 次へ 進む 時に 必ず 声を 止める（読み込みが 遅れて 次の 文に 声が 重なった＝読み手の 指摘）
+      const go = () => { if (m.voice) stopVoice(); next(); };
+      let timer = this.time.delayedCall(delay, go);
       const skip = () => {
         timer.remove(false);
-        if (m.voice) stopVoice();
-        next();
+        go();
       };
       this.skip = skip;
       // 声の ある 文（10/8 大将の お礼）＝届いている 声だけ 流し、声が 終わるまで 次へ 進まない（自動でも）
@@ -460,7 +461,7 @@ export class BattleScene extends Phaser.Scene {
         playVoice(m.voice, (sec) => {
           if (this.skip !== skip || !sec) return;
           timer.remove(false);
-          timer = this.time.delayedCall(Math.max(delay, sec * 1000 + 500), next);
+          timer = this.time.delayedCall(Math.max(delay, sec * 1000 + 500), go);
         });
       }
     };

@@ -1,10 +1,10 @@
 // 終わりの 場面（10/8 段6・本人「語り返し＋エンドロール」）。計算は src/field/ending.js
 // 字を 1つずつ 出して 待つ → さわると 早送り（とばしは 無し）。最後に 記録へ「終えた 印」を 残して 題の 画面へ
-import { GAME_FONT } from '../ui/fonts.js?v=275';
-import { startBgm, stopBgm, playVoice, stopVoice } from '../audio/chip.js?v=275';
-import { STORY_FILES } from '../data/story_assets.js?v=275';
-import { ENDING_OPEN, endingRoll, shioriLines, shioriVoices, CREDITS, markEnded } from '../field/ending.js?v=275';
-import { save, slotKey } from '../field/game.js?v=275';
+import { GAME_FONT } from '../ui/fonts.js?v=276';
+import { startBgm, stopBgm, playVoice, stopVoice } from '../audio/chip.js?v=276';
+import { STORY_FILES } from '../data/story_assets.js?v=276';
+import { ENDING_OPEN, endingRoll, shioriLines, shioriVoices, CREDITS, markEnded } from '../field/ending.js?v=276';
+import { save, slotKey } from '../field/game.js?v=276';
 
 const W = 360;
 const H = 640;
@@ -23,7 +23,7 @@ export class EndingScene extends Phaser.Scene {
   create() {
     this.cameras.main.setBackgroundColor('#05040e');
     this.fast = false;
-    this.input.on('pointerdown', () => { this.fast = true; });
+    this.input.on('pointerdown', () => { this.fast = true; this.tapped = true; }); // tapped＝1回でも さわった（声を 待つ 間の 早送り・10/8 夜）
     this.input.on('pointerup', () => { this.fast = false; });
     try { startBgm('story'); } catch { /* 音の 出ない 端末 */ }
     // 終えた 印を 先に 残す（途中で 閉じても 終えた ことに なる）
@@ -55,7 +55,10 @@ export class EndingScene extends Phaser.Scene {
       let ended = false;
       let sec = 0;
       playVoice(voice).then((s) => { sec = s; ended = true; });
-      while (!ended) { await this.wait(100); if (this.fast) { stopVoice(); break; } }
+      // 声が 鳴らない 端末（音が 止められた iPhone など）でも 先へ＝さわるか、字の 長さ＋8秒で 打ち切る（10/8 夜 読み手の 指摘）
+      this.tapped = false;
+      const until = Date.now() + hold + 8000;
+      while (!ended) { await this.wait(100); if (this.fast || this.tapped || Date.now() > until) { stopVoice(); break; } }
       await this.wait(sec ? 500 : hold);
     } else await this.wait(hold);
     this.tweens.add({ targets: o, alpha: 0, duration: 500 });

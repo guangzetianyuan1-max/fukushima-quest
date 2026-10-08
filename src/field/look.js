@@ -1,10 +1,10 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=275';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=275';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=275';
-import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=275';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=276';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=276';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=276';
+import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=276';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -194,10 +194,22 @@ const TOWN_GROUND = { '.': 'grass', '=': 'stone', ',': 'sand', '#': 'grass', _: 
   k: 'grass', K: 'grass', m: 'grass', Y: 'grass', R: 'grass', l: 'stone', r: 'river', b: 'river', p: 'river', d: 'road', H: 'sand', a: 'sand', P: 'sea', S: 'grass', w: 'paddy',
   N: 'fusuma', 上: 'jodan', J: 'tatami', B: 'itama', 鬼: 'stone', 臼: 'stone', 石: 'stone', 剣: 'stone', 鏡: 'stone' }; // 10/7 お城の 大広間（絵は art_src/make_castle_tiles.py）
 const TOWN_OBJ = { T: 'tree', t: 'torii', k: 'sakura', K: 'kaki', m: 'momo_hana', Y: 'yukisugi', R: 'rock', l: 'toro', b: 'bridge', H: 'hoshidana', a: 'ami', P: 'plank', S: 'shidare' };
-export function townLook(ch, x, y, game = null) {
+// ⭐町の 中の 季節（10/9 本人「南会津は町中も雪」「会津は町中も紅葉」）＝会津の 町は 紅葉・南会津の 町は 雪（お城の 大広間と お題の 場所は 変えない）
+//   会津の 町は どれも 地図の 雪の 線（AIZU_SNOW_FROM_Y）より 北（試験＝look.test が 地図の 場所から 確かめる）
+export const AUTUMN_TOWNS = ['inawashiro', 'aizuwakamatsu', 'yanaizu', 'nakanosawa', 'higashiyama', 'ashinomaki', 'nishiyama', 'hayato'];
+export const SNOW_TOWNS = ['hinoemata', 'tajima'];
+export const townSeason = (town) => (AUTUMN_TOWNS.includes(town) ? 'autumn' : SNOW_TOWNS.includes(town) ? 'snow' : null);
+const TREE_CHARS = ['T', 'Y', 'K', 'k', 'm']; // 町の 木（足もとが 緑の 草の 絵）＝季節の 町では 季節の 木に 替える
+export function townLook(ch, x, y, game = null, town = null) {
   // お題の 怪物の 場所（10/7）：もやの 渦・元に戻すと 鳥居
   if (QUEST_BOSS_AT[ch]) return { ground: 'stone', objs: [game?.cleared?.[QUEST_BOSS_AT[ch]] ? 'icon_torii' : 'vortex'] };
-  const objs = TOWN_OBJ[ch] ? [TOWN_OBJ[ch]] : [];
-  return { ground: TOWN_GROUND[ch] ?? 'grass', objs };
+  let objs = TOWN_OBJ[ch] ? [TOWN_OBJ[ch]] : [];
+  let ground = TOWN_GROUND[ch] ?? 'grass';
+  const season = townSeason(town);
+  if (season) {
+    if (ground === 'grass') ground = season === 'snow' ? 'yuki' : hash100(x + 5, y + 3) < 50 ? 'ochiba' : 'ochiba2';
+    if (TREE_CHARS.includes(ch)) objs = [season === 'snow' ? pick(['yukisugi2', 'yukisugi2', 'kareki', 'yukimatsu'], x, y) : pick(AIZU_AUTUMN, x, y)];
+  }
+  return { ground, objs };
 }
 export const TOWN_CHARS = Object.keys(TOWN_GROUND);
