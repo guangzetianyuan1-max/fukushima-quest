@@ -1,10 +1,11 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=276';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=276';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=276';
-import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=276';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=277';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=277';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=277';
+import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=277';
+import { endFoeReady } from './rally.js?v=277';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -111,6 +112,13 @@ export function fieldLook(game, ch, x, y, map = 'field') {
 }
 
 function baseLook(game, ch, x, y, map) {
+  const look = baseLook0(game, ch, x, y, map);
+  // 10/9 終章の 印（婆・駒・滝・舞）は 戦える 間だけ 黒い うずを 重ねる（ほかの ボスと 同じ 目印）
+  return END_MARKS.includes(ch) && game && endFoeReady(game, ch) ? { ...look, objs: [...look.objs, 'vortex'] } : look;
+}
+const END_MARKS = ['婆', '駒', '滝', '舞'];
+
+function baseLook0(game, ch, x, y, map) {
   // 名所の立て看板は 10/5 に消した（名前は 字だけ＝FieldScene.makeKanbanLabels）
   if (ROAD_OPENED_BY[ch]) return { ground: game.cleared?.[ROAD_OPENED_BY[ch]] ? 'road' : 'grass', objs: [] }; // 龍燈を戻すと現れる相馬への道（10/3）
   // お城クエストの 入口（10/7）＝お題を 受けるまでは ただの 草地・受けると 道しるべ
