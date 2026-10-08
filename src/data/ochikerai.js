@@ -3,7 +3,7 @@
 // 確かめた事（10/8）：会津駒ヶ岳の 山頂 近くに 湿原と 池塘・駒ノ大池は 空や 山頂を 映す・ハクサンコザクラ や チングルマ が 咲く（福島県 尾瀬の コラム）
 //   ⛔山の 名の 由来（残雪の 馬の 形）は 原典を 確かめきれていない＝言わない
 // 弱点＝駒ノ大池の 水鏡・勝つと「駒ヶ岳の花」（rally.js の RELICS.onsen）
-import { BASIC_ITEMS } from './basic_items.js?v=282';
+import { BASIC_ITEMS } from './basic_items.js?v=283';
 
 export const OCHIKERAI = {
   art: {
@@ -26,7 +26,7 @@ export const OCHIKERAI = {
   enemy: {
     id: 'ochikerai',
     name: '落人の 家来',
-    episode: '第三十話',
+    episode: '第三十一話', // 10/9 小豆洗い（第三十話）を 足して 繰り下げ
     tale: '駒ヶ岳の落人の家来',
     place: '福島県檜枝岐村',
     autoWinTarget: 0.8, // 終章の 中ボス（ばんばと 同じ 手当て・10/8）

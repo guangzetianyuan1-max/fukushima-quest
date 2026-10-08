@@ -1,8 +1,8 @@
 // 終わりの 場面（10/8 段6・本人「語り返し＋エンドロール」）：画面と 切り離した 計算だけ（src/scenes/EndingScene.js が 見せる）
 // 流れ＝幕が 下りる → 福島じゅうの もやが 晴れ、落人たちが 光に なって 昇る → 元に 戻した 主たちが 話の 順に 流れる → しおりの 語りで 締める → 作り手 →「おわり」→ 題の 画面
 // ⭐筋の芯（10/8 本人）＝大将の 怨念が 県内の もやを 作っていた・4人が 制覇すると 晴れて 落人も 成仏
-import { EPISODES, PRELUDE } from '../data/episodes.js?v=282';
-import { ORDERED } from './collection.js?v=282';
+import { EPISODES, PRELUDE } from '../data/episodes.js?v=283';
+import { ORDERED } from './collection.js?v=283';
 
 export const ENDING_OPEN = [
   '幕が、静かに 下りた……',
@@ -29,7 +29,7 @@ export const talesTold = (game) => EPISODES.filter((e) => game?.cleared?.[e.enem
 export const shioriLines = (game) => ENDING_SHIORI.map((t) => t.replace('{n}', String(talesTold(game))));
 // しおりの 締めの 声（10/8 本人「しおりの締めに声」＝Gemini TTS の Sulafat・art_src/gemini_tts.py <紙芝居_終章南会津.md> ending_shiori）
 //   1行目は「さんじゅうさんわ」と 読む＝話の 数が 33 の 時だけ 流す（ほかの 数なら 字だけ）
-export const ENDING_TALES = 33;
+export const ENDING_TALES = 34; // 10/9 小豆洗いを 足して 34話（しおりの 1行目の 声も「さんじゅうよんわ」に 録り直す）
 export const shioriVoices = (game) => ENDING_SHIORI.map((_, i) => (i === 0 && talesTold(game) !== ENDING_TALES ? null : `assets/story/ending_shiori_${i + 1}.mp3`));
 
 // 作り手（確かな 事だけ）

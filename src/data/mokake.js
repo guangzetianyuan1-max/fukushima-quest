@@ -4,7 +4,7 @@
 //   村に 多い 平野姓は 平家の 落人の 子孫とされ、家紋は 揚羽蝶（たびこふれ）
 // ⚠姫の霊の 話は ゲームの 作り（滝の 名の 言い伝えから）＝紙芝居④で「このゲームの語り」と 言う
 // 弱点＝裳を 掛ける 祈り・勝つと「揚羽蝶の旗」（rally.js の RELICS.castle）
-import { BASIC_ITEMS } from './basic_items.js?v=282';
+import { BASIC_ITEMS } from './basic_items.js?v=283';
 
 export const MOKAKE = {
   art: {
@@ -27,7 +27,7 @@ export const MOKAKE = {
   enemy: {
     id: 'mokake',
     name: '落人の 姫の 霊',
-    episode: '第三十一話',
+    episode: '第三十二話', // 10/9 繰り下げ
     tale: 'モーカケの滝の姫の霊',
     place: '福島県檜枝岐村',
     autoWinTarget: 0.8, // 終章の 中ボス（10/8）

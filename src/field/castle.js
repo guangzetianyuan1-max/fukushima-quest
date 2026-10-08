@@ -44,7 +44,7 @@ export const QUEST_TOWNS = Object.keys(CASTLE_QUESTS);
 export const SIDE_BOSSES = Object.fromEntries(QUEST_TOWNS.map((t) => [CASTLE_QUESTS[t].boss, CASTLE_QUESTS[t].side]));
 export const SIDE_AFTER = Object.fromEntries(QUEST_TOWNS.map((t) => [CASTLE_QUESTS[t].boss, CASTLE_QUESTS[t].after]));
 // 新しい場所の奥の字 → 怪物（大広間や新しい場所の中＝町の地図の字）
-export const QUEST_BOSS_AT = { 鬼: 'onigajo', 臼: 'usunuma', 石: 'oniishi', 剣: 'kenkatsura', 鏡: 'kagaminuma' };
+export const QUEST_BOSS_AT = { 鬼: 'onigajo', 臼: 'usunuma', 石: 'oniishi', 剣: 'kenkatsura', 鏡: 'kagaminuma', 豆: 'azukiarai' }; // 豆＝只見川の 沢の 小豆洗い（10/9・お題では ない＝町の 奥から 入る）
 // 章の地図の入口の字 → 城下町
 export const GATE_OF = Object.fromEntries(QUEST_TOWNS.map((t) => [CASTLE_QUESTS[t].gate.ch, t]));
 
@@ -238,6 +238,39 @@ const GROUNDS = {
 // 鏡ヶ沼の 出口は 道の 下の 端（x を 置く）
 GROUNDS.q_kagaminuma.rows[17] = 'RRRRRxRRRRRRRRR';
 
+// ⭐只見川の 沢（10/9 本人「只見を作る」「只見のモンスターを倒したら、檜枝岐村に通れる」）＝お題の 場所と 同じ 作り・只見の 町の 奥の 口（町の 字 q）から 入る
+//   出どころ＝日文研 怪異・妖怪伝承データベース「小豆洗い」（金山町）「只見川の中の沢には小豆洗いが出て、ザックザックと音をさせて小豆を研ぐ。怖いから沢の近くは通らなかった」
+export const SAWA_OF = { tadami: 'q_azukiarai' }; // 町 → 沢
+export const SAWA = {
+  q_azukiarai: {
+    name: '只見川の 沢', rows: [
+      'TTTTTTTTTTTTTTT',
+      'TTTTTT.豆.TTTTTT',
+      'TTTTT..=..TTTTT',
+      'TTTR...=...RTTT',
+      'TTpppppbpppppTT',
+      'TT.....=.....TT',
+      'TT..R..=..R..TT',
+      'TTT....=....TTT',
+      'TTppp..=..pppTT',
+      'TT.....=.....TT',
+      'TTR..=====..RTT',
+      'TT...=...=...TT',
+      'TTpppbpppbpppTT',
+      'TT...=...=...TT',
+      'TT...=====...TT',
+      'TTTT...=...TTTT',
+      'TTTTT..=..TTTTT',
+      'TTTTTTTxTTTTTTT',
+    ],
+    guide: { x: 5, y: 15, look: 'toshiyori', lines: ['只見の 古老「この 沢では、夜に なると ザックザックと 小豆を 研ぐ 音が するんじゃ。」', '只見の 古老「小豆洗いと いうてな。怖いから、わしらは 沢の 近くを 通らなんだ。」'] },
+  },
+};
+// 町の 奥の 口から 沢へ：地図へ 戻る 場所（fieldMap・fieldPos）は 変えない＝沢の 出口から 只見の 町の 外の 地図へ 出る（leaveTown）
+export function enterSawa(game, sawa, entry) {
+  return { ...game, pos: { map: sawa, ...entry, dir: 'up' }, justEntered: sawa };
+}
+
 // towns.js の TOWNS に足す形（npcs は 町と同じ書き方・spot は 使わない）
 export function castleMaps() {
   const maps = {};
@@ -257,6 +290,10 @@ export function castleMaps() {
       name: gr.name, inside: 'quest', castleOf: town, cardPending: true, rows: gr.rows, props: [], entry: { x: ex, y: gr.rows.length - 2 },
       npcs: [{ ...gr.guide, lines: gr.guide.lines }],
     };
+  }
+  for (const [id, gr] of Object.entries(SAWA)) {
+    const ex = gr.rows.at(-1).indexOf('x');
+    maps[id] = { name: gr.name, inside: 'quest', cardPending: true, rows: gr.rows, props: [], entry: { x: ex, y: gr.rows.length - 2 }, npcs: [{ ...gr.guide, lines: gr.guide.lines }] };
   }
   return maps;
 }
