@@ -1,10 +1,10 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=272';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=272';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=272';
-import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=272';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=273';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=273';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=273';
+import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=273';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -51,6 +51,7 @@ export function grovePiece(map, x, y) {
     const g = KENPOKU_GROVES.find((r) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1);
     return g ? pick(g.kinds, x, y) : base; // 安達ヶ原（y45〜）は暗い杉のまま
   }
+  if (map === 'minami') return vary(x, y) < 3 ? 'yukisugi' : pick(['yuki', 'yuki2'], x, y); // 終章 南会津は 全部 雪（10/8）
   if (map === 'aizu') {
     if (y >= AIZU_SNOW_FROM_Y) return vary(x, y) < 3 ? 'yukisugi' : pick(['yuki', 'yuki2'], x, y);
     return pick(AIZU_AUTUMN, x, y);
@@ -76,6 +77,7 @@ export function seaPiece(map, x, y) {
 
 // 山（^）のマスに置く物。県北の西の山すそ（吾妻）は雪をかぶった杉と雪の小山
 export function mountainPiece(map, x, y) {
+  if (map === 'minami') return vary(x, y) < 3 ? 'snowmtn' : 'yukisugi'; // 終章 南会津（10/8）
   if (map === 'aizu') {
     if (y >= AIZU_SNOW_FROM_Y - 1) return vary(x, y) < 3 ? 'snowmtn' : 'yukisugi';
     return vary(x, y) < 1 ? 'snowmtn' : 'rockmtn'; // 磐梯山・猫魔ヶ岳の 頂は ところどころ 雪
@@ -138,7 +140,11 @@ export function fieldLook(game, ch, x, y, map = 'field') {
     case '苗': return { ground: 'grass', objs: ['icon_yadoya'] }; // 猪苗代の町
     case '若': return { ground: 'grass', objs: ['shiro'] }; // 会津若松の町（鶴ヶ城の城下）
     case '津': return { ground: 'grass', objs: ['icon_mise'] }; // 柳津の町（圓藏寺の門前）
-    case '.': return { ground: 'grass', objs: map === 'aizu' && y >= AIZU_SNOW_FROM_Y && hash100(x, y) < 22 ? [pick(['yuki', 'yuki2'], x, y)] : [] }; // 南会津の雪（雪の地面の絵が届くまで 雪の 小山を 散らす）
+    case '南': return { ground: 'road', objs: ['sekisho'] }; // 地図の口（会津⇔南会津・10/8 終章）
+    case '檜': return { ground: 'grass', objs: ['icon_minka'] }; // 檜枝岐の村
+    case '婆': return { ground: 'grass', objs: ['hokora'] }; // 橋場のばんば（参道の 途中の 祠・段1では 印だけ）
+    case '舞': return { ground: 'grass', objs: ['jinja'] }; // 檜枝岐の舞台（鎮守神社の 境内・段1では 印だけ）
+    case '.': return { ground: 'grass', objs: (map === 'minami' || (map === 'aizu' && y >= AIZU_SNOW_FROM_Y)) && hash100(x, y) < 22 ? [pick(['yuki', 'yuki2'], x, y)] : [] }; // 南会津の雪（雪の地面の絵が届くまで 雪の 小山を 散らす）
     // 温泉地（10/5 夜）＝温泉マーク（絵が届くまで 宿屋の記号を借りる・ONSEN_ICON）。名前は 立て看板と同じ 字だけ（kanban.js）
     case 'e':
     case 'f':
