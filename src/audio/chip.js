@@ -504,6 +504,65 @@ const SFX = {
     [0, 0.1, 0.2, 0.3, 0.4].forEach((d, i) => noise(t + d, 0.12, { vol: 0.22, from: 2500 + i * 600, to: 1200 }));
     tone(N(40), t, 0.9, { type: 'triangle', vol: 0.2 });
   },
+  // ---- 終章（10/8）----
+  // 縁切りの はさみ（橋場のばんば）＝しゃきん、しゃきんと 二度 鳴って 断ち切る
+  hasami: (t) => {
+    [0, 0.22].forEach((d) => {
+      noise(t + d, 0.08, { vol: 0.416, from: 9000, to: 5000 });
+      tone(N(96), t + d, 0.12, { type: 'square', vol: 0.078, slideTo: N(100) });
+    });
+    noise(t + 0.48, 0.3, { vol: 0.364, from: 4000, to: 800 });
+    tone(N(84), t + 0.48, 0.5, { type: 'triangle', vol: 0.13, slideTo: N(72) });
+  },
+  // 縁結びの 紐（橋場のばんば）＝紐が するすると のびて きゅっと 結ばれる
+  himo: (t) => {
+    [0, 0.08, 0.16, 0.24, 0.32].forEach((d, i) => tone(N(67 + i * 2), t + d, 0.1, { type: 'triangle', vol: 0.26 }));
+    noise(t, 0.4, { vol: 0.3, from: 1500, to: 3000 });
+    tone(N(79), t + 0.45, 0.35, { type: 'square', vol: 0.2 });
+    tone(N(74), t + 0.45, 0.35, { type: 'square', vol: 0.15 });
+  },
+  // 雪崩 落とし（落人の家来）＝ごうっと 雪が すべり落ち、どさりと 埋まる
+  nadare: (t) => {
+    noise(t, 0.9, { vol: 0.32, from: 1800, to: 300 });
+    tone(N(38), t + 0.1, 0.8, { type: 'triangle', vol: 0.3, slideTo: N(31) });
+    noise(t + 0.85, 0.25, { vol: 0.3, from: 500, to: 150 });
+  },
+  // 太刀の 一閃（落人の家来）＝しゅっと 風を 切り、きいんと 鳴る
+  issen: (t) => {
+    noise(t, 0.12, { vol: 0.567, from: 3000, to: 9000 });
+    tone(N(100), t + 0.12, 0.45, { type: 'sine', vol: 0.227, slideTo: N(96) });
+    tone(N(88), t + 0.12, 0.3, { type: 'square', vol: 0.113 });
+  },
+  // すすり泣き（姫の霊）＝細い 声が 震えて 下がる
+  susurinaki: (t) => {
+    [0, 0.35, 0.7].forEach((d, i) => tone(N(81 - i * 2), t + d, 0.3, { type: 'sine', vol: 0.352, slideTo: N(77 - i * 2) }));
+    noise(t, 1.0, { vol: 0.128, from: 2500, to: 1500 });
+  },
+  // 滝つぼの 渦（姫の霊）＝ざあっと 水が 落ち、ごうごうと 渦を 巻く
+  takitsubo: (t) => {
+    noise(t, 1.1, { vol: 0.3, from: 5000, to: 1200 });
+    [0, 0.2, 0.4, 0.6].forEach((d, i) => tone(N(45 - i), t + d, 0.25, { type: 'triangle', vol: 0.18 }));
+  },
+  // 矢の 雨（落人の手下）＝ひゅんひゅんと 矢が 降り、とすとすと 刺さる
+  yanoame: (t) => {
+    [0, 0.09, 0.18, 0.27, 0.36, 0.45].forEach((d, i) => { noise(t + d, 0.08, { vol: 0.3, from: 7000, to: 3000 }); tone(N(60 - i), t + d + 0.08, 0.05, { type: 'square', vol: 0.18 }); });
+  },
+  // 鬨の 声（落人の手下）＝えい、えい、おう と 低い 声が 重なる
+  tokinokoe: (t) => {
+    [0, 0.3, 0.6].forEach((d, i) => { tone(N(43 + (i === 2 ? 5 : 0)), t + d, i === 2 ? 0.5 : 0.22, { type: 'sawtooth', vol: 0.336 }); noise(t + d, 0.2, { vol: 0.336, from: 900, to: 400 }); });
+  },
+  // 怨念の 黒い 炎（落人の大将）＝ぼうっと 低く 燃え上がり、うなる
+  onnen: (t) => {
+    noise(t, 1.1, { vol: 0.686, from: 400, to: 1600 });
+    tone(N(34), t, 1.1, { type: 'sawtooth', vol: 0.317, slideTo: N(29) });
+    tone(N(46), t + 0.3, 0.7, { type: 'sine', vol: 0.317, slideTo: N(41) });
+  },
+  // 源平の 太刀（落人の大将）＝刃が 鳴り、重く 振り下ろす
+  genpei: (t) => {
+    tone(N(95), t, 0.25, { type: 'triangle', vol: 0.238, slideTo: N(90) });
+    noise(t + 0.22, 0.18, { vol: 0.51, from: 6000, to: 1500 });
+    tone(N(31), t + 0.3, 0.45, { type: 'square', vol: 0.272, slideTo: N(26) });
+  },
   // ---- お城クエストの 怪物（10/7）----
   // 大岩 投げ（鬼ヶ城山の鬼）＝岩が うなって 飛び、どすんと 落ちる
   oiwa: (t) => {
@@ -626,6 +685,26 @@ const SFX = {
   kuji: (t) => { for (let i = 0; i < 9; i++) noise(t + i * 0.05, 0.04, { vol: 0.18, from: 5000, to: 1500 }); tone(N(91), t + 0.45, 0.3, { type: 'sine', vol: 0.14 }); },
   hiwatari: (t) => { noise(t, 1.0, { vol: 0.3, from: 300, to: 2000 }); arp([60, 64, 67, 72], t + 0.2, 0.1, 0.4, { type: 'square', vol: 0.15 }); },
   shikigami: (t) => { noise(t, 0.15, { vol: 0.15, from: 2000, to: 5000 }); arp([88, 91, 95], t + 0.1, 0.05, 0.12, { type: 'sine', vol: 0.15 }); },
+  // ⭐4人の 技の 段の 音（10/8 本人「4人の必殺技を出すとき、効果音やエフェクトを多用してほしい、強い必殺技ほど派手に」）＝技ごとの 音に 重ねる（src/battle/jobfx.js の sfx）
+  waza1: (t) => arp([84, 91, 96], t, 0.05, 0.25, { type: 'sine', vol: 0.256 }), // きらり
+  waza2: (t) => { noise(t, 0.35, { vol: 0.27, from: 600, to: 6000 }); arp([79, 86, 91, 98], t + 0.2, 0.06, 0.35, { type: 'triangle', vol: 0.216 }); }, // 風が 巻いて きらめく
+  waza3: (t) => { // 太鼓の ドン＋鉦の 余韻＋光の 粒
+    noise(t, 0.12, { vol: 0.287, from: 1200, to: 200 });
+    tone(N(33), t, 0.5, { type: 'sine', vol: 0.41, slideTo: N(28) });
+    tone(N(57), t + 0.05, 1.2, { type: 'triangle', vol: 0.131 });
+    tone(N(64), t + 0.05, 1.0, { type: 'triangle', vol: 0.082 });
+    arp([88, 91, 95, 100], t + 0.15, 0.07, 0.4, { type: 'sine', vol: 0.098 });
+  },
+  waza4: (t) => { // 力を ためて 上がる 音 → 大きな ドン（暗転の あとの 光に 合わせて 0.45秒）→ 和音と 鈴
+    noise(t, 0.45, { vol: 0.129, from: 300, to: 8000 });
+    tone(N(48), t, 0.45, { type: 'sawtooth', vol: 0.046, slideTo: N(84) });
+    const h = t + 0.45;
+    noise(h, 0.1, { vol: 0.276, from: 10000, to: 2000 });
+    tone(N(31), h, 0.9, { type: 'sine', vol: 0.253, slideTo: N(24) });
+    noise(h + 0.04, 0.8, { vol: 0.138, from: 2000, to: 100 });
+    for (const m of [60, 64, 67, 72]) tone(N(m), h + 0.05, 1.4, { type: 'triangle', vol: 0.041 });
+    arp([84, 88, 91, 96, 100], h + 0.2, 0.07, 0.5, { type: 'sine', vol: 0.06 });
+  },
   special: (t) => {
     noise(t, 0.18, { vol: 0.35, from: 800, to: 9000 }); // すべりこむ風切り
     tone(N(72), t, 0.18, { type: 'sawtooth', vol: 0.12, slideTo: N(96) });
@@ -840,6 +919,19 @@ const KIYOHIME_LEAD = [[76, 1], [77, 1], [81, 2], [83, 1], [84, 1], [83, 2], [81
 const AIZU_FIELD_LEAD = [[67, 2], [69, 2], [72, 4], [74, 2], [72, 1], [69, 1], [67, 4], [69, 2], [72, 2], [74, 2], [76, 2], [74, 8], [76, 2], [74, 2], [72, 2], [74, 2], [72, 2], [69, 2], [67, 4], [64, 2], [67, 2], [69, 2], [72, 2], [67, 8]];
 // 4章 会津の道中：民謡音階・速く
 const AIZU_BATTLE_LEAD = [[62, 1], [65, 1], [67, 2], [69, 1], [72, 1], [69, 2], [67, 2], [65, 2], [62, 4], [69, 1], [72, 1], [74, 2], [72, 1], [69, 1], [67, 2], [69, 8], [74, 2], [72, 2], [69, 2], [67, 2], [65, 1], [67, 1], [69, 2], [67, 2], [65, 2], [62, 2], [65, 2], [67, 2], [60, 2], [62, 8]];
+// 第三十話 橋場のばんば（10/8）：陽音階・ゆったり 不思議な 子守唄ふう
+const BANBA_LEAD = [[72, 2], [74, 2], [76, 4], [74, 2], [72, 2], [69, 4], [67, 2], [69, 2], [72, 4], [74, 8], [76, 2], [79, 2], [76, 2], [74, 2], [72, 4], [69, 4], [67, 2], [69, 2], [72, 2], [74, 2], [72, 8]];
+// 第三十一話 駒ヶ岳の落人の家来（10/8）：民謡の 音階・武者の 行進
+const OCHIKERAI_LEAD = [[64, 2], [67, 2], [69, 2], [72, 2], [74, 4], [72, 2], [69, 2], [67, 4], [69, 2], [72, 2], [69, 8], [74, 2], [76, 2], [79, 2], [76, 2], [74, 4], [72, 4], [69, 2], [67, 2], [64, 2], [67, 2], [69, 8]];
+// 第三十二話 モーカケの滝の姫の霊（10/8）：都節・水の 音の ように 細く
+const MOKAKE_LEAD = [[76, 4], [77, 2], [81, 2], [83, 4], [81, 4], [77, 2], [76, 2], [72, 4], [71, 8], [76, 2], [77, 2], [81, 2], [84, 2], [83, 4], [81, 4], [77, 2], [76, 2], [77, 2], [71, 2], [76, 8]];
+// 第三十三話 舞台の落人の手下（10/8）：民謡の 音階・せわしく
+const TESHITA_LEAD = [[69, 1], [72, 1], [74, 2], [72, 1], [69, 1], [67, 2], [69, 2], [72, 2], [74, 4], [76, 1], [79, 1], [76, 2], [74, 2], [72, 2], [69, 8], [72, 2], [74, 2], [76, 2], [74, 2], [72, 1], [74, 1], [72, 2], [69, 4], [67, 2], [64, 2], [67, 2], [69, 10]];
+// 第三十三話 平家の落人の 大将戦（10/8 本人「大将戦のBGMは壮大に、ビッグブリッジの死闘を参考に」）
+//   ⚠参考は 雰囲気だけ（速さ・駆ける 8分の 低音・勇ましい 跳躍・太鼓の 裏打ち）＝旋律は 新しく 作った（写さない）。イ短調 Am-F-G-Em-Am-F-G-E
+// 2本目＝旋律の 3度・6度 下を 和音に 沿って なぞる（1小節＝8分 8つ）
+const TAISHO_HARMONY = [[64, 2], [69, 1], [72, 1], [76, 3], [76, 1], [72, 2], [72, 1], [69, 1], [69, 2], [69, 2], [71, 1], [71, 1], [67, 2], [62, 2], [67, 2], [71, 6], [71, 1], [67, 1], [64, 1], [69, 1], [72, 1], [76, 1], [81, 2], [79, 1], [76, 1], [72, 1], [77, 1], [81, 2], [84, 4], [83, 2], [79, 1], [79, 1], [74, 2], [79, 2], [76, 4], [71, 2], [76, 2]];
+const TAISHO_LEAD = [[69, 2], [72, 1], [76, 1], [81, 3], [79, 1], [77, 2], [76, 1], [74, 1], [72, 2], [74, 2], [76, 1], [74, 1], [71, 2], [67, 2], [71, 2], [76, 6], [74, 1], [72, 1], [69, 1], [72, 1], [76, 1], [81, 1], [84, 2], [83, 1], [81, 1], [77, 1], [81, 1], [84, 2], [88, 4], [86, 2], [84, 1], [83, 1], [79, 2], [83, 2], [80, 4], [76, 2], [80, 2]];
 // 終章 南会津の 地図（10/8）：都節・雪の 山あいを ゆっくり
 const MINAMI_FIELD_LEAD = [[69, 4], [71, 2], [72, 2], [76, 8], [77, 2], [72, 2], [71, 4], [69, 8], [64, 4], [65, 2], [69, 2], [71, 8], [72, 2], [71, 2], [69, 2], [65, 2], [64, 8]];
 // 終章 南会津の 道中（10/8）：都節・速く 鋭く
@@ -1170,6 +1262,70 @@ const TRACKS = {
     },
   },
   // ---- 終章 南会津（10/8）
+  banba: {
+    lead: BANBA_LEAD, tempo: 132, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [45, 43, 45, 40, 45, 43, 41, 45].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i === 0 || i === 4) noise(s, 0.05, { vol: 0.07, from: 2500, to: 700 });
+        });
+      });
+    },
+  },
+  ochikerai: {
+    lead: OCHIKERAI_LEAD, tempo: 144, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [40, 40, 45, 40, 43, 45, 40, 40].forEach((r, bar) => {
+        [r, r + 12, r, r + 7, r, r + 12, r, r + 7].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 0) noise(s, 0.04, { vol: 0.07, from: 1200, to: 300 });
+        });
+      });
+    },
+  },
+  mokake: {
+    lead: MOKAKE_LEAD, tempo: 120, leadType: 'triangle', leadVol: 0.16,
+    bass(t0, eighth) {
+      [40, 41, 45, 40, 41, 40, 45, 40].forEach((r, bar) => {
+        tone(N(r - 12), t0 + bar * 8 * eighth, eighth * 3.6, { type: 'triangle', vol: 0.2 });
+        tone(N(r - 5), t0 + (bar * 8 + 4) * eighth, eighth * 3.6, { type: 'triangle', vol: 0.14 });
+        noise(t0 + (bar * 8 + 6) * eighth, 0.2, { vol: 0.04, from: 6000, to: 3000 });
+      });
+    },
+  },
+  teshita: {
+    lead: TESHITA_LEAD, tempo: 156, leadType: 'square', leadVol: 0.1,
+    bass(t0, eighth) {
+      [45, 43, 45, 40, 45, 43, 40, 45].forEach((r, bar) => {
+        [r, r + 12, r + 7, r + 12, r, r + 12, r + 7, r + 12].forEach((m, i) => {
+          const s = t0 + (bar * 8 + i) * eighth;
+          tone(N(m), s, eighth * 0.7, { type: 'triangle', vol: 0.2 });
+          if (i % 2 === 1) noise(s, 0.03, { vol: 0.06, from: 8000, to: 5000 });
+        });
+      });
+    },
+  },
+  taisho: {
+    lead: TAISHO_LEAD, tempo: 168, leadType: 'square', leadVol: 0.11,
+    harmony: TAISHO_HARMONY, harmonyType: 'square', harmonyVol: 0.07, // 10/8 複音
+    bass(t0, eighth) {
+      // 駆ける 8分の 低音（オクターブ）＋ 伸ばした 和音（壮大さ）＋ 太鼓（1・3拍 大太鼓／2・4拍 小太鼓）
+      const CH = [[45, 48, 52], [41, 45, 48], [43, 47, 50], [40, 43, 47], [45, 48, 52], [41, 45, 48], [43, 47, 50], [40, 44, 47]];
+      CH.forEach(([r, m3, p5], bar) => {
+        for (let i = 0; i < 8; i++) {
+          const st = t0 + (bar * 8 + i) * eighth;
+          tone(N((i % 2 ? r + 12 : r) - 12), st, eighth * 0.8, { type: 'triangle', vol: 0.22 });
+          if (i % 4 === 0) noise(st, 0.1, { vol: 0.14, from: 300, to: 80 });
+          if (i % 4 === 2) noise(st, 0.06, { vol: 0.08, from: 5000, to: 2500 });
+        }
+        [r + 12, m3 + 12, p5 + 12].forEach((n) => tone(N(n), t0 + bar * 8 * eighth, eighth * 7.6, { type: 'sawtooth', vol: 0.025 }));
+      });
+    },
+  },
+
   minamiField: {
     lead: MINAMI_FIELD_LEAD, tempo: 76, leadType: 'triangle', leadVol: 0.16,
     bass(t0, eighth) {
@@ -1434,6 +1590,8 @@ export const TRACK_NAMES = Object.keys(TRACKS);
 const LOOP_EIGHTHS = 64;
 // 試験用：曲の旋律の長さ（8分音符の数）。64 でないと繰り返しの継ぎ目がずれる
 export const leadEighths = (name) => TRACKS[name].lead.reduce((sum, [, len]) => sum + len, 0);
+// 2本目の 旋律の 長さ（無い 曲は null・10/8 複音）
+export const harmonyEighths = (name) => (TRACKS[name].harmony ? TRACKS[name].harmony.reduce((n, [, l]) => n + l, 0) : null);
 
 function scheduleLoop(track, t0) {
   const eighth = 60 / track.tempo / 2;
@@ -1441,6 +1599,14 @@ function scheduleLoop(track, t0) {
   for (const [m, len] of track.lead) {
     if (m !== null) tone(N(m), t, len * eighth * 0.9, { type: track.leadType, vol: track.leadVol });
     t += len * eighth;
+  }
+  // 2本目の 旋律（10/8 本人「単音ではなく、複音にできますか？」）＝旋律と 同時に 鳴る 和音の 声（無い 曲は 今まで どおり）
+  if (track.harmony) {
+    let h = t0;
+    for (const [m, len] of track.harmony) {
+      if (m !== null) tone(N(m), h, len * eighth * 0.9, { type: track.harmonyType ?? track.leadType, vol: track.harmonyVol ?? track.leadVol * 0.6 });
+      h += len * eighth;
+    }
   }
   track.bass(t0, eighth);
 }

@@ -2,12 +2,12 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=273';
-import { SOMA_ROWS } from './soma_map.js?v=273';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=273';
-import { KENCHU_ROWS } from './kenchu_map.js?v=273';
-import { AIZU_ROWS } from './aizu_map.js?v=273';
-import { MINAMI_ROWS } from './minami_map.js?v=273';
+import { IWAKI_ROWS } from './iwaki_map.js?v=274';
+import { SOMA_ROWS } from './soma_map.js?v=274';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=274';
+import { KENCHU_ROWS } from './kenchu_map.js?v=274';
+import { AIZU_ROWS } from './aizu_map.js?v=274';
+import { MINAMI_ROWS } from './minami_map.js?v=274';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS, minami: MINAMI_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
@@ -73,10 +73,11 @@ export const KANBAN_DEFS = [
   { map: 'aizu', near: '南', kind: 'michi', name: 'この先 南会津', lines: ['南へ 山を 越えれば 南会津。'] },
   { map: 'minami', near: '南', kind: 'michi', name: 'この先 会津', lines: ['北へ 山を 越えれば 金山。'] },
   { map: 'minami', near: '檜', kind: 'meisho', name: '檜枝岐', lines: ['福島県の 南西の 端の 村。尾瀬の 入口に あたる。'] },
-  { map: 'minami', at: [5, 11], kind: 'meisho', name: '会津駒ヶ岳', lines: ['高さ 2133メートルの 山。'] },
+  { map: 'minami', near: '駒', kind: 'meisho', name: '会津駒ヶ岳', lines: ['高さ 2133メートルの 山。'] },
+  { map: 'minami', near: '滝', kind: 'meisho', name: 'モーカケの滝', lines: ['平家の 姫の 裳を 掛けた 姿に 似ていると 伝わる 滝（ほかの 説も ある）。'] }, // 10/8 七入〜御池の 道ぞい
   { map: 'minami', at: [23, 35], kind: 'meisho', name: '燧ヶ岳', lines: ['高さ 2356メートルの 山。尾瀬国立公園の 山の ひとつ。'] },
   { map: 'minami', at: [20, 16], kind: 'meisho', name: '檜枝岐川', lines: ['伊南川の 上流の 川。'] },
-  { map: 'minami', near: '婆', kind: 'meisho', name: '橋場のばんば', lines: ['鎮守神社へ 続く 参道の 途中に まつられた 姥神さま。'] },
+  { map: 'minami', near: '婆', kind: 'meisho', name: '橋場のばんば', lines: ['鎮守神社へ 続く 参道の 途中に まつられた 姥神さま。', 'ばんばさまは、ただ にこにこと ほほえんで いる。'] }, // 10/8 本人「スタンプが揃っていない場合、橋場のばんばはただニコニコしている」
   { map: 'minami', near: '舞', kind: 'meisho', name: '檜枝岐の舞台', lines: ['鎮守神社の 境内に 建つ、茅葺きの 歌舞伎の 舞台。'] },
   { map: 'minami', at: [14, 38], kind: 'michi', name: 'この先 尾瀬', lines: ['南の 山を 越えれば 尾瀬。'] },
 ];

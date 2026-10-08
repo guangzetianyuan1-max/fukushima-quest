@@ -1,20 +1,22 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=273';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=273';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=273';
-import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=273';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=274';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=274';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=274';
+import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=274';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
-export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen', 'tatami', 'jodan', 'fusuma', 'itama'];
+export const GROUNDS = ['grass', 'sand', 'road', 'stone', 'floor', 'paddy', 'sea', 'river', 'pond', 'onsen', 'tatami', 'jodan', 'fusuma', 'itama', 'ochiba', 'ochiba2', 'yuki'];
 export const OBJECTS = [
   'tree', 'forest', 'rockmtn', 'rock', 'plank', 'snowmtn', 'bridge', 'vortex', 'mistwall',
   'minka', 'mise', 'yadoya', 'torii', 'jinja', 'tera', 'shiro', 'sekisho', 'counter', 'hei', 'fune', 'toro',
   'icon_minka', 'icon_yadoya', 'icon_mise', 'icon_torii', 'icon_onsen',
   // 福島らしい景色（10/4・art_src/prep_scenery.py）
   'sakura', 'shidare', 'sakura2', 'momo_hana', 'momo_mi', 'kuwa', 'kuwa2', 'yukisugi', 'yuki', 'yuki2', 'kaki', 'kaki2',
+  // 会津の 紅葉と 南会津の 雪の 木（10/8・art_src/prep_season_trees.py・足もとは 落ち葉と 雪）
+  'momiji', 'icho', 'koyo', 'yukisugi2', 'kareki', 'yukimatsu',
   // 浜の景色（10/4・art_src/prep_beach.py）
   'toudai', 'gyosen', 'katsuo', 'tetra', 'hamamatsu', 'hoshidana', 'kobune', 'kamome', 'ami',
   // 町の建物（10/6・art_src/prep_buildings.py＝城下町・町の店・温泉と港）
@@ -40,7 +42,12 @@ export const KENPOKU_GROVES = [
 export const SHIDARE_AT = { kenpoku: [10, 40] };
 // ⭐会津（4章・10/6 本人「会津は紅葉、南会津は雪で」）＝林は紅葉・南の端（AIZU_SNOW_FROM_Y から南＝金山・沼沢湖）は雪の杉と雪の小山
 //   紅葉の木の絵が届くまでは 柿の木（実の橙）を借りる＝AIZU_AUTUMN を momiji に替える
-export const AIZU_AUTUMN = ['kaki', 'kaki2', 'kaki', 'forest']; // しだれ桜は1本だけ（二本松の桜の林のまん中）
+export const AIZU_AUTUMN = ['momiji', 'koyo', 'icho', 'momiji', 'koyo']; // 10/8 本人「会津は紅葉の木多め」＝紅葉の 木だけ（赤を 多めに・udf4oy）
+// 雪の 林（南会津と 会津の 南の 端）＝細い 雪の 杉を 主に、雪の 枯れ木・雪の 松・雪の 小山を 混ぜる（10/8 本人「南会津は雪の木多め」）
+export function snowGrove(x, y) {
+  const h = hash100(x, y);
+  return h < 55 ? 'yukisugi2' : h < 75 ? 'kareki' : h < 90 ? 'yukimatsu' : pick(['yuki', 'yuki2'], x, y);
+}
 
 // 林（T）のマスに置く木
 export function grovePiece(map, x, y) {
@@ -51,9 +58,9 @@ export function grovePiece(map, x, y) {
     const g = KENPOKU_GROVES.find((r) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1);
     return g ? pick(g.kinds, x, y) : base; // 安達ヶ原（y45〜）は暗い杉のまま
   }
-  if (map === 'minami') return vary(x, y) < 3 ? 'yukisugi' : pick(['yuki', 'yuki2'], x, y); // 終章 南会津は 全部 雪（10/8）
+  if (map === 'minami') return snowGrove(x, y); // 終章 南会津は 全部 雪
   if (map === 'aizu') {
-    if (y >= AIZU_SNOW_FROM_Y) return vary(x, y) < 3 ? 'yukisugi' : pick(['yuki', 'yuki2'], x, y);
+    if (y >= AIZU_SNOW_FROM_Y) return snowGrove(x, y);
     return pick(AIZU_AUTUMN, x, y);
   }
   const h = hash100(x, y);
@@ -77,9 +84,9 @@ export function seaPiece(map, x, y) {
 
 // 山（^）のマスに置く物。県北の西の山すそ（吾妻）は雪をかぶった杉と雪の小山
 export function mountainPiece(map, x, y) {
-  if (map === 'minami') return vary(x, y) < 3 ? 'snowmtn' : 'yukisugi'; // 終章 南会津（10/8）
+  if (map === 'minami') return vary(x, y) < 3 ? 'snowmtn' : 'yukisugi2'; // 終章 南会津（10/8・杉は 足もとが 雪の 方）
   if (map === 'aizu') {
-    if (y >= AIZU_SNOW_FROM_Y - 1) return vary(x, y) < 3 ? 'snowmtn' : 'yukisugi';
+    if (y >= AIZU_SNOW_FROM_Y - 1) return vary(x, y) < 3 ? 'snowmtn' : 'yukisugi2';
     return vary(x, y) < 1 ? 'snowmtn' : 'rockmtn'; // 磐梯山・猫魔ヶ岳の 頂は ところどころ 雪
   }
   if (map === 'kenpoku' && x <= 4) {
@@ -89,8 +96,21 @@ export function mountainPiece(map, x, y) {
   return x <= 3 && vary(x, y) < 2 ? 'snowmtn' : 'rockmtn';
 }
 
+// ⭐季節の 地面（10/8 本人「会津は緑の芝生→おうどいろの落ち葉、南会津は緑の芝生→白の雪」）＝芝生（grass）の マスだけ 張り替える（道・川・砂は そのまま）
+//   会津＝落ち葉（2枚を マスごとに 散らす＝1枚だと 柄が 碁盤の 目に 見える）・南の端（AIZU_SNOW_FROM_Y から南）と 南会津＝雪。町の中（townLook）は 触らない
+export function seasonGround(map, x, y) {
+  if (map === 'minami' || (map === 'aizu' && y >= AIZU_SNOW_FROM_Y)) return 'yuki';
+  if (map === 'aizu') return hash100(x + 5, y + 3) < 50 ? 'ochiba' : 'ochiba2';
+  return 'grass';
+}
+
 // 歩く地図：字 → { ground, objs: [名前…] }
 export function fieldLook(game, ch, x, y, map = 'field') {
+  const look = baseLook(game, ch, x, y, map);
+  return look.ground === 'grass' ? { ...look, ground: seasonGround(map, x, y) } : look;
+}
+
+function baseLook(game, ch, x, y, map) {
   // 名所の立て看板は 10/5 に消した（名前は 字だけ＝FieldScene.makeKanbanLabels）
   if (ROAD_OPENED_BY[ch]) return { ground: game.cleared?.[ROAD_OPENED_BY[ch]] ? 'road' : 'grass', objs: [] }; // 龍燈を戻すと現れる相馬への道（10/3）
   // お城クエストの 入口（10/7）＝お題を 受けるまでは ただの 草地・受けると 道しるべ
@@ -143,7 +163,9 @@ export function fieldLook(game, ch, x, y, map = 'field') {
     case '南': return { ground: 'road', objs: ['sekisho'] }; // 地図の口（会津⇔南会津・10/8 終章）
     case '檜': return { ground: 'grass', objs: ['icon_minka'] }; // 檜枝岐の村
     case '婆': return { ground: 'grass', objs: ['hokora'] }; // 橋場のばんば（参道の 途中の 祠・段1では 印だけ）
-    case '舞': return { ground: 'grass', objs: ['jinja'] }; // 檜枝岐の舞台（鎮守神社の 境内・段1では 印だけ）
+    case '舞': return { ground: 'grass', objs: ['jinja'] };
+    case '駒': return { ground: 'grass', objs: ['snowmtn'] }; // 会津駒ヶ岳の 登り口（10/8・絵が届くまで 雪山）
+    case '滝': return { ground: 'river', objs: ['rock'] }; // モーカケの滝（10/8・絵が届くまで 水と 岩） // 檜枝岐の舞台（鎮守神社の 境内・段1では 印だけ）
     case '.': return { ground: 'grass', objs: (map === 'minami' || (map === 'aizu' && y >= AIZU_SNOW_FROM_Y)) && hash100(x, y) < 22 ? [pick(['yuki', 'yuki2'], x, y)] : [] }; // 南会津の雪（雪の地面の絵が届くまで 雪の 小山を 散らす）
     // 温泉地（10/5 夜）＝温泉マーク（絵が届くまで 宿屋の記号を借りる・ONSEN_ICON）。名前は 立て看板と同じ 字だけ（kanban.js）
     case 'e':

@@ -1,19 +1,20 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=273';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=273';
-import { EPISODES } from '../data/episodes.js?v=273';
-import { revealAt } from '../ui/reveal.js?v=273';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=273';
-import { chooseCommands } from '../battle/auto.js?v=273';
-import { itemNote } from '../data/items.js?v=273';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=273';
-import { STORY_FILES } from '../data/story_assets.js?v=273';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=273';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=273';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=273';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=273';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=273';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=273';
-import { DUEL_BIG } from '../data/duel_assets.js?v=273';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=274';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=274';
+import { EPISODES } from '../data/episodes.js?v=274';
+import { revealAt } from '../ui/reveal.js?v=274';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=274';
+import { chooseCommands } from '../battle/auto.js?v=274';
+import { itemNote } from '../data/items.js?v=274';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=274';
+import { STORY_FILES } from '../data/story_assets.js?v=274';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=274';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=274';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=274';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=274';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=274';
+import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=274';
+import { DUEL_BIG } from '../data/duel_assets.js?v=274';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=274';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -446,11 +447,22 @@ export class BattleScene extends Phaser.Scene {
       let delay = Math.max(STEP_MS, [...pages[0]].length * MS_PER_CHAR); // 見せているページの字数で
       if (this.auto) delay = Math.max(600, delay / 2);
       if (m.hold) delay = Math.max(delay, m.hold); // 必殺技の挿絵を見せるあいだ（自動でも短くしない）
-      const timer = this.time.delayedCall(delay, next);
-      this.skip = () => {
+      let timer = this.time.delayedCall(delay, next);
+      const skip = () => {
         timer.remove(false);
+        if (m.voice) stopVoice();
         next();
       };
+      this.skip = skip;
+      // 声の ある 文（10/8 大将の お礼）＝届いている 声だけ 流し、声が 終わるまで 次へ 進まない（自動でも）
+      if (m.voice && STORY_FILES.includes(m.voice)) {
+        // playVoice は 鳴り終わってから 返る＝長さは 鳴りはじめの 知らせ（onStart）で 受けとる
+        playVoice(m.voice, (sec) => {
+          if (this.skip !== skip || !sec) return;
+          timer.remove(false);
+          timer = this.time.delayedCall(Math.max(delay, sec * 1000 + 500), next);
+        });
+      }
     };
     next();
   }
@@ -525,6 +537,8 @@ export class BattleScene extends Phaser.Scene {
         this.cameras.main.flash(450, r, g, b);
         this.cameras.main.shake(500, 0.022);
       }
+    } else if (fx.kind === 'jobfx') {
+      this.playJobFx(fx);
     } else if (fx.kind === 'mist') {
       this.updateMistBadge(fx.mist);
       this.tweens.add({ targets: this.mistBadge, alpha: 0.2, duration: 120, yoyo: true, repeat: 1 });
@@ -543,6 +557,64 @@ export class BattleScene extends Phaser.Scene {
       this.dragon.setTint(0xffd34d);
       this.time.delayedCall(500, () => this.dragon.clearTint());
     }
+  }
+
+  // ⭐4人の 技の 演出（10/8 本人「4人の必殺技を出すとき、効果音やエフェクトを多用してほしい、強い必殺技ほど派手に」）
+  // 段（jobs.js の tier）ごとの 重ね方は src/battle/jobfx.js の jobFxPlan＝光・揺れ・飛び散る 星・広がる 輪・技の 名の 帯・暗転・回る 光の 筋・二度目の 光・重ねる 音
+  // 色は 技の 種類（JOBFX_LOOK：斬る＝白金・術＝青白・回復＝若草・舞＝橙・守り＝金・封じ＝紫）
+  playJobFx(fx) {
+    const p = jobFxPlan(fx.tier);
+    const [r, g, b] = JOBFX_COLORS[fx.look] ?? JOBFX_COLORS.attack;
+    const col = (r << 16) | (g << 8) | b;
+    const cam = this.cameras.main;
+    const ADD = Phaser.BlendModes.ADD;
+    p.sfx.forEach((n, i) => this.time.delayedCall(i * 60, () => sfx(n)));
+    const burst = () => {
+      cam.flash(p.flash, r, g, b);
+      if (p.shake) cam.shake(p.flash + 80, p.shake);
+      for (let i = 0; i < p.sparks; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const d = 60 + Math.random() * (70 + 25 * p.tier);
+        const s = this.add.star(W / 2, ENEMY_Y, 4, 2, 5 + p.tier, col, 1).setDepth(820).setBlendMode(ADD);
+        this.tweens.add({ targets: s, x: W / 2 + Math.cos(a) * d, y: ENEMY_Y + Math.sin(a) * d, angle: 180, scale: 0.3, alpha: 0, duration: 450 + p.tier * 120, delay: i * 12, ease: 'Cubic.Out', onComplete: () => s.destroy() });
+      }
+      for (let k = 0; k < p.rings; k++) {
+        const ring = this.add.circle(W / 2, ENEMY_Y, 20, col, 0).setStrokeStyle(3 + p.tier, col, 0.9).setDepth(815).setBlendMode(ADD);
+        this.tweens.add({ targets: ring, scale: 6 + k * 1.5, alpha: 0, duration: 520, delay: k * 130, ease: 'Cubic.Out', onComplete: () => ring.destroy() });
+      }
+      if (p.rays) {
+        const rays = this.add.container(W / 2, ENEMY_Y).setDepth(810).setScale(0.2);
+        for (let i = 0; i < p.rays; i++) rays.add(this.add.rectangle(0, 0, 460, 10, col, 0.35).setAngle((i * 180) / p.rays).setBlendMode(ADD));
+        this.tweens.add({ targets: rays, scale: 1, angle: 40, duration: 500, ease: 'Cubic.Out' });
+        this.tweens.add({ targets: rays, alpha: 0, delay: 700, duration: 600, onComplete: () => rays.destroy() });
+      }
+      if (p.banner) this.skillBanner(fx.name, col, p.tier);
+      if (p.afterFlash) this.time.delayedCall(450, () => { cam.flash(300, 255, 255, 255); cam.shake(350, 0.016); });
+    };
+    if (p.darken) {
+      // 奥の手（4章の 技）＝いったん 暗く なって、力を ためてから はじける（音 waza4 の ドンが 0.45秒）
+      const veil = this.add.rectangle(0, 0, W, H, 0x000000, 1).setOrigin(0).setDepth(805).setAlpha(0); // 塗りは 1・全体の 透明度で 暗くする（塗り 0 だと 見えない）
+      this.tweens.add({ targets: veil, alpha: 0.7, duration: 420, onComplete: burst });
+      this.tweens.add({ targets: veil, alpha: 0, delay: 1300, duration: 400, onComplete: () => veil.destroy() });
+    } else burst();
+  }
+
+  // 技の 名の 帯（3章の 奥義・4章の 技）：左から すべりこむ 黒い 帯に 毛筆の 名前・上に「奥義」「秘奥義」
+  skillBanner(name, col, tier) {
+    const y = 250;
+    const h = tier >= 4 ? 74 : 58;
+    const box = this.add.container(-W, 0).setDepth(900);
+    const css = `#${col.toString(16).padStart(6, '0')}`;
+    const band = this.add.rectangle(0, y, W, h, 0x000000, 0.78).setOrigin(0, 0.5);
+    const edge = (dy) => this.add.rectangle(0, y + dy, W, tier >= 4 ? 3 : 2, col).setOrigin(0, 0.5);
+    const label = this.add.text(W / 2, y - h / 2 + 4, JOBFX_LABEL[tier] ?? '', { fontFamily: BRUSH_FONT, fontSize: '14px', color: css, resolution: 3 }).setOrigin(0.5, 0);
+    const title = this.add.text(W / 2, y + 8, name, { fontFamily: BRUSH_FONT, fontSize: tier >= 4 ? '30px' : '24px', color: '#ffffff', resolution: 3, stroke: '#1a1008', strokeThickness: 5 }).setOrigin(0.5);
+    if (title.width > W - 24) title.setScale((W - 24) / title.width);
+    box.add([band, edge(-h / 2), edge(h / 2), label, title]);
+    this.tweens.add({
+      targets: box, x: 0, duration: 200, ease: 'Cubic.Out',
+      onComplete: () => this.tweens.add({ targets: box, alpha: 0, delay: tier >= 4 ? 1300 : 900, duration: 250, onComplete: () => box.destroy() }),
+    });
   }
 
   // ---- 紙芝居（本人 10/2「挿絵とナレーションを付けて」「スキップを入れて。見たくない人もいる」）----
@@ -1037,12 +1109,12 @@ export class BattleScene extends Phaser.Scene {
 
   playBlessing(done) {
     const bl = this.ep.enemy.blessing;
-    const img = this.add.image(W / 2, ENEMY_Y + 10, key(this.ep, 'blessing')).setScale(2).setAlpha(0);
+    const img = this.add.image(W / 2, ENEMY_Y + 10 + (bl.dy ?? 0), key(this.ep, 'blessing')).setScale(bl.scale ?? 2).setAlpha(0); // dy＝上下（3Dの 大将は 足もとが 題の 帯に かかった） // scale＝3Dの 絵は 細かく 作って 等倍（10/8 大将）
     this.tweens.add({ targets: this.dragonLight, alpha: 0, duration: 1500 });
     this.tweens.add({ targets: img, alpha: 1, duration: 2000 });
     this.tweens.add({ targets: this.glowLight, alpha: 0.95, scale: 2.3, duration: 2000 });
     sfx('biwa'); // 琵琶の音とともに現れる（本人 10/1）
-    this.time.delayedCall(2000, () => this.showMessages(bl.lines.map((text) => ({ text })), done));
+    this.time.delayedCall(2000, () => this.showMessages(bl.lines.map((l) => (typeof l === 'string' ? { text: l } : l)), done)); // 行は 字だけ か { text, voice }（10/8 大将の お礼の 声）
   }
 
   // ---- 一騎打ちの試し（10/4 相馬の道場→10/5 職業の師匠）：1本ごとに勝ち負けを数え、決まるまで次の本目へ。2本取れば その章の技 ----

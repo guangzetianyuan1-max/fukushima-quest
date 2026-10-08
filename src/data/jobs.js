@@ -157,6 +157,13 @@ export const JOB_SPELLS = {
   yudono: { name: '湯殿の行', desc: '全員のHPと術を少しずつ戻す（1戦1回）', kind: 'heal', cost: 0, once: true, frac: 0.25, addMp: 0.25, sfx: 'hiwatari', verb: '湯の 滝に 打たれた', text: '湯殿の 行で 清めた 験力が、みなを 満たす！' },
 };
 
+// 技の 強さの 段（10/8 本人「強い必殺技ほど派手に」）＝はじめの技・1章の技＝1／2章＝2／3章の 奥義＝3／4章（会津）の 技＝4
+// 戦いの 演出（src/battle/jobfx.js・BattleScene.playJobFx）と 重ねる 音（chip.js の waza1〜4）が 段で 増える。効き目は 変えない
+for (const j of Object.values(JOBS)) {
+  if (j.basic) JOB_SPELLS[j.basic].tier = Math.max(JOB_SPELLS[j.basic].tier ?? 0, 1);
+  j.skills.forEach((id, i) => { JOB_SPELLS[id].tier = Math.max(JOB_SPELLS[id].tier ?? 0, i + 1); });
+}
+
 // 章ごとのクエスト（本人「章ごとに1つ」）。town＝師匠の立つ町・form＝試しの形（duel 一騎打ち／mondo 問答／kagura 神楽／mato 的当て／kagewatari 影渡り）
 // 段階①（10/5）＝1章・段階②（10/5 夜）＝2章・段階③（10/5 夜）＝3章。2章・3章の師匠は 温泉地（本人 10/5 夜「各温泉地に、必殺技クエストを散らして」）
 export const QUESTS = {

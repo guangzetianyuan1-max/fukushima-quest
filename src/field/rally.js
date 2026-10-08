@@ -2,8 +2,8 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=273';
-import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=273';
+import { TOWNS } from './towns.js?v=274';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=274';
 const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
 const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
@@ -22,20 +22,40 @@ export const CASTLE_RALLY = Object.fromEntries(Object.entries(CASTLE_QUESTS).map
   castle: CASTLE_NAME[t], lord: `${LORD_NAME[t]}の お殿様`, need: { boss: q.boss }, ask: q.ask.join(''),
 }]));
 
-// そろうと もらえる 道具（終章 檜枝岐の 舞台に 供える）
+// 終章 檜枝岐の 舞台に 供える 道具。⭐10/8 本人「もらいかたは全て戦い」＝ラリーが そろうと 取りに 行ける（そろって いない 間は 敵が 現れない）
+//   place＝取りに 行く 場所・foe＝そこで 戦う 相手（戦いは 段2b〜2d で 足す）
 export const RELICS = {
-  castle: { id: 'agehacho', name: '揚羽蝶の旗' },
-  onsen: { id: 'komahana', name: '駒ヶ岳の花' },
-  gourmet: { id: 'daihon', name: 'お伊勢参りの台本' },
+  castle: { id: 'agehacho', name: '揚羽蝶の旗', place: 'モーカケの滝', foe: '落人の 姫の 霊', at: '滝', boss: 'mokake' }, // 10/8 段2d
+  onsen: { id: 'komahana', name: '駒ヶ岳の花', place: '会津駒ヶ岳', foe: '平家の 落人の 家来', at: '駒', boss: 'ochikerai' }, // 10/8 段2c
+  gourmet: { id: 'daihon', name: 'お伊勢参りの台本', place: '橋場のばんば', foe: '橋場の ばんばさま', at: '婆', boss: 'banba' }, // 10/8 段2b
 };
+// at＝南会津の 地図の 字・boss＝そこで 戦う 相手（episodes.js の id）。勝つと その 道具（game.js の afterWin）
+export const RELIC_OF_BOSS = Object.fromEntries(Object.values(RELICS).filter((r) => r.boss).map((r) => [r.boss, r.id]));
 export const RALLY_NAME = { onsen: '福島温泉めぐり', gourmet: '福島グルメ', castle: 'お城クエスト' };
 
 const LISTS = { onsen: ONSEN_RALLY, gourmet: Object.keys(GOURMET_RALLY), castle: Object.keys(CASTLE_RALLY) };
 export const rallyKeys = (kind) => LISTS[kind];
 export const hasStamp = (game, kind, key) => !!game?.stamps?.[kind]?.[key];
 export const stampCount = (game, kind) => LISTS[kind].filter((k) => hasStamp(game, kind, k)).length;
+// ラリーが そろったか（そろうと 道具を 取りに 行ける）
+export const rallyDone = (game, kind) => stampCount(game, kind) === LISTS[kind].length;
+// 舞台（字 舞）の 幕（10/8 段2e）：道具3つ そろうと 手下 → 大将。足りない 間は need に 道具の 名前
+export function stageNext(game) {
+  const need = Object.values(RELICS).filter((r) => !game.relics?.[r.id]).map((r) => r.name);
+  if (need.length) return { need, next: null };
+  if (!game.cleared?.teshita) return { need, next: 'teshita' };
+  if (!game.cleared?.taisho) return { need, next: 'taisho' };
+  return { need, next: null };
+}
+// その 字の 前で「はなす」と 戦いに なる 相手（ラリーが そろい、まだ 戻して いない とき だけ）。そろって いない 間は null＝敵は 現れない（ばんばは にこにこ）
+export function relicFoeAt(game, ch) {
+  const kind = Object.keys(RELICS).find((k) => RELICS[k].at === ch);
+  const r = kind && RELICS[kind];
+  if (!r?.boss || game.cleared?.[r.boss] || !rallyDone(game, kind)) return null;
+  return r.boss;
+}
 
-// 判子を 押す。新しく 押せたら lines に 知らせ・そろったら 道具も（もう 押してあれば 何もしない）
+// 判子を 押す。新しく 押せたら lines に 知らせ・そろったら 道具の 手がかり（道具は 渡さない＝10/8 戦って もらう）（もう 押してあれば 何もしない）
 export function addStamp(game, kind, key) {
   if (!LISTS[kind].includes(key) || hasStamp(game, kind, key)) return { game, lines: [], added: false };
   const stamps = { ...(game.stamps ?? {}), [kind]: { ...(game.stamps?.[kind] ?? {}), [key]: true } };
@@ -45,10 +65,7 @@ export function addStamp(game, kind, key) {
   const place = kind === 'castle' ? CASTLE_RALLY[key].castle : TOWNS[key]?.name ?? key;
   const lines = [`${RALLY_NAME[kind]}：${place}の 判子を もらった！（${n} / ${total}）`];
   const relic = RELICS[kind];
-  if (n === total && !g.relics?.[relic.id]) {
-    g = { ...g, relics: { ...(g.relics ?? {}), [relic.id]: true } };
-    lines.push(`${RALLY_NAME[kind]}の 判子が ぜんぶ そろった！`, `「${relic.name}」を 授かった！`);
-  }
+  if (n === total) lines.push(`${RALLY_NAME[kind]}の 判子が ぜんぶ そろった！`, `「${relic.name}」の 手がかり：${relic.place}`);
   return { game: g, lines, added: true };
 }
 

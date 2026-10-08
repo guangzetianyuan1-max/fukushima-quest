@@ -1,5 +1,5 @@
-import { gearAt } from '../data/equip.js?v=273'; // 10/5 武器と防具は職業ごと＝店は段で並べる
-import { castleMaps } from './castle.js?v=273'; // 10/7 お城の 大広間と お題の 場所
+import { gearAt } from '../data/equip.js?v=274'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=274'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -485,7 +485,7 @@ export const TOWNS = {
     ],
   },
   hinoemata: {
-    name: '檜枝岐', cardPending: true, // 10/8 終章 南会津（村の 入口の 一枚絵が 届くまで 名前だけ）
+    name: '檜枝岐', // 10/8 終章 南会津（村の 入口の 一枚絵＝zhckyb・art_src/prep_cards.py）
     shrineName: '檜枝岐の 祠',
     shrineLine: '檜枝岐の 祠で 旅の 無事を お願いしましょう。参道の 先が 鎮守さまの 舞台よ。',
     npcs: [
@@ -498,7 +498,7 @@ export const TOWNS = {
       { spot: 'm3', look: 'machibito', lines: ['村の 鎮守さまの 境内に、茅葺きの 歌舞伎の 舞台が あるんだ。', '参道の 途中には ばんばさまも いなさる。'] },
       { spot: 'm4', look: 'kodomo', lines: ['この村には、平家の 落人の 子孫だと 伝わる 家が あるんだって。'] },
       { spot: 'm5', look: 'okami', lines: ['村の 歌舞伎は、お伊勢参りの 帰りに 江戸で 観た 芝居を まねたのが はじまりと 伝わるの。'] },
-      { spot: 'banba', look: 'toshiyori', lines: ['ばんばさまは、子宝と 水難除け、縁結びと 縁切りの 神さまじゃ。', '縁を 切りたい 者は、新しい はさみを 納めるんじゃよ。'] },
+      { spot: 'banba', look: 'toshiyori', lines: ['ばんばさまは、子どもを 水難から 守る 神さまじゃ。頭に お椀を かぶせて 祈ると、願いが かなうと いう。', '縁結びや 縁切りを 願う 者は、はさみを 納めるんじゃよ。'] }, // 10/8 はさみの 切れる／切れないの 対応は 出どころで 逆＝言わない
     ],
   },
   nakanosawa: {

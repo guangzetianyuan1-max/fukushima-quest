@@ -1,17 +1,18 @@
-import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=273';
-import { TitleScene } from './scenes/TitleScene.js?v=273';
-import { JobScene } from './scenes/JobScene.js?v=273';
-import { BattleScene } from './scenes/BattleScene.js?v=273';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=273';
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=273';
-import { HARAI } from './field/game.js?v=273';
-import { EQUIP } from './data/equip.js?v=273';
-import { EPISODES } from './data/episodes.js?v=273';
-import { unlock, isUnlocked } from './audio/chip.js?v=273';
-import { askTerms } from './ui/terms.js?v=273';
-import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=273';
-import { showLoading, preloadImages } from './ui/loading.js?v=273';
-import { PRELOAD_ASSETS } from './data/preload_assets.js?v=273';
+import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=274';
+import { TitleScene } from './scenes/TitleScene.js?v=274';
+import { JobScene } from './scenes/JobScene.js?v=274';
+import { BattleScene } from './scenes/BattleScene.js?v=274';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=274';
+import { EndingScene } from './scenes/EndingScene.js?v=274'; // 10/8 終わりの 場面
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=274';
+import { HARAI } from './field/game.js?v=274';
+import { EQUIP } from './data/equip.js?v=274';
+import { EPISODES } from './data/episodes.js?v=274';
+import { unlock, isUnlocked } from './audio/chip.js?v=274';
+import { askTerms } from './ui/terms.js?v=274';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=274';
+import { showLoading, preloadImages } from './ui/loading.js?v=274';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=274';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
@@ -66,7 +67,7 @@ async function start() {
     backgroundColor: '#000000',
     pixelArt: true,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [TitleScene, JobScene, FieldScene, BattleScene], // 題の画面 →（はじめから）職業を選ぶ → 歩く地図 ⇄ 戦い
+    scene: [TitleScene, JobScene, FieldScene, BattleScene, EndingScene], // 題の画面 →（はじめから）職業を選ぶ → 歩く地図 ⇄ 戦い
   });
 }
 
