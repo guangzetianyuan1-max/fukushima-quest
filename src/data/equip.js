@@ -1,12 +1,12 @@
 // 装備（本人 10/1「武器、防具の採用は無いか？」→「3」＝刀屋と装備の回）
 // 1人に3か所：weapon 武器／armor 防具／charm お守り。who＝着けられる人。買うとその場で着け、前の品は半値で引き取ってもらう
 // 序章いわきで買える所：平の刀屋（武器）・平の荒物屋（防具）・平の八幡さま（勝守）・湯本のお寺（厄除け守）
-import { JOBS, jobOf } from './jobs.js?v=274';
+import { JOBS, jobOf } from './jobs.js?v=275';
 
 export const EQUIP = {
   // ---- 武器と防具＝職業ごと（本人 10/5「武器、防具は職業別に作ってください」）。id＝<職業>_w<段>（武器 段0〜6）／<職業>_a<段>（防具 段1〜6）
   // 強さと値段は 段ごとに どの職業も同じ（前の 刀の段・防具の 旅の笠〜当世具足と同じ数＝強さ合わせは変わらない）
-  // 段0＝はじめに持つ・段1〜2＝序章の平・段3＝1章の小高・段4＝1章の相馬・段5＝2章・段6＝3章・段7＝4章 会津（10/6）
+  // 段0＝はじめに持つ・段1〜2＝序章の平・段3＝1章の小高・段4＝1章の相馬・段5＝2章・段6＝3章・段7＝4章 会津（10/6）・段8＝終章 田島（10/8 夜 本人「田島の町ではさらに強い武器と防具を」）
   // bushi
   bushi_w0: { name: '木の棒', slot: 'weapon', job: 'bushi', tier: 0, atk: 2, price: 0, icon: 'bou' },
   bushi_w1: { name: '木刀', slot: 'weapon', job: 'bushi', tier: 1, atk: 5, price: 30, icon: 'bokuto' },
@@ -23,6 +23,8 @@ export const EQUIP = {
   bushi_a5: { name: '大鎧', slot: 'armor', job: 'bushi', tier: 5, def: 22, price: 520 },
   bushi_a6: { name: '当世具足', slot: 'armor', job: 'bushi', tier: 6, def: 30, price: 820 },
   bushi_a7: { name: '黒漆の具足', slot: 'armor', job: 'bushi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  bushi_w8: { name: '雪華の太刀', slot: 'weapon', job: 'bushi', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  bushi_a8: { name: '金小札の大鎧', slot: 'armor', job: 'bushi', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // sou
   sou_w0: { name: '木の杖', slot: 'weapon', job: 'sou', tier: 0, atk: 2, price: 0 },
   sou_w1: { name: '樫の杖', slot: 'weapon', job: 'sou', tier: 1, atk: 5, price: 30, icon: 'kashizue' },
@@ -39,6 +41,8 @@ export const EQUIP = {
   sou_a5: { name: '緋の衣', slot: 'armor', job: 'sou', tier: 5, def: 22, price: 520 },
   sou_a6: { name: '金襴の袈裟', slot: 'armor', job: 'sou', tier: 6, def: 30, price: 820 },
   sou_a7: { name: '紫の袈裟', slot: 'armor', job: 'sou', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  sou_w8: { name: '水晶の如意', slot: 'weapon', job: 'sou', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  sou_a8: { name: '錦の袈裟', slot: 'armor', job: 'sou', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // yojutsu
   yojutsu_w0: { name: '檜扇', slot: 'weapon', job: 'yojutsu', tier: 0, atk: 2, price: 0 },
   yojutsu_w1: { name: '舞扇', slot: 'weapon', job: 'yojutsu', tier: 1, atk: 5, price: 30, icon: 'sensu' },
@@ -55,6 +59,8 @@ export const EQUIP = {
   yojutsu_a5: { name: '月の羽衣', slot: 'armor', job: 'yojutsu', tier: 5, def: 22, price: 520 },
   yojutsu_a6: { name: '九尾の羽衣', slot: 'armor', job: 'yojutsu', tier: 6, def: 30, price: 820 },
   yojutsu_a7: { name: '天女の羽衣', slot: 'armor', job: 'yojutsu', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  yojutsu_w8: { name: '玉藻の扇', slot: 'weapon', job: 'yojutsu', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  yojutsu_a8: { name: '月影の羽衣', slot: 'armor', job: 'yojutsu', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // ninja
   ninja_w0: { name: '小刀', slot: 'weapon', job: 'ninja', tier: 0, atk: 2, price: 0 },
   ninja_w1: { name: '短刀', slot: 'weapon', job: 'ninja', tier: 1, atk: 5, price: 30 },
@@ -71,6 +77,8 @@ export const EQUIP = {
   ninja_a5: { name: '黒鉄の帷子', slot: 'armor', job: 'ninja', tier: 5, def: 22, price: 520 },
   ninja_a6: { name: '影の装束', slot: 'armor', job: 'ninja', tier: 6, def: 30, price: 820 },
   ninja_a7: { name: '闇夜の装束', slot: 'armor', job: 'ninja', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  ninja_w8: { name: '朧月の忍び刀', slot: 'weapon', job: 'ninja', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  ninja_a8: { name: '夜叉の装束', slot: 'armor', job: 'ninja', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // rikishi（10/5 夕 本人「力士の武器で刃物はおかしい、素手が基本」＝手に巻く・はめる物。金剛の手甲＝力士の名の元の 金剛力士から）
   rikishi_w0: { name: '素手', slot: 'weapon', job: 'rikishi', tier: 0, atk: 2, price: 0 },
   rikishi_w1: { name: '晒しの巻き手', slot: 'weapon', job: 'rikishi', tier: 1, atk: 5, price: 30 },
@@ -87,6 +95,8 @@ export const EQUIP = {
   rikishi_a5: { name: '大関の化粧まわし', slot: 'armor', job: 'rikishi', tier: 5, def: 22, price: 520 },
   rikishi_a6: { name: '横綱の綱', slot: 'armor', job: 'rikishi', tier: 6, def: 30, price: 820 },
   rikishi_a7: { name: '雲竜の綱', slot: 'armor', job: 'rikishi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  rikishi_w8: { name: '大関の鉄手甲', slot: 'weapon', job: 'rikishi', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  rikishi_a8: { name: '横綱の化粧廻し', slot: 'armor', job: 'rikishi', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // yumi
   yumi_w0: { name: '竹の弓', slot: 'weapon', job: 'yumi', tier: 0, atk: 2, price: 0 },
   yumi_w1: { name: '半弓', slot: 'weapon', job: 'yumi', tier: 1, atk: 5, price: 30 },
@@ -103,6 +113,8 @@ export const EQUIP = {
   yumi_a5: { name: '小札の鎧', slot: 'armor', job: 'yumi', tier: 5, def: 22, price: 520 },
   yumi_a6: { name: '大将の鎧', slot: 'armor', job: 'yumi', tier: 6, def: 30, price: 820 },
   yumi_a7: { name: '緋縅の鎧', slot: 'armor', job: 'yumi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  yumi_w8: { name: '雷上動の弓', slot: 'weapon', job: 'yumi', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  yumi_a8: { name: '紺糸縅の鎧', slot: 'armor', job: 'yumi', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // miko
   miko_w0: { name: '大幣', slot: 'weapon', job: 'miko', tier: 0, atk: 2, price: 0 },
   miko_w1: { name: '神楽鈴', slot: 'weapon', job: 'miko', tier: 1, atk: 5, price: 30 },
@@ -119,6 +131,8 @@ export const EQUIP = {
   miko_a5: { name: '天冠と千早', slot: 'armor', job: 'miko', tier: 5, def: 22, price: 520 },
   miko_a6: { name: '神衣', slot: 'armor', job: 'miko', tier: 6, def: 30, price: 820 },
   miko_a7: { name: '白妙の神衣', slot: 'armor', job: 'miko', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  miko_w8: { name: '日輪の鉾', slot: 'weapon', job: 'miko', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  miko_a8: { name: '千早の神衣', slot: 'armor', job: 'miko', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // onmyo
   onmyo_w0: { name: '木の笏', slot: 'weapon', job: 'onmyo', tier: 0, atk: 2, price: 0 },
   onmyo_w1: { name: '桃の木の杖', slot: 'weapon', job: 'onmyo', tier: 1, atk: 5, price: 30 },
@@ -135,6 +149,8 @@ export const EQUIP = {
   onmyo_a5: { name: '陰陽の装束', slot: 'armor', job: 'onmyo', tier: 5, def: 22, price: 520 },
   onmyo_a6: { name: '天文の装束', slot: 'armor', job: 'onmyo', tier: 6, def: 30, price: 820 },
   onmyo_a7: { name: '星辰の装束', slot: 'armor', job: 'onmyo', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  onmyo_w8: { name: '七星の宝剣', slot: 'weapon', job: 'onmyo', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  onmyo_a8: { name: '天文の狩衣', slot: 'armor', job: 'onmyo', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // kusushi
   kusushi_w0: { name: '薬の匙', slot: 'weapon', job: 'kusushi', tier: 0, atk: 2, price: 0 },
   kusushi_w1: { name: '乳棒', slot: 'weapon', job: 'kusushi', tier: 1, atk: 5, price: 30 },
@@ -151,6 +167,8 @@ export const EQUIP = {
   kusushi_a5: { name: '錦の羽織', slot: 'armor', job: 'kusushi', tier: 5, def: 22, price: 520 },
   kusushi_a6: { name: '神農の衣', slot: 'armor', job: 'kusushi', tier: 6, def: 30, price: 820 },
   kusushi_a7: { name: '薬王の衣', slot: 'armor', job: 'kusushi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  kusushi_w8: { name: '霊芝の杖', slot: 'weapon', job: 'kusushi', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  kusushi_a8: { name: '桃源の衣', slot: 'armor', job: 'kusushi', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // yamabushi
   yamabushi_w0: { name: '山の杖', slot: 'weapon', job: 'yamabushi', tier: 0, atk: 2, price: 0 },
   yamabushi_w1: { name: '小錫杖', slot: 'weapon', job: 'yamabushi', tier: 1, atk: 5, price: 30 },
@@ -167,6 +185,8 @@ export const EQUIP = {
   yamabushi_a5: { name: '引敷と鈴懸', slot: 'armor', job: 'yamabushi', tier: 5, def: 22, price: 520 },
   yamabushi_a6: { name: '大峰の装束', slot: 'armor', job: 'yamabushi', tier: 6, def: 30, price: 820 },
   yamabushi_a7: { name: '羽黒の装束', slot: 'armor', job: 'yamabushi', tier: 7, def: 39, price: 1250 }, // 4章 会津（10/6）
+  yamabushi_w8: { name: '金剛の錫杖', slot: 'weapon', job: 'yamabushi', tier: 8, atk: 72, price: 2200 }, // 終章 田島（10/8 夜・絵＝6qdyc8・art_src/cut_gear_tier8.py）
+  yamabushi_a8: { name: '大峯の装束', slot: 'armor', job: 'yamabushi', tier: 8, def: 49, price: 1800 }, // 終章 田島（10/8 夜）
   // ---- だれでも着けられる物（景品の防具・お守り）
   mino: { name: '蓑', slot: 'armor', def: 6, price: 60 }, // 小名浜の釣りの景品（店では売らない）
   kachimori: { name: '勝守', slot: 'charm', atk: 2, price: 25 }, // 八幡さま＝武運の神さまと伝わる
@@ -177,6 +197,12 @@ export const EQUIP = {
   // 二本松の提灯祭りの景品（10/4）＝宵祭りで提灯に灯す 二本松神社の御神火にちなむ お守り（ゲームの作り）。ここでしか手に入らない
   gojinka: { name: '御神火の守り', slot: 'charm', atk: 4, def: 3, agi: 2, price: 0 },
   yakuyoke: { name: '厄除け守', slot: 'charm', ward: true, price: 25 }, // 呪い・取り憑きを半分はね返す
+  // お城の お題の 褒美（10/8 夜 本人「殿様クエで、殿様に報告しても何もない。味気が無い」）＝お殿様から いただく お守り。店では 売らない（rally.js の CASTLE_REWARD）。絵＝95ek0e・art_src/cut_reward_charms.py
+  r_taira: { name: '平の 殿の 扇', slot: 'charm', atk: 2, def: 2, agi: 1, price: 0 },
+  r_nakamura: { name: '九曜の 守り', slot: 'charm', atk: 3, def: 3, agi: 2, price: 0 }, // 九曜＝相馬氏の 家紋
+  r_nihonmatsu: { name: '霞ヶ城の 守り', slot: 'charm', atk: 4, def: 3, agi: 3, price: 0 },
+  r_shirakawa: { name: '白河の 関守り', slot: 'charm', atk: 5, def: 4, agi: 3, price: 0 },
+  r_aizuwakamatsu: { name: '鶴ヶ城の 守り刀', slot: 'charm', atk: 6, def: 5, agi: 4, price: 0 },
 };
 
 // その人が いま着けられるか（武器と防具＝その職業の品だけ・お守りと景品の防具＝だれでも）
@@ -266,7 +292,7 @@ const GEAR_AT = {
   1: [0, 0], 2: [0, 0], 3: [1, 0], 4: [1, 1], 5: [2, 1], 6: [2, 2], 7: [3, 2], 8: [4, 3], 9: [4, 4],
   10: [4, 4], 11: [5, 4], 12: [5, 4], 13: [5, 5], 14: [5, 5], 15: [5, 5], 16: [6, 5], 17: [6, 6], 18: [6, 6], 19: [6, 6], 20: [6, 6],
   21: [7, 6], 22: [7, 7], 23: [7, 7], 24: [7, 7], 25: [7, 7], // 4章 会津（10/6）＝猪苗代・若松で 7段目
-  26: [7, 7], 27: [7, 7], 28: [7, 7], 29: [7, 7], 30: [7, 7], // 終章 南会津（10/8 Lv30 まで）＝8段目の 装備は まだ（檜枝岐の 刀屋も 7段目）
+  26: [7, 7], 27: [7, 7], 28: [7, 7], 29: [7, 7], 30: [7, 7], // 終章 南会津（10/8 Lv30 まで）＝ボスの 強さは 7段目で 合わせた まま（8段目＝田島の 刀屋は 買えば 楽に なる ごほうび・10/8 夜）
 };
 export function expectEquipFor(lv, job) {
   const [wt, at] = GEAR_AT[Math.min(30, Math.max(1, lv))];

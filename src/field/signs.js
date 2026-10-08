@@ -5,6 +5,9 @@ export const SIGN_OF = {
   shrine: '神社', temple: '寺', kashi: '菓子', chaya: '茶屋', bansho: '番屋', fishing: '釣り',
 };
 
+// 建物が 無ければ 看板を 出さない 置き場（10/8）
+export const NEED_BUILDING = ['chaya'];
+
 // 店の人 n を 含む（または 左右・上で となる）建物
 function buildingOf(props, n) {
   const inside = (p, x, y) => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h;
@@ -22,6 +25,7 @@ export function townSigns(t) {
     const text = SIGN_OF[n.spot];
     if (!text || n.role === 'master' || n.guide) continue;
     const b = buildingOf(t.props, n);
+    if (!b && NEED_BUILDING.includes(n.spot)) continue; // 10/8 本人「『茶屋』は無い」＝温泉地の 茶屋の 人は 立っているだけ（建物が 無い）＝看板を 出さない
     // ⭐10/7 本人「文字を頭ひとつ上に。人物に被ります」＝人の 頭（1マス）より 上＝入口の 行の 2つ上の 行の 下の 辺
     if (b) out.push({ text, x: b.x + b.w / 2, y: b.y + b.h - 2, spot: n.spot });
     else out.push({ text, x: n.x + 0.5, y: n.y - 1, spot: n.spot }); // 建物が 無い＝人の 頭の さらに 上

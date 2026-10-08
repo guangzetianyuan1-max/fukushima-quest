@@ -4,7 +4,7 @@
 // 漁師になった少年 長吉は、海から戻ると海のめぐみと無事に帰れたことへの感謝を忘れなかった
 // ゲームでは、忘れられて黒いもやに呑まれた暮らしの守り神。弱点＝「海の幸への感謝」。倒すと元に戻り、長い腕で虎捕山への もやを払う
 // 絵＝10/3 届いた（1ukroq 呑まれた・z1hpg6 元の姿・3dcp6z 長い腕。①→挿絵→②の順で頼んで姿がそろった）。背景も届いた。プロンプト＝art_src/Geminiプロンプト_1章相馬.md
-import { BASIC_ITEMS } from './basic_items.js?v=274';
+import { BASIC_ITEMS } from './basic_items.js?v=275';
 
 export const TENAGA = {
   art: {

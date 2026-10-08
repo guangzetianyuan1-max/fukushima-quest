@@ -1,10 +1,10 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=274';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=274';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=274';
-import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=274';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=275';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=275';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=275';
+import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=275';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -162,6 +162,7 @@ function baseLook(game, ch, x, y, map) {
     case '津': return { ground: 'grass', objs: ['icon_mise'] }; // 柳津の町（圓藏寺の門前）
     case '南': return { ground: 'road', objs: ['sekisho'] }; // 地図の口（会津⇔南会津・10/8 終章）
     case '檜': return { ground: 'grass', objs: ['icon_minka'] }; // 檜枝岐の村
+    case '田': return { ground: 'grass', objs: ['icon_yadoya'] }; // 田島の町（10/8 夜・会津西街道の 宿場）
     case '婆': return { ground: 'grass', objs: ['hokora'] }; // 橋場のばんば（参道の 途中の 祠・段1では 印だけ）
     case '舞': return { ground: 'grass', objs: ['jinja'] };
     case '駒': return { ground: 'grass', objs: ['snowmtn'] }; // 会津駒ヶ岳の 登り口（10/8・絵が届くまで 雪山）

@@ -6,7 +6,7 @@ export const MINAMI_ROWS = [
   '^^^^^^^^^^^^^^八^^^^^^^^^^^^^^^',
   '^^^TTTTT......=.....wTTTTTT^^^',
   '^^^TTTTT......=.....wTTTTTT^^^',
-  '^^^TTTTT......=TTTT.wTTTTTT^^^',
+  '^^^TTTTT.....田=TTTT.wTTTTTT^^^',
   '^^^TTTTT......=TTTT.wTTTTTT^^^',
   '^^^...........=TTTT.wTTTTTT^^^',
   '^^^^^^^^^.....=TTTT.wTTTTTT^^^',

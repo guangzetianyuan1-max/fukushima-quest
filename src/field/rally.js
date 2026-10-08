@@ -2,8 +2,8 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=274';
-import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=274';
+import { TOWNS } from './towns.js?v=275';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=275';
 const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
 const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
@@ -31,6 +31,16 @@ export const RELICS = {
 };
 // at＝南会津の 地図の 字・boss＝そこで 戦う 相手（episodes.js の id）。勝つと その 道具（game.js の afterWin）
 export const RELIC_OF_BOSS = Object.fromEntries(Object.values(RELICS).filter((r) => r.boss).map((r) => [r.boss, r.id]));
+// お城の お題の 褒美（10/8 夜）＝文と その土地に ちなむ お守り（equip.js の r_<町>・強さは お題の 順に 上がる）
+export const CASTLE_REWARD = {
+  taira: { mon: 300, charm: 'r_taira' }, nakamura: { mon: 500, charm: 'r_nakamura' }, nihonmatsu: { mon: 700, charm: 'r_nihonmatsu' },
+  shirakawa: { mon: 900, charm: 'r_shirakawa' }, aizuwakamatsu: { mon: 1200, charm: 'r_aizuwakamatsu' },
+};
+// 褒美の お守りを who に 着ける（前の お守りは 家老に あずける＝消える）
+export function wearReward(game, id, who) {
+  const equip = { ...(game.equip ?? {}), [who]: { ...(game.equip?.[who] ?? {}), charm: id } };
+  return { game: { ...game, equip }, old: game.equip?.[who]?.charm ?? null };
+}
 export const RALLY_NAME = { onsen: '福島温泉めぐり', gourmet: '福島グルメ', castle: 'お城クエスト' };
 
 const LISTS = { onsen: ONSEN_RALLY, gourmet: Object.keys(GOURMET_RALLY), castle: Object.keys(CASTLE_RALLY) };
@@ -88,8 +98,18 @@ export function lordTalk(game, town) {
   // 10/7 夜 判子が あっても 怪物を 戻して いなければ お題へ（10/6 の 決まりで 先に 判子を もらった 記録は、お題を 受けられず 鬼ヶ城山に 入れなかった）
   if (hasStamp(game, 'castle', town) && game.cleared?.[cq.boss]) return { game, lines: [say(`よう 来た。そなたらの 働き、${q.castle}の 者は みな 忘れぬぞ。`)], done: true };
   if (game.cleared?.[cq.boss]) {
+    // 10/8 夜 本人「殿様に報告しても何もない。味気が無い」＝侍が 並ぶ 中で 礼と 褒美（文＋お守り）→ 判子
+    const rw = CASTLE_REWARD[town];
     const r = addStamp(game, 'castle', town);
-    return { game: r.game, lines: [say(`おお、${cq.place}の もやを はらって くれたか。礼を 言うぞ。`), ...r.lines], done: true };
+    const g = { ...r.game, mon: (r.game.mon ?? 0) + rw.mon };
+    const lines = [
+      '侍たちが 大広間に ずらりと 並んだ……',
+      say(`おお、${cq.place}の もやを はらって くれたか。礼を 言うぞ。`),
+      say(`この 働き、${q.castle}の 者は みな 忘れぬ。褒美を とらせよう。`),
+      `褒美に ${rw.mon}文を いただいた！`,
+      ...r.lines,
+    ];
+    return { game: g, lines, done: true, charm: rw.charm };
   }
   // 依頼は その章を 終えてから（10/7 本人）＝章の 最後の ボスを 戻すまでは 断る
   if (!questAccepted(game, town) && !game.cleared?.[cq.after]) {

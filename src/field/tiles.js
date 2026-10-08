@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=274';
+import { makeRng } from '../battle/rules.js?v=275';
 
 export const TILE = 16;
 
@@ -108,7 +108,7 @@ export const FIELD_TERRAIN = {
   亀: ['boss', true], 猫: ['boss', true], 足: ['boss', true], 朱: ['boss', true], 牛: ['boss', true], 河: ['boss', true], 狐: ['boss', true], 沼: ['boss', true],
   一: ['mist', false], 二: ['mist', false], 三: ['mist', false], 四: ['mist', false], 五: ['mist', false], 六: ['mist', false], 七: ['mist', false],
   // 10/8 終章 南会津：南＝会津⇔南会津の口・八＝その もや（沼御前）・檜＝檜枝岐の村・婆＝橋場のばんば（段1は 印だけ）・九＝参道の もや（ばんば）・舞＝檜枝岐の舞台（段1は 印だけ）
-  南: ['road', true], 八: ['mist', false], 檜: ['town_yumoto', true], 婆: ['grass', false], 九: ['mist', false], 舞: ['grass', false], 駒: ['grass', false], 滝: ['grass', false], // 駒＝会津駒ヶ岳の 登り口・滝＝モーカケの滝（10/8 段2a・いまは 印だけ）
+  南: ['road', true], 八: ['mist', false], 檜: ['town_yumoto', true], 田: ['town_yumoto', true], 婆: ['grass', false], 九: ['mist', false], 舞: ['grass', false], 駒: ['grass', false], 滝: ['grass', false], // 駒＝会津駒ヶ岳の 登り口・滝＝モーカケの滝（10/8 段2a・いまは 印だけ）
   ア: ['grass', true], イ: ['grass', true], ウ: ['grass', true], エ: ['grass', true], オ: ['grass', true], // 10/7 お城クエストの 入口（お題を 受けると ひらく・castle.js）
 };
 export const TOWN_TERRAIN = {

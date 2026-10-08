@@ -2,12 +2,12 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=274';
-import { SOMA_ROWS } from './soma_map.js?v=274';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=274';
-import { KENCHU_ROWS } from './kenchu_map.js?v=274';
-import { AIZU_ROWS } from './aizu_map.js?v=274';
-import { MINAMI_ROWS } from './minami_map.js?v=274';
+import { IWAKI_ROWS } from './iwaki_map.js?v=275';
+import { SOMA_ROWS } from './soma_map.js?v=275';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=275';
+import { KENCHU_ROWS } from './kenchu_map.js?v=275';
+import { AIZU_ROWS } from './aizu_map.js?v=275';
+import { MINAMI_ROWS } from './minami_map.js?v=275';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS, minami: MINAMI_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
@@ -35,25 +35,25 @@ export const KANBAN_DEFS = [
   { map: 'field', at: [31, 26], kind: 'meisho', name: '塩屋埼灯台', lines: ['いわきの 岬に 立つ 白い 灯台。'] },
   { map: 'field', near: 'E', kind: 'michi', name: 'この先 相馬', lines: ['北へ 行けば 相馬の 里。'] },
   // 1章 相馬
-  { map: 'soma', near: 'M', kind: 'shiro', name: '相馬中村城跡', lines: ['相馬氏の 城が あった所。いまは 相馬中村神社が まつられている。'] },
-  { map: 'soma', near: 'Q', kind: 'shiro', name: '小高城跡', lines: ['相馬氏が 中村城へ 移るまで、およそ 280年 城を 置いた所。'] },
+  { map: 'soma', near: 'M', kind: 'shiro', name: '相馬中村城', lines: ['相馬氏の 城。いまは 城の 中に 相馬中村神社が まつられている。'] }, // 10/8 夜 本人「小峰城跡→小峰城に変更。お城で跡は消してほしい」
+  { map: 'soma', near: 'Q', kind: 'shiro', name: '小高城', lines: ['相馬氏が 中村城へ 移るまで、およそ 280年 置いた 城。'] },
   { map: 'soma', at: [27, 4], kind: 'meisho', name: '鵜ノ尾埼灯台', lines: ['相馬の 松川浦の 入口の 岬に 立つ 灯台。'] },
   { map: 'soma', near: 'E', kind: 'michi', name: 'この先 いわき', lines: ['南へ 行けば いわきの 里。'] },
   { map: 'soma', near: 'X', kind: 'michi', name: 'この先 県北', lines: ['西へ 山を こえれば 福島・二本松。'] },
   // 2章 県北
   { map: 'kenpoku', near: 'U', kind: 'meisho', name: '福島・信夫山', lines: ['福島の 町の なかに ある 山。'] },
-  { map: 'kenpoku', near: 'W', kind: 'shiro', name: '二本松城跡（霞ヶ城）', lines: ['石垣の 残る 城あと。いまは 霞ヶ城公園。', '春は 桜の 名所。'] },
+  { map: 'kenpoku', near: 'W', kind: 'shiro', name: '二本松城（霞ヶ城）', lines: ['石垣の 残る 城。いまは 霞ヶ城公園。', '春は 桜の 名所。'] },
   { map: 'kenpoku', near: 'X', kind: 'michi', name: 'この先 相馬', lines: ['東へ 山を こえれば 相馬の 里。'] },
   { map: 'kenpoku', near: 'I', kind: 'michi', name: 'この先 郡山', lines: ['南へ 行けば 郡山・須賀川・白河。'] },
   // 3章 県中・県南（10/4）
   { map: 'kenchu', near: 'I', kind: 'michi', name: 'この先 二本松', lines: ['北へ 行けば 二本松の 城下。'] },
   { map: 'kenchu', near: 'm', kind: 'hana', name: '三春滝桜', lines: ['樹齢 千年を こえると いわれる しだれ桜。国の 天然記念物。'] },
-  { map: 'kenchu', near: 'v', kind: 'shiro', name: '白河小峰城跡', lines: ['白河藩の 城あと。石垣と 三重櫓が ある。'] },
+  { map: 'kenchu', near: 'v', kind: 'shiro', name: '小峰城', lines: ['白河藩の 城。石垣と 三重櫓が ある。'] },
   // 4章 会津（10/6・vault 2026-10-06 調べノートで 確かめた 事だけ）
   { map: 'kenchu', near: '関', kind: 'michi', name: 'この先 会津', lines: ['西へ 峠を こえれば 会津。'] },
   { map: 'aizu', near: '関', kind: 'michi', name: 'この先 白河', lines: ['東へ 峠を 下れば 白河。'] },
   { map: 'aizu', near: '若', kind: 'shiro', name: '会津若松・鶴ヶ城', lines: ['会津若松の 城。蒲生氏郷が 鶴ヶ城と 名づけたと 伝わる。'] },
-  { map: 'aizu', near: '亀', kind: 'shiro', name: '亀ヶ城跡', lines: ['戦国の ころ、鶴ヶ城の 支城として 築かれた 城あと。いまは 桜と 紅葉の 名所。'] },
+  { map: 'aizu', near: '亀', kind: 'shiro', name: '亀ヶ城', lines: ['戦国の ころ、鶴ヶ城の 支城として 築かれた 城。いまは 桜と 紅葉の 名所。'] },
   // 町の名前（10/6 本人「会津で町やお城の名前が表記されていない」）
   { map: 'aizu', near: '苗', kind: 'meisho', name: '猪苗代', lines: ['猪苗代湖の 北の 町。'] },
   { map: 'aizu', near: '津', kind: 'meisho', name: '柳津', lines: ['只見川の ほとりの 門前町。'] },
@@ -73,6 +73,7 @@ export const KANBAN_DEFS = [
   { map: 'aizu', near: '南', kind: 'michi', name: 'この先 南会津', lines: ['南へ 山を 越えれば 南会津。'] },
   { map: 'minami', near: '南', kind: 'michi', name: 'この先 会津', lines: ['北へ 山を 越えれば 金山。'] },
   { map: 'minami', near: '檜', kind: 'meisho', name: '檜枝岐', lines: ['福島県の 南西の 端の 村。尾瀬の 入口に あたる。'] },
+  { map: 'minami', near: '田', kind: 'meisho', name: '田島', lines: ['会津西街道の 宿場町。夏の 祇園祭で 知られる。'] }, // 10/8 夜
   { map: 'minami', near: '駒', kind: 'meisho', name: '会津駒ヶ岳', lines: ['高さ 2133メートルの 山。'] },
   { map: 'minami', near: '滝', kind: 'meisho', name: 'モーカケの滝', lines: ['平家の 姫の 裳を 掛けた 姿に 似ていると 伝わる 滝（ほかの 説も ある）。'] }, // 10/8 七入〜御池の 道ぞい
   { map: 'minami', at: [23, 35], kind: 'meisho', name: '燧ヶ岳', lines: ['高さ 2356メートルの 山。尾瀬国立公園の 山の ひとつ。'] },

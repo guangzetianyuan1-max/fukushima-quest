@@ -1,10 +1,10 @@
 // 終わりの 場面（10/8 段6・本人「語り返し＋エンドロール」）。計算は src/field/ending.js
 // 字を 1つずつ 出して 待つ → さわると 早送り（とばしは 無し）。最後に 記録へ「終えた 印」を 残して 題の 画面へ
-import { GAME_FONT } from '../ui/fonts.js?v=274';
-import { startBgm, stopBgm, playVoice, stopVoice } from '../audio/chip.js?v=274';
-import { STORY_FILES } from '../data/story_assets.js?v=274';
-import { ENDING_OPEN, endingRoll, shioriLines, shioriVoices, CREDITS, markEnded } from '../field/ending.js?v=274';
-import { save, slotKey } from '../field/game.js?v=274';
+import { GAME_FONT } from '../ui/fonts.js?v=275';
+import { startBgm, stopBgm, playVoice, stopVoice } from '../audio/chip.js?v=275';
+import { STORY_FILES } from '../data/story_assets.js?v=275';
+import { ENDING_OPEN, endingRoll, shioriLines, shioriVoices, CREDITS, markEnded } from '../field/ending.js?v=275';
+import { save, slotKey } from '../field/game.js?v=275';
 
 const W = 360;
 const H = 640;
