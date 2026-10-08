@@ -5,7 +5,7 @@
 //   舞台＝鎮守神社の 境内の 茅葺きの 舞台（いまも 歌舞伎が 奉納される）＝「怪物の 巣」に しない（最後の 演目として 舞台の 上で 戦う）
 // 紙芝居の 影絵＝本人の 動画「平家の落人」（第5回）の 影絵 C19・C41・C42・C53 を 正方形に 切って 使う（10/8 本人「大将戦では昔話(影絵)を入れて欲しい。平家の落人のやつ」）
 // 弱点＝昔話の 語り返し（設計書 10/1「旅の者が、これまで集めた昔話を語り返す」）。勝つと FieldScene が 終わりの 場面（EndingScene）へ
-import { BASIC_ITEMS } from './basic_items.js?v=281';
+import { BASIC_ITEMS } from './basic_items.js?v=282';
 
 export const TAISHO = {
   art: {
@@ -62,12 +62,11 @@ export const TAISHO = {
       '舞台に、黒い もやが ほどけて 消えていく……',
       '揚羽蝶の 鎧の 大将が、元の 姿を 取りもどした。',
     ],
-    // 10/8 本人「この対象を3D化で出して、成仏させてくれてありがとうと礼を言って欲しい」＝金の 光の 中に 3Dの 大将（弁天さまと 同じ 作り＝BattleScene.playBlessing・琵琶の 音）
-    // 3Dの 絵＝本人が Gemini で 描いた hgkt3d（10/8・目を 閉じて ほほえむ）。⭐ドット絵の 道具（150ドット）に 通すと 3Dが 潰れる＝緑を 抜いて 高さ300で 作り 等倍で 出す（scale 1）
+    // 10/8 本人「成仏させてくれてありがとうと礼を言って欲しい」＝金の 光と 琵琶の 音（BattleScene.playBlessing）。（10/8 は 3Dの 大将 hgkt3d を 出したが 10/9 に 外した）
     blessing: {
-      image: 'assets/taisho_3d.png', scale: 1, dy: -18,
+      // ⛔10/9 本人「最後のボスの3Dは消してください。2Dの戦い後の姿で」＝image を 持たない（戻った 2Dの 姿 taisho_light の まま 光と お礼）。前＝taisho_3d.png
       lines: [
-        '金色の 光の 中に、大将が 静かに 姿を あらわした。',
+        '金色の 光が、大将を やさしく つつんだ。', // 10/9 2Dの まま＝「姿を あらわした」は 合わない
         // 10/8 本人「最後の大将のお礼の声は？」「自動録音して入れて欲しい」＝大将が 話す 2行に 声（Gemini TTS の Algenib＝男の 低い 声・art_src/gemini_tts.py --voice Algenib）
         { text: '大将「旅の 者たちよ。わしらの 無念を 語り返し、成仏させて くれて……ありがとう。」', voice: 'assets/story/taisho_bless_1.mp3' },
         { text: '大将「福島の 昔話を、これからも 語り継いで くだされ。」', voice: 'assets/story/taisho_bless_2.mp3' },

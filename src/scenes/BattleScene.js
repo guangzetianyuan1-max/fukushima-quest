@@ -1,20 +1,20 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=281';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=281';
-import { EPISODES } from '../data/episodes.js?v=281';
-import { revealAt } from '../ui/reveal.js?v=281';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=281';
-import { chooseCommands } from '../battle/auto.js?v=281';
-import { itemNote } from '../data/items.js?v=281';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=281';
-import { STORY_FILES } from '../data/story_assets.js?v=281';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=281';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=281';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=281';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=281';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=281';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=281';
-import { DUEL_BIG } from '../data/duel_assets.js?v=281';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=281';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=282';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=282';
+import { EPISODES } from '../data/episodes.js?v=282';
+import { revealAt } from '../ui/reveal.js?v=282';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=282';
+import { chooseCommands } from '../battle/auto.js?v=282';
+import { itemNote } from '../data/items.js?v=282';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=282';
+import { STORY_FILES } from '../data/story_assets.js?v=282';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=282';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=282';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=282';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=282';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=282';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=282';
+import { DUEL_BIG } from '../data/duel_assets.js?v=282';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=282';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -89,7 +89,7 @@ export class BattleScene extends Phaser.Scene {
     }
     // 元に戻ったあとに現れる人（賢沼の弁天さまなど）
     const bl = this.ep.enemy.blessing;
-    if (bl && !this.textures.exists(key(this.ep, 'blessing'))) this.load.image(key(this.ep, 'blessing'), bl.image);
+    if (bl?.image && !this.textures.exists(key(this.ep, 'blessing'))) this.load.image(key(this.ep, 'blessing'), bl.image); // image の 無い お礼＝戻った 2Dの 姿の まま（10/9 大将）
     const hp = this.ep.enemy.helper; // 助っ人の絵（10/6 おこん母子から・無ければ文だけ）
     if (hp?.image && !this.textures.exists(key(this.ep, 'helper'))) this.load.image(key(this.ep, 'helper'), hp.image);
     // 紙芝居の挿絵（届いている物だけ読む＝ STORY_FILES は art_src/prep_story.py が書く）
@@ -1112,9 +1112,12 @@ export class BattleScene extends Phaser.Scene {
 
   playBlessing(done) {
     const bl = this.ep.enemy.blessing;
-    const img = this.add.image(W / 2, ENEMY_Y + 10 + (bl.dy ?? 0), key(this.ep, 'blessing')).setScale(bl.scale ?? 2).setAlpha(0); // dy＝上下（3Dの 大将は 足もとが 題の 帯に かかった） // scale＝3Dの 絵は 細かく 作って 等倍（10/8 大将）
-    this.tweens.add({ targets: this.dragonLight, alpha: 0, duration: 1500 });
-    this.tweens.add({ targets: img, alpha: 1, duration: 2000 });
+    // 10/9 本人「最後のボスの3Dは消してください。2Dの戦い後の姿で」＝image の 無い お礼は 戻った 2Dの 姿を 残し、光と 文だけ 重ねる
+    if (bl.image) {
+      const img = this.add.image(W / 2, ENEMY_Y + 10 + (bl.dy ?? 0), key(this.ep, 'blessing')).setScale(bl.scale ?? 2).setAlpha(0); // dy＝上下 // scale＝絵の 倍率
+      this.tweens.add({ targets: this.dragonLight, alpha: 0, duration: 1500 });
+      this.tweens.add({ targets: img, alpha: 1, duration: 2000 });
+    }
     this.tweens.add({ targets: this.glowLight, alpha: 0.95, scale: 2.3, duration: 2000 });
     sfx('biwa'); // 琵琶の音とともに現れる（本人 10/1）
     this.time.delayedCall(2000, () => this.showMessages(bl.lines.map((l) => (typeof l === 'string' ? { text: l } : l)), done)); // 行は 字だけ か { text, voice }（10/8 大将の お礼の 声）
