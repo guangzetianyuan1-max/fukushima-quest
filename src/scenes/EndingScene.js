@@ -1,10 +1,10 @@
 // 終わりの 場面（10/8 段6・本人「語り返し＋エンドロール」）。計算は src/field/ending.js
 // 字を 1つずつ 出して 待つ → さわると 早送り・右上の「とばす」で おわりへ（10/9 本人「最後のエンドロールが長い。スキップを付けて欲しい」）。最後に 記録へ「終えた 印」を 残して 題の 画面へ
-import { GAME_FONT } from '../ui/fonts.js?v=279';
-import { startBgm, stopBgm, playVoice, stopVoice } from '../audio/chip.js?v=279';
-import { STORY_FILES } from '../data/story_assets.js?v=279';
-import { ENDING_OPEN, endingRoll, shioriLines, shioriVoices, CREDITS, markEnded } from '../field/ending.js?v=279';
-import { save, slotKey } from '../field/game.js?v=279';
+import { GAME_FONT } from '../ui/fonts.js?v=280';
+import { startBgm, stopBgm, playVoice, stopVoice } from '../audio/chip.js?v=280';
+import { STORY_FILES } from '../data/story_assets.js?v=280';
+import { ENDING_OPEN, endingRoll, shioriLines, shioriVoices, CREDITS, markEnded } from '../field/ending.js?v=280';
+import { save, slotKey } from '../field/game.js?v=280';
 
 const W = 360;
 const TITLE_VIDEO = 'assets/title_dance.mp4?v=2'; // TitleScene と 同じ（作り直したら 両方の 番号を 上げる）
@@ -26,6 +26,8 @@ export class EndingScene extends Phaser.Scene {
     this.fast = false;
     this.skipping = false;
     this.done = false;
+    this.stopSakura = null;
+    this.events.once('shutdown', () => this.stopSakura?.()); // 夜桜の 動画を 場面と 一緒に 止める
     // とばす（10/9）＝声を 止めて「おわり」へ。終えた 印は 下で 先に 残すので 記録は 同じ
     const skipBtn = this.add.text(W - 14, 26, 'とばす ▶▶', { fontFamily: GAME_FONT, fontSize: '17px', color: '#cfd8ff', resolution: 3, backgroundColor: '#1a1638', padding: { x: 10, y: 8 } })
       .setOrigin(1, 0.5).setDepth(10).setInteractive();
@@ -139,7 +141,7 @@ export class EndingScene extends Phaser.Scene {
       all.forEach((o) => o.destroy());
     }
     // しおりの 語り（10/9 本人「最後のしおりのかたりは、初めの画面、桜と3Dしおりで語って欲しい」）＝題の 画面の 夜桜と 3Dの しおりの 舞（動画）＋桜吹雪。字は 下の 帯の 上
-    const stage = this.sakuraStage();
+    const stage = this.skipping ? [] : this.sakuraStage(); // とばした 後は 作らない（10/9 読み手）
     this.tweens.add({ targets: stage, alpha: 1, duration: 1000 });
     if (!this.skipping) await this.wait(1200);
     const voices = shioriVoices(g);

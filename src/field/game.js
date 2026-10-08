@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=279';
-import { kanbanAt } from './kanban.js?v=279';
-import { SOMA_ROWS } from './soma_map.js?v=279';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=279';
-import { KENCHU_ROWS } from './kenchu_map.js?v=279';
-import { AIZU_ROWS } from './aizu_map.js?v=279';
-import { MINAMI_ROWS } from './minami_map.js?v=279';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=279';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=279';
-import { withGates } from './castle.js?v=279';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=279';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=279';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=279';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=279';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=279';
-import { becomeKunoichi } from './kagewatari.js?v=279';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=279';
-import { RELIC_OF_BOSS } from './rally.js?v=279'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=279'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=280';
+import { kanbanAt } from './kanban.js?v=280';
+import { SOMA_ROWS } from './soma_map.js?v=280';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=280';
+import { KENCHU_ROWS } from './kenchu_map.js?v=280';
+import { AIZU_ROWS } from './aizu_map.js?v=280';
+import { MINAMI_ROWS } from './minami_map.js?v=280';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=280';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=280';
+import { withGates } from './castle.js?v=280';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=280';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=280';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=280';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=280';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=280';
+import { becomeKunoichi } from './kagewatari.js?v=280';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=280';
+import { RELIC_OF_BOSS } from './rally.js?v=280'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=280'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -444,7 +444,15 @@ export const BOSS_MON = { onigajo: 160, usunuma: 280, oniishi: 560, kenkatsura: 
 // もう一度 戦う（10/9 本人「クリアすると戦えないので、もういちどボスと戦うのコマンドを」）＝図鑑の 札から 倒した ボスに 挑み直す
 //   勝っても 負けても 旅の 進み（倒した 印・道具・お礼の 文・仲間・終わりの 場面）は 変えない。勝ち＝HPと 道具だけ 持ち帰る／負け＝挑む 前の まま 地図へ
 export function afterRematch(game, state) {
-  return state?.over === 'win' ? { ...settle(game, state), justCleared: null } : { ...game, justCleared: null };
+  // 10/9 読み手の 指摘：settle は 力つきた 人・呪い・盗まれた 物・取られた 文まで 持ち帰り、勝つと 負けより 損に なった
+  //   ⇒ 勝ち＝道具と、戦う 前に 生きていて 最後まで 立っていた 人の HP・術の力 だけ／それ以外（倒れた・呪い・盗み・文）は 戦う 前の まま
+  if (state?.over !== 'win') return { ...game, justCleared: null };
+  const party = { ...game.party };
+  for (const a of state.allies ?? []) {
+    const p = game.party?.[a.id];
+    if (p && !p.dead && a.alive !== false && a.hp > 0) party[a.id] = { ...p, hp: a.hp, mp: a.mp };
+  }
+  return { ...game, party, items: { ...state.items }, justCleared: null };
 }
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）

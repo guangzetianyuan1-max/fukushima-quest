@@ -1,7 +1,8 @@
 // 終わりの 場面（10/8 段6・本人「語り返し＋エンドロール」）：画面と 切り離した 計算だけ（src/scenes/EndingScene.js が 見せる）
 // 流れ＝幕が 下りる → 福島じゅうの もやが 晴れ、落人たちが 光に なって 昇る → 元に 戻した 主たちが 話の 順に 流れる → しおりの 語りで 締める → 作り手 →「おわり」→ 題の 画面
 // ⭐筋の芯（10/8 本人）＝大将の 怨念が 県内の もやを 作っていた・4人が 制覇すると 晴れて 落人も 成仏
-import { EPISODES, PRELUDE } from '../data/episodes.js?v=279';
+import { EPISODES, PRELUDE } from '../data/episodes.js?v=280';
+import { ORDERED } from './collection.js?v=280';
 
 export const ENDING_OPEN = [
   '幕が、静かに 下りた……',
@@ -11,7 +12,7 @@ export const ENDING_OPEN = [
 
 // 元に 戻した 主たち（話の 順・お城の お題も）。絵＝元の 姿（art.light）
 export function endingRoll(game) {
-  return EPISODES.filter((e) => game?.cleared?.[e.enemy.id]).map((e) => ({
+  return ORDERED.filter((e) => game?.cleared?.[e.enemy.id]).map((e) => ({ // 10/9 図鑑と 同じ 並び（お城の お題は 最後）
     id: e.enemy.id, episode: e.enemy.episode, tale: e.enemy.tale, place: e.enemy.place.replace(/^福島県/, ''), img: e.art.light,
   }));
 }
