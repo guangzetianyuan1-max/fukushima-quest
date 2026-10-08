@@ -1,20 +1,20 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=278';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=278';
-import { EPISODES } from '../data/episodes.js?v=278';
-import { revealAt } from '../ui/reveal.js?v=278';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=278';
-import { chooseCommands } from '../battle/auto.js?v=278';
-import { itemNote } from '../data/items.js?v=278';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=278';
-import { STORY_FILES } from '../data/story_assets.js?v=278';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=278';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=278';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=278';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=278';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=278';
-import { battleData, afterWin, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=278';
-import { DUEL_BIG } from '../data/duel_assets.js?v=278';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=278';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=279';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=279';
+import { EPISODES } from '../data/episodes.js?v=279';
+import { revealAt } from '../ui/reveal.js?v=279';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=279';
+import { chooseCommands } from '../battle/auto.js?v=279';
+import { itemNote } from '../data/items.js?v=279';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=279';
+import { STORY_FILES } from '../data/story_assets.js?v=279';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=279';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=279';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=279';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=279';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=279';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=279';
+import { DUEL_BIG } from '../data/duel_assets.js?v=279';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=279';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -64,6 +64,7 @@ export class BattleScene extends Phaser.Scene {
     this.zakoId = this.fromField ? data?.zako ?? null : null;
     // data.duel ＝ 相馬の道場の試し合い（何本目か・10/4 武士になるクエスト）
     this.duel = this.fromField ? data?.duel ?? null : null;
+    this.rematch = this.fromField && !!data?.rematch; // 図鑑からの もう一度（10/9）＝進みを 変えない
     if (this.duel) this.ep = duelData(this.registry.get('game'), this.duel);
     else if (this.zakoId) this.ep = zakoData(this.registry.get('game'), this.zakoId, data.zone);
     else this.ep = this.fromField ? battleData(this.registry.get('game'), EPISODES[this.index]) : EPISODES[this.index];
@@ -1067,7 +1068,7 @@ export class BattleScene extends Phaser.Scene {
       this.state.enemy.restored = true;
       this.time.delayedCall(2100, () => {
         // もらえる力と、文（歩く地図から来た戦いだけ。本人 10/2「ボスを倒した際は、お金を多めに。ここでは50文」）
-        const rewards = [{ text: e.reward }, ...(this.fromField && BOSS_MON[e.id] ? [{ text: `お礼に 文を ${BOSS_MON[e.id]} もらった！`, sfx: 'eat' }] : [])];
+        const rewards = [{ text: e.reward }, ...(this.fromField && !this.rematch && BOSS_MON[e.id] ? [{ text: `お礼に 文を ${BOSS_MON[e.id]} もらった！`, sfx: 'eat' }] : [])];
         // ほんとうの結末：紙芝居があれば挿絵と声で、無ければ「昔話」の文で
         const tail = e.story?.after
           ? () => this.playStory('after', () => this.showMessages(rewards, () => this.showAfterWin()))
@@ -1175,6 +1176,10 @@ export class BattleScene extends Phaser.Scene {
       this.cameras.main.once('camerafadeoutcomplete', () => this.scene.start('title'));
     })];
     // 必ず負ける1回目（2章 鬼婆）：記録へ戻らず、町の宿で目をさます（文も減らない）
+    if (this.rematch) {
+      this.showMenu('', [['地図へ もどる', once(() => this.backToField(afterRematch(this.registry.get('game'), this.state)))], quit]);
+      return;
+    }
     if (this.fromField && this.state?.enemy?.forcedLose) {
       this.showMenu('', [['……', once(() => this.backToField(afterForcedLose(this.registry.get('game'), this.ep.enemy.id)))]]);
       return;
@@ -1188,6 +1193,10 @@ export class BattleScene extends Phaser.Scene {
 
   // 勝ったあと：つぎの話があれば「つぎの話へ」、無ければ準備中と伝える
   showAfterWin() {
+    if (this.rematch) {
+      this.showMenu('', [['地図へ もどる', once(() => this.backToField(afterRematch(this.registry.get('game'), this.state)))]]);
+      return;
+    }
     if (this.fromField) {
       this.showMenu('', [['旅を つづける', once(() => this.backToField(afterWin(this.registry.get('game'), this.ep.enemy.id, this.state)))]]);
       return;

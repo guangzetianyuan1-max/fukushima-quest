@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=278';
-import { kanbanAt } from './kanban.js?v=278';
-import { SOMA_ROWS } from './soma_map.js?v=278';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=278';
-import { KENCHU_ROWS } from './kenchu_map.js?v=278';
-import { AIZU_ROWS } from './aizu_map.js?v=278';
-import { MINAMI_ROWS } from './minami_map.js?v=278';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=278';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=278';
-import { withGates } from './castle.js?v=278';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=278';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=278';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=278';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=278';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=278';
-import { becomeKunoichi } from './kagewatari.js?v=278';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=278';
-import { RELIC_OF_BOSS } from './rally.js?v=278'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=278'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=279';
+import { kanbanAt } from './kanban.js?v=279';
+import { SOMA_ROWS } from './soma_map.js?v=279';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=279';
+import { KENCHU_ROWS } from './kenchu_map.js?v=279';
+import { AIZU_ROWS } from './aizu_map.js?v=279';
+import { MINAMI_ROWS } from './minami_map.js?v=279';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=279';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=279';
+import { withGates } from './castle.js?v=279';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=279';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=279';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=279';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=279';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=279';
+import { becomeKunoichi } from './kagewatari.js?v=279';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=279';
+import { RELIC_OF_BOSS } from './rally.js?v=279'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=279'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -440,6 +440,12 @@ function settle(game, state) {
 // 勝った：ボスを元に戻した印・残った道具・HP（力つきた仲間は幽霊のまま）
 // ボスを元に戻したお礼の文（本人 10/2「ボスを倒した際は、お金を多めに出して。ここでは50文」＝松川様50・あとは順に増やす＝Claudeの決め）
 export const BOSS_MON = { onigajo: 160, usunuma: 280, oniishi: 560, kenkatsura: 1050, kagaminuma: 1700, matsukawa: 50, kashinuma: 70, jagan: 90, ryuto: 120, zarukaburi: 150, daihisan: 170, tenaga: 190, sumitora: 240, amekai: 280, gobou: 300, mukade: 360, heppiri: 380, onibaba: 500, jakotsu: 540, miharugoma: 560, otakimaru: 620, nekonaki: 640, tengu: 700, takuzen: 720, kappa: 780, kiyohime: 1000, kamehime: 1050, nekoma: 1100, ashinaga: 1150, shunobon: 1200, akabeko: 1250, nawakappa: 1300, okon: 1350, numagozen: 1600, banba: 1800, ochikerai: 1900, mokake: 1900, teshita: 1000, taisho: 3000 }; // banba＝終章（10/8） // 4章（10/6） // 3章（10/4） // 1章は順に多め（Claudeの決め）・ザルカブリは10/4から戦う（本人）
+
+// もう一度 戦う（10/9 本人「クリアすると戦えないので、もういちどボスと戦うのコマンドを」）＝図鑑の 札から 倒した ボスに 挑み直す
+//   勝っても 負けても 旅の 進み（倒した 印・道具・お礼の 文・仲間・終わりの 場面）は 変えない。勝ち＝HPと 道具だけ 持ち帰る／負け＝挑む 前の まま 地図へ
+export function afterRematch(game, state) {
+  return state?.over === 'win' ? { ...settle(game, state), justCleared: null } : { ...game, justCleared: null };
+}
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
 export function afterWin(game, enemyId, state) {
