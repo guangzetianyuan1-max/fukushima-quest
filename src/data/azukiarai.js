@@ -4,8 +4,8 @@
 // ⚠記録は 金山町（只見川の 下流）＝只見町の 記録では ない。補足（hosoku）で そう 言う。姿を 見た 話は 無い＝聞こえるのは 音だけ
 // ⭐悪者に しない：もやに 呑まれて 暴れた・戻すと また 静かに 小豆を 研ぐ だけの 者
 // 場所＝只見の 町の 奥の 只見川の 沢（castle.js の SAWA・字 豆）。勝つと 田島の 南の 壁 十 が 晴れて 檜枝岐へ
-// 絵（ボス・挿絵・背景）は 10/9 届いた。紙芝居（影絵 4枚と 声）は 届いたら story を 足す
-import { BASIC_ITEMS } from './basic_items.js?v=283';
+// 絵（ボス・挿絵・背景）・紙芝居（影絵 4枚と 声）・アイキャッチ（挿絵 小豆の 雨から）は 10/9 そろった
+import { BASIC_ITEMS } from './basic_items.js?v=284';
 
 export const AZUKIARAI = {
   art: {
@@ -46,6 +46,17 @@ export const AZUKIARAI = {
       '夜に なると、ザックザックと 小豆を 研ぐ 音が する。怖くて、だれも 沢の 近くを 通らなかった そうよ。',
       '……もやに 呑まれて しまったのね。只見川の せせらぎを 聞かせて あげましょう。',
     ],
+    // 紙芝居（10/9 本人の 影絵 4qq2bc・3r5g0s・o742nb・e7fn31／声＝AI Studio Sulafat・台本＝置き場 紙芝居_只見の小豆洗い.md）
+    story: {
+      tell: [
+        { img: 'assets/story/azukiarai_1.png', voice: 'assets/story/azukiarai_1.mp3', text: '只見川の 沢には、むかしから 小豆洗いが 出ると 伝わるの。夜に なると、ザックザック、ザックザックと、小豆を 研ぐ 音が 聞こえてきた そうよ。' },
+        { img: 'assets/story/azukiarai_2.png', voice: 'assets/story/azukiarai_2.mp3', text: '姿を 見た 人は いないの。聞こえるのは、小豆を 研ぐ 音だけ。村の 人たちは 怖がって、沢の 近くを 通らなかった そうよ。' },
+        { img: 'assets/story/azukiarai_3.png', voice: 'assets/story/azukiarai_3.mp3', text: 'けれど 山を こえて 流れてきた 黒い もやが、沢の 小豆洗いを 呑みこんで しまった……。思い出させて あげましょう。只見川の せせらぎを。' },
+      ],
+      after: [
+        { img: 'assets/story/azukiarai_4.png', voice: 'assets/story/azukiarai_4.mp3', text: 'ほんとうに 伝わっているのは、只見川の 沢に 小豆洗いが 出たと いう 言い伝え。記録に 残っているのは、只見川の 流れる、金山町の お話なの。' },
+      ],
+    },
     revealText: '小豆洗いの 弱点が 明かされた！ 只見川の せせらぎが よく効くように なった。',
     restoreLines: [
       '沢に、黒い もやが ほどけて 消えていく……',
