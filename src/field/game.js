@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=290';
-import { kanbanAt } from './kanban.js?v=290';
-import { SOMA_ROWS } from './soma_map.js?v=290';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=290';
-import { KENCHU_ROWS } from './kenchu_map.js?v=290';
-import { AIZU_ROWS } from './aizu_map.js?v=290';
-import { MINAMI_ROWS } from './minami_map.js?v=290';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=290';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=290';
-import { withGates } from './castle.js?v=290';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=290';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=290';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=290';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=290';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=290';
-import { becomeKunoichi } from './kagewatari.js?v=290';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=290';
-import { RELIC_OF_BOSS } from './rally.js?v=290'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=290'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=291';
+import { kanbanAt } from './kanban.js?v=291';
+import { SOMA_ROWS } from './soma_map.js?v=291';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=291';
+import { KENCHU_ROWS } from './kenchu_map.js?v=291';
+import { AIZU_ROWS } from './aizu_map.js?v=291';
+import { MINAMI_ROWS } from './minami_map.js?v=291';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=291';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=291';
+import { withGates } from './castle.js?v=291';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=291';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=291';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=291';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=291';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=291';
+import { becomeKunoichi } from './kagewatari.js?v=291';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=291';
+import { RELIC_OF_BOSS } from './rally.js?v=291'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=291'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -196,6 +196,14 @@ const TOWN_LABEL = { odaka: '小高', nakamura: '相馬', fukushima: '福島', n
 // ⭐屋根のマス（10/5 夜 本人「町や城で、屋根の上に乗るのは辞めて」）＝町の建物の絵（props）の はみ出し
 // 歩く地図の城（look.js が shiro を置く字）の真上は止めない（本人「上から二本松城に入れない」）＝FieldScene が 真上に立つ間だけ 城の絵を人の手前に重ねる
 export const CASTLE_CHARS = ['H', 'M', 'W', 'v', '若']; // 若＝会津若松（鶴ヶ城の城下・10/6）
+// 歩く地図の 大きな 置き物（10/9 本人「三春のもやの隣に大きな桜(三春桜)が欲しい」「もやと文字が隠れないように」）
+// x, y＝左上の マス・w×h マスに 幅を 合わせ 下の 辺を そろえて 描く（FieldScene）。置いた マスは 歩けない
+// 三春滝桜＝三春の もや（m 26,20）の 左に 1列 あけて 22〜24・20〜22。名前「三春滝桜」は もやの 上の 道の 行（19）＝重ならない
+export const FIELD_PROPS = [
+  { map: 'kenchu', x: 22, y: 20, w: 3, h: 3, img: 'takizakura' },
+];
+export const PROP_CELLS = {};
+for (const p of FIELD_PROPS) for (let y = p.y; y < p.y + p.h; y++) for (let x = p.x; x < p.x + p.w; x++) (PROP_CELLS[p.map] ??= new Set()).add(`${x},${y}`);
 export const ROOFS = Object.fromEntries(Object.entries(TOWNS).map(([id, t]) => [id, roofCells(t.props)]));
 
 // from＝いま立っている所（画面の居場所。無ければ game.pos）＝技の要る壁の 向こう側から 戻れるかに使う
@@ -203,6 +211,7 @@ export function canWalk(game, map, x, y, from = null) {
   const t = terrainAt(map, x, y);
   if (!t) return false;
   if (ROOFS[map]?.has(`${x},${y}`)) return false;
+  if (PROP_CELLS[map]?.has(`${x},${y}`)) return false;
   if (isField(map) && WALL_OPENED_BY[t.ch]) return wallOpen(game, t.ch) || ((!!game.cleared[WALL_OPENED_BY[t.ch]] || BACK_ALWAYS.has(t.ch)) && onFarSide(game, map, t.ch, x, y, from));
   return t.walk;
 }

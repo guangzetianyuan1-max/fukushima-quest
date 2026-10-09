@@ -2,7 +2,7 @@
 //   →「新しい遊び方を少しずつ」→「柳津以外のアトラクションも全部進めて」）。柳津の縄のぼりは hadaka.js
 // 題材は 10/7 ネットで 確かめた事だけ（世話役の 台詞は towns.js）。遊び方は 7つとも 違う形にした
 // 計算は画面と切り離す（画面は src/scenes/attractionsUI.js）。どれも 点（pts）を 返し、点は 景品と 換える
-import { exchangePrize } from './fishing.js?v=290';
+import { exchangePrize } from './fishing.js?v=291';
 
 // ---- 平：じゃんがら念仏踊り「打ち方まね」＝鉦（K）と太鼓（T）の 打ち方を 覚えて 真似る。合うたびに 1つ 長くなる ----
 export const JANGARA_START = 3;

@@ -1,11 +1,11 @@
 // 歩く地図の見た目（Gemini の絵・2026-10-02 本人「いわきを作り直し」）
 // 1マス＝地面（assets/tiles/g_*.png・32×32）＋上に置く物（o_*.png・下の辺をマスの下にそろえる）
 // 通れるかどうかは tiles.js の TERRAIN のまま（見た目だけを変える）
-import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=290';
-import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=290';
-import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=290';
-import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=290';
-import { endFoeReady } from './rally.js?v=290';
+import { AIZU_SNOW_FROM_Y } from './aizu_map.js?v=291';
+import { BOSS_AT, WALL_OPENED_BY, ROAD_OPENED_BY, wallOpen } from './game.js?v=291';
+import { kanbanAt, KANBAN_KINDS } from './kanban.js?v=291';
+import { QUEST_BOSS_AT, GATE_OF, questAccepted } from './castle.js?v=291';
+import { endFoeReady } from './rally.js?v=291';
 
 // 温泉マーク（10/5 夜 l65904・岩の露天風呂と湯小屋）
 export const ONSEN_ICON = 'icon_onsen';
@@ -18,6 +18,8 @@ export const OBJECTS = [
   'sakura', 'shidare', 'sakura2', 'momo_hana', 'momo_mi', 'kuwa', 'kuwa2', 'yukisugi', 'yuki', 'yuki2', 'kaki', 'kaki2',
   // 会津の 紅葉と 南会津の 雪の 木（10/8・art_src/prep_season_trees.py・足もとは 落ち葉と 雪）
   'momiji', 'icho', 'koyo', 'yukisugi2', 'kareki', 'yukimatsu',
+  // 三春の もやの 隣の 大きな 三春滝桜（10/9・art_src/prep_takizakura.py・3×3マス＝game.js の FIELD_PROPS）
+  'takizakura',
   // 浜の景色（10/4・art_src/prep_beach.py）
   'toudai', 'gyosen', 'katsuo', 'tetra', 'hamamatsu', 'hoshidana', 'kobune', 'kamome', 'ami',
   // 町の建物（10/6・art_src/prep_buildings.py＝城下町・町の店・温泉と港）
