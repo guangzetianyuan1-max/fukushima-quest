@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=347';
-import { kanbanAt } from './kanban.js?v=347';
-import { SOMA_ROWS } from './soma_map.js?v=347';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=347';
-import { KENCHU_ROWS } from './kenchu_map.js?v=347';
-import { AIZU_ROWS } from './aizu_map.js?v=347';
-import { MINAMI_ROWS } from './minami_map.js?v=347';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=347';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=347';
-import { withGates } from './castle.js?v=347';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=347';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=347';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=347';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=347';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=347';
-import { becomeKunoichi } from './kagewatari.js?v=347';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=347';
-import { RELIC_OF_BOSS } from './rally.js?v=347'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=347'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=348';
+import { kanbanAt } from './kanban.js?v=348';
+import { SOMA_ROWS } from './soma_map.js?v=348';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=348';
+import { KENCHU_ROWS } from './kenchu_map.js?v=348';
+import { AIZU_ROWS } from './aizu_map.js?v=348';
+import { MINAMI_ROWS } from './minami_map.js?v=348';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=348';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=348';
+import { withGates } from './castle.js?v=348';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=348';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=348';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=348';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=348';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=348';
+import { becomeKunoichi } from './kagewatari.js?v=348';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=348';
+import { RELIC_OF_BOSS } from './rally.js?v=348'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=348'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -562,11 +562,17 @@ export function encounterAt(game, map, x, y, rng) {
   // その章の10体の絵がそろうまでは いわきの北の顔ぶれを強めて出す（ZONE_SCALE）
   const chapterList = CHAPTER_OF_MAP[map] ? chapterPool(game, CHAPTER_OF_MAP[map]) : [];
   const pool = map === 'field' ? zone : 'north';
-  const list = chapterList.length ? chapterList : Object.keys(ZAKO).filter((id) => !ZAKO[id].pending && !ZAKO[id].retired).filter((id) => ZAKO[id].zones.includes(pool)
+  const list = chapterList.length ? chapterList : Object.keys(ZAKO).filter((id) => !ZAKO[id].pending && !ZAKO[id].retired && !ZAKO[id].rare).filter((id) => ZAKO[id].zones.includes(pool)
     || (ch === '=' && ZAKO[id].zones.includes('road'))
     || (ch === ',' && ZAKO[id].zones.includes('coast')));
-  return list.length ? { id: list[Math.floor(rng() * list.length)], zone } : null;
+  if (!list.length) return null;
+  // 10/10 本人「暴走族、サラリーマン、いじめられっ子、ホステス、ギャルを使いたい」＝まれに 今の 時代の 人（レア）
+  if (rng() >= 1 - RARE_RATE) return { id: RARE_IDS[Math.floor(rng() * RARE_IDS.length)], zone, rare: true }; // 乱数の 大きい 側（決め打ちの 0 では 出ない）
+  return { id: list[Math.floor(rng() * list.length)], zone };
 }
+export const RARE_IDS = Object.keys(ZAKO).filter((id) => ZAKO[id].rare);
+export const RARE_RATE = 1 / 100; // 道中の 出会いの 約100回に1回（10/10 本人「約100回に1回にしてほしい」・はじめは 30回に1回）
+export const RARE_REWARD = 3;    // 経験と 文は 3倍（まれに しか 会えない ぶん）
 
 // 章の地図と、その章のボス（元に戻した数で 出てくる雑魚の強さの上限が上がる）
 export const CHAPTER_OF_MAP = { soma: 1, kenpoku: 2, kenchu: 3, aizu: 4, minami: 5 }; // minami＝終章（10/8）
@@ -610,11 +616,11 @@ export function zakoData(game, zakoId, zone) {
     spells: { harai: HARAI },
     enemy: {
       id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone] ?? {}; return { hp: Math.round(z.hp * (k.hp ?? 1)), atk: Math.round(z.atk * (k.atk ?? 1)), def: Math.round(z.def * (k.def ?? 1)) }; })(), agi: z.agi,
-      rewardRate: ZONE_SCALE[zone]?.reward ?? 1,
+      rewardRate: (ZONE_SCALE[zone]?.reward ?? 1) * (z.rare ? RARE_REWARD : 1), rare: !!z.rare,
       monCut: PAY_CUT[zone]?.zako ?? 1, // 10/10 後半は 文だけ 少し 削る（経験は そのまま）
       bgm: { soma: 'somaBattle', kenpoku: 'kenpokuBattle', kenchu: 'kenchuBattle', aizu: 'aizuBattle', minami: 'minamiBattle' }[zone], // 1章の道中の曲（10/3「章ごとにBGMは新しく」） // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
       weakness: null, noWeak: true, canFlee: true, trick: z.trick ?? null, special: null,
-      biteName: z.biteName, introText: z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,
+      biteName: z.biteName, introText: z.rare ? `めずらしい 相手だ！ ${z.introText}` : z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,
       loseLines: ['旅の者たちは 力つきた……'],
       itemNames: Object.fromEntries(Object.entries(ITEMS).map(([id, it]) => [id, it.name])),
     },

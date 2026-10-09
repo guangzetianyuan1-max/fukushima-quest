@@ -1,5 +1,6 @@
 // 道中の敵（序章いわき）。本人 10/1「道中の敵は癖のあるキャラクター（①スリ 道具を盗む ②呪い ③幽霊が取り付く・それぞれ町で回復）」
 // ＋「追加①暴走族 ②ヤクザ ③ホステス ④漁師」（今の姿のまま＝忘れのもやが今の世の者まで引き寄せた）
+// ⭐10/10 本人「暴走族、サラリーマン、いじめられっ子、ホステス、ギャルを使いたい」＝この5体は rare（どの 地図でも 道中の 出会いの 約100回に1回・その 章の 強さで・経験と 文は 3倍＝game.js の RARE_RATE／RARE_REWARD）。残りは retired の まま
 // ⏸10/2 本人「奇抜なてきも消してほしい」＝今の時代の12人は retired（道中に出ない・データと絵は取っておく）。いまは昔話らしい4体（狐火・狸・藁人形・さまよい霊）だけ
 // どれも もやに当てられた者。倒すと正気に戻り、ひと言しゃべって去る（漁師や夜の町で働く人を悪者にしない）
 // trick＝癖（rules.js の enemyAct が見る）。chance の見込みで、ふつうの攻撃の代わりに出す
@@ -43,7 +44,7 @@ export const ZAKO = {
     restoreLines: ['霊は 「だれかに 思い出して ほしかった」と つぶやいて、うすれていった。'],
   },
   bosozoku: {
-    name: '暴走族', retired: true, hp: 28, atk: 11, def: 4, agi: 13, exp: 8, mon: 8,
+    name: '暴走族', rare: true, hp: 28, atk: 11, def: 4, agi: 13, exp: 8, mon: 8,
     biteName: '体当たり', zones: ['road'],
     trick: { kind: 'noise', chance: 0.3 },
     introText: 'けたたましい 音を 立てて、バイクが 突っ込んできた！',
@@ -57,7 +58,7 @@ export const ZAKO = {
     restoreLines: ['ヤクザは 目を ぱちくりさせ、「……すまねえ、どうかしてた」と 頭を 下げて 去っていった。'],
   },
   hostess: {
-    name: 'ホステス', retired: true, hp: 26, atk: 8, def: 3, agi: 11, exp: 8, mon: 10,
+    name: 'ホステス', rare: true, hp: 26, atk: 8, def: 3, agi: 11, exp: 8, mon: 10,
     biteName: '扇子で ぴしゃり', zones: ['midSouth', 'midNorth'],
     trick: { kind: 'charm', chance: 0.3 },
     introText: '「あら、いい男。ちょっと 寄って いかない？」',
@@ -81,7 +82,7 @@ export const ZAKO = {
   },
   ijime: {
     // 殴って笑う相手にしない：もやに当てられて うずくまる子。目をさまさせると 自分で顔を上げる
-    name: 'いじめられっ子', retired: true, hp: 10, atk: 3, def: 1, agi: 9, exp: 3, mon: 1,
+    name: 'いじめられっ子', rare: true, hp: 10, atk: 3, def: 1, agi: 9, exp: 3, mon: 1,
     biteName: 'やけくその パンチ', zones: ['midSouth', 'south'],
     trick: { kind: 'runaway', chance: 0.35 },
     introText: 'うつむいた 子が、黒い もやの 中で ふるえている……',
@@ -96,7 +97,7 @@ export const ZAKO = {
   },
   // ---- 追加3人（本人 10/1「追加①サラリーマン ②ラーメン屋 ③寿司屋」）。pending＝絵がまだ ----
   salaryman: {
-    name: 'サラリーマン', retired: true, hp: 26, atk: 9, def: 4, agi: 8, exp: 7, mon: 9,
+    name: 'サラリーマン', rare: true, hp: 26, atk: 9, def: 4, agi: 8, exp: 7, mon: 9,
     biteName: '名刺 手裏剣', zones: ['road', 'midNorth'],
     trick: { kind: 'drink', chance: 0.25, amount: 12 },
     introText: '「ま、まだ 帰れないんです……」と、目の下に くまを つくった 男が 立ちふさがった！',
@@ -118,7 +119,7 @@ export const ZAKO = {
   },
   // 本人 10/1「追加①AV女優 ②ギャル」→ ギャルだけ入れた（AV女優は性的な役になる・ストアの年齢区分・芯から外れる＝見送り）
   gal: {
-    name: 'ギャル', retired: true, hp: 22, atk: 8, def: 3, agi: 12, exp: 6, mon: 7,
+    name: 'ギャル', rare: true, hp: 22, atk: 8, def: 3, agi: 12, exp: 6, mon: 7,
     biteName: 'デコった スマホで ぺしっ', zones: ['midNorth', 'midSouth'],
     trick: { kind: 'blind', chance: 0.3 },
     introText: '「え、ちょ、旅人とか まじ ウケるんですけど！」',
