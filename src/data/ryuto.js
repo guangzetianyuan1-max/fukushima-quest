@@ -1,5 +1,5 @@
 // 龍燈の龍と戦う1場面のデータ。数値は試算（500戦）で決めた：自動＝498勝（必殺技は運なので、まれに負ける）・語らないと0勝。
-import { BASIC_ITEMS } from './basic_items.js?v=333';
+import { BASIC_ITEMS } from './basic_items.js?v=334';
 
 export const RYUTO = {
   // 絵（art_src/prep_art.py ryuto で整えた物）と、敵の後ろの光：呑まれた間は月明かり／戻ったら金色
