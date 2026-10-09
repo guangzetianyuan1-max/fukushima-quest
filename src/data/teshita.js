@@ -4,7 +4,7 @@
 // 2体同時（twin＝毎ターン 二人とも 動く・体力は ひとつ）。弱点＝揚羽蝶の 旗（主の 紋に 膝を つく）
 // 駒ヶ岳の 家来（ochikerai）とは 姿と 名前を 分ける＝こちらは 鎧の 弓取りと 槍持ち
 // 勝つと 地図へ 戻らず そのまま 大将（taisho）へ（FieldScene の FINAL_CHAIN）
-import { BASIC_ITEMS } from './basic_items.js?v=345';
+import { BASIC_ITEMS } from './basic_items.js?v=346';
 
 export const TESHITA = {
   art: {
@@ -30,7 +30,7 @@ export const TESHITA = {
     episode: '最終話', // 10/9 本人「ラスボスは最終話にしてください」（前＝第三十三話）
     tale: '平家の落人（手下）',
     place: '福島県檜枝岐村',
-    autoWinTarget: 0.8, // 終章の 中ボス（10/8）
+    autoWinTarget: 0.95, // 終章の 中ボス（10/8・前は 0.8）。⭐10/10 夜 本人「平均で0.6に」「手下と大将の連戦では？」＝連戦（傷を 持ち越して 大将へ）で 測る＝tests/_chain.mjs。必殺技 2つを 0.8倍（矢の雨 128→102・鬨の声 99→79）
     expectLv: 28,
     // 10/9 本人「子分、ラスボスが弱い、全然技を使わない」＝田島の 8段目で 3〜6ターンで 倒れ 技を 出す 前に 終わった ⇒ 体力 1.35倍・必殺技を 出やすく・攻めを 合わせ直した（前＝hp 1200・atk 171・必殺技 20%/12%）
     hp: 1620, atk: 158, def: 150, agi: 15,
@@ -38,8 +38,8 @@ export const TESHITA = {
     weakness: 'agehahata',
     mist: { min: 1, max: 3, rise: 0.2 },
     twin: { names: ['落人の 弓取り', '落人の 槍持ち'], bites: ['弓で 射る', '槍で 突く'] },
-    special: { name: '矢の 雨', kind: 'all', chance: 0.3, power: 128, flash: [255, 220, 160], sfx: 'yanoame', cutin: 'assets/cutin/teshita_yanoame.png' },
-    special2: { name: '鬨の 声', kind: 'all', chance: 0.22, power: 99, flash: [255, 120, 80], sfx: 'tokinokoe', cutin: 'assets/cutin/teshita_tokinokoe.png' },
+    special: { name: '矢の 雨', kind: 'all', chance: 0.3, power: 102, flash: [255, 220, 160], sfx: 'yanoame', cutin: 'assets/cutin/teshita_yanoame.png' },
+    special2: { name: '鬨の 声', kind: 'all', chance: 0.22, power: 79, flash: [255, 120, 80], sfx: 'tokinokoe', cutin: 'assets/cutin/teshita_tokinokoe.png' },
     biteName: '槍で 突く',
     introText: '舞台の 幕が 上がると、古い 鎧の 弓取りと 槍持ちが 立ちはだかった！ 「大将の 御前、通しは せぬ！」',
     tellLines: [

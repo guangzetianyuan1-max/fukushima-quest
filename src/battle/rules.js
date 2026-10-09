@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=345'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=346'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -702,13 +702,14 @@ function enemyAct(state, rng, log) {
   }
   if (e.twin) {
     e.twin.names.forEach((nm, i) => {
-      if (state.allies.some((a) => a.alive)) enemyStrike(state, rng, log, nm, e.twin.bites?.[i] ?? e.biteName);
+      // 10/10 洗い出し：燕返しで 倒した あとも 残りが 攻め続け、全員 倒れて「勝ち」に なった（手下 → 大将の 連戦で 全員 倒れたまま 大将へ 進み 止まる）＝敵が 倒れたら やめる
+      if (e.hp > 0 && state.allies.some((a) => a.alive)) enemyStrike(state, rng, log, nm, e.twin.bites?.[i] ?? e.biteName);
     });
   } else {
     enemyStrike(state, rng, log, e.name, e.biteName);
   }
   // 必殺技とは別に、毎ターン mist.rise の見込みで もやが ふいに 濃くなる（本人 10/1「もやはランダムに」）
-  if (e.mist?.rise && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive) && rng() < e.mist.rise) {
+  if (e.mist?.rise && e.hp > 0 && e.mistLeft < e.mist.max && state.allies.some((a) => a.alive) && rng() < e.mist.rise) {
     e.mistLeft += 1;
     log.push({ text: `${e.name}の まわりで、黒い もやが ふいに 濃くなった……`, effect: { kind: 'mist', mist: e.mistLeft } });
   }
@@ -760,7 +761,7 @@ function enemyStrike(state, rng, log, name, bite) {
     log.push({ text: `${name}の 必殺技！ ${sp.name}！`, effect: { kind: 'special', flash: sp.flash, cutin: sp.cutin, solo: !!sp.sfxSolo }, sfx: sp.sfx ?? 'flame', ...(sp.cutin ? { hold: 1700 } : {}) });
     const kind = sp.kind ?? 'all';
     let stunned = living;
-    if (kind === 'one') {
+    if (kind === 'one' && living.length) {
       // 1人に 大技（かばう・分身は かみつきと 同じく 効く）
       let t = living[Math.floor(rng() * living.length)];
       const cov = state.cover?.turns > 0 ? living.find((x) => x.id === state.cover.id) : null;
