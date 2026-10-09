@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=343'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=344'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -117,10 +117,18 @@ export const SILENCE_TURNS = 2;
 // 毒（戦いの 中だけ）＝ターンの 終わりに 最大HPの POISON_FRAC を 失う・POISON_TURNS で 消える・毒では 倒れない（1で 止まる）・お祓いで 治る
 export const POISON_FRAC = 0.06;
 export const POISON_TURNS = 3;
-function poisonAll(targets, log, text) {
+// 文は 実際に かかった 人から 作る（10/10 洗い出し：凍み餅の 人を 外した あとも「みんな」と 出ていた）
+function poisonAll(targets, log, living) {
   const hit = targets.filter((a) => a.alive && !a.shimiWard); // 10/9 夜 凍み餅を 食べた 人は 毒に かからない
   for (const a of hit) a.poison = POISON_TURNS;
-  if (hit.length) log.push({ text, sfx: 'dokuiki' });
+  const all = hit.length === living.filter((a) => a.alive).length;
+  if (hit.length) log.push({ text: all ? 'みんな 毒に おかされた！' : `${hit.map((a) => a.name).join('と ')}は 毒に おかされた！`, sfx: 'dokuiki' });
+}
+// お菓子を 食べられないわけ（もう 食べた／術の 力の 無い 人の 水飴）＝戦いの 道具の 選びで 灰色にする。食べられるなら null
+export function sweetBlocked(a, itemId, it) {
+  if (a.sweets?.[itemId]) return '食べた';
+  if (it.fx?.mpRegen && !(a.maxMp > 0)) return '術なし';
+  return null;
 }
 
 function hurt(a, d, log) {
@@ -368,6 +376,10 @@ function allyAct(state, a, cmd, data, rng, log) {
       a.sweets = a.sweets ?? {};
       if (a.sweets[cmd.itemId]) {
         log.push({ text: `${a.name}は もう ${it.name}を 食べている。（同じ お菓子は 重ならない）` });
+        return;
+      }
+      if (sweetBlocked(a, cmd.itemId, it) === '術なし') { // 10/10 洗い出し：術の 力の 無い 人が 水飴を 食べても 効かなかった＝食べずに 残す
+        log.push({ text: `${a.name}には 術の 力が ない。${it.name}は 食べずに 残した。` });
         return;
       }
       state.items[cmd.itemId] -= 1;
@@ -771,7 +783,7 @@ function enemyStrike(state, rng, log, name, bite) {
         state.decoy.count = 0;
         log.push({ text: '分身は 技に 巻きこまれて 消えた……' });
       }
-      if (kind === 'poison') poisonAll(living, log, 'みんな 毒に おかされた！');
+      if (kind === 'poison') poisonAll(living, log, living);
       if (kind === 'silence' && living.some((a) => a.alive)) {
         state.silence = Math.max(state.silence ?? 0, SILENCE_TURNS + 1); // ターンの 終わりに 1つ 減る＝つぎの 2ターン
         log.push({ text: '声が かき消されて、術も 語りも とどかない！', sfx: 'down' });
@@ -830,10 +842,10 @@ function doTrick(state, e, living, rng, log) {
   }
   // 毒の息（10/7 蛇の ボス）＝全員を 毒に（もう 全員 毒なら 出さない）
   if (k === 'poisonall') {
-    const t = living.filter((a) => !(a.poison > 0));
+    const t = living.filter((a) => !(a.poison > 0) && !a.shimiWard); // 10/10 洗い出し：凍み餅の 人しか 残って いないと 空振りの 息で 手番を 使っていた
     if (!t.length) return false;
     log.push({ text: e.trick.text ?? `${e.name}は 毒の 息を 吐いた！`, effect: { kind: 'shake' } });
-    poisonAll(t, log, t.length === living.length ? 'みんな 毒に おかされた！' : `${t.map((a) => a.name).join('と ')}は 毒に おかされた！`); // 10/7 夜 毒に なったのが 一部なら その人の 名前
+    poisonAll(t, log, living); // 10/7 夜 毒に なったのが 一部なら その人の 名前
     return true;
   }
   if (k === 'curse' || k === 'possess') {

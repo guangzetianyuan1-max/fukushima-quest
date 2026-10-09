@@ -1,21 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=343';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=343';
-import { EPISODES } from '../data/episodes.js?v=343';
-import { revealAt } from '../ui/reveal.js?v=343';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=343';
-import { chooseCommands } from '../battle/auto.js?v=343';
-import { SKILLNAME_IDS, SKILLNAME_PAD } from '../data/skillname_assets.js?v=343';
-import { itemNote } from '../data/items.js?v=343';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=343';
-import { STORY_FILES } from '../data/story_assets.js?v=343';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=343';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=343';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=343';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=343';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=343';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=343';
-import { DUEL_BIG } from '../data/duel_assets.js?v=343';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=343';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=344';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=344';
+import { EPISODES } from '../data/episodes.js?v=344';
+import { revealAt } from '../ui/reveal.js?v=344';
+import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=344';
+import { chooseCommands } from '../battle/auto.js?v=344';
+import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=344';
+import { itemNote } from '../data/items.js?v=344';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=344';
+import { STORY_FILES } from '../data/story_assets.js?v=344';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=344';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=344';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=344';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=344';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=344';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=344';
+import { DUEL_BIG } from '../data/duel_assets.js?v=344';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=344';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -78,7 +78,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   preload() {
-    for (const id of SKILLNAME_IDS) if (!this.textures.exists(`skn_${id}`)) this.load.image(`skn_${id}`, `assets/skillname/${id}.png`); // 10/10 技の 名の 毛筆
+    for (const id of SKILLNAME_IDS) if (!this.textures.exists(`skn_${id}`)) this.load.image(`skn_${id}`, `assets/skillname/${id}.png?v=${SKILLNAME_V}`); // 10/10 技の 名の 毛筆
     // 一騎打ちの 相手の絵は 師匠ごとに 変わる＝前の 一騎打ちの 絵（同じ名前）を 捨てて 読み直す（10/5 夜）
     if (this.duel) for (const part of ['dark', 'light']) if (this.textures.exists(key(this.ep, part))) this.textures.remove(key(this.ep, part));
     const look = this.ep.art.look;
@@ -958,8 +958,10 @@ export class BattleScene extends Phaser.Scene {
     // 名前の右に効き目（本人 10/1「名物の隣に効き目も表示してほしい」）
     const opts = Object.entries(this.ep.items).filter(([, it]) => it.kind !== 'ammo').map(([id, it]) => { // 鉄砲の玉は「鉄砲」で使う
       const n = this.state.items[id];
-      const note = itemNote(it);
-      return [`${it.name}×${n}`, n > 0 ? () => this.choose(a, { type: 'item', itemId: id }) : null, note];
+      const ally = this.state.allies.find((x) => x.id === (a?.id ?? a));
+      const no = it.kind === 'sweet' && ally ? sweetBlocked(ally, id, it) : null; // 10/10 洗い出し：食べた お菓子・術の 無い 人の 水飴は 灰色（選ぶと 手番が むだに なった）
+      const note = no ?? itemNote(it);
+      return [`${it.name}×${n}`, n > 0 && !no ? () => this.choose(a, { type: 'item', itemId: id }) : null, note];
     });
     this.showMenu('どの 道具を 使う？', [...opts, ['戻る', () => this.askNextAlly()]]);
   }
