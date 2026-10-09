@@ -59,6 +59,17 @@ export const gateMarks = (game, map) => QUEST_TOWNS
   .filter((t) => CASTLE_QUESTS[t].gate.map === map && questAccepted(game, t) && !game?.cleared?.[CASTLE_QUESTS[t].boss])
   .map((t) => ({ x: CASTLE_QUESTS[t].gate.x, y: CASTLE_QUESTS[t].gate.y, name: CASTLE_QUESTS[t].place }));
 
+// 怪物を 戻したのに まだ お殿様へ 報告して いない 城下町（10/9 夜 本人「お城のお題終了時、案内は無いのか？」）
+// rows＝その 地図の 字・townOf＝字 → 町（towns.js の TOWN_OF）。報告（castleRewarded）が 済めば 消える
+export const reportMarks = (game, rows, townOf) => {
+  const out = [];
+  rows.forEach((r, y) => [...r].forEach((ch, x) => {
+    const t = townOf[ch];
+    if (t && CASTLE_QUESTS[t] && game?.cleared?.[CASTLE_QUESTS[t].boss] && !game?.castleRewarded?.[t]) out.push({ x, y, name: 'お殿様へ 報告' });
+  }));
+  return out;
+};
+
 // 章の地図に 入口の字を 重ねる（地図の書き出し道具 make_*_map.py には 触らない）
 export function withGates(map, rows) {
   const out = [...rows];
