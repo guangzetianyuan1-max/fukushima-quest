@@ -2,7 +2,7 @@
 // 旅の者・しおり＝16コマ（正面0〜3／後ろ4〜7／左8〜11／右12〜15＝左の裏返し）・足の運び4コマ
 // 町の人＝正面の足踏み2コマ（向きは変わらない）
 // 1コマ 36×42 ドット。足もとをマスの中心から14ドット下に置く（origin y＝1−14/42）
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=295';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=296';
 
 export const DIRS = ['down', 'up', 'left', 'right'];
 // 仲間（本人 10/2：猟師・閼伽井嶽の僧）も旅の者・しおりと同じ16コマ
