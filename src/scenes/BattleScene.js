@@ -1,20 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=327';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=327';
-import { EPISODES } from '../data/episodes.js?v=327';
-import { revealAt } from '../ui/reveal.js?v=327';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=327';
-import { chooseCommands } from '../battle/auto.js?v=327';
-import { itemNote } from '../data/items.js?v=327';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=327';
-import { STORY_FILES } from '../data/story_assets.js?v=327';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=327';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=327';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=327';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=327';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=327';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=327';
-import { DUEL_BIG } from '../data/duel_assets.js?v=327';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL } from '../battle/jobfx.js?v=327';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=328';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=328';
+import { EPISODES } from '../data/episodes.js?v=328';
+import { revealAt } from '../ui/reveal.js?v=328';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=328';
+import { chooseCommands } from '../battle/auto.js?v=328';
+import { SKILLNAME_IDS } from '../data/skillname_assets.js?v=328';
+import { itemNote } from '../data/items.js?v=328';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=328';
+import { STORY_FILES } from '../data/story_assets.js?v=328';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=328';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=328';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=328';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=328';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=328';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=328';
+import { DUEL_BIG } from '../data/duel_assets.js?v=328';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=328';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -77,6 +78,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   preload() {
+    for (const id of SKILLNAME_IDS) if (!this.textures.exists(`skn_${id}`)) this.load.image(`skn_${id}`, `assets/skillname/${id}.png`); // 10/10 技の 名の 毛筆
     // 一騎打ちの 相手の絵は 師匠ごとに 変わる＝前の 一騎打ちの 絵（同じ名前）を 捨てて 読み直す（10/5 夜）
     if (this.duel) for (const part of ['dark', 'light']) if (this.textures.exists(key(this.ep, part))) this.textures.remove(key(this.ep, part));
     const look = this.ep.art.look;
@@ -590,7 +592,8 @@ export class BattleScene extends Phaser.Scene {
         this.tweens.add({ targets: rays, scale: 1, angle: 40, duration: 500, ease: 'Cubic.Out' });
         this.tweens.add({ targets: rays, alpha: 0, delay: 700, duration: 600, onComplete: () => rays.destroy() });
       }
-      if (p.banner) this.skillBanner(fx.name, col, p.tier);
+      if (p.banner) this.skillBanner(fx.name, col, p.tier, fx.id);
+      else if (fx.id && this.textures.exists(`skn_${fx.id}`)) this.skillName(fx.id, p.tier); // 10/10 段1・2も 毛筆の 名（小さめ）
       if (p.afterFlash) this.time.delayedCall(450, () => { cam.flash(300, 255, 255, 255); cam.shake(350, 0.016); });
     };
     if (p.darken) {
@@ -601,8 +604,19 @@ export class BattleScene extends Phaser.Scene {
     } else burst();
   }
 
+  // 10/10 技の 名の 毛筆（段1・2＝帯なしで 敵の 前に ふわっと）。高さは 段で 変える＝SKILLNAME_H
+  skillName(id, tier) {
+    const im = this.add.image(0, 0, `skn_${id}`);
+    const k = Math.min(SKILLNAME_H[tier] / im.height, (W - 40) / im.width);
+    const paper = this.add.rectangle(0, 0, im.width * k + 28, im.height * k + 12, 0xf1e6c8, 0.92).setStrokeStyle(2, 0x8a5a2e); // 和紙の 帯（暗い 背景に 墨が 沈まない）
+    im.setScale(k);
+    const box = this.add.container(W / 2, 250, [paper, im]).setDepth(900).setAlpha(0).setScale(1.3);
+    this.tweens.add({ targets: box, scale: 1, alpha: 1, duration: 180, ease: 'Back.Out',
+      onComplete: () => this.tweens.add({ targets: box, alpha: 0, delay: 650, duration: 250, onComplete: () => box.destroy() }) });
+  }
+
   // 技の 名の 帯（3章の 奥義・4章の 技）：左から すべりこむ 黒い 帯に 毛筆の 名前・上に「奥義」「秘奥義」
-  skillBanner(name, col, tier) {
+  skillBanner(name, col, tier, id = null) {
     const y = 250;
     const h = tier >= 4 ? 74 : 58;
     const box = this.add.container(-W, 0).setDepth(900);
@@ -613,6 +627,15 @@ export class BattleScene extends Phaser.Scene {
     const title = this.add.text(W / 2, y + 8, name, { fontFamily: BRUSH_FONT, fontSize: tier >= 4 ? '30px' : '24px', color: '#ffffff', resolution: 3, stroke: '#1a1008', strokeThickness: 5 }).setOrigin(0.5);
     if (title.width > W - 24) title.setScale((W - 24) / title.width);
     box.add([band, edge(-h / 2), edge(h / 2), label, title]);
+    // 10/10 本人「習字のかっこいい文字、必殺技の強さにより字の大きさが変わる」＝毛筆の 絵が あれば 字の かわりに それを 段の 大きさで
+    if (id && this.textures.exists(`skn_${id}`)) {
+      title.setVisible(false);
+      band.setFillStyle(0xf1e6c8, 0.94); // 黒い 帯に 黒い 墨は 沈む＝和紙の 色に（10/10）
+      label.setColor('#5a2a10');
+      const im = this.add.image(W / 2, y + 6, `skn_${id}`);
+      im.setScale(Math.min(SKILLNAME_H[tier] / im.height, (W - 20) / im.width));
+      box.add(im);
+    }
     this.tweens.add({
       targets: box, x: 0, duration: 200, ease: 'Cubic.Out',
       onComplete: () => this.tweens.add({ targets: box, alpha: 0, delay: tier >= 4 ? 1300 : 900, duration: 250, onComplete: () => box.destroy() }),

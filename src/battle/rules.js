@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=327'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=328'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -517,7 +517,7 @@ function jobSkill(state, a, sp, id, rng, log) {
   if (sp.once) a.usedOnce = [...(a.usedOnce ?? []), id];
   // 10/8 本人「4人の必殺技を出すとき、効果音やエフェクトを多用してほしい、強い必殺技ほど派手に」＝出せた 時だけ 段（jobs.js の tier）の 演出を 載せる
   const plan = jobFxPlan(sp.tier ?? 1);
-  head.effect = { kind: 'jobfx', tier: plan.tier, look: JOBFX_LOOK[sp.kind] ?? 'attack', name: sp.name };
+  head.effect = { kind: 'jobfx', tier: plan.tier, look: JOBFX_LOOK[sp.kind] ?? 'attack', name: sp.name, id }; // id＝毛筆の 名の 絵（10/10）
   if (plan.hold) head.hold = plan.hold;
   const living = state.allies.filter((x) => x.alive);
   const heal = (t, n) => {

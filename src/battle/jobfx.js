@@ -19,6 +19,8 @@ export const JOBFX_LOOK = {
   debuff: 'curse', seal: 'curse', daze: 'curse', bind: 'curse', poison: 'curse',
 };
 export const JOBFX_LABEL = { 3: '奥義', 4: '秘奥義' };
+// 技の 名の 毛筆の 高さ（画面の ドット・段 1〜4）＝強い 技ほど 大きく（10/10 本人「必殺技の強さにより字の大きさが変わる」）・幅は 画面に 収める
+export const SKILLNAME_H = { 1: 30, 2: 38, 3: 48, 4: 62 };
 
 // 段 → 重ねる 物。flash＝光る 長さ(ms)・shake＝揺れの 強さ・sparks＝飛び散る 星・rings＝広がる 輪・banner＝技の 名の 帯
 // darken＝先に 暗く なる・rays＝回る 光の 筋・afterFlash＝遅れて もう一度 光る・sfx＝重ねる 音・hold＝その 文を 見せる 長さ(ms・自動でも 短く しない)
