@@ -2,8 +2,8 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=342';
-import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=342';
+import { TOWNS } from './towns.js?v=343';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=343';
 const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
 const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
@@ -35,7 +35,7 @@ export const RELIC_OF_BOSS = Object.fromEntries(Object.values(RELICS).filter((r)
 // お城の お題の 褒美（10/8 夜）＝文と その土地に ちなむ お守り（equip.js の r_<町>・強さは お題の 順に 上がる）
 export const CASTLE_REWARD = {
   taira: { mon: 300, charm: 'r_taira' }, nakamura: { mon: 500, charm: 'r_nakamura' }, nihonmatsu: { mon: 700, charm: 'r_nihonmatsu' },
-  shirakawa: { mon: 900, charm: 'r_shirakawa' }, aizuwakamatsu: { mon: 1200, charm: 'r_aizuwakamatsu' },
+  shirakawa: { mon: 700, charm: 'r_shirakawa' }, aizuwakamatsu: { mon: 750, charm: 'r_aizuwakamatsu' }, // 10/10 本人「後半は 支払いを 抑えて」＝900→700・1200→750（game.js の PAY_CUT と 同じ 割合）
 };
 // 褒美の お守りを who に 着ける（前の お守りは 家老に あずける＝消える）
 export function wearReward(game, id, who) {

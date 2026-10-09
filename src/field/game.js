@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=342';
-import { kanbanAt } from './kanban.js?v=342';
-import { SOMA_ROWS } from './soma_map.js?v=342';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=342';
-import { KENCHU_ROWS } from './kenchu_map.js?v=342';
-import { AIZU_ROWS } from './aizu_map.js?v=342';
-import { MINAMI_ROWS } from './minami_map.js?v=342';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=342';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=342';
-import { withGates } from './castle.js?v=342';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=342';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=342';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=342';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=342';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=342';
-import { becomeKunoichi } from './kagewatari.js?v=342';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=342';
-import { RELIC_OF_BOSS } from './rally.js?v=342'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=342'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=343';
+import { kanbanAt } from './kanban.js?v=343';
+import { SOMA_ROWS } from './soma_map.js?v=343';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=343';
+import { KENCHU_ROWS } from './kenchu_map.js?v=343';
+import { AIZU_ROWS } from './aizu_map.js?v=343';
+import { MINAMI_ROWS } from './minami_map.js?v=343';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=343';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=343';
+import { withGates } from './castle.js?v=343';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=343';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=343';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=343';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=343';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=343';
+import { becomeKunoichi } from './kagewatari.js?v=343';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=343';
+import { RELIC_OF_BOSS } from './rally.js?v=343'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=343'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -484,7 +484,7 @@ export function afterRematch(game, state) {
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
 export function afterWin(game, enemyId, state) {
   const s = settle(game, state);
-  let g = { ...s, mon: s.mon + (BOSS_MON[enemyId] ?? 0), cleared: { ...game.cleared, [enemyId]: true }, justCleared: enemyId };
+  let g = { ...s, mon: s.mon + bossPay(enemyId), cleared: { ...game.cleared, [enemyId]: true }, justCleared: enemyId };
   const r = JOIN_AFTER[enemyId] ? join(g, JOIN_AFTER[enemyId]) : { ok: false };
   if (r.ok) g = { ...r.game, justJoined: [JOIN_AFTER[enemyId]] };
   if (RELIC_OF_BOSS[enemyId]) g = { ...g, relics: { ...(g.relics ?? {}), [RELIC_OF_BOSS[enemyId]]: true }, relicsV: 2 }; // 終章の 道具（10/8）
@@ -499,7 +499,7 @@ export function afterZako(game, zakoId, state) {
   const z = ZAKO[zakoId];
   const k = state.enemy?.rewardRate ?? 1; // 帯の倍率（1章の相馬は多め）
   const exp = Math.round(z.exp * k);
-  const mon = Math.round(z.mon * MON_RATE * k);
+  const mon = Math.round(z.mon * MON_RATE * k * (state.enemy?.monCut ?? 1));
   const before = Object.fromEntries(membersOf(g).map((id) => [id, lvOf(g, id)]));
   // 経験：始めの2人は game.exp、加わった味方は自分の経験（幽霊には入らない）
   const expOf = Object.fromEntries(Object.entries(g.expOf ?? {}).map(([id, x]) => [id, g.party[id]?.dead ? x : x + exp]));
@@ -537,6 +537,20 @@ const ENCOUNTER_ON = { '.': 1 / 20, ',': 1 / 18, '=': 1 / 22, r: 1 / 22, T: 1 / 
 export const MIN_STEPS = 4; // 戦いのすぐあとは出ない
 // 道中の敵から もらう文の倍率（本人 10/2「お金を増やすペースを倍に」）
 export const MON_RATE = 2;
+// 10/10 本人「ゲーム後半に行くにつれ、稼げてしまいます。後半に行くにつれ、少し支払いを抑えて」
+// 測った 原因（tests/_economy.mjs）＝その章の ボスの 文が 4人の いちばん 良い 装備の 何割を まかなうか：序章〜2章 約3〜5割 → 3章 7割 → 4章 9割
+//   ＋レベルが 上がると 道中が すぐ 終わる・古い 装備は 半値で 引き取る＝後半ほど 余る。⇒ 3章から 章ごとに 少しずつ 削る（ボスは 強めに・道中は 弱めに）
+export const PAY_CUT = {
+  kenchu: { boss: 0.75, zako: 0.9 }, // 3章
+  aizu: { boss: 0.6, zako: 0.8 },    // 4章
+  minami: { boss: 0.6, zako: 0.75 }, // 終章
+};
+export const BOSS_ZONE = {
+  ...Object.fromEntries(['miharugoma', 'otakimaru', 'nekonaki', 'tengu', 'takuzen', 'kappa', 'kiyohime', 'kenkatsura'].map((id) => [id, 'kenchu'])),
+  ...Object.fromEntries(['kamehime', 'nekoma', 'ashinaga', 'shunobon', 'akabeko', 'nawakappa', 'okon', 'numagozen', 'kagaminuma'].map((id) => [id, 'aizu'])),
+  ...Object.fromEntries(['azukiarai', 'banba', 'ochikerai', 'mokake', 'teshita', 'taisho'].map((id) => [id, 'minami'])),
+};
+export const bossPay = (id) => Math.round((BOSS_MON[id] ?? 0) * (PAY_CUT[BOSS_ZONE[id]]?.boss ?? 1));
 
 export function encounterAt(game, map, x, y, rng) {
   if (!isField(map)) return null;
@@ -597,6 +611,7 @@ export function zakoData(game, zakoId, zone) {
     enemy: {
       id: `zako-${zakoId}-${zone}`, zakoId, name: z.name, ...(() => { const k = ZONE_SCALE[zone] ?? {}; return { hp: Math.round(z.hp * (k.hp ?? 1)), atk: Math.round(z.atk * (k.atk ?? 1)), def: Math.round(z.def * (k.def ?? 1)) }; })(), agi: z.agi,
       rewardRate: ZONE_SCALE[zone]?.reward ?? 1,
+      monCut: PAY_CUT[zone]?.zako ?? 1, // 10/10 後半は 文だけ 少し 削る（経験は そのまま）
       bgm: { soma: 'somaBattle', kenpoku: 'kenpokuBattle', kenchu: 'kenchuBattle', aizu: 'aizuBattle', minami: 'minamiBattle' }[zone], // 1章の道中の曲（10/3「章ごとにBGMは新しく」） // ⚠ reward はボスの「倒したときの文」と同じ名前＝別の名前にする
       weakness: null, noWeak: true, canFlee: true, trick: z.trick ?? null, special: null,
       biteName: z.biteName, introText: z.introText, tellLines: [ZAKO_TELL], restoreLines: z.restoreLines,

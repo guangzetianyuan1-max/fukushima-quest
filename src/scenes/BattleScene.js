@@ -1,21 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=342';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=342';
-import { EPISODES } from '../data/episodes.js?v=342';
-import { revealAt } from '../ui/reveal.js?v=342';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=342';
-import { chooseCommands } from '../battle/auto.js?v=342';
-import { SKILLNAME_IDS, SKILLNAME_PAD } from '../data/skillname_assets.js?v=342';
-import { itemNote } from '../data/items.js?v=342';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=342';
-import { STORY_FILES } from '../data/story_assets.js?v=342';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=342';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=342';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=342';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=342';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=342';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=342';
-import { DUEL_BIG } from '../data/duel_assets.js?v=342';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=342';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=343';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=343';
+import { EPISODES } from '../data/episodes.js?v=343';
+import { revealAt } from '../ui/reveal.js?v=343';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=343';
+import { chooseCommands } from '../battle/auto.js?v=343';
+import { SKILLNAME_IDS, SKILLNAME_PAD } from '../data/skillname_assets.js?v=343';
+import { itemNote } from '../data/items.js?v=343';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=343';
+import { STORY_FILES } from '../data/story_assets.js?v=343';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=343';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=343';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=343';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=343';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=343';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=343';
+import { DUEL_BIG } from '../data/duel_assets.js?v=343';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=343';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -1090,7 +1090,7 @@ export class BattleScene extends Phaser.Scene {
       this.time.delayedCall(2100, () => {
         // もらえる力と、文（歩く地図から来た戦いだけ。本人 10/2「ボスを倒した際は、お金を多めに。ここでは50文」）
         // 10/9 もう一度 戦う＝もらえる物の 文（台本を 差し出した・大将の 影 など）は 出さない＝進みは 変わらない
-        const rewards = this.rematch ? [{ text: 'もう一度の 手合わせを 終えた。' }] : [{ text: e.reward }, ...(this.fromField && BOSS_MON[e.id] ? [{ text: `お礼に 文を ${BOSS_MON[e.id]} もらった！`, sfx: 'eat' }] : [])];
+        const rewards = this.rematch ? [{ text: 'もう一度の 手合わせを 終えた。' }] : [{ text: e.reward }, ...(this.fromField && bossPay(e.id) ? [{ text: `お礼に 文を ${bossPay(e.id)} もらった！`, sfx: 'eat' }] : [])];
         // ほんとうの結末：紙芝居があれば挿絵と声で、無ければ「昔話」の文で
         const tail = e.story?.after
           ? () => this.playStory('after', () => this.showMessages(rewards, () => this.showAfterWin()))
