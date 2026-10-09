@@ -2,8 +2,8 @@
 // 初めて（と規約の版が変わったとき）は全文を出し、「同意します」に印を付けて「同意して はじめる」を押すまで ゲームを始めない
 // 同意したことは 端末の中（localStorage）に 版と日時で残す。残せない端末（記録を消す設定など）では 毎回 たずねる
 // 画面は Phaser でなく ふつうの HTML（長い文を読みやすく・指でなぞって送れるように）
-import { GAME_FONT } from './fonts.js?v=354';
-import { TERMS, TERMS_TITLE, TERMS_VERSION, TERMS_CHECK, TERMS_BUTTON } from '../data/terms.js?v=354';
+import { GAME_FONT } from './fonts.js?v=355';
+import { TERMS, TERMS_TITLE, TERMS_VERSION, TERMS_CHECK, TERMS_BUTTON } from '../data/terms.js?v=355';
 
 export const TERMS_KEY = 'fq-terms';
 

@@ -1,18 +1,19 @@
-import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=354';
-import { TitleScene } from './scenes/TitleScene.js?v=354';
-import { JobScene } from './scenes/JobScene.js?v=354';
-import { BattleScene } from './scenes/BattleScene.js?v=354';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=354';
-import { EndingScene } from './scenes/EndingScene.js?v=354'; // 10/8 終わりの 場面
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=354';
-import { HARAI } from './field/game.js?v=354';
-import { EQUIP } from './data/equip.js?v=354';
-import { EPISODES } from './data/episodes.js?v=354';
-import { unlock, isUnlocked } from './audio/chip.js?v=354';
-import { askTerms } from './ui/terms.js?v=354';
-import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=354';
-import { showLoading, preloadImages } from './ui/loading.js?v=354';
-import { PRELOAD_ASSETS } from './data/preload_assets.js?v=354';
+import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=355';
+import { countInstall } from './ui/install_count.js?v=355';
+import { TitleScene } from './scenes/TitleScene.js?v=355';
+import { JobScene } from './scenes/JobScene.js?v=355';
+import { BattleScene } from './scenes/BattleScene.js?v=355';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=355';
+import { EndingScene } from './scenes/EndingScene.js?v=355'; // 10/8 終わりの 場面
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=355';
+import { HARAI } from './field/game.js?v=355';
+import { EQUIP } from './data/equip.js?v=355';
+import { EPISODES } from './data/episodes.js?v=355';
+import { unlock, isUnlocked } from './audio/chip.js?v=355';
+import { askTerms } from './ui/terms.js?v=355';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=355';
+import { showLoading, preloadImages } from './ui/loading.js?v=355';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=355';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
@@ -58,6 +59,7 @@ async function start() {
   await askTerms();
   // 遊んでいる間の自動更新（裏から戻った時など・表紙ならすぐ読み直し、途中は知らせだけ）
   watchUpdates(() => !window.fqGame || window.fqGame.scene.isActive('title'));
+  countInstall(); // 10/10 ホーム画面の アイコンから 初めて 開いた 端末を 1回だけ 数える（ホームページの ダウンロード数）
   // 確かめ用の取っ手：ブラウザから window.fqGame で場面を動かせる（遊ぶ人には見えない）
   window.fqGame = new Phaser.Game({
     type: Phaser.AUTO,

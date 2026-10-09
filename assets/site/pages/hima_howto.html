@@ -22,6 +22,10 @@
 .hb .card small{display:block;color:#c9b88a}
 .hb table{width:100%;border-collapse:collapse}
 .hb td,.hb th{border-bottom:1px solid #ddd;padding:.4em .5em;text-align:left;vertical-align:top}
+.hb .cnt{display:flex;gap:12px;justify-content:center;margin:1em 0}
+.hb .cnt div{flex:1;max-width:220px;background:#14122a;color:#f3e6c0;border-radius:12px;padding:.6em .4em;text-align:center}
+.hb .cnt b{display:block;font-size:2em;color:#ffe08a;line-height:1.2}
+.hb .cnt small{font-size:.85em;color:#c9b88a}
 .hb .box{background:#f7f3ea;border-radius:10px;padding:12px 16px;margin:1em 0}
 </style><div class="hb">
 <p class="lead">「福島昔話クエストRPG」の遊び方をまとめました。はじめての方は、上から順に読んでください。</p>
@@ -94,4 +98,25 @@
 <p class="note">記録は、その端末のブラウザの中に残ります。ブラウザの履歴やデータを消すと、記録も消えるので気をつけてください。</p>
 
 <a class="play" href="https://guangzetianyuan1-max.github.io/fukushima-quest/" target="_blank" rel="noopener">▶ 福島昔話クエストRPG で遊ぶ（無料）</a>
+<script>
+(function () {
+  var API = '/wp-json/hima/v1/', PLAY = 'https://guangzetianyuan1-max.github.io/fukushima-quest/';
+  function uid() { var h = '0123456789abcdef', s = ''; for (var i = 0; i < 32; i++) s += h[Math.floor(Math.random() * 16)]; s = s.slice(0, 12) + '4' + s.slice(13, 16) + '89ab'[Math.floor(Math.random() * 4)] + s.slice(17); return s.slice(0, 8) + '-' + s.slice(8, 12) + '-' + s.slice(12, 16) + '-' + s.slice(16, 20) + '-' + s.slice(20); }
+  function vid() { try { var v = localStorage.getItem('hima-vid'); if (!v) { v = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uid(); localStorage.setItem('hima-vid', v); } return v; } catch (e) { return null; } }
+  var a = document.getElementById('hima-c-install'), b = document.getElementById('hima-c-click');
+  if (a && b) fetch(API + 'counts', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (c) { a.textContent = (c.install || 0).toLocaleString(); b.textContent = (c.click || 0).toLocaleString(); }).catch(function () {});
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!el || el.href.indexOf(PLAY) !== 0) return;
+    try {
+      if (localStorage.getItem('hima-click-counted')) return;
+      var v = vid(); if (!v) return;
+      var body = JSON.stringify({ kind: 'click', id: v });
+      if (navigator.sendBeacon) navigator.sendBeacon(API + 'hit', new Blob([body], { type: 'text/plain' }));
+      else fetch(API + 'hit', { method: 'POST', body: body, keepalive: true });
+      localStorage.setItem('hima-click-counted', '1');
+    } catch (err) {}
+  }, true);
+})();
+</script>
 </div>

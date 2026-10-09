@@ -1,21 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=354';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=354';
-import { EPISODES } from '../data/episodes.js?v=354';
-import { revealAt } from '../ui/reveal.js?v=354';
-import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=354';
-import { chooseCommands } from '../battle/auto.js?v=354';
-import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=354';
-import { itemNote } from '../data/items.js?v=354';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=354';
-import { STORY_FILES } from '../data/story_assets.js?v=354';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=354';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=354';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=354';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=354';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=354';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=354';
-import { DUEL_BIG } from '../data/duel_assets.js?v=354';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=354';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=355';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=355';
+import { EPISODES } from '../data/episodes.js?v=355';
+import { revealAt } from '../ui/reveal.js?v=355';
+import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=355';
+import { chooseCommands } from '../battle/auto.js?v=355';
+import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=355';
+import { itemNote } from '../data/items.js?v=355';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=355';
+import { STORY_FILES } from '../data/story_assets.js?v=355';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=355';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=355';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=355';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=355';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=355';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=355';
+import { DUEL_BIG } from '../data/duel_assets.js?v=355';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=355';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
