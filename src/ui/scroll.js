@@ -1,6 +1,6 @@
 // 巻物に毛筆で縦書きした題「第一話 ﹁龍燈﹂」（本人 10/1「ドット文字で無いほうが良い。習字で背景巻物」）
 // 上下に軸（こげ茶・金の端）、間に和紙。右から読む縦書きを1列で：話数 → かぎ括弧 → 話の名 → かぎ括弧
-import { GAME_FONT, TITLE_WEIGHT } from './fonts.js?v=323';
+import { GAME_FONT, TITLE_WEIGHT } from './fonts.js?v=324';
 const BRUSH = GAME_FONT; // 10/4 夜 ドットのゴシックへ（前＝毛筆の Yuji Boku）
 const INK = 0x1a1008;
 const PAPER = 0xf1e4c0;
