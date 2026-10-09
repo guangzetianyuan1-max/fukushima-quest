@@ -2,8 +2,8 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=285';
-import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=285';
+import { TOWNS } from './towns.js?v=286';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=286';
 const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
 const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
@@ -11,8 +11,9 @@ const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', s
 export const ONSEN_RALLY = ['yumoto', 'iizaka', 'takayu', 'tsuchiyu', 'dake', 'bandaiatami', 'bohata', 'nekonakiyu', 'futamata', 'kashi', 'nakanosawa', 'higashiyama', 'ashinomaki', 'nishiyama', 'hayato'];
 
 // 福島グルメ（11品）＝その町の 店で 名物を 買うと 判子（名物は 10/6 ネットで 確かめた。小高・須賀川は 確かな 名物が 見つからず 外した）
+// ⭐10/9 本人「グルメの順番を確認して欲しい。1番はめひかりです」＝旅の 順路の 順（いわきは 南の 鮫川から 小名浜 → 湯本 → 平 と 北へ）＝図鑑の グルメの 並び
 export const GOURMET_RALLY = {
-  taira: 'g_unikai', onahama: 'g_mehikari', yumoto: 'g_manju', nakamura: 'g_hokki', fukushima: 'g_momo', nihonmatsu: 'tamayokan',
+  onahama: 'g_mehikari', yumoto: 'g_manju', taira: 'g_unikai', nakamura: 'g_hokki', fukushima: 'g_momo', nihonmatsu: 'tamayokan',
   koriyama: 'g_usukawa', shirakawa: 'g_ramen', inawashiro: 'g_soba', aizuwakamatsu: 'g_kozuyu', yanaizu: 'g_awaman',
 };
 

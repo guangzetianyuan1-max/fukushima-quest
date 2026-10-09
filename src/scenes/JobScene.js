@@ -1,14 +1,14 @@
 // 職業を選ぶ画面（本人 10/5「①ゲームは初めから4人で進める ②職業が多数あり、選択をしてからスタートする」）
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
-// 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）＋いま光っている枠に入る → 次の空いた枠へ
+// 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）→ 同じ 職業を もう一度 押すと いま光っている枠に入る → 次の空いた枠へ（10/9 本人「2回押したら次に」）
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=285';
-import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=285';
-import { sfx } from '../audio/chip.js?v=285';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=285';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=285';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=285';
-import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=285';
+import { GAME_FONT } from '../ui/fonts.js?v=286';
+import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=286';
+import { sfx } from '../audio/chip.js?v=286';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=286';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=286';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=286';
+import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=286';
 
 const W = 360;
 const FONT = GAME_FONT;
@@ -38,9 +38,11 @@ export class JobScene extends Phaser.Scene {
     this.advising = false;
     this.slots = [null, null, null, null];
     this.history = []; // 戻るで 取り消す順
+    this.armed = null; // 10/9 1回目に 押した 職業（もう一度 押すと 決まる）
+    this.armHint = null;
     this.active = 0;
     this.shown = null;
-    this.add.text(W / 2, 24, '4人の 職業を えらぶ', { fontFamily: FONT, fontSize: '22px', color: '#ffd98a', resolution: 3 }).setOrigin(0.5);
+    this.titleText = this.add.text(W / 2, 24, '4人の 職業を えらぶ', { fontFamily: FONT, fontSize: '22px', color: '#ffd98a', resolution: 3 }).setOrigin(0.5);
     // 4つの枠
     this.slotUi = SLOT_LABELS.map((label, i) => {
       const x = 6 + i * (SLOT.w + SLOT.gap);
@@ -65,6 +67,15 @@ export class JobScene extends Phaser.Scene {
       const who = this.add.text(x + 13, y + GRID.h / 2, '', { fontFamily: FONT, fontSize: '11px', color: '#ffd98a', resolution: 3 }).setOrigin(0, 0.5); // 枠の左に 入った枠の名前（名前の長い 弓矢使いとも重ならない）
       const hit = hitBox(this, x + GRID.w / 2, y + GRID.h / 2, GRID.w, GRID.h).setInteractive();
       this.onTap(hit, () => {
+        // ⭐10/9 本人「職業を選ぶ際、同じ職業を2回押したら次に進むように」＝1回目は 説明だけ・同じ 職業を もう一度 押すと 光っている 枠に 決まって 次の 枠へ
+        if (this.armed !== id) {
+          this.armed = id;
+          sfx('select');
+          this.showInfo(id);
+          this.refresh();
+          return;
+        }
+        this.armed = null;
         this.history.push(this.active);
         const r = choose(this.slots, this.active, id);
         this.slots = r.slots;
@@ -151,6 +162,11 @@ export class JobScene extends Phaser.Scene {
       u.t.setColor(at >= 0 ? '#ffd98a' : u.id === this.shown ? '#ffffff' : '#e6e6f0');
       u.win.setAlpha(u.id === this.shown ? 1 : 0.75);
     }
+    // 10/9 1回目に 押した 職業＝「もう一度 押すと ○○に 決まる」（欄の 下に 金の 字）
+    //   ⚠欄の 下に 出すと 説明の 最後の 行に 重なった＝上の 題の 所に 出す（題と 入れ替える）
+    if (!this.armHint) this.armHint = this.add.text(W / 2, 24, '', { fontFamily: FONT, fontSize: '17px', color: '#ffffff', resolution: 3 }).setOrigin(0.5);
+    this.armHint.setText(this.armed ? `もう一度 押すと「${SLOT_LABELS[this.active]}」に 決まります` : '').setVisible(!!this.armed);
+    this.titleText?.setVisible(!this.armed);
     const ok = validPick(pickOf(this.slots));
     this.goWin.setAlpha(ok ? 1 : 0.4);
     this.goText.setColor(ok ? '#ffd98a' : '#8a8fa8');
@@ -182,7 +198,7 @@ export class JobScene extends Phaser.Scene {
     const txt = (x, y, s, size = 15, color = '#ffffff', o = 0) => add(this.add.text(x, y, s, { fontFamily: FONT, fontSize: `${size}px`, color, resolution: 3 }).setOrigin(o, 0));
     const top = INFO.y + 12;
     if (!id) {
-      txt(W / 2, top + 50, '光っている 枠に 入れる 職業を\n下から えらんでください。', 17, '#ffffff', 0.5).setAlign('center');
+      txt(W / 2, top + 50, '職業を 押すと 説明が 出ます。\nもう一度 押すと 光っている 枠に 決まります。', 16, '#ffffff', 0.5).setAlign('center'); // 10/9 2回 押して 決める
       txt(W / 2, top + 120, 'どの職業も 能力の点は 合計30。\n技は 1章から3章の町で 師匠の\n試しを受けて 1つずつ 習います。', 15, '#b8bcd8', 0.5).setAlign('center');
       return;
     }

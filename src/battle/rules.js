@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=285'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=286'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -77,7 +77,7 @@ export function createBattle(data, rng = null) {
     // mistLeft＝敵がまとう黒いもやの残り（本人 10/1「たたかうの役目が半減しませんか？」）。mist の無い敵は0
     enemy: { ...data.enemy, maxHp: data.enemy.hp, revealed: false, restored: false, mistLeft: startMist(data.enemy.mist, rng) },
     items: Object.fromEntries(Object.entries(data.items).map(([k, v]) => [k, v.count])),
-    stolen: [], // 道中の敵に盗まれた名物（小名浜の番屋に届く）
+    stolen: [], // 道中の敵に盗まれた名物（どの 番屋でも 戻る・10/9）
     monLost: 0, // 因縁で取られた文
     silence: 0, // 爆音の残りターン（術と語るが使えない）
     blind: 0, // 自撮りのフラッシュの残りターン（たたかうが半分外れる）
@@ -795,6 +795,7 @@ function doTrick(state, e, living, rng, log) {
     state.items[id] -= 1;
     state.stolen.push(id);
     log.push({ text: `${e.name}は ${e.itemNames?.[id] ?? id}を ${e.trick.verb ?? '盗んで 逃げていった'}！`, sfx: 'flee' });
+    log.push({ text: '盗まれた 品は、町の 番屋に 届くかも しれない。' }); // 10/9 本人「各エリアの番屋で引き取り」
     state.over = 'fled';
     return true;
   }

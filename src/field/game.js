@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=285';
-import { kanbanAt } from './kanban.js?v=285';
-import { SOMA_ROWS } from './soma_map.js?v=285';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=285';
-import { KENCHU_ROWS } from './kenchu_map.js?v=285';
-import { AIZU_ROWS } from './aizu_map.js?v=285';
-import { MINAMI_ROWS } from './minami_map.js?v=285';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=285';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=285';
-import { withGates } from './castle.js?v=285';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=285';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=285';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=285';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=285';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=285';
-import { becomeKunoichi } from './kagewatari.js?v=285';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=285';
-import { RELIC_OF_BOSS } from './rally.js?v=285'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=285'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=286';
+import { kanbanAt } from './kanban.js?v=286';
+import { SOMA_ROWS } from './soma_map.js?v=286';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=286';
+import { KENCHU_ROWS } from './kenchu_map.js?v=286';
+import { AIZU_ROWS } from './aizu_map.js?v=286';
+import { MINAMI_ROWS } from './minami_map.js?v=286';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=286';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=286';
+import { withGates } from './castle.js?v=286';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=286';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=286';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=286';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=286';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=286';
+import { becomeKunoichi } from './kagewatari.js?v=286';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=286';
+import { RELIC_OF_BOSS } from './rally.js?v=286'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=286'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -115,7 +115,7 @@ export function newGame(pick = DEFAULT_PICK) {
     exp: 0,
     equip: startEquip(base),
     steps: 0, // 道中の敵に出会ってからの歩数
-    stolen: [], // 盗まれた名物（小名浜の番屋に届く）
+    stolen: [], // 盗まれた名物（どの 番屋でも 戻る・10/9）
     cleared: {},
     savePos: { ...START },
     intro: true,
@@ -557,7 +557,8 @@ export function chapterPool(game, chapter) {
   const cap = Math.min(10, 4 + 2 * done);
   return Object.keys(ZAKO).filter((id) => {
     const z = ZAKO[id];
-    return z.chapter === chapter && !z.pending && !z.retired && z.tier <= cap && z.tier > cap - 7;
+    // 10/9 本人「各エリアのモンスターいずれかに、盗むスキルを」＝盗む 敵（どの 章にも 1体）は 弱くても 章の 最後まで 出す（番屋で 引き取る 遊びが 消えない）
+    return z.chapter === chapter && !z.pending && !z.retired && z.tier <= cap && (z.tier > cap - 7 || z.trick?.kind === 'steal');
   });
 }
 
@@ -627,7 +628,7 @@ function cure(game, flag, price) {
 export const purify = (game) => cure(game, 'curse', HARAI_PRICE);
 export const kuyo = (game) => cure(game, 'ghost', KUYO_PRICE);
 
-// 小名浜の番屋：盗まれた名物が全部 戻ってくる
+// 番屋（10/9〜 小名浜と 城下町 5つと 田島）：どの 番屋でも 盗まれた 品が 全部 戻ってくる
 export function returnStolen(game) {
   if (!game.stolen?.length) return { ok: false, game, got: [] };
   const items = { ...game.items };
