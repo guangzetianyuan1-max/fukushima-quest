@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=348'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=349'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -270,7 +270,7 @@ function allyAct(state, a, cmd, data, rng, log) {
     e.hp = Math.max(0, e.hp - d);
     log.push({ text: `${e.name}に ${d}の ダメージ！`, effect: { kind: 'hitEnemy' } });
   } else if (cmd.type === 'spell' && isJobSkill(data.spells[cmd.spellId])) {
-    jobSkill(state, a, data.spells[cmd.spellId], cmd.spellId, rng, log);
+    jobSkill(state, a, data.spells[cmd.spellId], cmd.spellId, rng, log, cmd.target);
   } else if (cmd.type === 'spell' && data.spells[cmd.spellId]?.kind === 'yojutsu') {
     // くノ一の 狐火の術（10/4 夜）：守りを無視した 攻撃力×mult。もやの間は半分・明かす前の昔話の主には2割
     const sp = data.spells[cmd.spellId];
@@ -437,7 +437,9 @@ function allyAct(state, a, cmd, data, rng, log) {
       }
       return;
     }
-    const t = it.kind === 'mp' ? lowestMpAlly(state) : lowestAlly(state);
+    // 10/10 本人「手動の際の守り系の魔法は、だれに魔法をかけるかを選択できるように」＝選んだ 人（cmd.target）。その番までに 倒れて いたら いつもの 決め方
+    const chosen = state.allies.find((x) => x.id === cmd.target && x.alive && (it.kind !== 'mp' || x.maxMp > 0));
+    const t = chosen ?? (it.kind === 'mp' ? lowestMpAlly(state) : lowestAlly(state));
     if (!t) {
       log.push({ text: `${a.name}は ${it.name}を とりだした。しかし 使う相手が いない。` });
       return;
@@ -509,7 +511,7 @@ function clearMist(e, n, log) {
   });
 }
 
-function jobSkill(state, a, sp, id, rng, log) {
+function jobSkill(state, a, sp, id, rng, log, target = null) {
   const e = state.enemy;
   const head = { text: `${a.name}は ${sp.verb ?? sp.name + 'を 使った'}！`, sfx: sp.sfx };
   log.push(head);
@@ -575,10 +577,10 @@ function jobSkill(state, a, sp, id, rng, log) {
     for (const t of living) heal(t, Math.round(t.maxHp * sp.frac * (sp.frac >= 1 ? 1 : healScale(a)) * (sp.frac >= 1 ? 1 : spread(rng))));
     clearMist(e, sp.clearMist, log);
   } else if (k === 'healOne') {
-    const t = lowestAlly(state);
+    const t = living.find((x) => x.id === target) ?? lowestAlly(state); // 10/10 選んだ 人
     heal(t, Math.round(t.maxHp * sp.frac));
   } else if (k === 'revive') {
-    const dead = state.allies.filter((x) => !x.alive);
+    const dead = state.allies.filter((x) => !x.alive).sort((x, y) => (y.id === target) - (x.id === target)); // 10/10 選んだ 人を 先に（もう 起きて いれば ほかの 人）
     if (!dead.length) log.push({ text: 'しかし 倒れた 仲間は いない。' });
     for (const t of sp.all ? dead : dead.slice(0, 1)) {
       t.alive = true;

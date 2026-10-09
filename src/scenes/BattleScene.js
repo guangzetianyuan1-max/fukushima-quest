@@ -1,21 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=348';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=348';
-import { EPISODES } from '../data/episodes.js?v=348';
-import { revealAt } from '../ui/reveal.js?v=348';
-import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=348';
-import { chooseCommands } from '../battle/auto.js?v=348';
-import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=348';
-import { itemNote } from '../data/items.js?v=348';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=348';
-import { STORY_FILES } from '../data/story_assets.js?v=348';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=348';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=348';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=348';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=348';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=348';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=348';
-import { DUEL_BIG } from '../data/duel_assets.js?v=348';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=348';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=349';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=349';
+import { EPISODES } from '../data/episodes.js?v=349';
+import { revealAt } from '../ui/reveal.js?v=349';
+import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=349';
+import { chooseCommands } from '../battle/auto.js?v=349';
+import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=349';
+import { itemNote } from '../data/items.js?v=349';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=349';
+import { STORY_FILES } from '../data/story_assets.js?v=349';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=349';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=349';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=349';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=349';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=349';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=349';
+import { DUEL_BIG } from '../data/duel_assets.js?v=349';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=349';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -948,9 +948,22 @@ export class BattleScene extends Phaser.Scene {
       const cost = sp.once ? (used ? '使った' : '1戦1回') : `術${sp.cost}`;
       // 効き目（jobs.js の desc）。昔話の弱点の術は「語って明かすと よく効く」
       const sub = sp.desc ?? (sp.weakMult ? (id === this.ep.enemy.weakness ? '語って明かした 弱点に よく効く' : '昔話の主の 弱点を突く術') : sp.kind === 'heal' ? '全員のHPを 回復' : null);
-      return [`${sp.name}（${cost}）`, () => this.choose(a, { type: 'spell', spellId: id }), null, sub];
+      const pick = () => {
+        // 10/10 本人「だれに魔法をかけるかを選択できるように」＝1人に かかる 技（倒れた 仲間 1人を 起こす・1人を 回復）は 相手を 選ぶ
+        const dead = this.state.allies.filter((x) => !x.alive);
+        if (sp.kind === 'revive' && !sp.all && dead.length > 1) return this.targetMenu(a, `${sp.name}で だれを 起こす？`, dead, (t) => ({ type: 'spell', spellId: id, target: t }), () => this.spellMenu(a));
+        if (sp.kind === 'healOne') return this.targetMenu(a, `${sp.name}を だれに？`, this.livingAllies(), (t) => ({ type: 'spell', spellId: id, target: t }), () => this.spellMenu(a));
+        return this.choose(a, { type: 'spell', spellId: id });
+      };
+      return [`${sp.name}（${cost}）`, pick, null, sub];
     });
     this.showMenu('どの 術を つかう？', [...opts, ['戻る', () => this.askNextAlly()]]);
+  }
+
+  // 10/10 1人に かかる 技・道具の 相手を 選ぶ（HP か 術の力を 横に）。戻る＝前の 選び
+  targetMenu(a, title, list, cmdOf, back, mp = false) {
+    const opts = list.map((t) => [t.name, () => this.choose(a, cmdOf(t.id)), t.alive ? (mp ? `術 ${t.mp}/${t.maxMp}` : `HP ${t.hp}/${t.maxHp}`) : '倒れて いる']);
+    this.showMenu(title, [...opts, ['戻る', back]]);
   }
 
   // 道具。無くなった物は灰色で残す
@@ -961,7 +974,12 @@ export class BattleScene extends Phaser.Scene {
       const ally = this.state.allies.find((x) => x.id === (a?.id ?? a));
       const no = it.kind === 'sweet' && ally ? sweetBlocked(ally, id, it) : null; // 10/10 洗い出し：食べた お菓子・術の 無い 人の 水飴は 灰色（選ぶと 手番が むだに なった）
       const note = no ?? itemNote(it);
-      return [`${it.name}×${n}`, n > 0 && !no ? () => this.choose(a, { type: 'item', itemId: id }) : null, note];
+      // 10/10 1人に 使う 薬（HP・術）は 相手を 選ぶ（秘薬の 間は 全員に 効くので 選ばない）
+      const one = (it.kind === 'hp' || it.kind === 'mp') && !this.state.medAll;
+      const go = () => (one
+        ? this.targetMenu(a, `${it.name}を だれに 使う？`, this.livingAllies().filter((t) => it.kind !== 'mp' || t.maxMp > 0), (t) => ({ type: 'item', itemId: id, target: t }), () => this.itemMenu(a), it.kind === 'mp')
+        : this.choose(a, { type: 'item', itemId: id }));
+      return [`${it.name}×${n}`, n > 0 && !no ? go : null, note];
     });
     this.showMenu('どの 道具を 使う？', [...opts, ['戻る', () => this.askNextAlly()]]);
   }
