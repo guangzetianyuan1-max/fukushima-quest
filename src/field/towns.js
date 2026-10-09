@@ -1,5 +1,5 @@
-import { gearAt } from '../data/equip.js?v=339'; // 10/5 武器と防具は職業ごと＝店は段で並べる
-import { castleMaps } from './castle.js?v=339'; // 10/7 お城の 大広間と お題の 場所
+import { gearAt } from '../data/equip.js?v=340'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=340'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -561,7 +561,7 @@ export const TOWNS = {
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。芦ノ牧の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['芦ノ牧の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { spot: 'm1', look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 4, lines: ['芦ノ牧の 湯宿の 番頭で ございます。', '反閇の 歩み、会津の 昔話を 知る 方に お教えしましょう。'] },
+      { spot: 'm1', look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 4, lines: ['芦ノ牧の 湯宿の 番頭で ございます。', 'へんばいの 歩み、会津の 昔話を 知る 方に お教えしましょう。'] },
       { spot: 'm2', look: 'onsen_yumori', role: 'master', job: 'kusushi', ch: 4, lines: ['芦ノ牧の 湯守じゃ。', '会津の 薬用人参の 煎じ方、昔話の 問いに 答えられたら 教えよう。'] },
       { spot: 'chaya', look: 'chaya', lines: ['大川の 渓谷を ながめて、ひと休み していって くださいな。'] },
     ],

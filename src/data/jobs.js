@@ -154,7 +154,7 @@ export const JOB_SPELLS = {
   dohyoiri: { name: '横綱の土俵入り', desc: '3ターン 全員の攻めと守りが上がる（1戦1回）', kind: 'buff', cost: 0, once: true, mult: 1.3, turns: 3, addGuard: { mult: 0.7, turns: 3 }, sfx: 'shiko', verb: '堂々と 土俵入りを はじめた', text: 'よいしょー！ 横綱の 四股に、みなの 体に 力と 守りが みなぎる！' },
   yabusame: { name: '流鏑馬', desc: '3本の矢で 続けて射る', kind: 'strike', cost: 12, mult: 0.8, defMult: 0.5, hits: 3, big: true, sfx: 'kaburaya', verb: '馬を 走らせながら 弓を 引いた', text: '一の 的、二の 的、三の 的！ 矢が 続けて 突きささる！' },
   higanjishi: { name: '彼岸獅子の舞', desc: '3ターン 全員の攻めが1.5倍', kind: 'buff', cost: 14, mult: 1.5, turns: 3, sfx: 'kagura', verb: '獅子頭を かぶって 舞いはじめた', text: '笛と 太鼓に 獅子が 舞う！ みなの 体に 春の 力が みなぎる！' },
-  henbai: { name: '反閇', desc: '敵の必殺技を封じ 3ターン攻めを弱める', kind: 'seal', cost: 12, addWeak: { mult: 0.7, turns: 3 }, sfx: 'kekkai', verb: '北斗の 形に 足を 踏んだ', text: '反閇の 歩みが 地を 鎮め、敵の 力を おさえこむ！' },
+  henbai: { name: 'へんばい', desc: '敵の必殺技を封じ 3ターン攻めを弱める', kind: 'seal', cost: 12, addWeak: { mult: 0.7, turns: 3 }, sfx: 'kekkai', verb: '北斗の 形に 足を 踏んだ', text: 'へんばいの 歩みが 地を 鎮め、敵の 力を おさえこむ！' },
   ninjin: { name: '会津の薬用人参', desc: '倒れた仲間を全員起こす（1戦1回）', kind: 'revive', cost: 10, once: true, all: true, frac: 0.5, sfx: 'sosei', verb: '会津の 薬用人参を 煎じた', text: '人参の 力が、倒れた 仲間の 体に しみわたる！' },
   yudono: { name: '湯殿の行', desc: '全員のHPと術を戻す（1戦1回）', kind: 'heal', cost: 0, once: true, frac: 0.35, addMp: 0.25, sfx: 'hiwatari', verb: '湯の 滝に 打たれた', text: '湯殿の 行で 清めた 験力が、みなを 満たす！' }, // 10/8 夜 HPの 戻りを 25→35%（1戦1回と 術の力の 戻りは 前の まま＝外すと 術の 組が 弱った）
 };

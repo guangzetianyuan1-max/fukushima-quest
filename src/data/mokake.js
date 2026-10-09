@@ -4,7 +4,7 @@
 //   村に 多い 平野姓は 平家の 落人の 子孫とされ、家紋は 揚羽蝶（たびこふれ）
 // ⚠姫の霊の 話は ゲームの 作り（滝の 名の 言い伝えから）＝紙芝居④で「このゲームの語り」と 言う
 // 弱点＝裳を 掛ける 祈り・勝つと「揚羽蝶の旗」（rally.js の RELICS.castle）
-import { BASIC_ITEMS } from './basic_items.js?v=339';
+import { BASIC_ITEMS } from './basic_items.js?v=340';
 
 export const MOKAKE = {
   art: {
