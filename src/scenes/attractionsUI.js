@@ -1,10 +1,10 @@
-import { hitBox } from '../ui/kit.js?v=331'; // 10/7 押せる 当たり（Zone は 背景に 負ける）
+import { hitBox } from '../ui/kit.js?v=332'; // 10/7 押せる 当たり（Zone は 背景に 負ける）
 // 町の催し7つの 画面（10/7・計算は src/field/attractions.js）。FieldScene の startAttr が 呼ぶ
 // play(scene, box, { rng, done }) → 確かめ用の 取っ手。終わったら done(結果) を 1回だけ 呼ぶ（点の 計算と 文は FieldScene）
 // 背景は Gemini の絵（ATTR_ART・届いて いれば）／無ければ 図形。部品は どれも box に 入れる（box ごと 消える）
-import { GAME_FONT } from '../ui/fonts.js?v=331';
-import { sfx } from '../audio/chip.js?v=331';
-import * as A from '../field/attractions.js?v=331';
+import { GAME_FONT } from '../ui/fonts.js?v=332';
+import { sfx } from '../audio/chip.js?v=332';
+import * as A from '../field/attractions.js?v=332';
 
 const W = 360;
 const FONT = GAME_FONT;
