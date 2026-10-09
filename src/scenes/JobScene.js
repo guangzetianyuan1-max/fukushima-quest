@@ -2,13 +2,13 @@
 // 4つの枠（主人公・しおり・仲間・仲間）に、10の職業から1つずつ。同じ職業は2人に付けない
 // 職業を押す＝下に くわしく（役目・能力の点5つ・はじめからの技・章ごとに習う技）→ 同じ 職業を もう一度 押すと いま光っている枠に入る → 次の空いた枠へ（10/9 本人「2回押したら次に」）
 // 枠を押す＝その枠を選び直す。4つ埋まったら「この4人で 旅に出る」
-import { GAME_FONT } from '../ui/fonts.js?v=292';
-import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=292';
-import { sfx } from '../audio/chip.js?v=292';
-import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=292';
-import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=292';
-import { choose, pickOf, undoPick } from '../data/jobs.js?v=292';
-import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=292';
+import { GAME_FONT } from '../ui/fonts.js?v=293';
+import { preloadKit, makeWindow, hitBox } from '../ui/kit.js?v=293';
+import { sfx } from '../audio/chip.js?v=293';
+import { JOBS, JOB_IDS, JOB_SPELLS, POINT_NAMES, POINT_TOTAL, WEAPON_NAMES, adviceOf } from '../data/jobs.js?v=293';
+import { newGame, validPick, validHeroName, HERO_NAME_MAX } from '../field/game.js?v=293';
+import { choose, pickOf, undoPick } from '../data/jobs.js?v=293';
+import { HERO_SEXES, SEX_NAME } from '../field/hero.js?v=293';
 
 const W = 360;
 const FONT = GAME_FONT;
