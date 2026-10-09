@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=309';
-import { kanbanAt } from './kanban.js?v=309';
-import { SOMA_ROWS } from './soma_map.js?v=309';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=309';
-import { KENCHU_ROWS } from './kenchu_map.js?v=309';
-import { AIZU_ROWS } from './aizu_map.js?v=309';
-import { MINAMI_ROWS } from './minami_map.js?v=309';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=309';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=309';
-import { withGates } from './castle.js?v=309';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=309';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=309';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=309';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=309';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=309';
-import { becomeKunoichi } from './kagewatari.js?v=309';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=309';
-import { RELIC_OF_BOSS } from './rally.js?v=309'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=309'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=310';
+import { kanbanAt } from './kanban.js?v=310';
+import { SOMA_ROWS } from './soma_map.js?v=310';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=310';
+import { KENCHU_ROWS } from './kenchu_map.js?v=310';
+import { AIZU_ROWS } from './aizu_map.js?v=310';
+import { MINAMI_ROWS } from './minami_map.js?v=310';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=310';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=310';
+import { withGates } from './castle.js?v=310';
+import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=310';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=310';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=310';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=310';
+import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=310';
+import { becomeKunoichi } from './kagewatari.js?v=310';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=310';
+import { RELIC_OF_BOSS } from './rally.js?v=310'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=310'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
