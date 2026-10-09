@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=324'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=325'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -118,7 +118,7 @@ export const SILENCE_TURNS = 2;
 export const POISON_FRAC = 0.06;
 export const POISON_TURNS = 3;
 function poisonAll(targets, log, text) {
-  const hit = targets.filter((a) => a.alive);
+  const hit = targets.filter((a) => a.alive && !a.shimiWard); // 10/9 夜 凍み餅を 食べた 人は 毒に かからない
   for (const a of hit) a.poison = POISON_TURNS;
   if (hit.length) log.push({ text, sfx: 'dokuiki' });
 }
@@ -131,6 +131,15 @@ function hurt(a, d, log) {
     a.hp = 1;
     log.push({ text: `${a.name}は ${d}の ダメージを うけた！`, effect: { kind: 'hitAlly', target: a.id, hp: a.hp } });
     log.push({ text: `しかし ${a.name}は 泰山府君の 加護で 踏みとどまった！`, sfx: 'heal' });
+    return;
+  }
+  // 10/9 夜 あんぽ柿：この 戦いで 一度だけ
+  if (a.hp === 0 && a.endure) {
+    const by = a.endure;
+    a.endure = null;
+    a.hp = 1;
+    log.push({ text: `${a.name}は ${d}の ダメージを うけた！`, effect: { kind: 'hitAlly', target: a.id, hp: a.hp } });
+    log.push({ text: `しかし ${a.name}は ${by}の 力で 踏みとどまった！`, sfx: 'heal' });
     return;
   }
   log.push({ text: `${a.name}は ${d}の ダメージを うけた！`, effect: { kind: 'hitAlly', target: a.id, hp: a.hp } });
@@ -166,7 +175,7 @@ function allyAct(state, a, cmd, data, rng, log) {
     return;
   }
   // 爆音で声が届かない（居合い斬りは声を使わないので出せる）
-  if (state.silence > 0 && ((cmd.type === 'spell' && !VOICELESS.has(data.spells[cmd.spellId]?.kind)) || cmd.type === 'tell')) {
+  if (state.silence > 0 && !a.shimiWard && ((cmd.type === 'spell' && !VOICELESS.has(data.spells[cmd.spellId]?.kind)) || cmd.type === 'tell')) {
     log.push({ text: `${a.name}は 声を 出したが、かき消されて 届かない！` }); // 10/4 鳴き声・こだまでも合う文に（前は どの雑魚でも「爆音」）
     return;
   }
@@ -352,6 +361,26 @@ function allyAct(state, a, cmd, data, rng, log) {
     const it = data.items[cmd.itemId];
     if (state.items[cmd.itemId] <= 0) {
       log.push({ text: `${it.name}は もう ない！` });
+      return;
+    }
+    // 10/9 夜 お菓子（本人「この戦闘中のみ防御力が1.5倍など」）＝食べた 本人に その戦いの 間だけ。同じ 菓子は 重ならない（食べずに 残す）
+    if (it.kind === 'sweet') {
+      a.sweets = a.sweets ?? {};
+      if (a.sweets[cmd.itemId]) {
+        log.push({ text: `${a.name}は もう ${it.name}を 食べている。（同じ お菓子は 重ならない）` });
+        return;
+      }
+      state.items[cmd.itemId] -= 1;
+      a.sweets[cmd.itemId] = true;
+      const fx = it.fx ?? {};
+      log.push({ text: `${a.name}は ${it.name}を 食べた！`, sfx: 'eat' });
+      if (fx.stat) {
+        a[fx.stat] = Math.round(a[fx.stat] * fx.mult);
+        log.push({ text: `${a.name}の ${{ def: '守り', atk: '攻め', agi: '素早さ' }[fx.stat]}が 上がった！（この 戦いの 間）`, sfx: 'heal' });
+      }
+      if (fx.mpRegen) { a.mpRegen = (a.mpRegen ?? 0) + fx.mpRegen; log.push({ text: `${a.name}の 体に 力が めぐり はじめた！（術の 力が 毎ターン もどる）`, sfx: 'heal' }); }
+      if (fx.ward) { a.shimiWard = true; a.poison = 0; log.push({ text: `${a.name}は 毒にも 術封じにも かからなく なった！（この 戦いの 間）`, sfx: 'heal' }); }
+      if (fx.endure) { a.endure = it.name; log.push({ text: `${a.name}は 一度だけ 倒れずに 踏みとどまれる！（この 戦いの 間）`, sfx: 'heal' }); }
       return;
     }
     // 釣りの景品（本人 10/2「戦闘時に役立つもの」）：投網＝敵を1回止める（ぬしは かわすことも）／大漁の酒＝生きている全員の HP を戻す
@@ -945,6 +974,12 @@ export function resolveTurn(state0, commands, data, rng) {
       a.poison -= 1;
       log.push({ text: `${a.name}は ${d > 0 ? `毒で ${d}の ダメージ！` : '毒に むしばまれて いる……'}${a.poison > 0 ? '' : `（${a.name}の 毒が ぬけた）`}`, effect: { kind: 'hitAlly', target: a.id, hp: a.hp } });
     }
+  }
+  // 10/9 夜 米の 水飴：ターンの 終わりに 術の 力が もどる
+  if (!state.over) for (const a of state.allies.filter((x) => x.alive && x.mpRegen > 0 && x.maxMp > 0 && x.mp < x.maxMp)) {
+    const before = a.mp;
+    a.mp = Math.min(a.maxMp, a.mp + a.mpRegen);
+    log.push({ text: `${a.name}の 術の 力が ${a.mp - before} もどった。`, effect: { kind: 'mp', target: a.id, mp: a.mp } });
   }
   for (const key of ['buff', 'guard', 'cover', 'counter']) if (state[key]?.turns > 0) state[key].turns -= 1;
   if (state.enemy.weak?.turns > 0) state.enemy.weak.turns -= 1;
