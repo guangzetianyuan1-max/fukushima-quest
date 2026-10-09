@@ -1,6 +1,6 @@
 // 道具の一覧と値段（文）。歩く地図の店と持ち物はここを引く
 // 10/2 本人「食べ物を普通に戻して欲しい。ご当地ものは、完成後入れなおします」＝いわきの名物（iwaki_foods.js）は取っておき、いまは ふつうの道具
-import { BASIC_ITEMS } from './basic_items.js?v=294';
+import { BASIC_ITEMS } from './basic_items.js?v=295';
 
 const strip = ({ count, ...rest }) => rest;
 
