@@ -5,7 +5,7 @@
 //   舞台＝鎮守神社の 境内の 茅葺きの 舞台（いまも 歌舞伎が 奉納される）＝「怪物の 巣」に しない（最後の 演目として 舞台の 上で 戦う）
 // 紙芝居の 影絵＝本人の 動画「平家の落人」（第5回）の 影絵 C19・C41・C42・C53 を 正方形に 切って 使う（10/8 本人「大将戦では昔話(影絵)を入れて欲しい。平家の落人のやつ」）
 // 弱点＝昔話の 語り返し（設計書 10/1「旅の者が、これまで集めた昔話を語り返す」）。勝つと FieldScene が 終わりの 場面（EndingScene）へ
-import { BASIC_ITEMS } from './basic_items.js?v=326';
+import { BASIC_ITEMS } from './basic_items.js?v=327';
 
 export const TAISHO = {
   art: {
@@ -31,15 +31,15 @@ export const TAISHO = {
     episode: '最終話', // 10/9 本人「ラスボスは最終話にしてください」（前＝第三十三話）
     tale: '平家の落人',
     place: '福島県檜枝岐村',
-    autoWinTarget: 0.75, // 終章の 最後（設計書 10/1「終章70%」）。10/8 0.70→0.75＝0.70 では 守りの技の無い組が 0.25 まで 落ちた（大技を 減らしても 届かない）
+    autoWinTarget: 0.65, // ⭐10/10 本人「ラスボスが弱すぎる。もっと必殺技を出す確率を上げて欲しい」＝0.75→0.65・必殺技 0.3→0.45／0.18→0.30。// 終章の 最後（設計書 10/1「終章70%」）。10/8 0.70→0.75＝0.70 では 守りの技の無い組が 0.25 まで 落ちた（大技を 減らしても 届かない）
     expectLv: 28,
     // 10/9 本人「子分、ラスボスが弱い、全然技を使わない」＝田島の 8段目で 3〜6ターンで 倒れ 技を 出す 前に 終わった ⇒ 体力 1.35倍・必殺技を 出やすく・攻めを 合わせ直した（前＝hp 1200・atk 735・必殺技 25%/6%）
-    hp: 1620, atk: 1099, def: 150, agi: 16,
+    hp: 1458, atk: 1382, def: 150, agi: 16,
     bgm: 'taisho',
     weakness: 'katarigaeshi',
     mist: { min: 1, max: 3, rise: 0.2 },
-    special: { name: '怨念の 黒い 炎', kind: 'poison', chance: 0.3, power: 411, flash: [120, 60, 160], sfx: 'onnen', cutin: 'assets/cutin/taisho_onnen.png' },
-    special2: { name: '源平の 太刀', kind: 'one', chance: 0.18, power: 522, flash: [255, 240, 200], sfx: 'genpei', cutin: 'assets/cutin/taisho_genpei.png' },
+    special: { name: '怨念の 黒い 炎', kind: 'poison', chance: 0.45, power: 517, flash: [120, 60, 160], sfx: 'onnen', cutin: 'assets/cutin/taisho_onnen.png' },
+    special2: { name: '源平の 太刀', kind: 'one', chance: 0.3, power: 657, flash: [255, 240, 200], sfx: 'genpei', cutin: 'assets/cutin/taisho_genpei.png' },
     biteName: '太刀で 斬りつける',
     introText: '幕の 奥から、揚羽蝶の 鎧の 大将が あらわれた！ 「福島の 道を ふさいだ もやは、わが 怨念……。弔われず、忘れられた 者たちの 無念よ！」',
     tellLines: [

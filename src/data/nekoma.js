@@ -3,7 +3,7 @@
 // 山の主の猫王は仕返しに郷士の奥方を奪う。郷士は家の宝刀で猫王を討った。別の版＝弘法大師が法力で調伏した姿が猫石。慧日寺の僧がネズミ除けに猫王を祀ったとも
 // ⭐「良い存在が呑まれる」形＝慧日寺が祀った山の主の猫王。⚠奥方の場面は見せない・宝刀や郷士の名は原典に無い＝出さない
 // 弱点＝「郷士の宝刀」
-import { BASIC_ITEMS } from './basic_items.js?v=326';
+import { BASIC_ITEMS } from './basic_items.js?v=327';
 
 export const NEKOMA = {
   art: {
