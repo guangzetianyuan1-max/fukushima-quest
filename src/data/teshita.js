@@ -4,7 +4,7 @@
 // 2体同時（twin＝毎ターン 二人とも 動く・体力は ひとつ）。弱点＝揚羽蝶の 旗（主の 紋に 膝を つく）
 // 駒ヶ岳の 家来（ochikerai）とは 姿と 名前を 分ける＝こちらは 鎧の 弓取りと 槍持ち
 // 勝つと 地図へ 戻らず そのまま 大将（taisho）へ（FieldScene の FINAL_CHAIN）
-import { BASIC_ITEMS } from './basic_items.js?v=322';
+import { BASIC_ITEMS } from './basic_items.js?v=323';
 
 export const TESHITA = {
   art: {
