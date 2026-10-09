@@ -2,63 +2,63 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=344';
-import { stampOnsen, stampGourmet, lordTalk, wearReward, relicWait, endFoeReady, endRematch, karoTalk, rallyKeys, hasStamp, stampCount, rallyDone, relicFoeAt, stageNext, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=344';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=344';
-import { EPISODES } from '../data/episodes.js?v=344';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=344';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=344';
-import { RIDERS } from '../data/nomaoi_assets.js?v=344';
-import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=344';
-import { HADAKA_ART } from '../data/hadaka_assets.js?v=344';
-import { RELIC_ART, RELIC_VOICE } from '../data/relic_assets.js?v=344';
-import { WALL_HINT, WALL_BLOCK_TEXT } from '../field/wall_hints.js?v=344';
-import { ATTR_ART } from '../data/attr_assets.js?v=344';
-import { ATTRACTIONS, ATTR_IDS, enterAttr, addAttrPts, exchangeAttr, jangaraPts, yuPts, warajiPts, hanaPts, darumaPts, darumaAll, swanPts, koboPts, WARAJI_GOAL, KOBO_THROWS, SWAN_ROUNDS } from '../field/attractions.js?v=344';
-import { ATTR_PLAY, ATTR_TEXT } from './attractionsUI.js?v=344';
-import { newRound as newHadaka, grab as grabRope, heightAt as ropeHeight, roundDone as hadakaDone, timeLeft as hadakaLeft, roundPts as hadakaPts, enterRound as enterHadaka, addRope, HADAKA_PRIZES, exchangeHadaka, ENTRY_PRICE as HADAKA_PRICE } from '../field/hadaka.js?v=344';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=344';
-import { TILE } from '../field/tiles.js?v=344';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=344';
-import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker, hitBox } from '../ui/kit.js?v=344';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=344';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName, townEntry } from '../field/towns.js?v=344';
-import { missedStamps } from '../field/missed.js?v=344';
-import { CASTLE_QUESTS, QUEST_BOSS_AT, GATE_OF, gateGround, gateMarks, reportMarks, enterCastle, leaveCastle, SAWA_OF, enterSawa } from '../field/castle.js?v=344';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=344';
-import { townSigns, SIGN_OF } from '../field/signs.js?v=344';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=344';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=344';
+import { collection, PER_PAGE } from '../field/collection.js?v=345';
+import { stampOnsen, stampGourmet, lordTalk, wearReward, relicWait, endFoeReady, endRematch, karoTalk, rallyKeys, hasStamp, stampCount, rallyDone, relicFoeAt, stageNext, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=345';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=345';
+import { EPISODES } from '../data/episodes.js?v=345';
+import { ITEMS, PRICE, itemNote } from '../data/items.js?v=345';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=345';
+import { RIDERS } from '../data/nomaoi_assets.js?v=345';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=345';
+import { HADAKA_ART } from '../data/hadaka_assets.js?v=345';
+import { RELIC_ART, RELIC_VOICE } from '../data/relic_assets.js?v=345';
+import { WALL_HINT, WALL_BLOCK_TEXT } from '../field/wall_hints.js?v=345';
+import { ATTR_ART } from '../data/attr_assets.js?v=345';
+import { ATTRACTIONS, ATTR_IDS, enterAttr, addAttrPts, exchangeAttr, jangaraPts, yuPts, warajiPts, hanaPts, darumaPts, darumaAll, swanPts, koboPts, WARAJI_GOAL, KOBO_THROWS, SWAN_ROUNDS } from '../field/attractions.js?v=345';
+import { ATTR_PLAY, ATTR_TEXT } from './attractionsUI.js?v=345';
+import { newRound as newHadaka, grab as grabRope, heightAt as ropeHeight, roundDone as hadakaDone, timeLeft as hadakaLeft, roundPts as hadakaPts, enterRound as enterHadaka, addRope, HADAKA_PRIZES, exchangeHadaka, ENTRY_PRICE as HADAKA_PRICE } from '../field/hadaka.js?v=345';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=345';
+import { TILE } from '../field/tiles.js?v=345';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=345';
+import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker, hitBox } from '../ui/kit.js?v=345';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=345';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName, townEntry } from '../field/towns.js?v=345';
+import { missedStamps } from '../field/missed.js?v=345';
+import { CASTLE_QUESTS, QUEST_BOSS_AT, GATE_OF, gateGround, gateMarks, reportMarks, enterCastle, leaveCastle, SAWA_OF, enterSawa } from '../field/castle.js?v=345';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=345';
+import { townSigns, SIGN_OF } from '../field/signs.js?v=345';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=345';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=345';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, PASSED_BY, SAVE_KEY, slotKey, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-  wallQuestLines, startDuel, learnSkill, canTakeQuest } from '../field/game.js?v=344';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=344';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=344';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=344';
-import { membersOf } from '../battle/levels.js?v=344';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=344';
-import { ICON_IDS } from '../data/icons.js?v=344';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=344';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=344';
-import { gearStage, stagedLook, baseLook } from '../field/gearlook.js?v=344';
-import { mapPointOf } from '../field/mapcard.js?v=344';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=344';
-import { heroLook, heroFace, heroSexOf } from '../field/hero.js?v=344';
-import { bathTown, bathBg, BATH_VOICE, BATH_VOICE_AT, BATH_SECONDS } from '../field/bath.js?v=344';
-import { BATH_ART } from '../data/bath_assets.js?v=344';
-import { QUEST_ART, KAGURA_TORII } from '../data/quest_assets.js?v=344';
-import { makeRng } from '../battle/rules.js?v=344';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=344';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=344';
+  wallQuestLines, startDuel, learnSkill, canTakeQuest } from '../field/game.js?v=345';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=345';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=345';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=345';
+import { membersOf } from '../battle/levels.js?v=345';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=345';
+import { ICON_IDS } from '../data/icons.js?v=345';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=345';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=345';
+import { gearStage, stagedLook, baseLook } from '../field/gearlook.js?v=345';
+import { mapPointOf } from '../field/mapcard.js?v=345';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=345';
+import { heroLook, heroFace, heroSexOf } from '../field/hero.js?v=345';
+import { bathTown, bathBg, BATH_VOICE, BATH_VOICE_AT, BATH_SECONDS } from '../field/bath.js?v=345';
+import { BATH_ART } from '../data/bath_assets.js?v=345';
+import { QUEST_ART, KAGURA_TORII } from '../data/quest_assets.js?v=345';
+import { makeRng } from '../battle/rules.js?v=345';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=345';
+import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=345';
 
 const STATUS_PAD = 96; // 上の札（4,4 から 高さ 16＋23×行）の下の端＋少し
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS, FIELD_PROPS } from '../field/game.js?v=344';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds, playVoice, stopVoice } from '../audio/chip.js?v=344';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=344';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=344';
+import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS, FIELD_PROPS } from '../field/game.js?v=345';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds, playVoice, stopVoice } from '../audio/chip.js?v=345';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=345';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=345';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {

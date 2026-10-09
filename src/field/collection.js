@@ -1,7 +1,7 @@
 // コレクション（本人 10/4 夜「コマンド『どうぐ』→『コレクション』を新設定、倒したボスのキャラクターをあつめるように」）
 // 元に戻した昔話の主（game.cleared）の 元の姿を、話の順に並べる。まだの主は 影と「？？？」（話数だけ見せる）
 // 画面は FieldScene の showCollection（3列×3段＝1ページ9体）
-import { EPISODES } from '../data/episodes.js?v=344';
+import { EPISODES } from '../data/episodes.js?v=345';
 
 export const PER_PAGE = 9;
 
