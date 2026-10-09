@@ -1,5 +1,7 @@
 // 町の 店の 看板（10/7 本人「町や城の店に看板が欲しい『武器』『よろず屋』『宿』『温泉』など」）
 // 画面と 切り離した 計算だけ：店の人の 置き場（spot）→ 看板の 字と、看板を 掛ける マス（建物の 入口の 上・無ければ 人の 頭の 上）
+import { EQUIP } from '../data/equip.js?v=290';
+
 export const SIGN_OF = {
   katana: '武器', gusoku: '防具', dougu: 'よろず屋', shop: 'よろず屋', yado: '宿', bandai: '温泉',
   shrine: '神社', temple: '寺', kashi: '菓子', chaya: '茶屋', bansho: '番屋', fishing: '釣り',
@@ -22,7 +24,9 @@ export function townSigns(t) {
   if (!t || t.inside) return [];
   const out = [];
   for (const n of t.npcs ?? []) {
-    const text = SIGN_OF[n.spot];
+    // 10/9 本人「武器、防具屋の表記方法をチェック」＝武器も 防具も 売る 刀屋（檜枝岐・田島・只見・小高）は「武器・防具」
+    const both = n.role === 'equip' && ['weapon', 'armor'].every((s) => (n.goods ?? []).some((id) => EQUIP[id]?.slot === s));
+    const text = both ? '武器・防具' : SIGN_OF[n.spot];
     if (!text || n.role === 'master' || n.guide) continue;
     const b = buildingOf(t.props, n);
     if (!b && NEED_BUILDING.includes(n.spot)) continue; // 10/8 本人「『茶屋』は無い」＝温泉地の 茶屋の 人は 立っているだけ（建物が 無い）＝看板を 出さない

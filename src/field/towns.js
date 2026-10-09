@@ -1,5 +1,5 @@
-import { gearAt } from '../data/equip.js?v=289'; // 10/5 武器と防具は職業ごと＝店は段で並べる
-import { castleMaps } from './castle.js?v=289'; // 10/7 お城の 大広間と お題の 場所
+import { gearAt } from '../data/equip.js?v=290'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=290'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -38,8 +38,8 @@ export const TOWNS = {
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「いわきの 湯本温泉は、古くから 知られた 湯の町よ。旅の つかれは 湯で 落としてね。」', '湯めぐりの 案内人「北の 県北や 県中には、職業の 技を 教えて くれる 温泉が あるんだって。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 八幡さまへ。'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([1, 2]), items: ['tama'], lines: ['刀屋だ。腕に 合った 得物を 選びな。'] },
-      { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [1, 2]), lines: ['荒物屋だよ。旅の 支度なら まかせて おくれ。'] },
+      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([1, 2]), items: ['tama'], lines: ['平の 刀屋だ。腕に 合った 得物を 選びな。'] },
+      { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [1, 2]), lines: ['平の 具足屋だ。旅の 支度なら まかせて おくれ。'] },
       { spot: 'm1', look: 'machibito', lines: ['ここは 平の 城下町。お城の まわりに 町が ひらけたんだ。'] },
       { spot: 'm2', look: 'musume', lines: ['黒い もやが 出てから、昔話を 語る 人が へってしまって……'] },
       // 初めての人への助言（本人 10/2「各町の町人を増やして、初心者向けのアドバイスを。武器や防具の必要性。術の効果など」）
@@ -163,7 +163,7 @@ export const TOWNS = {
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「県北の 温泉地には、職業の 技を 教える 師匠が いるらしいわ。」', '湯めぐりの 案内人「湯に つかれば 傷も 呪いも 落ちるから、旅の 合間に 寄ってね。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 相馬の 神社へ。'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([4]), items: ['tama'], lines: ['相馬の 刀屋だ。職人ごとの 得物と 防具を そろえて あるぜ。'] },
+      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([4]), items: ['tama'], lines: ['相馬の 刀屋だ。職ごとの 得物を そろえて あるぜ。'] },
       { spot: 'dougu', look: 'shonin', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['相馬の 道具屋だ。薬箱は 皆の 傷を いっぺんに 手当て できるぜ。'] }, // 10/3 本人「道具も強く」
       { spot: 'yado', look: 'okami', role: 'inn', price: 18, lines: ['いらっしゃいませ。相馬の 宿で ございます。'] },
       { spot: 'm1', look: 'ryoshi', lines: [
@@ -294,7 +294,7 @@ export const TOWNS = {
       // 湯めぐりの 案内人（10/5 夜 本人「各城やまちで、温泉に行くように促すキャラクターも」）
       { spot: 'guide', look: 'onsen_annai', guide: true, lines: ['湯めぐりの 案内人「石川の 母畑温泉と 猫啼温泉、天栄の 谷の 二岐温泉にも 師匠が いるって。」', '湯めぐりの 案内人「松明あかしの 御神火も、旅の 力に なるわよ。」'] },
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 須賀川の 神社へ。'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([6]), items: ['tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、具足を そろえて いけ。'] },
+      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([6]), items: ['tama'], lines: ['須賀川の 刀屋だ。天栄の 川へ 行くなら、得物を そろえて いけ。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 28, lines: ['いらっしゃいませ。須賀川の 宿で ございます。'] },
       { spot: 'm1', look: 'toshiyori', lines: [
         '須賀川の 松明あかしは、四百年 あまり 続く 火祭りじゃ。',
@@ -459,8 +459,8 @@ export const TOWNS = {
       { spot: 'attr', look: 'musume', role: 'attr', attr: 'kobosi', lines: ['十日市の 世話役です。起き上がり小法師は、家族の 人数より 一つ 多く 買って 神棚に 飾るのが 習わしです。', '世話役「子孫繁栄と 無病息災を 願うんです。台の 上で 起き上がるように 投げて みてください。」'] }, // 10/7 町の催し（attractions.js）
       { spot: 'shrine', look: 'kannushi', role: 'shrine', lines: ['ようこそ 若松の 神社へ。'] },
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「鶴ヶ城だ。蒲生氏郷さまが、黒川を 若松と あらため、城を 鶴ヶ城と 名づけたと 伝わる。」'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7]), items: ['tama'], lines: ['会津の 刀屋だ。'] },
-      { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [6, 7]), lines: ['会津の 具足屋だ。'] },
+      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7]), items: ['tama'], lines: ['会津若松の 刀屋だ。'] },
+      { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [6, 7]), lines: ['会津若松の 具足屋だ。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['若松の 道具屋で ございます。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 32, lines: ['いらっしゃいませ。若松の 旅籠で ございます。'] },
       { spot: 'kashi', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou'], lines: ['城下の 茶屋です。ひと休み して いって くださいな。'] },
@@ -497,7 +497,7 @@ export const TOWNS = {
       { spot: 'guide', look: 'kannushi', role: 'shrine', lines: ['ようこそ 檜枝岐の 祠へ。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 36, lines: ['いらっしゃいませ。檜枝岐の 民宿で ございます。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['檜枝岐の よろず屋で ございます。'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7], [7]), items: ['tama'], lines: ['山の 村の 刀屋だ。若松から 品を 運んで きた。'] },
+      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7], [7]), items: ['tama'], lines: ['檜枝岐の 刀屋だ。得物も 防具も、若松から 運んで きた。'] },
       { spot: 'm1', look: 'toshiyori', lines: ['この村は 山に 囲まれて、平らな 土地が ほとんど ない。', '米が 作れんから、むかしは 山で ソバを 育てたんじゃ。'] },
       { spot: 'm2', look: 'musume', lines: ['冬は 雪が 2メートルも 積もるの。'] },
       { spot: 'm3', look: 'machibito', lines: ['村の 鎮守さまの 境内に、茅葺きの 歌舞伎の 舞台が あるんだ。', '参道の 途中には ばんばさまも いなさる。'] },
@@ -515,7 +515,7 @@ export const TOWNS = {
       { spot: 'guide', look: 'kannushi', role: 'shrine', lines: ['ようこそ 田島の 鎮守さまへ。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 40, lines: ['いらっしゃいませ。田島の 宿で ございます。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['田島の よろず屋で ございます。'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([8], [8]), items: ['tama'], lines: ['田島の 刀屋だ。街道を 運ばれて きた、いちばんの 品が そろって おるぞ。'] },
+      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([8], [8]), items: ['tama'], lines: ['田島の 刀屋だ。街道を 運ばれて きた、いちばんの 得物と 防具が そろって おるぞ。'] },
       { spot: 'm1', look: 'toshiyori', lines: ['田島は、会津と 江戸を むすぶ 会津西街道の 宿場町じゃ。', 'むかしは 大名の 行列も ここを 通ったんじゃよ。'] },
       { spot: 'm2', look: 'musume', lines: ['夏の 祇園祭には、きれいに 着かざった 女の人たちが、お供え物を 運んで 町を 歩くのよ。'] },
       { spot: 'm3', look: 'machibito', lines: ['町の 西の 山には、鴫山城が あるんだ。'] },
@@ -530,7 +530,7 @@ export const TOWNS = {
       { spot: 'guide', look: 'kannushi', role: 'shrine', lines: ['ようこそ 只見の 鎮守さまへ。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 40, lines: ['いらっしゃいませ。只見の 宿で ございます。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['只見の よろず屋で ございます。'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([8], [8]), items: ['tama'], lines: ['只見の 刀屋だ。雪の 峠を こえて きた 品が そろって おるぞ。'] },
+      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([8], [8]), items: ['tama'], lines: ['只見の 刀屋だ。雪の 峠を こえて きた 得物と 防具が そろって おるぞ。'] },
       { spot: 'm1', look: 'toshiyori', lines: ['只見は、只見川と 伊南川が 流れる 雪深い 町じゃ。', '「只見」の 名は、弘法大師が この 川を 只 見て 帰られたからと いう 言い伝えも あるんじゃよ。'] }, // 福島県「只見川の歴史」（寛文の 風俗帳）
       { spot: 'm2', look: 'musume', lines: ['町の まわりは ブナの 森。只見の 森と くらしは、ユネスコエコパークにも なっているのよ。'] },
       { spot: 'm3', look: 'machibito', lines: ['田島から 檜枝岐へ 抜ける 谷の 道は、雪崩で 埋まって しまったんだ。', '町の 者で 掘り出したいが、奥の 只見川の 沢から 夜な夜な ザックザックと 小豆を 研ぐ 音が して、みんな 怖がって 外へ 出ない。いまは 黒い もやまで 立ちこめて いる……。'], after: { boss: 'azukiarai', lines: ['沢の もやが 晴れて、小豆を 研ぐ 音も 静かに なった。', '町の みんなで 雪崩の 雪を 掘り出したよ。檜枝岐へ 行けるぞ。'] } }, // 10/9 本人「雪崩で通れない理由で」・倒した 後は after
