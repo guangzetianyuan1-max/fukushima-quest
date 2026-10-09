@@ -1,6 +1,6 @@
 // 道具の一覧と値段（文）。歩く地図の店と持ち物はここを引く
 // 10/2 本人「食べ物を普通に戻して欲しい。ご当地ものは、完成後入れなおします」＝いわきの名物（iwaki_foods.js）は取っておき、いまは ふつうの道具
-import { BASIC_ITEMS } from './basic_items.js?v=298';
+import { BASIC_ITEMS } from './basic_items.js?v=299';
 
 const strip = ({ count, ...rest }) => rest;
 
@@ -15,8 +15,8 @@ export const ITEMS = {
   tokujou: { name: '特上薬草', kind: 'hp', amount: 120 },
   goshinsui: { name: '御神水', kind: 'mp', amount: 25 },
   kusuribako: { name: '薬箱', kind: 'hpall', amount: 60 },
-  // 二本松の提灯祭りの景品（10/4）＝二本松の名物 玉羊羹（ようかんを丸い玉に流した菓子）
-  tamayokan: { name: '玉羊羹', kind: 'hp', amount: 90 },
+  // 二本松の提灯祭りの景品（10/4）＝二本松の名物（ようかんを丸い玉に流した菓子）。⭐10/9 夜 本人「『薄皮饅頭』『玉羊羹』も変えてください」＝店の 商品名と 重なる 名前は 使わない＝まんまる羊羹
+  tamayokan: { name: 'まんまる羊羹', kind: 'hp', amount: 90 },
   // 福島グルメ（10/6 本人「福島グルメ登場させ、各お店より購入する」＝スタンプラリー・src/field/rally.js）。名物は ネットで 確かめた 物だけ
   // ⚠id は g_ を付ける（mehikari・manju は 前の記録の 読み替え OLD_ITEM で 薬草に 化ける）
   g_unikai: { name: 'うに貝焼き', kind: 'hp', amount: 80 }, // いわきの 郷土料理（江戸時代は 献上品）
@@ -24,7 +24,7 @@ export const ITEMS = {
   g_manju: { name: '温泉饅頭', kind: 'hp', amount: 30 },
   g_hokki: { name: 'ほっき飯', kind: 'hp', amount: 70 }, // 相馬の 冬から 早春の 郷土料理
   g_momo: { name: '桃', kind: 'hp', amount: 60 },
-  g_usukawa: { name: '薄皮饅頭', kind: 'hp', amount: 80 }, // 郡山・1852年（嘉永5年）奥州街道の 宿場で 生まれた
+  g_usukawa: { name: '茶まんじゅう', kind: 'hp', amount: 80 }, // 郡山の 名物の 皮の 薄い 茶色の 饅頭（10/9 夜 商品名と 重ならない よう 茶まんじゅうに）
   g_ramen: { name: '白河ラーメン', kind: 'hpall', amount: 50 },
   g_soba: { name: '猪苗代の そば', kind: 'hp', amount: 100 },
   g_kozuyu: { name: 'こづゆ', kind: 'hpall', amount: 70 }, // 会津の 冠婚葬祭の 汁物
@@ -36,7 +36,7 @@ export function itemNote(it) {
   return { mp: `術+${it.amount}`, hpall: `全員HP+${it.amount}`, bind: '敵を止める', ammo: '鉄砲' }[it.kind] ?? `HP+${it.amount}`;
 }
 
-export const PRICE = { yakusou: 8, jouyakusou: 30, reisui: 15, tama: 10, tokujou: 60, goshinsui: 45, kusuribako: 90, tamayokan: 45, g_unikai: 40, g_mehikari: 15, g_manju: 10, g_hokki: 35, g_momo: 30, g_usukawa: 40, g_ramen: 70, g_soba: 50, g_kozuyu: 90, g_awaman: 60 }; // 玉羊羹＝二本松の菓子屋（10/5 夜・HP90＝上薬草と特上の間）
+export const PRICE = { yakusou: 8, jouyakusou: 30, reisui: 15, tama: 10, tokujou: 60, goshinsui: 45, kusuribako: 90, tamayokan: 45, g_unikai: 40, g_mehikari: 15, g_manju: 10, g_hokki: 35, g_momo: 30, g_usukawa: 40, g_ramen: 70, g_soba: 50, g_kozuyu: 90, g_awaman: 60 }; // まんまる羊羹＝二本松の菓子屋（10/5 夜・HP90＝上薬草と特上の間）
 
 // 前の記録（名物のころ）の持ち物を、いまの道具に読み替える
 export const OLD_ITEM = { mehikari: 'yakusou', manju: 'yakusou', uni: 'jouyakusou', katsuo: 'reisui' };

@@ -1,5 +1,5 @@
-import { gearAt } from '../data/equip.js?v=298'; // 10/5 武器と防具は職業ごと＝店は段で並べる
-import { castleMaps } from './castle.js?v=298'; // 10/7 お城の 大広間と お題の 場所
+import { gearAt } from '../data/equip.js?v=299'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=299'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -249,10 +249,10 @@ export const TOWNS = {
       { spot: 'm2', look: 'ryoshi', lines: [
         '鬼婆は おそろしく 強いと いう。観世寺へ 行く まえに、宿で しっかり 休んで いきな。',
       ] },
-      // ⭐10/5 夜 本人「店を増やしてほしい」＝具足屋・道具屋・菓子屋（二本松の 名物 玉羊羹）・お城の番兵
+      // ⭐10/5 夜 本人「店を増やしてほしい」＝具足屋・道具屋・菓子屋（二本松の 名物 まんまる羊羹）・お城の番兵
       { spot: 'gusoku', look: 'shonin', role: 'equip', goods: gearAt([], [4, 5]), lines: ['二本松の 具足屋だ。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['jouyakusou', 'tokujou', 'goshinsui', 'kusuribako'], lines: ['二本松の 道具屋で ございます。'] },
-      { spot: 'kashi', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou'], lines: ['二本松の 菓子屋です。名物の 玉羊羹は、提灯祭りの 景品に 出して いますよ。'] }, // 10/7 本人「店ではスタンプラリーの食事は出さない」
+      { spot: 'kashi', look: 'chaya', role: 'shop', goods: ['jouyakusou', 'tokujou'], lines: ['二本松の 菓子屋です。名物の まんまる羊羹は、提灯祭りの 景品に 出して いますよ。'] }, // 10/7 本人「店ではスタンプラリーの食事は出さない」
       { spot: 'banpei', look: 'yakunin', lines: ['番兵「霞ヶ城の 石垣は 見事だろう。春は 桜で いっぱいに なるぞ。」'] },
       { spot: 'lord', look: 'yakunin', role: 'castle_gate', lines: [] }, // お城の 門番＝話すと 城の 大広間へ（10/7 お城クエスト・src/field/castle.js）
     ],
