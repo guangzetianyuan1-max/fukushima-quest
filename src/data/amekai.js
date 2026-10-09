@@ -5,7 +5,7 @@
 // 原典には敵はいない＝ゲームでは、忘れられて黒いもやに呑まれた母の霊。弱点＝「子を守る約束」。原典は紙芝居④で しおりが語る
 // ⚠身ごもった母の死・墓の赤子＝絵と語りは直接見せず、やさしく語る
 // 絵＝10/4 届いた。プロンプト＝art_src/Geminiプロンプト_2章県北.md
-import { BASIC_ITEMS } from './basic_items.js?v=340';
+import { BASIC_ITEMS } from './basic_items.js?v=341';
 
 export const AMEKAI = {
   art: {
