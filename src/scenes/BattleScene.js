@@ -1,21 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=341';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=341';
-import { EPISODES } from '../data/episodes.js?v=341';
-import { revealAt } from '../ui/reveal.js?v=341';
-import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=341';
-import { chooseCommands } from '../battle/auto.js?v=341';
-import { SKILLNAME_IDS } from '../data/skillname_assets.js?v=341';
-import { itemNote } from '../data/items.js?v=341';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=341';
-import { STORY_FILES } from '../data/story_assets.js?v=341';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=341';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=341';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=341';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=341';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=341';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=341';
-import { DUEL_BIG } from '../data/duel_assets.js?v=341';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=341';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=342';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=342';
+import { EPISODES } from '../data/episodes.js?v=342';
+import { revealAt } from '../ui/reveal.js?v=342';
+import { createBattle, resolveTurn, makeRng } from '../battle/rules.js?v=342';
+import { chooseCommands } from '../battle/auto.js?v=342';
+import { SKILLNAME_IDS, SKILLNAME_PAD } from '../data/skillname_assets.js?v=342';
+import { itemNote } from '../data/items.js?v=342';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=342';
+import { STORY_FILES } from '../data/story_assets.js?v=342';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=342';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=342';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=342';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=342';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=342';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel } from '../field/game.js?v=342';
+import { DUEL_BIG } from '../data/duel_assets.js?v=342';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=342';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -606,11 +606,10 @@ export class BattleScene extends Phaser.Scene {
 
   // 10/10 技の 名の 毛筆（段1・2＝帯なしで 敵の 前に ふわっと）。高さは 段で 変える＝SKILLNAME_H
   skillName(id, tier) {
+    // 10/10 本人「背景が暗いことがあるので、字の周りを白のエフェクト」＝白い 光は 絵に 焼いた（prep_skillnames.add_glow）＝和紙の 札は 外した
     const im = this.add.image(0, 0, `skn_${id}`);
-    const k = Math.min(SKILLNAME_H[tier] / im.height, (W - 40) / im.width);
-    const paper = this.add.rectangle(0, 0, im.width * k + 28, im.height * k + 12, 0xf1e6c8, 0.92).setStrokeStyle(2, 0x8a5a2e); // 和紙の 帯（暗い 背景に 墨が 沈まない）
-    im.setScale(k);
-    const box = this.add.container(W / 2, 250, [paper, im]).setDepth(900).setAlpha(0).setScale(1.3);
+    im.setScale(Math.min(SKILLNAME_H[tier] / (im.height - 2 * SKILLNAME_PAD), (W - 20) / im.width)); // 高さは 墨の 字で 測る（光の 幅を 除く）
+    const box = this.add.container(W / 2, 250, [im]).setDepth(900).setAlpha(0).setScale(1.3);
     this.tweens.add({ targets: box, scale: 1, alpha: 1, duration: 180, ease: 'Back.Out',
       onComplete: () => this.tweens.add({ targets: box, alpha: 0, delay: 650, duration: 250, onComplete: () => box.destroy() }) });
   }
@@ -630,10 +629,9 @@ export class BattleScene extends Phaser.Scene {
     // 10/10 本人「習字のかっこいい文字、必殺技の強さにより字の大きさが変わる」＝毛筆の 絵が あれば 字の かわりに それを 段の 大きさで
     if (id && this.textures.exists(`skn_${id}`)) {
       title.setVisible(false);
-      band.setFillStyle(0xf1e6c8, 0.94); // 黒い 帯に 黒い 墨は 沈む＝和紙の 色に（10/10）
-      label.setColor('#5a2a10');
+      // 10/10 白い 光を 焼いた ので 黒い 帯の まま（前は 墨が 沈むので 和紙の 色に して いた）
       const im = this.add.image(W / 2, y + 6, `skn_${id}`);
-      im.setScale(Math.min(SKILLNAME_H[tier] / im.height, (W - 20) / im.width));
+      im.setScale(Math.min(SKILLNAME_H[tier] / (im.height - 2 * SKILLNAME_PAD), (W - 4) / im.width));
       box.add(im);
     }
     this.tweens.add({
