@@ -5,7 +5,7 @@
 //   舞台＝鎮守神社の 境内の 茅葺きの 舞台（いまも 歌舞伎が 奉納される）＝「怪物の 巣」に しない（最後の 演目として 舞台の 上で 戦う）
 // 紙芝居の 影絵＝本人の 動画「平家の落人」（第5回）の 影絵 C19・C41・C42・C53 を 正方形に 切って 使う（10/8 本人「大将戦では昔話(影絵)を入れて欲しい。平家の落人のやつ」）
 // 弱点＝昔話の 語り返し（設計書 10/1「旅の者が、これまで集めた昔話を語り返す」）。勝つと FieldScene が 終わりの 場面（EndingScene）へ
-import { BASIC_ITEMS } from './basic_items.js?v=316';
+import { BASIC_ITEMS } from './basic_items.js?v=317';
 
 export const TAISHO = {
   art: {

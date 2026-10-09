@@ -1,5 +1,5 @@
-import { gearAt } from '../data/equip.js?v=316'; // 10/5 武器と防具は職業ごと＝店は段で並べる
-import { castleMaps } from './castle.js?v=316'; // 10/7 お城の 大広間と お題の 場所
+import { gearAt } from '../data/equip.js?v=317'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=317'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -497,7 +497,7 @@ export const TOWNS = {
       { spot: 'guide', look: 'kannushi', role: 'shrine', lines: ['ようこそ 檜枝岐の 祠へ。'] },
       { spot: 'yado', look: 'okami', role: 'inn', price: 36, lines: ['いらっしゃいませ。檜枝岐の 民宿で ございます。'] },
       { spot: 'dougu', look: 'musume', role: 'shop', goods: ['tokujou', 'goshinsui', 'kusuribako'], lines: ['檜枝岐の よろず屋で ございます。'] },
-      { spot: 'katana', look: 'kaji', role: 'equip', goods: gearAt([7], [7]), items: ['tama'], lines: ['檜枝岐の 刀屋だ。得物も 防具も、若松から 運んで きた。'] },
+      // ⛔10/9 夜 本人「檜枝岐村にも武器防具屋は要らない」＝刀屋を 外した（建物は 民家・武器と 防具は 田島で）
       { spot: 'm1', look: 'toshiyori', lines: ['この村は 山に 囲まれて、平らな 土地が ほとんど ない。', '米が 作れんから、むかしは 山で ソバを 育てたんじゃ。'] },
       { spot: 'm2', look: 'musume', lines: ['冬は 雪が 2メートルも 積もるの。'] },
       { spot: 'm3', look: 'machibito', lines: ['村の 鎮守さまの 境内に、茅葺きの 歌舞伎の 舞台が あるんだ。', '参道の 途中には ばんばさまも いなさる。'] },
@@ -1490,10 +1490,10 @@ export const TOWN_LAYOUTS = {
       {"img": "hokora", "x": 7, "y": 2, "w": 3, "h": 3},
       {"img": "hatago", "x": 1, "y": 3, "w": 4, "h": 3},
       {"img": "kusuriya", "x": 1, "y": 11, "w": 4, "h": 3},
-      {"img": "katanaya", "x": 9, "y": 11, "w": 4, "h": 3},
+      {"img": "minka", "x": 9, "y": 11, "w": 4, "h": 3},
       {"img": "minka", "x": 9, "y": 6, "w": 3, "h": 2},
     ],
-    spots: {"yado": {"x": 2, "y": 5}, "dougu": {"x": 2, "y": 13}, "katana": {"x": 10, "y": 13}, "guide": {"x": 10, "y": 4}, "m1": {"x": 6, "y": 7}, "m2": {"x": 11, "y": 8}, "m3": {"x": 5, "y": 10}, "m4": {"x": 3, "y": 7}, "m5": {"x": 10, "y": 15}, "banba": {"x": 15, "y": 10}},
+    spots: {"yado": {"x": 2, "y": 5}, "dougu": {"x": 2, "y": 13}, "guide": {"x": 10, "y": 4}, "m1": {"x": 6, "y": 7}, "m2": {"x": 11, "y": 8}, "m3": {"x": 5, "y": 10}, "m4": {"x": 3, "y": 7}, "m5": {"x": 10, "y": 15}, "banba": {"x": 15, "y": 10}},
   },
   tajima: {
     entry: {"x": 8, "y": 16},
