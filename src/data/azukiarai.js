@@ -5,7 +5,7 @@
 // ⭐悪者に しない：もやに 呑まれて 暴れた・戻すと また 静かに 小豆を 研ぐ だけの 者
 // 場所＝只見の 町の 奥の 只見川の 沢（castle.js の SAWA・字 豆）。勝つと 田島の 南の 壁 十 が 晴れて 檜枝岐へ
 // 絵（ボス・挿絵・背景）・紙芝居（影絵 4枚と 声）・アイキャッチ（挿絵 小豆の 雨から）は 10/9 そろった
-import { BASIC_ITEMS } from './basic_items.js?v=314';
+import { BASIC_ITEMS } from './basic_items.js?v=315';
 
 export const AZUKIARAI = {
   art: {
