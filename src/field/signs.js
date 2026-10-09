@@ -1,6 +1,6 @@
 // 町の 店の 看板（10/7 本人「町や城の店に看板が欲しい『武器』『よろず屋』『宿』『温泉』など」）
 // 画面と 切り離した 計算だけ：店の人の 置き場（spot）→ 看板の 字と、看板を 掛ける マス（建物の 入口の 上・無ければ 人の 頭の 上）
-import { EQUIP } from '../data/equip.js?v=351';
+import { EQUIP } from '../data/equip.js?v=352';
 
 export const SIGN_OF = {
   katana: '武器', gusoku: '防具', dougu: 'よろず屋', shop: 'よろず屋', yado: '宿', bandai: '温泉',
