@@ -116,7 +116,8 @@ export const JOB_SPELLS = {
   // ---- 妖術使い ----
   maboroshi: { name: '幻の術', desc: '2ターン 敵の攻撃が半分それる', kind: 'daze', cost: 6, turns: 2, autoHurt: 0.5, sfx: 'maboroshi', verb: '印を 結び、すうっと 姿を ゆらがせた', text: '姿が いくつにも 分かれて 見える！', hitText: 'は 幻を 追いはじめた！', missText: 'は 幻を 斬りつけた！ 攻撃が それた！' },
   ikazuchi: { name: '雷の術', desc: '知力で放つ 大きな術の一撃', kind: 'magic', cost: 12, mult: 1.9, big: true, sfx: 'ikazuchi', verb: '天を 指さした', text: '雲が 裂け、稲妻が 落ちた！' },
-  oogama: { name: '大蝦蟇の術', desc: '大蝦蟇を呼ぶ・3ターン 毎ターン攻撃', kind: 'summon', cost: 18, mult: 1.0, turns: 3, big: true, beast: '大蝦蟇', sfx: 'oogama', verb: '巻物を くわえて 印を 結んだ', text: '煙の 中から 大蝦蟇が あらわれた！ しばらく 共に 戦う。' },
+  // ⭐10/10 本人「2」＝技の 名を 大蝦蟇→大がま（Gemini が「蟇」を 2回 まちがえた・毛筆の 絵の ため）
+  oogama: { name: '大がまの術', desc: '大がまを呼ぶ・3ターン 毎ターン攻撃', kind: 'summon', cost: 18, mult: 1.0, turns: 3, big: true, beast: '大がま', sfx: 'oogama', verb: '巻物を くわえて 印を 結んだ', text: '煙の 中から 大がまが あらわれた！ しばらく 共に 戦う。' },
   // ---- 忍者 ----
   kemuridama: { name: '煙玉', desc: 'そのターン 敵の攻撃を全員かわす', kind: 'evade', cost: 5, sfx: 'kemuri', verb: '煙玉を 投げた', text: 'もうもうと 煙が たちこめ、みなの 姿が 消えた！' },
   kagenui: { name: '影縫い', desc: '敵を1回 動けなくする（4回に3回）', kind: 'bind', cost: 6, chance: 0.75, sfx: 'kagenui', verb: '苦無を 敵の 影に 投げた', text: '苦無が 影を 地面に 縫いとめる！', hitText: 'は 影を 縫われて 動けない！', missText: 'は 影を ひきはがした！', stuckText: 'は 影を 縫われて 動けない！' },

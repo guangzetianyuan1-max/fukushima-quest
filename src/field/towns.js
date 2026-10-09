@@ -1,5 +1,5 @@
-import { gearAt } from '../data/equip.js?v=330'; // 10/5 武器と防具は職業ごと＝店は段で並べる
-import { castleMaps } from './castle.js?v=330'; // 10/7 お城の 大広間と お題の 場所
+import { gearAt } from '../data/equip.js?v=331'; // 10/5 武器と防具は職業ごと＝店は段で並べる
+import { castleMaps } from './castle.js?v=331'; // 10/7 お城の 大広間と お題の 場所
 // ⭐10/2 本人「湯本、平、両方神社が見えない」＝上の2段は画面の上の札（HP・文）に隠れる＝どの町も上に杉の並木を2段足して、中身を2段下げた（TOP）
 // 町の中の地図と、町の人（本人 10/1「平(城下町、武器がある)、湯本(温泉回復、温泉饅頭)、小名浜(めひかり、かつお、貝焼き)」）
 // 字の意味は tiles.js の TOWN_TERRAIN。x＝町の出口（踏むと歩く地図へ戻る）。大きさと入口は 町ごと（TOWN_LAYOUTS・10/5 夜〜）
@@ -387,7 +387,7 @@ export const TOWNS = {
     npcs: [
       { spot: 'yado', look: 'okami', role: 'inn', price: 10, lines: ['いらっしゃいませ。磐梯熱海の 湯宿で ございます。'] },
       { spot: 'bandai', look: 'kaji', role: 'onsen', lines: ['磐梯熱海の 湯屋の 番台だ。湯に つかれば、つかれも 呪いも 落ちるぞ。'] },
-      { spot: 'm1', look: 'onsen_geisha', role: 'master', job: 'yojutsu', ch: 3, lines: ['磐梯熱海の 芸者で ございます。', '大蝦蟇を 呼ぶ 術、お座敷の 余興で なく 腕で 見せて くださいな。'] },
+      { spot: 'm1', look: 'onsen_geisha', role: 'master', job: 'yojutsu', ch: 3, lines: ['磐梯熱海の 芸者で ございます。', '大がまを 呼ぶ 術、お座敷の 余興で なく 腕で 見せて くださいな。'] },
       { spot: 'm2', look: 'onsen_rikishi', role: 'master', job: 'rikishi', ch: 3, lines: ['湯治に 来ておる 大関だ。', '上手投げは 腰で 投げる。わしと 一番 取れ。'] },
       { spot: 'm3', look: 'onsen_banto', role: 'master', job: 'onmyo', ch: 3, lines: ['磐梯熱海の 湯宿の 番頭で ございます。', '泰山府君の 祭、県中の 昔話を 知る 方に お教えしましょう。'] },
       { spot: 'chaya', look: 'chaya', lines: ['湯けむりを 見ながら、ひと休み していって くださいな。'] },
