@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=362';
-import { kanbanAt } from './kanban.js?v=362';
-import { SOMA_ROWS } from './soma_map.js?v=362';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=362';
-import { KENCHU_ROWS } from './kenchu_map.js?v=362';
-import { AIZU_ROWS } from './aizu_map.js?v=362';
-import { MINAMI_ROWS } from './minami_map.js?v=362';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=362';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=362';
-import { withGates } from './castle.js?v=362';
-import { ITEMS, PRICE, OLD_ITEM, itemRoom } from '../data/items.js?v=362';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=362';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=362';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=362';
-import { EQUIP, BAG_CAP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=362';
-import { becomeKunoichi } from './kagewatari.js?v=362';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=362';
-import { RELIC_OF_BOSS } from './rally.js?v=362'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=362'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=363';
+import { kanbanAt } from './kanban.js?v=363';
+import { SOMA_ROWS } from './soma_map.js?v=363';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=363';
+import { KENCHU_ROWS } from './kenchu_map.js?v=363';
+import { AIZU_ROWS } from './aizu_map.js?v=363';
+import { MINAMI_ROWS } from './minami_map.js?v=363';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=363';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=363';
+import { withGates } from './castle.js?v=363';
+import { ITEMS, PRICE, OLD_ITEM, itemRoom } from '../data/items.js?v=363';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=363';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=363';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=363';
+import { EQUIP, BAG_CAP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=363';
+import { becomeKunoichi } from './kagewatari.js?v=363';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=363';
+import { RELIC_OF_BOSS } from './rally.js?v=363'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=363'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -528,10 +528,10 @@ export function afterZako(game, zakoId, state) {
   const expOf = Object.fromEntries(Object.entries(g.expOf ?? {}).map(([id, x]) => [id, g.party[id]?.dead ? x : x + exp]));
   g = { ...g, exp: (g.exp ?? 0) + exp, expOf, mon: g.mon + mon };
   lines.push(`経験 ${exp}と、文を ${mon} 手に入れた！`);
-  if (z.drop && itemRoom(g, z.drop) < 1) lines.push(`お礼に ${ITEMS[z.drop].name}を 差し出されたが、道具が いっぱいで 持てない……`); // 10/10 上限
+  if (z.drop && itemRoom(g, z.drop) < 1) lines.push(ITEMS[z.drop].kind === 'treasure' ? `お宝「${ITEMS[z.drop].name}」が 落ちていたが、道具が いっぱいで 持てない……` : `お礼に ${ITEMS[z.drop].name}を 差し出されたが、道具が いっぱいで 持てない……`); // 10/10 上限
   else if (z.drop) {
     g = { ...g, items: { ...g.items, [z.drop]: (g.items[z.drop] ?? 0) + 1 } };
-    lines.push(`お礼に ${ITEMS[z.drop].name}を もらった！`);
+    lines.push(ITEMS[z.drop].kind === 'treasure' ? `お宝「${ITEMS[z.drop].name}」を 手に入れた！ 店で 高く 売れそうだ。` : `お礼に ${ITEMS[z.drop].name}を もらった！`); // 10/10 レアキャラの お宝
   }
   g = { ...g, lv: levelFor(g.exp) };
   // 上がった分だけ HP と術の力も増える（ドラクエと同じ）。幽霊は伸びない（生き返ると今のレベルの満タン）
@@ -703,6 +703,7 @@ export const NAME = { ...Object.fromEntries(Object.entries(COMPANIONS).map(([id,
 export function useItem(game, id) {
   const it = ITEMS[id];
   if (it.kind === 'ammo') return { ok: false, game, text: `${it.name}は 戦いで 猟師が 鉄砲に こめて 使う。` };
+  if (it.kind === 'treasure') return { ok: false, game, text: `${it.name}は お宝だ。店で 高く 売れる。` }; // 10/10
   if (it.kind === 'bind') return { ok: false, game, text: `${it.name}は 戦いで 敵に 投げて 使う。` };
   if (it.kind === 'sweet') return { ok: false, game, text: `${it.name}は 戦いの 中で 食べると、その 戦いの 間だけ 力が 出る。` }; // 10/9 夜 お菓子
   if (it.kind === 'hpall') {

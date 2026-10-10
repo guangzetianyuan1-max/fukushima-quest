@@ -45,6 +45,7 @@ export const ZAKO = {
   },
   bosozoku: {
     name: '暴走族', rare: true, hp: 28, atk: 11, def: 4, agi: 13, exp: 8, mon: 8,
+    drop: 't_maffler', // 10/10 お宝（売ると 高い）
     biteName: '体当たり', zones: ['road'],
     trick: { kind: 'noise', chance: 0.3 },
     introText: 'けたたましい 音を 立てて、バイクが 突っ込んできた！',
@@ -59,6 +60,7 @@ export const ZAKO = {
   },
   hostess: {
     name: 'ホステス', rare: true, hp: 26, atk: 8, def: 3, agi: 11, exp: 8, mon: 10,
+    drop: 't_shinju', // 10/10 お宝（売ると 高い）
     biteName: '扇子で ぴしゃり', zones: ['midSouth', 'midNorth'],
     trick: { kind: 'charm', chance: 0.3 },
     introText: '「あら、いい男。ちょっと 寄って いかない？」',
@@ -83,6 +85,7 @@ export const ZAKO = {
   ijime: {
     // 殴って笑う相手にしない：もやに当てられて うずくまる子。目をさまさせると 自分で顔を上げる
     name: 'いじめられっ子', rare: true, hp: 10, atk: 3, def: 1, agi: 9, exp: 3, mon: 1,
+    drop: 't_kosen', // 10/10 お宝（よく 逃げるので いちばん 高い）
     biteName: 'やけくその パンチ', zones: ['midSouth', 'south'],
     trick: { kind: 'runaway', chance: 0.35 },
     introText: 'うつむいた 子が、黒い もやの 中で ふるえている……',
@@ -98,6 +101,7 @@ export const ZAKO = {
   // ---- 追加3人（本人 10/1「追加①サラリーマン ②ラーメン屋 ③寿司屋」）。pending＝絵がまだ ----
   salaryman: {
     name: 'サラリーマン', rare: true, hp: 26, atk: 9, def: 4, agi: 8, exp: 7, mon: 9,
+    drop: 't_kindokei', // 10/10 お宝（売ると 高い）
     biteName: '名刺 手裏剣', zones: ['road', 'midNorth'],
     trick: { kind: 'drink', chance: 0.25, amount: 12 },
     introText: '「ま、まだ 帰れないんです……」と、目の下に くまを つくった 男が 立ちふさがった！',
@@ -120,6 +124,7 @@ export const ZAKO = {
   // 本人 10/1「追加①AV女優 ②ギャル」→ ギャルだけ入れた（AV女優は性的な役になる・ストアの年齢区分・芯から外れる＝見送り）
   gal: {
     name: 'ギャル', rare: true, hp: 22, atk: 8, def: 3, agi: 12, exp: 6, mon: 7,
+    drop: 't_tekagami', // 10/10 お宝（売ると 高い）
     biteName: 'デコった スマホで ぺしっ', zones: ['midNorth', 'midSouth'],
     trick: { kind: 'blind', chance: 0.3 },
     introText: '「え、ちょ、旅人とか まじ ウケるんですけど！」',

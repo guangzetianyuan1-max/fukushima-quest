@@ -1,6 +1,6 @@
 // 道具の一覧と値段（文）。歩く地図の店と持ち物はここを引く
 // 10/2 本人「食べ物を普通に戻して欲しい。ご当地ものは、完成後入れなおします」＝いわきの名物（iwaki_foods.js）は取っておき、いまは ふつうの道具
-import { BASIC_ITEMS } from './basic_items.js?v=362';
+import { BASIC_ITEMS } from './basic_items.js?v=363';
 
 const strip = ({ count, ...rest }) => rest;
 
@@ -18,6 +18,12 @@ export const ITEMS = {
   // 小名浜の釣りの景品だけ（店では売らない）。本人 10/2「戦闘時に役立つもの」
   toami: { name: '投網', kind: 'bind', amount: 1 },
   sake: { name: '大漁の酒', kind: 'hpall', amount: 40 },
+  // 10/10 本人「レアキャラは高価に売れるものをドロップする」＝お宝（使えない・店で 高く 売れる）。レアキャラ 5体が 1つずつ 必ず 落とす（zako.js の drop）
+  t_maffler: { name: '金ぴかの竹やりマフラー', kind: 'treasure' }, // 暴走族
+  t_kindokei: { name: '舶来の金時計', kind: 'treasure' },          // サラリーマン
+  t_kosen: { name: '古銭の束', kind: 'treasure' },                 // いじめられっ子（集めていた 穴あき銭）
+  t_shinju: { name: '真珠の首飾り', kind: 'treasure' },            // ホステス
+  t_tekagami: { name: 'きらきらの手鏡', kind: 'treasure' },        // ギャル
   // 1章 相馬の道具（本人 10/3「武器や防具、道具も、強い敵に合わせて強くしてほしい」）＝Lv7〜9のHP（旅の者 約110〜125・4人で約400）に合わせた。小高の薬売り・相馬の道具屋で売る
   tokujou: { name: '特上薬草', kind: 'hp', amount: 120 },
   goshinsui: { name: '御神水', kind: 'mp', amount: 25 },
@@ -50,10 +56,10 @@ export const ITEMS = {
 // 道具の効き目の短い書き方（店・戦いの道具の右に出す）
 export function itemNote(it) {
   if (it.kind === 'sweet') return it.note; // 10/9 夜 お菓子＝その戦いの 間だけの 効き目（短く＝店の 窓で 名前が 切れた・「この戦いの間」は 店の 人が 言う）
-  return { mp: `術+${it.amount}`, hpall: `全員HP+${it.amount}`, bind: '敵を止める', ammo: '鉄砲' }[it.kind] ?? `HP+${it.amount}`;
+  return { mp: `術+${it.amount}`, hpall: `全員HP+${it.amount}`, bind: '敵を止める', ammo: '鉄砲', treasure: 'お宝（売る 物）' }[it.kind] ?? `HP+${it.amount}`;
 }
 
-export const PRICE = { yakusou: 8, jouyakusou: 30, reisui: 15, tama: 10, tokujou: 60, goshinsui: 45, kusuribako: 90, tamayokan: 45, g_unikai: 40, g_mehikari: 15, g_manju: 10, g_hokki: 35, g_momo: 30, g_usukawa: 40, g_ramen: 70, g_soba: 50, g_kozuyu: 90, g_awaman: 60, s_milkan: 80, s_yubeshi: 100, s_hoshigaki: 80, s_mizuame: 100, s_shimimochi: 120, s_anpo: 150 }; // まんまる羊羹＝二本松の菓子屋（10/5 夜・HP90＝上薬草と特上の間）
+export const PRICE = { yakusou: 8, jouyakusou: 30, reisui: 15, tama: 10, tokujou: 60, goshinsui: 45, kusuribako: 90, tamayokan: 45, g_unikai: 40, g_mehikari: 15, g_manju: 10, g_hokki: 35, g_momo: 30, g_usukawa: 40, g_ramen: 70, g_soba: 50, g_kozuyu: 90, g_awaman: 60, s_milkan: 80, s_yubeshi: 100, s_hoshigaki: 80, s_mizuame: 100, s_shimimochi: 120, s_anpo: 150, t_maffler: 800, t_kindokei: 1000, t_kosen: 1200, t_shinju: 1600, t_tekagami: 900 }; // t_＝お宝（店では 売らない・買い取りは 半分＝400〜800文） // まんまる羊羹＝二本松の菓子屋（10/5 夜・HP90＝上薬草と特上の間）
 
 // 前の記録（名物のころ）の持ち物を、いまの道具に読み替える
 export const OLD_ITEM = { mehikari: 'yakusou', manju: 'yakusou', uni: 'jouyakusou', katsuo: 'reisui' };
