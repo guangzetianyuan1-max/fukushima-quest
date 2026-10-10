@@ -2,8 +2,8 @@
 // ②福島グルメ登場させ、各お店より購入する。③お城クエスト、各お城のお殿様に合い、クエストのお題を授かる」→案を「この案で進める」）
 // そろうと 終章の 舞台の 幕を 開ける 道具が もらえる（お城＝揚羽蝶の旗／温泉＝駒ヶ岳の花／グルメ＝お伊勢参りの台本）
 // 画面と切り離した計算だけ（FieldScene が 湯・買い物・お殿様の 話で 呼ぶ）。記録は game.stamps＝{ onsen:{}, gourmet:{}, castle:{} }・game.relics
-import { TOWNS } from './towns.js?v=360';
-import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=360';
+import { TOWNS } from './towns.js?v=361';
+import { CASTLE_QUESTS, questAccepted, acceptQuest } from './castle.js?v=361';
 const CASTLE_NAME = { taira: '磐城平城', nakamura: '相馬中村城', nihonmatsu: '二本松城', shirakawa: '白河小峰城', aizuwakamatsu: '鶴ヶ城' };
 const LORD_NAME = { taira: '平', nakamura: '相馬', nihonmatsu: '二本松', shirakawa: '白河', aizuwakamatsu: '会津' };
 
@@ -40,8 +40,11 @@ export const CASTLE_REWARD = {
 // 褒美の お守りを who に 着ける（前の お守りは 家老に あずける＝消える）
 export function wearReward(game, id, who) {
   const equip = { ...(game.equip ?? {}), [who]: { ...(game.equip?.[who] ?? {}), charm: id } };
-  return { game: { ...game, equip }, old: game.equip?.[who]?.charm ?? null };
+  const old = game.equip?.[who]?.charm ?? null;
+  return { game: { ...game, equip, bag: old ? [...(game.bag ?? []), old] : game.bag }, old }; // 10/10 前の お守りは 持ち物へ（前は 家老に あずけて 消えた）
 }
+// 着けずに 持ち物へ（10/10・前は「家老に あずけた」で 消えた）
+export const keepReward = (game, id) => ({ ...game, bag: [...(game.bag ?? []), id] });
 export const RALLY_NAME = { onsen: '福島温泉めぐり', gourmet: '福島グルメ', castle: 'お城クエスト' };
 
 const LISTS = { onsen: ONSEN_RALLY, gourmet: Object.keys(GOURMET_RALLY), castle: Object.keys(CASTLE_RALLY) };

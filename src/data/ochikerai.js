@@ -3,7 +3,7 @@
 // 確かめた事（10/8）：会津駒ヶ岳の 山頂 近くに 湿原と 池塘・駒ノ大池は 空や 山頂を 映す・ハクサンコザクラ や チングルマ が 咲く（福島県 尾瀬の コラム）
 //   ⛔山の 名の 由来（残雪の 馬の 形）は 原典を 確かめきれていない＝言わない
 // 弱点＝駒ノ大池の 水鏡・勝つと「駒ヶ岳の花」（rally.js の RELICS.onsen）
-import { BASIC_ITEMS } from './basic_items.js?v=360';
+import { BASIC_ITEMS } from './basic_items.js?v=361';
 
 export const OCHIKERAI = {
   art: {

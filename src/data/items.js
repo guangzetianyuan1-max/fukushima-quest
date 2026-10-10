@@ -1,8 +1,15 @@
 // 道具の一覧と値段（文）。歩く地図の店と持ち物はここを引く
 // 10/2 本人「食べ物を普通に戻して欲しい。ご当地ものは、完成後入れなおします」＝いわきの名物（iwaki_foods.js）は取っておき、いまは ふつうの道具
-import { BASIC_ITEMS } from './basic_items.js?v=360';
+import { BASIC_ITEMS } from './basic_items.js?v=361';
 
 const strip = ({ count, ...rest }) => rest;
+
+// 10/10 本人「武器、防具、道具はもてる限度を決めて欲しい。それ以上は使うか、売らないと、新しいものが持てないように」
+// 道具は 全部で ITEM_CAP こ まで（種類を 問わない）。鉄砲の 玉は 別（猟師の 弾＝数が 多い）
+export const ITEM_CAP = 20;
+export const itemCapped = (id) => ITEMS[id] && ITEMS[id].kind !== 'ammo';
+export const itemCount = (game) => Object.entries(game?.items ?? {}).filter(([id]) => itemCapped(id)).reduce((a, [, n]) => a + Math.max(0, n ?? 0), 0);
+export const itemRoom = (game, id) => (itemCapped(id) ? ITEM_CAP - itemCount(game) : Infinity);
 
 export const ITEMS = {
   ...Object.fromEntries(Object.entries(BASIC_ITEMS).map(([id, it]) => [id, strip(it)])),

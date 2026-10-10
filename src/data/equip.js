@@ -1,7 +1,7 @@
 // 装備（本人 10/1「武器、防具の採用は無いか？」→「3」＝刀屋と装備の回）
 // 1人に3か所：weapon 武器／armor 防具／charm お守り。who＝着けられる人。買うとその場で着け、前の品は半値で引き取ってもらう
 // 序章いわきで買える所：平の刀屋（武器）・平の荒物屋（防具）・平の八幡さま（勝守）・湯本のお寺（厄除け守）
-import { JOBS, jobOf } from './jobs.js?v=360';
+import { JOBS, jobOf } from './jobs.js?v=361';
 
 export const EQUIP = {
   // ---- 武器と防具＝職業ごと（本人 10/5「武器、防具は職業別に作ってください」）。id＝<職業>_w<段>（武器 段0〜6）／<職業>_a<段>（防具 段1〜6）
@@ -214,6 +214,8 @@ export function canWear(game, id, who) {
 }
 
 export const SLOTS = ['weapon', 'armor', 'charm'];
+// 10/10 持ち物の 装備（外した 品）は BAG_CAP まで。身に 着けて いる 品は 数えない
+export const BAG_CAP = 8;
 export const SLOT_NAME = { weapon: '武器', armor: '防具', charm: 'お守り' };
 
 // はじめの装備＝その職業の段0の武器

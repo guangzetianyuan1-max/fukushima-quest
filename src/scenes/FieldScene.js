@@ -2,63 +2,63 @@
 // 上 y0〜420 に地図（1マス32ドット・旅の者が真ん中、しおりと加わった仲間が1歩ずつうしろに続く）／下の窓に十字キーと「はなす」「どうぐ」
 // 話す・店・宿の文と選びも下の窓（そのあいだ十字キーは隠す）
 // 旅の状態は registry の 'game'（計算は src/field/game.js）。地図が変わる（町に入る・出る）たびに この場面を始め直す
-import { collection, PER_PAGE } from '../field/collection.js?v=360';
-import { stampOnsen, stampGourmet, lordTalk, wearReward, relicWait, endFoeReady, endRematch, karoTalk, rallyKeys, hasStamp, stampCount, rallyDone, relicFoeAt, stageNext, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=360';
-import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=360';
-import { EPISODES } from '../data/episodes.js?v=360';
-import { ITEMS, PRICE, itemNote } from '../data/items.js?v=360';
-import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=360';
-import { RIDERS } from '../data/nomaoi_assets.js?v=360';
-import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=360';
-import { HADAKA_ART } from '../data/hadaka_assets.js?v=360';
-import { RELIC_ART, RELIC_VOICE } from '../data/relic_assets.js?v=360';
-import { WALL_HINT, WALL_BLOCK_TEXT } from '../field/wall_hints.js?v=360';
-import { ATTR_ART } from '../data/attr_assets.js?v=360';
-import { ATTRACTIONS, ATTR_IDS, enterAttr, addAttrPts, exchangeAttr, jangaraPts, yuPts, warajiPts, hanaPts, darumaPts, darumaAll, swanPts, koboPts, WARAJI_GOAL, KOBO_THROWS, SWAN_ROUNDS } from '../field/attractions.js?v=360';
-import { ATTR_PLAY, ATTR_TEXT } from './attractionsUI.js?v=360';
-import { newRound as newHadaka, grab as grabRope, heightAt as ropeHeight, roundDone as hadakaDone, timeLeft as hadakaLeft, roundPts as hadakaPts, enterRound as enterHadaka, addRope, HADAKA_PRIZES, exchangeHadaka, ENTRY_PRICE as HADAKA_PRICE } from '../field/hadaka.js?v=360';
-import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=360';
-import { TILE } from '../field/tiles.js?v=360';
-import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=360';
-import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker, hitBox } from '../ui/kit.js?v=360';
-import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=360';
-import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName, townEntry } from '../field/towns.js?v=360';
-import { missedStamps } from '../field/missed.js?v=360';
-import { CASTLE_QUESTS, QUEST_BOSS_AT, GATE_OF, gateGround, gateMarks, reportMarks, enterCastle, leaveCastle, SAWA_OF, enterSawa } from '../field/castle.js?v=360';
-import { KANBAN, kanbanAt } from '../field/kanban.js?v=360';
-import { townSigns, SIGN_OF } from '../field/signs.js?v=360';
-import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=360';
-import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=360';
+import { collection, PER_PAGE } from '../field/collection.js?v=361';
+import { stampOnsen, stampGourmet, lordTalk, wearReward, keepReward, relicWait, endFoeReady, endRematch, karoTalk, rallyKeys, hasStamp, stampCount, rallyDone, relicFoeAt, stageNext, RELICS, GOURMET_RALLY, CASTLE_RALLY, RALLY_NAME } from '../field/rally.js?v=361';
+import { GAME_FONT, TITLE_WEIGHT } from '../ui/fonts.js?v=361';
+import { EPISODES } from '../data/episodes.js?v=361';
+import { ITEMS, PRICE, itemNote, ITEM_CAP, itemCount } from '../data/items.js?v=361';
+import { FISH, PRIZES, ROD_PRICE, BITE_WINDOW_MS, WAIT_MS, rollFish, zoneStart, inZone, rentRod, addCatch, exchange } from '../field/fishing.js?v=361';
+import { RIDERS } from '../data/nomaoi_assets.js?v=361';
+import { TAIMATSU_ART } from '../data/taimatsu_assets.js?v=361';
+import { HADAKA_ART } from '../data/hadaka_assets.js?v=361';
+import { RELIC_ART, RELIC_VOICE } from '../data/relic_assets.js?v=361';
+import { WALL_HINT, WALL_BLOCK_TEXT } from '../field/wall_hints.js?v=361';
+import { ATTR_ART } from '../data/attr_assets.js?v=361';
+import { ATTRACTIONS, ATTR_IDS, enterAttr, addAttrPts, exchangeAttr, jangaraPts, yuPts, warajiPts, hanaPts, darumaPts, darumaAll, swanPts, koboPts, WARAJI_GOAL, KOBO_THROWS, SWAN_ROUNDS } from '../field/attractions.js?v=361';
+import { ATTR_PLAY, ATTR_TEXT } from './attractionsUI.js?v=361';
+import { newRound as newHadaka, grab as grabRope, heightAt as ropeHeight, roundDone as hadakaDone, timeLeft as hadakaLeft, roundPts as hadakaPts, enterRound as enterHadaka, addRope, HADAKA_PRIZES, exchangeHadaka, ENTRY_PRICE as HADAKA_PRICE } from '../field/hadaka.js?v=361';
+import { FLAGS, FLAG_PRIZES, ENTRY_PRICE, ROUND_MS, CATCH_P, newRace, stepRace, racePts, flagX, fallP, enterRace, addFlags, exchangeFlag } from '../field/nomaoi.js?v=361';
+import { TILE } from '../field/tiles.js?v=361';
+import { GROUNDS, OBJECTS, fieldLook, townLook } from '../field/look.js?v=361';
+import { preloadKit, makeWindow, makeButton, makePad, paginate, fitSpeaker, hitBox } from '../ui/kit.js?v=361';
+import { preloadPeople, frameOf, ORIGIN_Y } from '../field/sprites.js?v=361';
+import { TOWNS, TOWN_OF, TOWN_CARD_NAME, townCardName, townEntry } from '../field/towns.js?v=361';
+import { missedStamps } from '../field/missed.js?v=361';
+import { CASTLE_QUESTS, QUEST_BOSS_AT, GATE_OF, gateGround, gateMarks, reportMarks, enterCastle, leaveCastle, SAWA_OF, enterSawa } from '../field/castle.js?v=361';
+import { KANBAN, kanbanAt } from '../field/kanban.js?v=361';
+import { townSigns, SIGN_OF } from '../field/signs.js?v=361';
+import { AILMENTS, badgesOf, hpColor } from '../field/ailments.js?v=361';
+import { smooth, BRUSH_FONT } from '../ui/scroll.js?v=361';
 import {
   mapRows, terrainAt, canWalk, tileNameAt, DELTA, BOSS_AT, WALL_OPENED_BY, PASSED_BY, SAVE_KEY, slotKey, maxOf,
   enterTown, leaveTown, buy, stayInn, save, autoSaveAfterBoss, useItem, walkStep, encounterAt,
   purify, kuyo, returnStolen, HARAI_PRICE, KUYO_PRICE, revive, revivePrice, NAME, nameOf, isField, crossAt, WALL_QUEST_LINES,
-  wallQuestLines, startDuel, learnSkill, canTakeQuest } from '../field/game.js?v=360';
-import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=360';
-import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=360';
-import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=360';
-import { membersOf } from '../battle/levels.js?v=360';
-import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=360';
-import { ICON_IDS } from '../data/icons.js?v=360';
-import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=360';
-import { EXTRA_LOOKS } from '../data/look_assets.js?v=360';
-import { gearStage, stagedLook, baseLook } from '../field/gearlook.js?v=360';
-import { mapPointOf } from '../field/mapcard.js?v=360';
-import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=360';
-import { heroLook, heroFace, heroSexOf } from '../field/hero.js?v=360';
-import { bathTown, bathBg, BATH_VOICE, BATH_VOICE_AT, BATH_SECONDS } from '../field/bath.js?v=360';
-import { BATH_ART } from '../data/bath_assets.js?v=360';
-import { QUEST_ART, KAGURA_TORII } from '../data/quest_assets.js?v=360';
-import { makeRng } from '../battle/rules.js?v=360';
-import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=360';
-import { EQUIP, SLOTS, SLOT_NAME, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=360';
+  wallQuestLines, startDuel, learnSkill, canTakeQuest } from '../field/game.js?v=361';
+import { JOBS, JOB_SPELLS, QUESTS, jobOf } from '../data/jobs.js?v=361';
+import { newMondo, answerMondo, mondoDone, mondoPassed, MONDO_COUNT, MONDO_PASS } from '../field/mondo.js?v=361';
+import { newMato, shootMato, matoX, matoDone, matoPassed, MATO_ARROWS, MATO_PASS, MATO_HALF } from '../field/mato.js?v=361';
+import { membersOf } from '../battle/levels.js?v=361';
+import { COMPANIONS, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=361';
+import { ICON_IDS } from '../data/icons.js?v=361';
+import { FACE_IDS, KUNOICHI_FACES } from '../data/faces.js?v=361';
+import { EXTRA_LOOKS } from '../data/look_assets.js?v=361';
+import { gearStage, stagedLook, baseLook } from '../field/gearlook.js?v=361';
+import { mapPointOf } from '../field/mapcard.js?v=361';
+import { FISHING_ICON_IDS } from '../data/icons_fishing.js?v=361';
+import { heroLook, heroFace, heroSexOf } from '../field/hero.js?v=361';
+import { bathTown, bathBg, BATH_VOICE, BATH_VOICE_AT, BATH_SECONDS } from '../field/bath.js?v=361';
+import { BATH_ART } from '../data/bath_assets.js?v=361';
+import { QUEST_ART, KAGURA_TORII } from '../data/quest_assets.js?v=361';
+import { makeRng } from '../battle/rules.js?v=361';
+import { newRun, tapRun, stepRun, runPos, beamX, LANES as KW_LANES, STRIKES as KW_STRIKES, TIME_MS as KW_TIME } from '../field/kagewatari.js?v=361';
+import { EQUIP, SLOTS, SLOT_NAME, BAG_CAP, equipNote, diffNote, diffDown, canWear } from '../data/equip.js?v=361';
 
 const STATUS_PAD = 96; // 上の札（4,4 から 高さ 16＋23×行）の下の端＋少し
 const START_EQUIP = {}; // 前の形の名残（職業の旅は game.equip）
-import { buyEquip, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS, FIELD_PROPS } from '../field/game.js?v=360';
-import { sfx, startBgm, stopBgm, playJingle, jingleSeconds, playVoice, stopVoice } from '../audio/chip.js?v=360';
-import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=360';
-import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=360';
+import { buyEquip, sellItem, sellEquip, sellBagItem, wearFromBag, bagOf, itemSellPrice, equipSellPrice, partyView, soakOnsen, ONSEN_PRICE, prayGojinka, afterKagewatari, CASTLE_CHARS, FIELD_PROPS } from '../field/game.js?v=361';
+import { sfx, startBgm, stopBgm, playJingle, jingleSeconds, playVoice, stopVoice } from '../audio/chip.js?v=361';
+import { newRound as newTaimatsu, tapAt as tapTaimatsu, sparkX, torchX, target as taimatsuTarget, roundDone as taimatsuDone, timeLeft as taimatsuLeft, roundPts as taimatsuPts, enterRound as enterTaimatsu, addTorches, TAIMATSU_PRIZES, exchangeTaimatsu, ENTRY_PRICE as TAIMATSU_PRICE, TORCHES as TAIMATSU_TORCHES, TIME_MS as TAIMATSU_MS, HALF as TAIMATSU_HALF } from '../field/taimatsu.js?v=361';
+import { newRound, tapAt, roundEnd as roundEndAt, roundPts as chochinPts, enterRound, addLanterns, CHOCHIN_PRIZES, exchangeChochin, ENTRY_PRICE as CHOCHIN_PRICE, LANTERNS as CHOCHIN_LANTERNS, BEAT_MS as CHOCHIN_BEAT, OK_MS as CHOCHIN_OK, KAGURA_PASS, KAGURA_MISS, kaguraPassed } from '../field/chochin.js?v=361';
 
 // 景品の窓（釣り＝小名浜の釣り番／旗＝雲雀ヶ原の世話役）。同じ窓を 点の名前と景品の表だけ替えて使う
 const PRIZE_SHOPS = {
@@ -1629,7 +1629,7 @@ export class FieldScene extends Phaser.Scene {
   shopMenu(n) {
     const opts = n.goods.map((id) => [`${ITEMS[id].name}（${this.g.items[id] ?? 0}）`, () => this.buyOne(n, id), `${PRICE[id]}文 ${itemNote(ITEMS[id])}`]); // 効き目と持っている数も（10/3 道具を強くした）
     // n.back があれば「もどる」（よろず屋・刀屋の中の道具の棚から開いたとき）
-    this.showMenu(`何を 買う？（所持金 ${this.g.mon}文）`, [...opts, n.back ? ['もどる', n.back] : ['やめる', () => this.closeDialog()]]);
+    this.showMenu(`何を 買う？（所持金 ${this.g.mon}文・道具 ${itemCount(this.g)}/${ITEM_CAP}）`, [...opts, ...(n.back ? [['もどる', n.back]] : [['売る', () => this.sellMenu(() => this.shopMenu(n))], ['やめる', () => this.closeDialog()]])]);
   }
 
   buyOne(n, id) {
@@ -1640,7 +1640,7 @@ export class FieldScene extends Phaser.Scene {
       sfx('eat');
       // 福島グルメの判子は 店では 出ない（10/7 アトラクションの 景品で もらう）
     }
-    const text = r.ok ? `${ITEMS[id].name}を 買った！（${this.g.items[id]}こ 持っている）` : '文が 足りないようだ……';
+    const text = r.ok ? `${ITEMS[id].name}を 買った！（${this.g.items[id]}こ 持っている）` : r.reason === 'full' ? `道具が いっぱいだ（${ITEM_CAP}こ まで）。使うか 売ってから に しよう。` : '文が 足りないようだ……';
     if (r.ok) this.showGoods(id);
     const back = () => (n.role === 'equip' ? this.equipShop(n.goods, n.items) : this.shopMenu(n));
     this.showMessages([{ text }, ...stamp], back);
@@ -1668,14 +1668,14 @@ export class FieldScene extends Phaser.Scene {
       const [, fn, note, color] = this.equipOption(id, w, () => this.wearRewardOn(id, w, after));
       return [`${nameOf(this.g, w)}（今：${now ? EQUIP[now].name : 'なし'}）`, fn ?? (() => this.wearRewardOn(id, w, after)), note, color];
     });
-    this.showMenu(`${EQUIP[id].name}（${equipNote(id)}）を いただいた！ だれが 着ける？`, [...opts, ['着けずに あずける', () => this.showMessages([{ text: `${EQUIP[id].name}は 家老に あずけた。` }], after)]]); // 10/8 夜 いまの お守りの ほうが 良い 時
+    this.showMenu(`${EQUIP[id].name}（${equipNote(id)}）を いただいた！ だれが 着ける？`, [...opts, ['着けずに 持ち物へ', () => { this.setGame(keepReward(this.g, id)); this.showMessages([{ text: `${EQUIP[id].name}は 持ち物に 入れた。` }], after); }]]); // 10/10 前は 家老に あずけて 消えた // 10/8 夜 いまの お守りの ほうが 良い 時
   }
 
   wearRewardOn(id, who, after) {
     const r = wearReward(this.g, id, who);
     this.setGame(r.game);
     const lines = [{ text: `${nameOf(this.g, who)}は ${EQUIP[id].name}を 身に着けた！`, sfx: 'select' }];
-    if (r.old) lines.push({ text: `（${EQUIP[r.old].name}は 家老に あずけた）` });
+    if (r.old) lines.push({ text: `（${EQUIP[r.old].name}は 持ち物に 入れた）` });
     this.showMessages(lines, after);
   }
 
@@ -2638,12 +2638,17 @@ export class FieldScene extends Phaser.Scene {
       return;
     }
     const r = shop.exchange(this.g, pid, who);
-    if (!r.ok) return;
+    if (!r.ok) {
+      // 10/10 持てる 数の 上限
+      const why = r.reason === 'full' ? `道具が いっぱいだ（${ITEM_CAP}こ まで）。使うか 売ってから に しよう。` : r.reason === 'bagfull' ? `持ち物が いっぱいだ（${BAG_CAP}つ まで）。前の 品を 店で 売ってから に しよう。` : null;
+      if (why) this.showMessages([{ speaker: 'しおり', text: why }], () => this.prizeMenu(p.kind, shopId));
+      return;
+    }
     this.setGame(r.game);
     sfx('heal');
     this.showGoods(p.id);
     const lines = [{ text: p.kind === 'item' ? `${this.prizeName(p)}を もらった！` : `${nameOf(this.g, who)}は ${EQUIP[p.id].name}を 身に着けた！` }];
-    if (r.old) lines.push({ text: r.refund > 0 ? `（${EQUIP[r.old].name}は ${r.refund}文で 引き取って もらった）` : `（${EQUIP[r.old].name}は ${shop.keeper}に あずけた）` });
+    if (r.old) lines.push({ text: `（${EQUIP[r.old].name}は 持ち物に 入れた・店で 売れる）` }); // 10/10 自動で 売らない
     const back = () => this.prizeMenu(p.kind, shopId);
     // 景品の 名物＝福島グルメの判子（10/7）→ 図鑑を開いて「済」を押す
     const st = p.kind === 'item' ? stampGourmet(this.g, p.id) : { added: false };
@@ -3079,7 +3084,13 @@ export class FieldScene extends Phaser.Scene {
       // その人の品：選べば そのまま その人が着ける
       // 右の字＝いまの品と比べて どう変わるか（装備中の品は 灰色で 選べない・下がる物は 赤）
       const opts = forWho(who).map((id) => this.equipOption(id, who, () => this.doBuyEquip(id, who, back), `${EQUIP[id].price}文 `));
-      this.showMenu(`${nameOf(this.g, who)}の 品（いまと くらべて）所持金 ${this.g.mon}文`, [...opts, ['もどる', () => this.equipShop(goods, items)]]);
+      // 10/10 持ち物の 品（外した 物）も 並べる＝選べば 着け直す（いま 着けて いる 物は 持ち物へ）
+      const slots = new Set(goods.map((id) => EQUIP[id]?.slot)); // その 店が 扱う 種類だけ（荒物屋で 持ち物の 武器は 出さない）
+      const mine = [...new Set(bagOf(this.g))].filter((id) => slots.has(EQUIP[id].slot) && canWear(this.g, id, who)).map((id) => {
+        const [, fn, note, color] = this.equipOption(id, who, () => this.doWearFromBag(id, who, back), '持ち物 ');
+        return [`${EQUIP[id].name}（持ち物）`, fn, note, color];
+      });
+      this.showMenu(`${nameOf(this.g, who)}の 品（いまと くらべて）所持金 ${this.g.mon}文`, [...mine, ...opts, ['もどる', () => this.equipShop(goods, items)]]);
       return;
     }
     // ⭐10/9 本人「武器、防具屋の表記方法をチェックして。福島の武器屋が他と表記方法が違う」＝品が 5行 以下の 刀屋（相馬〜会津）だけ「何を 買う？」で 先に 品・ほかは「だれの 品を 見る？」で 先に 人 だった ⇒ どの 店も 先に 人（品が 1つも 無い 時だけ 品の 並びへ）
@@ -3087,12 +3098,12 @@ export class FieldScene extends Phaser.Scene {
       // 10/5 武器と防具は職業ごと＝あなたと しおりは 職業も 添える（仲間は 名前が職業）
       const who = (w) => (w === 'tabi' || w === 'shiori') && jobOf(this.g, w) ? `${nameOf(this.g, w)}（${JOBS[jobOf(this.g, w)].name}）` : nameOf(this.g, w);
       const people = members.filter((w) => forWho(w).length).map((w) => [`${who(w)}の 品`, () => this.equipShop(goods, items, w)]);
-      this.showMenu(`だれの 品を 見る？（所持金 ${this.g.mon}文）`, [...people, ...shelfRow, ['やめる', () => this.closeDialog()]]);
+      this.showMenu(`だれの 品を 見る？（所持金 ${this.g.mon}文）`, [...people, ...shelfRow, ['売る', () => this.sellMenu(() => this.equipShop(goods, items))], ['やめる', () => this.closeDialog()]]);
       return;
     }
     // 人を選ぶ前は 品の強さ（＋を付けない＝「上がる・下がる」と取り違えない）。人を選ぶと いまと比べた変わり方（pickWho）
     const opts = all.map((id) => [EQUIP[id].name, () => this.pickWho(id, back), `${EQUIP[id].price}文 ${equipNote(id).replaceAll('+', '')}`]);
-    this.showMenu(`何を 買う？（右は 品の強さ・所持金 ${this.g.mon}文）`, [...opts, ...shelfRow, ['やめる', () => this.closeDialog()]]);
+    this.showMenu(`何を 買う？（右は 品の強さ・所持金 ${this.g.mon}文）`, [...opts, ...shelfRow, ['売る', () => this.sellMenu(() => this.equipShop(goods, items))], ['やめる', () => this.closeDialog()]]);
   }
 
   // 買った品の絵を、地図の真ん中に少しだけ出す（本人 10/2「買ったときにイラストを添えて」）。絵の無い品は出さない
@@ -3126,8 +3137,17 @@ export class FieldScene extends Phaser.Scene {
     return [EQUIP[id].name, onPick, `${prefix}${diffNote(id, now)}`, diffDown(id, now) ? '#ff8a7a' : '#ffd34d'];
   }
 
-  doBuyEquip(id, who, back) {
-    const r = buyEquip(this.g, id, who);
+  doBuyEquip(id, who, back, sellOld = false) {
+    const r = buyEquip(this.g, id, who, { sellOld });
+    if (!r.ok && r.reason === 'bagfull') {
+      // 10/10 持ち物が いっぱい＝前の 品を 売るなら 買える（聞いてから）
+      const p = equipSellPrice(r.old);
+      this.showMenu(`持ち物が いっぱいだ（${BAG_CAP}つ まで）。前の ${EQUIP[r.old].name}を ${p > 0 ? `${p}文で 売って` : '手放して（値は つかない）'} 買う？`, [
+        [p > 0 ? '売って 買う' : '手放して 買う', () => this.doBuyEquip(id, who, back, true)],
+        ['やめる', back],
+      ]);
+      return;
+    }
     if (!r.ok) {
       this.showMessages([{ text: r.reason === 'money' ? '文が 足りないようだ……' : 'その人は 着けられない。' }], back);
       return;
@@ -3136,8 +3156,100 @@ export class FieldScene extends Phaser.Scene {
     sfx('heal');
     this.showGoods(id);
     const lines = [{ text: `${nameOf(this.g, who)}は ${EQUIP[id].name}を 身に着けた！` }];
-    if (r.old) lines.push({ text: r.refund > 0 ? `（${EQUIP[r.old].name}は ${r.refund}文で 引き取って もらった）` : `（${EQUIP[r.old].name}は 店に 置いていった）` });
+    if (r.old && sellOld) {
+      lines.push({ text: r.sold > 0 ? `（${EQUIP[r.old].name}は ${r.sold}文で 売った）` : `（${EQUIP[r.old].name}は 手放した）` });
+      this.showMessages(lines, back);
+      return;
+    }
+    // 10/10 本人「自動で売るではなく、許可を得てから売るにしてほしい」＝前の 品は 持ち物へ 入れてから「売る？」と 聞く
+    this.showMessages(lines, r.old ? () => this.askSellOld(r.old, back) : back);
+  }
+
+  // 外した 品を 売るか 聞く（値の つかない 品は 持ち物へ 入れた と だけ 言う）
+  askSellOld(old, back) {
+    const name = EQUIP[old].name;
+    const price = equipSellPrice(old);
+    if (price <= 0) { this.showMessages([{ text: `${name}は 持ち物に 入れた。` }], back); return; }
+    this.showMenu(`前の ${name}は どうする？（所持金 ${this.g.mon}文）`, [
+      [`${price}文で 売る`, () => this.doSellBag(old, back)],
+      ['持ち物に 入れておく', () => this.showMessages([{ text: `${name}は 持ち物に 入れた。（持ち物 ${bagOf(this.g).length}/${BAG_CAP}）` }], back)],
+    ]);
+  }
+
+  doWearFromBag(id, who, back) {
+    const r = wearFromBag(this.g, id, who);
+    if (!r.ok) { this.showMessages([{ text: 'その人は 着けられない。' }], back); return; }
+    this.setGame(r.game);
+    sfx('select');
+    const lines = [{ text: `${nameOf(this.g, who)}は ${EQUIP[id].name}を 身に着けた！` }];
+    if (r.old) lines.push({ text: `（${EQUIP[r.old].name}は 持ち物に 入れた）` });
     this.showMessages(lines, back);
+  }
+
+  // ---- 店に 売る（10/10 本人「武器、防具、道具をお店に売れるように」・買い取りは 店の 値段の 半分）----
+  sellMenu(back) {
+    this.showMenu(`何を 売る？ 買い取りは 店の 値段の 半分（所持金 ${this.g.mon}文）`, [
+      [`道具を 売る（${itemCount(this.g)}/${ITEM_CAP}）`, () => this.sellItemsMenu(back)],
+      [`武器・防具・お守りを 売る（持ち物 ${bagOf(this.g).length}/${BAG_CAP}）`, () => this.sellGearMenu(back)],
+      ['もどる', back],
+    ]);
+  }
+
+  sellItemsMenu(back) {
+    const ids = Object.keys(ITEMS).filter((id) => (this.g.items?.[id] ?? 0) > 0);
+    if (!ids.length) { this.showMessages([{ text: '売れる 道具を 持って いない。' }], () => this.sellMenu(back)); return; }
+    const opts = ids.map((id) => {
+      const p = itemSellPrice(id);
+      return [`${ITEMS[id].name}（${this.g.items[id]}）`, p > 0 ? () => this.doSellItem(id, back) : null, p > 0 ? `${p}文` : '値が つかない'];
+    });
+    this.showMenu(`どの 道具を 売る？ 1つずつ（所持金 ${this.g.mon}文）`, [...opts, ['もどる', () => this.sellMenu(back)]]);
+  }
+
+  doSellItem(id, back) {
+    const r = sellItem(this.g, id);
+    if (!r.ok) { this.sellItemsMenu(back); return; }
+    this.setGame(r.game);
+    sfx('select');
+    this.showMessages([{ text: `${ITEMS[id].name}を ${r.price}文で 売った。（のこり ${this.g.items[id]}こ）` }], () => this.sellItemsMenu(back));
+  }
+
+  // 装備：持ち物の 品 → いま 着けて いる 品（売ると 外れるので 念を 押す）
+  sellGearMenu(back) {
+    const again = () => this.sellGearMenu(back);
+    const bag = bagOf(this.g);
+    const kept = [...new Set(bag)].map((id) => {
+      const n = bag.filter((x) => x === id).length;
+      const p = equipSellPrice(id);
+      return [`${EQUIP[id].name}（持ち物${n > 1 ? '×' + n : ''}）`, p > 0 ? () => this.doSellBag(id, again) : null, p > 0 ? `${p}文` : '値が つかない'];
+    });
+    const worn = membersOf(this.g).flatMap((w) => SLOTS.map((slot) => [w, slot, this.g.equip?.[w]?.[slot]]).filter(([, , id]) => id && EQUIP[id]).map(([w, slot, id]) => {
+      const p = equipSellPrice(id);
+      return [`${nameOf(this.g, w)}の ${EQUIP[id].name}`, p > 0 ? () => this.confirmSellWorn(w, slot, again) : null, p > 0 ? `${p}文` : '値が つかない'];
+    }));
+    this.showMenu(`どれを 売る？（所持金 ${this.g.mon}文）`, [...kept, ...worn, ['もどる', () => this.sellMenu(back)]]);
+  }
+
+  doSellBag(id, back) {
+    const r = sellBagItem(this.g, id);
+    if (!r.ok) { back(); return; }
+    this.setGame(r.game);
+    sfx('select');
+    this.showMessages([{ text: `${EQUIP[id].name}を ${r.price}文で 売った。（所持金 ${this.g.mon}文）` }], back);
+  }
+
+  confirmSellWorn(who, slot, back) {
+    const id = this.g.equip[who][slot];
+    const p = equipSellPrice(id);
+    this.showMenu(`${nameOf(this.g, who)}の ${EQUIP[id].name}を ${p}文で 売る？ 売ると 外れて ${SLOT_NAME[slot] ?? '品'}が なしに なる。`, [
+      ['売る', () => {
+        const r = sellEquip(this.g, who, slot);
+        if (!r.ok) { back(); return; }
+        this.setGame(r.game);
+        sfx('select');
+        this.showMessages([{ text: `${EQUIP[id].name}を ${r.price}文で 売った。（所持金 ${this.g.mon}文）` }], back);
+      }],
+      ['やめる', back],
+    ]);
   }
 
   doSave() {
@@ -3268,7 +3380,7 @@ export class FieldScene extends Phaser.Scene {
       const it = ITEMS[id];
       return [`${it.name}×${k}`, () => this.eat(id), itemNote(it)];
     });
-    this.showMenu(opts.length ? 'どの 道具を 使う？' : '道具を 何も 持っていない。', [...opts, ['とじる', () => this.closeDialog()]]);
+    this.showMenu(opts.length ? `どの 道具を 使う？（道具 ${itemCount(this.g)}/${ITEM_CAP}・持ち物の 装備 ${bagOf(this.g).length}/${BAG_CAP}）` : '道具を 何も 持っていない。', [...opts, ['とじる', () => this.closeDialog()]]); // 10/10 持てる 数
   }
 
   eat(id) {

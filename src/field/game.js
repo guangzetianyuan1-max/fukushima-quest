@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=360';
-import { kanbanAt } from './kanban.js?v=360';
-import { SOMA_ROWS } from './soma_map.js?v=360';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=360';
-import { KENCHU_ROWS } from './kenchu_map.js?v=360';
-import { AIZU_ROWS } from './aizu_map.js?v=360';
-import { MINAMI_ROWS } from './minami_map.js?v=360';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=360';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=360';
-import { withGates } from './castle.js?v=360';
-import { ITEMS, PRICE, OLD_ITEM } from '../data/items.js?v=360';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=360';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=360';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=360';
-import { EQUIP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=360';
-import { becomeKunoichi } from './kagewatari.js?v=360';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=360';
-import { RELIC_OF_BOSS } from './rally.js?v=360'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=360'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=361';
+import { kanbanAt } from './kanban.js?v=361';
+import { SOMA_ROWS } from './soma_map.js?v=361';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=361';
+import { KENCHU_ROWS } from './kenchu_map.js?v=361';
+import { AIZU_ROWS } from './aizu_map.js?v=361';
+import { MINAMI_ROWS } from './minami_map.js?v=361';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=361';
+import { TOWNS, townEntry, roofCells } from './towns.js?v=361';
+import { withGates } from './castle.js?v=361';
+import { ITEMS, PRICE, OLD_ITEM, itemRoom } from '../data/items.js?v=361';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=361';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=361';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=361';
+import { EQUIP, BAG_CAP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=361';
+import { becomeKunoichi } from './kagewatari.js?v=361';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=361';
+import { RELIC_OF_BOSS } from './rally.js?v=361'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=361'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -240,8 +240,31 @@ export function leaveTown(game) {
 // ---- 店・宿・記録 ----
 export function buy(game, itemId) {
   const price = PRICE[itemId];
-  if (game.mon < price) return { ok: false, game };
+  if (itemRoom(game, itemId) < 1) return { ok: false, reason: 'full', game }; // 10/10 持てる 数の 上限
+  if (game.mon < price) return { ok: false, reason: 'money', game };
   return { ok: true, game: { ...game, mon: game.mon - price, items: { ...game.items, [itemId]: (game.items[itemId] ?? 0) + 1 } } };
+}
+
+// ---- 店に 売る（10/10 本人「武器、防具、道具をお店に売れるようにしてほしい。買取価格はお任せ」）----
+// 買い取りは 店の 値段の 半分（買い替えの 引き取りと 同じ）。値段の 無い 品（釣り・お殿様の 褒美・はじめの 品）は 値が つかない
+// 道具は 1つずつ。装備は 着けて いる 物を 売る（売ると 外れる・袋は 無い）
+export const SELL_RATE = 0.5;
+export const itemSellPrice = (id) => Math.floor((PRICE[id] ?? 0) * SELL_RATE);
+export const equipSellPrice = (id) => Math.floor((EQUIP[id]?.price ?? 0) * SELL_RATE);
+export function sellItem(game, id) {
+  const price = itemSellPrice(id);
+  if (!((game.items?.[id] ?? 0) > 0)) return { ok: false, reason: 'none', game };
+  if (price <= 0) return { ok: false, reason: 'price', game };
+  return { ok: true, price, game: { ...game, mon: game.mon + price, items: { ...game.items, [id]: game.items[id] - 1 } } };
+}
+export function sellEquip(game, who, slot) {
+  const id = game.equip?.[who]?.[slot];
+  if (!id || !EQUIP[id]) return { ok: false, reason: 'none', game };
+  const price = equipSellPrice(id);
+  if (price <= 0) return { ok: false, reason: 'price', game };
+  const equip = structuredClone(game.equip);
+  equip[who][slot] = null;
+  return { ok: true, id, price, game: { ...game, equip, mon: game.mon + price } };
 }
 
 export function stayInn(game, price) {
@@ -505,7 +528,8 @@ export function afterZako(game, zakoId, state) {
   const expOf = Object.fromEntries(Object.entries(g.expOf ?? {}).map(([id, x]) => [id, g.party[id]?.dead ? x : x + exp]));
   g = { ...g, exp: (g.exp ?? 0) + exp, expOf, mon: g.mon + mon };
   lines.push(`経験 ${exp}と、文を ${mon} 手に入れた！`);
-  if (z.drop) {
+  if (z.drop && itemRoom(g, z.drop) < 1) lines.push(`お礼に ${ITEMS[z.drop].name}を 差し出されたが、道具が いっぱいで 持てない……`); // 10/10 上限
+  else if (z.drop) {
     g = { ...g, items: { ...g.items, [z.drop]: (g.items[z.drop] ?? 0) + 1 } };
     lines.push(`お礼に ${ITEMS[z.drop].name}を もらった！`);
   }
@@ -703,17 +727,45 @@ export function useItem(game, id) {
 }
 
 // ---- 装備を買う ----
-// 買うと その場で着ける。前の品は半値で引き取り。着けられない人・文が足りないときは買えない
-export function buyEquip(game, id, who) {
+// 買うと その場で着ける。着けられない人・文が足りないときは買えない
+// 10/10 本人「武器も新しいものを買ったら自動で売るではなく、許可を得てから売るにしてほしい」＝前の 品は 持ち物（bag）へ。売るかは 画面が 聞く（sellBagItem）
+// 持ち物が いっぱい（BAG_CAP）で 前の 品が あれば 買えない（reason 'bagfull'）＝画面が「前の 品を 売って 買う？」と 聞き、はい なら sellOld
+export function buyEquip(game, id, who, { sellOld = false } = {}) {
   const e = EQUIP[id];
   if (!canWear(game, id, who)) return { ok: false, reason: 'who', game }; // 武器は その職業の系統だけ（10/5）
   if (game.mon < e.price) return { ok: false, reason: 'money', game };
   const equip = structuredClone(game.equip ?? {});
   equip[who] ??= { weapon: null, armor: null, charm: null }; // 仲間が加わる前の記録には その人の欄が無い
   const old = equip[who][e.slot];
-  const refund = old ? Math.floor(EQUIP[old].price / 2) : 0;
+  if (old && !sellOld && bagRoom(game) < 1) return { ok: false, reason: 'bagfull', old, game };
   equip[who][e.slot] = id;
-  return { ok: true, old, refund, game: { ...game, equip, mon: game.mon - e.price + refund } };
+  const g = { ...game, equip, mon: game.mon - e.price };
+  if (old && sellOld) return { ok: true, old, sold: equipSellPrice(old), game: { ...g, mon: g.mon + equipSellPrice(old) } };
+  return { ok: true, old, game: putInBag(g, old) };
+}
+
+// ---- 持ち物の 品（10/10）＝外した 装備。店で 売るか、店で 着け直す ----
+export const bagOf = (game) => (game.bag ?? []).filter((id) => EQUIP[id]); // 前の 記録には 無い・無い 品は 数えない
+export const bagRoom = (game) => BAG_CAP - bagOf(game).length;
+export const putInBag = (game, id) => (id && EQUIP[id] ? { ...game, bag: [...bagOf(game), id] } : game);
+const takeOut = (bag, id) => { const i = bag.indexOf(id); return i < 0 ? null : [...bag.slice(0, i), ...bag.slice(i + 1)]; };
+export function sellBagItem(game, id) {
+  const bag = takeOut(bagOf(game), id);
+  if (!bag) return { ok: false, reason: 'none', game };
+  const price = equipSellPrice(id);
+  if (price <= 0) return { ok: false, reason: 'price', game };
+  return { ok: true, price, game: { ...game, bag, mon: game.mon + price } };
+}
+export function wearFromBag(game, id, who) {
+  const bag = takeOut(bagOf(game), id);
+  if (!bag) return { ok: false, reason: 'none', game };
+  if (!canWear(game, id, who)) return { ok: false, reason: 'who', game };
+  const equip = structuredClone(game.equip ?? {});
+  equip[who] ??= { weapon: null, armor: null, charm: null };
+  const slot = EQUIP[id].slot;
+  const old = equip[who][slot];
+  equip[who][slot] = id;
+  return { ok: true, old, game: putInBag({ ...game, equip, bag }, old) };
 }
 
 // 強さを見る（どうぐ → そうび）

@@ -3,7 +3,8 @@
 // 釣りの手順（画面は FieldScene の fishing*）：①うきが沈んで「！」が出たら さわる（早すぎ・遅すぎは逃げる）
 //                                          ②左右に動く針が緑の帯に入ったら さわる（帯の幅と針の速さは魚しだい）
 // 画面と切り離す＝Node で試験する。ここの関数は game を書き換えずに新しい game を返す
-import { EQUIP, canWear } from '../data/equip.js?v=360';
+import { EQUIP, BAG_CAP, canWear } from '../data/equip.js?v=361';
+import { itemRoom } from '../data/items.js?v=361';
 
 export const ROD_PRICE = 5;
 // 「！」が出てから さわれる長さ（ミリ秒）と、「！」が出るまでの待ち
@@ -65,7 +66,7 @@ export const PRIZES = {
   ebisu: { kind: 'equip', id: 'ebisu', pts: 30 },
 };
 
-// 景品と換える。お守り・防具は who に着ける（前の品は店と同じく半値で引き取り）
+// 景品と換える。お守り・防具は who に着ける（前の品は 持ち物へ・10/10）
 export const exchange = (game, prizeId, who = null) => exchangePrize(game, PRIZES[prizeId], 'fishPts', who);
 
 // 景品の換え方（釣り点＝fishPts・野馬追の旗点＝flagPts で共通）
@@ -73,6 +74,7 @@ export function exchangePrize(game, p, key, who = null) {
   if ((game[key] ?? 0) < p.pts) return { ok: false, reason: 'pts', game };
   let g = { ...game, [key]: game[key] - p.pts };
   if (p.kind === 'item') {
+    if (itemRoom(game, p.id) < p.n) return { ok: false, reason: 'full', game }; // 10/10 持てる 数の 上限
     g = { ...g, items: { ...g.items, [p.id]: (g.items[p.id] ?? 0) + p.n } };
     return { ok: true, game: g };
   }
@@ -81,7 +83,8 @@ export function exchangePrize(game, p, key, who = null) {
   const equip = structuredClone(g.equip ?? {});
   equip[who] ??= { weapon: null, armor: null, charm: null };
   const old = equip[who][e.slot];
-  const refund = old ? Math.floor(EQUIP[old].price / 2) : 0;
+  if (old && (g.bag ?? []).filter((x) => EQUIP[x]).length >= BAG_CAP) return { ok: false, reason: 'bagfull', game }; // 10/10 前の 品の 入る 所が 無い
   equip[who][e.slot] = p.id;
-  return { ok: true, old, refund, game: { ...g, equip, mon: g.mon + refund } };
+  // 10/10 本人「自動で売るではなく、許可を得てから」＝前の 品は 持ち物へ（売るのは 店で）
+  return { ok: true, old, game: { ...g, equip, bag: old && EQUIP[old] ? [...(g.bag ?? []), old] : g.bag } };
 }
