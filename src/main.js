@@ -1,19 +1,19 @@
-import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=358';
-import { countInstall } from './ui/install_count.js?v=358';
-import { TitleScene } from './scenes/TitleScene.js?v=358';
-import { JobScene } from './scenes/JobScene.js?v=358';
-import { BattleScene } from './scenes/BattleScene.js?v=358';
-import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=358';
-import { EndingScene } from './scenes/EndingScene.js?v=358'; // 10/8 終わりの 場面
-import { ZAKO, ZAKO_TELL } from './data/zako.js?v=358';
-import { HARAI } from './field/game.js?v=358';
-import { EQUIP } from './data/equip.js?v=358';
-import { EPISODES } from './data/episodes.js?v=358';
-import { unlock, isUnlocked } from './audio/chip.js?v=358';
-import { askTerms } from './ui/terms.js?v=358';
-import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=358';
-import { showLoading, preloadImages } from './ui/loading.js?v=358';
-import { PRELOAD_ASSETS } from './data/preload_assets.js?v=358';
+import { FONT_NAME, TITLE_WEIGHT, EYE_FONT_NAME } from './ui/fonts.js?v=359';
+import { countInstall } from './ui/install_count.js?v=359';
+import { TitleScene } from './scenes/TitleScene.js?v=359';
+import { JobScene } from './scenes/JobScene.js?v=359';
+import { BattleScene } from './scenes/BattleScene.js?v=359';
+import { FieldScene, FIELD_TEXT } from './scenes/FieldScene.js?v=359';
+import { EndingScene } from './scenes/EndingScene.js?v=359'; // 10/8 終わりの 場面
+import { ZAKO, ZAKO_TELL } from './data/zako.js?v=359';
+import { HARAI } from './field/game.js?v=359';
+import { EQUIP } from './data/equip.js?v=359';
+import { EPISODES } from './data/episodes.js?v=359';
+import { unlock, isUnlocked } from './audio/chip.js?v=359';
+import { askTerms } from './ui/terms.js?v=359';
+import { watchUpdates, newerOnLaunch, reloadTo } from './ui/update.js?v=359';
+import { showLoading, preloadImages } from './ui/loading.js?v=359';
+import { PRELOAD_ASSETS } from './data/preload_assets.js?v=359';
 
 // 本人 10/2「松川と戦うまで、BGMが無い」＝iPhone は指を置いた瞬間（pointerdown）では音の出口を開けず、指を離した瞬間・クリックで開く
 // ⇒ 画面のどこを さわっても、離した瞬間に音の出口を開け直す（題の画面で一度さわった後だけ。止まっていれば鳴りだす）
