@@ -1,21 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=363';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=363';
-import { EPISODES } from '../data/episodes.js?v=363';
-import { revealAt } from '../ui/reveal.js?v=363';
-import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=363';
-import { chooseCommands } from '../battle/auto.js?v=363';
-import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=363';
-import { itemNote } from '../data/items.js?v=363';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=363';
-import { STORY_FILES } from '../data/story_assets.js?v=363';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=363';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=363';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=363';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=363';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=363';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=363';
-import { DUEL_BIG } from '../data/duel_assets.js?v=363';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=363';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=364';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=364';
+import { EPISODES } from '../data/episodes.js?v=364';
+import { revealAt } from '../ui/reveal.js?v=364';
+import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=364';
+import { chooseCommands } from '../battle/auto.js?v=364';
+import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=364';
+import { itemNote } from '../data/items.js?v=364';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=364';
+import { STORY_FILES } from '../data/story_assets.js?v=364';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=364';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=364';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=364';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=364';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=364';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=364';
+import { DUEL_BIG } from '../data/duel_assets.js?v=364';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=364';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -493,6 +493,7 @@ export class BattleScene extends Phaser.Scene {
 
   playEffect(fx) {
     const sprite = this.state.enemy.restored ? this.dragonLight : this.dragon;
+    if (fx.kind === 'treasure') { this.showTreasure(fx.id); return; } // 10/10 お宝
     if (fx.kind === 'hitEnemy') {
       sfx('hit');
       this.tweens.add({ targets: sprite, alpha: 0.2, duration: 70, yoyo: true, repeat: 2 });
@@ -1202,9 +1203,52 @@ export class BattleScene extends Phaser.Scene {
   endZako() {
     this.auto = false;
     this.updateAutoBadge();
-    const { game, lines } = afterZako(this.registry.get('game'), this.zakoId, this.state);
-    const list = lines.map((text) => ({ text, sfx: text.includes('レベル') ? 'win' : undefined }));
-    this.showMessages(list, () => this.backToField(game));
+    const { game, lines, treasure } = afterZako(this.registry.get('game'), this.zakoId, this.state);
+    // 10/10 本人「（お宝は）ゲットしたとき、画面に効果音付きで出して」＝お宝の 行で 絵を 大きく・お宝の 音
+    const list = lines.map((text) => (treasure && text.startsWith('お宝「')
+      ? { text, effect: { kind: 'treasure', id: treasure }, hold: 1800 }
+      : { text, sfx: text.includes('レベル') ? 'win' : undefined }));
+    this.showMessages(list, () => { this.treasureBox?.destroy(); this.treasureBox = null; this.backToField(game); });
+  }
+
+  // お宝の 絵（10/10）：金の 光の 輪・枠・絵が はずんで 出る・まわりで 星が またたく
+  showTreasure(id) {
+    const key = `icon_${id}`;
+    if (!this.textures.exists(key)) {
+      this.load.image(key, `assets/icons/${id}.png`);
+      this.load.once('complete', () => this.showTreasure(id));
+      this.load.start();
+      return;
+    }
+    sfx('otakara');
+    this.treasureBox?.destroy();
+    const box = this.add.container(W / 2, 236).setDepth(900);
+    this.treasureBox = box;
+    const glow = this.add.circle(0, 0, 118, 0xffd34d, 0.22);
+    const rays = this.add.graphics();
+    rays.fillStyle(0xfff2b0, 0.28);
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * Math.PI * 2;
+      const b = a + 0.12;
+      rays.fillTriangle(0, 0, Math.cos(a) * 150, Math.sin(a) * 150, Math.cos(b) * 150, Math.sin(b) * 150);
+    }
+    const frame = makeWindow(this, -78, -78, 156, 156);
+    const icon = this.add.image(0, 0, key).setScale(2.7);
+    const label = this.add.text(0, 100, 'お宝！', { fontFamily: GAME_FONT, fontSize: '24px', color: '#ffe08a', stroke: '#2a1a00', strokeThickness: 5, resolution: 3 }).setOrigin(0.5);
+    box.add([rays, glow, frame, icon, label]);
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2 + 0.3;
+      const r = 96 + (k % 2) * 22;
+      const star = this.add.text(Math.cos(a) * r, Math.sin(a) * r, '✦', { fontFamily: GAME_FONT, fontSize: `${14 + (k % 3) * 4}px`, color: '#fff6c8', resolution: 3 }).setOrigin(0.5).setAlpha(0);
+      box.add(star);
+      this.tweens.add({ targets: star, alpha: 1, scale: { from: 0.4, to: 1.2 }, duration: 380, delay: 120 + k * 90, yoyo: true, repeat: -1, repeatDelay: 300 });
+    }
+    box.setScale(0.3).setAlpha(0);
+    this.tweens.add({ targets: box, scale: 1, alpha: 1, duration: 420, ease: 'Back.Out' });
+    this.tweens.add({ targets: rays, angle: 360, duration: 9000, repeat: -1 });
+    this.tweens.add({ targets: glow, scale: 1.12, alpha: 0.32, duration: 700, yoyo: true, repeat: -1 });
+    this.tweens.add({ targets: icon, y: -6, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.InOut', delay: 420 });
+    this.cameras.main.flash(180, 255, 240, 190);
   }
 
   playLose() {
