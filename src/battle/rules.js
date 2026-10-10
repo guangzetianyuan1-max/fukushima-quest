@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=359'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=360'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -527,6 +527,15 @@ function jobSkill(state, a, sp, id, rng, log, target = null) {
     log.push({ text: 'しかし 術の力が たりない！' });
     return;
   }
+  // 10/10 洗い出し：効く 相手の いない 技は 術の力も 1戦1回の 枠も 使わない（起こす 人が いない 蘇生・もやの 無い 四股踏み＝前は 術の力だけ 減った）
+  if (sp.kind === 'revive' && !state.allies.some((x) => !x.alive)) {
+    log.push({ text: 'しかし 倒れた 仲間は いない。' });
+    return;
+  }
+  if (sp.kind === 'mistall' && !(e.mistLeft > 0)) {
+    log.push({ text: 'しかし もやは もう 晴れている。' });
+    return;
+  }
   a.mp -= sp.cost ?? 0;
   if (sp.once) a.usedOnce = [...(a.usedOnce ?? []), id];
   // 10/8 本人「4人の必殺技を出すとき、効果音やエフェクトを多用してほしい、強い必殺技ほど派手に」＝出せた 時だけ 段（jobs.js の tier）の 演出を 載せる
@@ -581,7 +590,6 @@ function jobSkill(state, a, sp, id, rng, log, target = null) {
     heal(t, Math.round(t.maxHp * sp.frac));
   } else if (k === 'revive') {
     const dead = state.allies.filter((x) => !x.alive).sort((x, y) => (y.id === target) - (x.id === target)); // 10/10 選んだ 人を 先に（もう 起きて いれば ほかの 人）
-    if (!dead.length) log.push({ text: 'しかし 倒れた 仲間は いない。' });
     for (const t of sp.all ? dead : dead.slice(0, 1)) {
       t.alive = true;
       t.hp = Math.max(1, Math.round(t.maxHp * sp.frac));
@@ -617,7 +625,6 @@ function jobSkill(state, a, sp, id, rng, log, target = null) {
   } else if (k === 'evade') {
     state.evade = sp.evadeTurns ?? 1; // 隠れ蓑（4章）は 2ターン
   } else if (k === 'mistall') {
-    if (!(e.mistLeft > 0)) log.push({ text: 'もやは もう 晴れている。' });
     clearMist(e, 99, log);
   } else if (k === 'counter') {
     state.counter = { id: a.id, mult: sp.mult, turns: sp.turns, big: !!sp.big };

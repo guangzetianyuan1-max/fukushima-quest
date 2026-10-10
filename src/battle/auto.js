@@ -3,7 +3,7 @@
 // それ以外：弱った味方（HP4割未満）がいれば HP の道具 → 術の力が足りなければ術の道具 → もやが無ければ明かされた弱点の術 → たたかう（もやを払う）。
 // 道具は1ターンに1つだけ使う。
 // 10/5 職業の技（jobs.js の JOB_SPELLS）：起こす・回復・お祓い・守り・かばう・弱らせる・封じる・毒・かわす・もや払い・殴る技・術を 場面で選ぶ
-import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK, VOICELESS } from './rules.js?v=359';
+import { MAGIC_K, BIG_UNREVEALED, MIST_BLOCK, VOICELESS } from './rules.js?v=360';
 
 const WEAK = 0.4;
 const VERY_WEAK = 0.25;
@@ -193,7 +193,7 @@ export function chooseCommands(state, data) {
     if (weakSpell && a.mp < data.spells[weakSpell].cost) {
       const mpFoods = foods(state, data, 'mp');
       if (!foodUsed && mpFoods.length > 0) {
-        cmds[a.id] = { type: 'item', itemId: mpFoods[0][0] };
+        cmds[a.id] = { type: 'item', itemId: mpFoods[0][0], target: a.id }; // 10/10 洗い出し：弱点の 術を 撃つ この人に（前は 術の力の 割合が 低い 別の人＝術の 無い 弓矢使いへ 回った）
         foodUsed = true;
         continue;
       }

@@ -37,7 +37,9 @@ export function countInstall(win = globalThis.window, doFetch = globalThis.fetch
     if (!hit) return false;
     // text/plain＝前もっての 問い合わせ（CORS の preflight）を 起こさない 送り方
     doFetch(COUNTER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(hit) })
-      .then((r) => { if (r.ok) win.localStorage.setItem(DONE, '1'); })
+      // 10/10 洗い出し：同じ 回線から 1日 5台を 超えると サーバーは {limited:true} を 返す＝数えて いないので 印を 立てず 次に 開いた 時に もう一度
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j?.ok && !j.limited) win.localStorage.setItem(DONE, '1'); })
       .catch(() => {});
     return true;
   } catch {
