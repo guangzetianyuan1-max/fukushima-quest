@@ -1,10 +1,10 @@
 // 取り忘れた 判子（10/9 本人「相馬の殿様クエスト終わらずに県北に入れた。この画面で忘れたスタンプをアナウンスして欲しい」）
 // 次の エリアの 地図へ 入った 時に、それより 前の エリアで まだ 押して いない 判子（温泉・グルメ・お城）を しおりが 言う
 // 画面と 切り離した 計算だけ（FieldScene が 地図の口を 通った 時に 呼ぶ）
-import { mapRows } from './game.js?v=361';
-import { TOWN_OF, TOWNS } from './towns.js?v=361';
-import { ONSEN_RALLY, GOURMET_RALLY, CASTLE_RALLY, hasStamp } from './rally.js?v=361';
-import { ITEMS } from '../data/items.js?v=361';
+import { mapRows } from './game.js?v=362';
+import { TOWN_OF, TOWNS } from './towns.js?v=362';
+import { ONSEN_RALLY, GOURMET_RALLY, CASTLE_RALLY, hasStamp } from './rally.js?v=362';
+import { ITEMS } from '../data/items.js?v=362';
 
 // エリア＝歩く 地図（旅の 順）
 export const AREA_ORDER = ['field', 'soma', 'kenpoku', 'kenchu', 'aizu', 'minami'];

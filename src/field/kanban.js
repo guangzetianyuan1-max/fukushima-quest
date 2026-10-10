@@ -2,12 +2,12 @@
 // 絵＝assets/tiles/o_kanban_<種類>.png（art_src/prep_kanban.py・板は無地）。名前は地図の上に毛筆の字で重ね、看板に向いて「はなす」と短い説明
 // 置き場＝目印（町・地図の口の字、または座標）の隣の草地（.）を、左→右→左下→右下→下→左上→右上→上 の順に探す
 // 説明は確かめた事だけ（10/4 ネットで確かめた：中村城跡に相馬中村神社／小高城は相馬氏の約280年の居城・1611年に中村へ／磐城平城＝平藩／鵜ノ尾埼灯台＝松川浦の岬／霞ヶ城公園＝石垣・さくら名所100選）。三春の滝桜は 3章の地図ができたら足す
-import { IWAKI_ROWS } from './iwaki_map.js?v=361';
-import { SOMA_ROWS } from './soma_map.js?v=361';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=361';
-import { KENCHU_ROWS } from './kenchu_map.js?v=361';
-import { AIZU_ROWS } from './aizu_map.js?v=361';
-import { MINAMI_ROWS } from './minami_map.js?v=361';
+import { IWAKI_ROWS } from './iwaki_map.js?v=362';
+import { SOMA_ROWS } from './soma_map.js?v=362';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=362';
+import { KENCHU_ROWS } from './kenchu_map.js?v=362';
+import { AIZU_ROWS } from './aizu_map.js?v=362';
+import { MINAMI_ROWS } from './minami_map.js?v=362';
 
 const ROWS = { field: IWAKI_ROWS, soma: SOMA_ROWS, kenpoku: KENPOKU_ROWS, kenchu: KENCHU_ROWS, aizu: AIZU_ROWS, minami: MINAMI_ROWS };
 export const KANBAN_KINDS = ['shiro', 'meisho', 'hana', 'michi'];
