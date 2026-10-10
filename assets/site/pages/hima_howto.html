@@ -23,7 +23,8 @@
 .hb table{width:100%;border-collapse:collapse}
 .hb td,.hb th{border-bottom:1px solid #ddd;padding:.4em .5em;text-align:left;vertical-align:top}
 .hb .short{max-width:340px;margin:1.2em auto}
-.hb .short iframe{display:block;width:100%;aspect-ratio:9/16;height:auto;border:0;border-radius:14px;background:#14122a}
+.hb .short .video-container,.hb .short .video{position:static!important;padding:0!important;height:auto!important;max-width:none!important;margin:0!important}  /* Cocoon が 埋め込みを 横長（16:9）の 枠で 包む＝縦長の ショートが 切れた（10/10）*/
+.hb .short iframe{position:static!important;display:block;width:100%!important;aspect-ratio:9/16;height:auto!important;border:0;border-radius:14px;background:#14122a}
 .hb .cnt{display:flex;gap:12px;justify-content:center;margin:1em 0}
 .hb .cnt div{flex:1;max-width:220px;background:#14122a;color:#f3e6c0;border-radius:12px;padding:.6em .4em;text-align:center}
 .hb .cnt b{display:block;font-size:2em;color:#ffe08a;line-height:1.2}
