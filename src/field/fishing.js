@@ -3,8 +3,8 @@
 // 釣りの手順（画面は FieldScene の fishing*）：①うきが沈んで「！」が出たら さわる（早すぎ・遅すぎは逃げる）
 //                                          ②左右に動く針が緑の帯に入ったら さわる（帯の幅と針の速さは魚しだい）
 // 画面と切り離す＝Node で試験する。ここの関数は game を書き換えずに新しい game を返す
-import { EQUIP, BAG_CAP, canWear } from '../data/equip.js?v=364';
-import { itemRoom } from '../data/items.js?v=364';
+import { EQUIP, BAG_CAP, canWear } from '../data/equip.js?v=365';
+import { itemRoom } from '../data/items.js?v=365';
 
 export const ROD_PRICE = 5;
 // 「！」が出てから さわれる長さ（ミリ秒）と、「！」が出るまでの待ち
@@ -75,7 +75,7 @@ export function exchangePrize(game, p, key, who = null) {
   let g = { ...game, [key]: game[key] - p.pts };
   if (p.kind === 'item') {
     if (itemRoom(game, p.id) < p.n) return { ok: false, reason: 'full', game }; // 10/10 持てる 数の 上限
-    g = { ...g, items: { ...g.items, [p.id]: (g.items[p.id] ?? 0) + p.n } };
+    g = { ...g, items: { ...g.items, [p.id]: (g.items[p.id] ?? 0) + p.n }, gift: { ...(g.gift ?? {}), [p.id]: (g.gift?.[p.id] ?? 0) + p.n } }; // 10/10 景品の 分＝店で 売れない
     return { ok: true, game: g };
   }
   const e = EQUIP[p.id];

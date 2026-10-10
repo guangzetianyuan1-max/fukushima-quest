@@ -1,21 +1,21 @@
-import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=364';
-import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=364';
-import { EPISODES } from '../data/episodes.js?v=364';
-import { revealAt } from '../ui/reveal.js?v=364';
-import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=364';
-import { chooseCommands } from '../battle/auto.js?v=364';
-import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=364';
-import { itemNote } from '../data/items.js?v=364';
-import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=364';
-import { STORY_FILES } from '../data/story_assets.js?v=364';
-import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=364';
-import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=364';
-import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=364';
-import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=364';
-import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=364';
-import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=364';
-import { DUEL_BIG } from '../data/duel_assets.js?v=364';
-import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=364';
+import { GAME_FONT, EYE_FONT } from '../ui/fonts.js?v=365';
+import { AILMENTS, badgesOf, hpColor, partyStateLines } from '../field/ailments.js?v=365';
+import { EPISODES } from '../data/episodes.js?v=365';
+import { revealAt } from '../ui/reveal.js?v=365';
+import { createBattle, resolveTurn, makeRng, sweetBlocked } from '../battle/rules.js?v=365';
+import { chooseCommands } from '../battle/auto.js?v=365';
+import { SKILLNAME_IDS, SKILLNAME_PAD, SKILLNAME_V } from '../data/skillname_assets.js?v=365';
+import { itemNote } from '../data/items.js?v=365';
+import { unlock, isUnlocked, sfx, startBgm, stopBgm, toggleMute, isMuted, playVoice, stopVoice, voiceLevel } from '../audio/chip.js?v=365';
+import { STORY_FILES } from '../data/story_assets.js?v=365';
+import { TITLE_HOLD, TITLE_NO_VOICE } from './_title_consts.js?v=365';
+import { CUTIN_FILES, CUTIN_V } from '../data/cutin_assets.js?v=365';
+import { drawScroll, fitScroll, smooth, BRUSH_FONT } from '../ui/scroll.js?v=365';
+import { preloadKit, makeWindow, makeButton, paginate, fitSpeaker } from '../ui/kit.js?v=365';
+import { FRAME_W, FRAME_H, frameOf } from '../field/sprites.js?v=365';
+import { battleData, afterWin, afterRematch, afterLose, afterForcedLose, zakoData, afterZako, BOSS_MON, duelData, afterDuel, bossPay } from '../field/game.js?v=365';
+import { DUEL_BIG } from '../data/duel_assets.js?v=365';
+import { jobFxPlan, JOBFX_COLORS, JOBFX_LABEL, SKILLNAME_H } from '../battle/jobfx.js?v=365';
 
 // 1つの戦いの画面を、話ごとのデータ（src/data/<話>.js・並びは episodes.js）で使い回す
 // 絵は Gemini で描いて art_src/prep_art.py で整えた物（敵も背景も2倍で見せる）。データの art に置き場と光の色
@@ -149,6 +149,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   create() {
+    this.zakoEnded = false; // 10/10 お宝の 絵（場面は 使い回される）
+    this.treasureBox = null;
     this.makeLookArt();
     // ⚠場面は戦うたびに作り直す＝前の戦いで消えた部品が this に残っている。作る前に触ると止まる（10/2 道中の敵が出ると固まった＝所持金の字）
     this.monBadge = null;
@@ -853,7 +855,7 @@ export class BattleScene extends Phaser.Scene {
     }
     const a = allies[this.inputIndex];
     // 気絶している人には聞かない（その番は休む・本人 10/4 すごいおなら）
-    if (a.stunned > 0) {
+    if (a.stunned > 0 || a.charged) { // 10/10 洗い出し：満月の一矢を 構えた 次の 番も 聞いて いた（選んでも ひとりでに 放つので 捨てられた）
       this.pending[a.id] = { type: 'attack' };
       this.inputIndex += 1;
       this.askNextAlly();
@@ -1208,11 +1210,19 @@ export class BattleScene extends Phaser.Scene {
     const list = lines.map((text) => (treasure && text.startsWith('お宝「')
       ? { text, effect: { kind: 'treasure', id: treasure }, hold: 1800 }
       : { text, sfx: text.includes('レベル') ? 'win' : undefined }));
-    this.showMessages(list, () => { this.treasureBox?.destroy(); this.treasureBox = null; this.backToField(game); });
+    this.showMessages(list, () => { this.zakoEnded = true; this.clearTreasure(); this.backToField(game); });
   }
 
   // お宝の 絵（10/10）：金の 光の 輪・枠・絵が はずんで 出る・まわりで 星が またたく
+  clearTreasure() {
+    if (!this.treasureBox) return;
+    this.tweens.killTweensOf([this.treasureBox, ...this.treasureBox.list]); // 回り続ける 光の 輪・星を 止める（10/10 洗い出し）
+    this.treasureBox.destroy();
+    this.treasureBox = null;
+  }
+
   showTreasure(id) {
+    if (this.zakoEnded) return; // 絵の 読み込みを 待つ 間に 戦いが 終わったら 出さない（10/10 洗い出し）
     const key = `icon_${id}`;
     if (!this.textures.exists(key)) {
       this.load.image(key, `assets/icons/${id}.png`);
@@ -1221,7 +1231,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
     sfx('otakara');
-    this.treasureBox?.destroy();
+    this.clearTreasure();
     const box = this.add.container(W / 2, 236).setDepth(900);
     this.treasureBox = box;
     const glow = this.add.circle(0, 0, 118, 0xffd34d, 0.22);

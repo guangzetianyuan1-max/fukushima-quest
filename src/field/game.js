@@ -1,24 +1,24 @@
 // 旅の状態（居場所・文・持ち物・仲間の HP・元に戻したボス・記録）。画面と切り離す＝Node で試験する
 // ここの関数は game を書き換えずに、新しい game を返す
-import { IWAKI_ROWS } from './iwaki_map.js?v=364';
-import { kanbanAt } from './kanban.js?v=364';
-import { SOMA_ROWS } from './soma_map.js?v=364';
-import { KENPOKU_ROWS } from './kenpoku_map.js?v=364';
-import { KENCHU_ROWS } from './kenchu_map.js?v=364';
-import { AIZU_ROWS } from './aizu_map.js?v=364';
-import { MINAMI_ROWS } from './minami_map.js?v=364';
-import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=364';
-import { TOWNS, townEntry, roofCells } from './towns.js?v=364';
-import { withGates } from './castle.js?v=364';
-import { ITEMS, PRICE, OLD_ITEM, itemRoom } from '../data/items.js?v=364';
-import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=364';
-import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=364';
-import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=364';
-import { EQUIP, BAG_CAP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=364';
-import { becomeKunoichi } from './kagewatari.js?v=364';
-import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=364';
-import { RELIC_OF_BOSS } from './rally.js?v=364'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
-import { QUEST_ART } from '../data/quest_assets.js?v=364'; // 師匠の 試しの 絵（10/8）
+import { IWAKI_ROWS } from './iwaki_map.js?v=365';
+import { kanbanAt } from './kanban.js?v=365';
+import { SOMA_ROWS } from './soma_map.js?v=365';
+import { KENPOKU_ROWS } from './kenpoku_map.js?v=365';
+import { KENCHU_ROWS } from './kenchu_map.js?v=365';
+import { AIZU_ROWS } from './aizu_map.js?v=365';
+import { MINAMI_ROWS } from './minami_map.js?v=365';
+import { FIELD_TERRAIN, TOWN_TERRAIN } from './tiles.js?v=365';
+import { TOWNS, TOWN_OF, townEntry, roofCells } from './towns.js?v=365';
+import { withGates } from './castle.js?v=365';
+import { ITEMS, PRICE, OLD_ITEM, itemRoom } from '../data/items.js?v=365';
+import { ZAKO, ZAKO_TELL } from '../data/zako.js?v=365';
+import { statsAt, levelFor, EXP_TO, PARTY_IDS, ALL_IDS, MAX_PARTY, membersOf, statsWithGear, memberStats } from '../battle/levels.js?v=365';
+import { COMPANIONS, COMPANION_SPELLS, JOIN_AFTER, LEARN_AFTER_LOSS, KUNOICHI } from '../data/companions.js?v=365';
+import { EQUIP, BAG_CAP, canWear, startEquip, migrateEquip } from '../data/equip.js?v=365';
+import { becomeKunoichi } from './kagewatari.js?v=365';
+import { JOBS, JOB_IDS, JOB_SPELLS, QUESTS, jobOf, jobSpellsOf, chapterSkillsDone } from '../data/jobs.js?v=365';
+import { RELIC_OF_BOSS } from './rally.js?v=365'; // 終章の 道具＝その 相手に 勝つと 手に 入る（10/8）
+import { QUEST_ART } from '../data/quest_assets.js?v=365'; // 師匠の 試しの 絵（10/8）
 
 // v2＝職業の旅（10/5 本人「前の記録は使えない＝はじめから」）。v1 の記録は読まない
 export const SAVE_KEY = 'fq-save-v2';
@@ -251,10 +251,24 @@ export function buy(game, itemId) {
 export const SELL_RATE = 0.5;
 export const itemSellPrice = (id) => Math.floor((PRICE[id] ?? 0) * SELL_RATE);
 export const equipSellPrice = (id) => Math.floor((EQUIP[id]?.price ?? 0) * SELL_RATE);
+// 10/10 洗い出し：景品で もらった 道具は 売れない（本人の 選び）＝景品の 分（game.gift）を 数え、売れるのは 残りだけ
+export const giftOf = (game, id) => Math.min(game.gift?.[id] ?? 0, game.items?.[id] ?? 0);
+export const sellableCount = (game, id) => Math.max(0, (game.items?.[id] ?? 0) - giftOf(game, id));
+// 道具が 減ったら 景品の 分から 先に 減らす（戦いで 使った・盗まれた・外で 使った）
+export function withItems(game, items) {
+  const gift = { ...(game.gift ?? {}) };
+  for (const id of Object.keys(gift)) {
+    const used = Math.max(0, (game.items?.[id] ?? 0) - (items[id] ?? 0));
+    gift[id] = Math.max(0, Math.min(gift[id] - used, items[id] ?? 0));
+    if (!gift[id]) delete gift[id];
+  }
+  return { ...game, items, gift };
+}
 export function sellItem(game, id) {
   const price = itemSellPrice(id);
   if (!((game.items?.[id] ?? 0) > 0)) return { ok: false, reason: 'none', game };
   if (price <= 0) return { ok: false, reason: 'price', game };
+  if (sellableCount(game, id) < 1) return { ok: false, reason: 'gift', game };
   return { ok: true, price, game: { ...game, mon: game.mon + price, items: { ...game.items, [id]: game.items[id] - 1 } } };
 }
 export function sellEquip(game, who, slot) {
@@ -425,8 +439,20 @@ export function afterForcedLose(game, enemyId) {
   g = { ...g, party: fullParty(g) };
   const town = le?.town;
   if (!town) return { ...g, ...afterLose({ ...g, mon: g.mon * 2 }), mon: g.mon };
-  // 町の入口に立つ（町を出ると、ボスの手前の 地図の場所へ）
-  return { ...g, pos: { map: town, ...townEntry(town), dir: 'up' }, justEntered: null };
+  // 町の入口に立つ（町を出ると、その 町の 地図の 場所へ）
+  // 10/10 洗い出し：fieldMap／fieldPos を 置いて いなかった＝二本松を 出ると、鬼婆の 前に 最後に 入った 町（相馬など）の 前へ 飛ばされた
+  const c = townCell(town);
+  return { ...g, pos: { map: town, ...townEntry(town), dir: 'up' }, ...(c ? { fieldMap: c.map, fieldPos: { x: c.x, y: c.y } } : {}), justEntered: null };
+}
+// 町の 字が ある 地図と マス
+export function townCell(town) {
+  for (const [map, rows] of Object.entries(FIELDS)) {
+    for (let y = 0; y < rows.length; y++) {
+      const x = [...rows[y]].findIndex((ch) => TOWN_OF[ch] === town);
+      if (x >= 0) return { map, x, y };
+    }
+  }
+  return null;
 }
 
 // 影渡りに受かった（10/4 夜）：くノ一になり、しおりの HP と術の力を くノ一の満タンへ（しおりの術の力は 0 だった）
@@ -479,7 +505,7 @@ function settle(game, state) {
     ? { hp: 0, mp: a.mp, dead: true, curse: false, ghost: false }
     : { hp: a.hp, mp: a.mp, curse: !!a.curse, ghost: !!a.ghost }]));
   return {
-    ...game, party: { ...game.party, ...party }, items: { ...state.items },
+    ...withItems(game, { ...state.items }), party: { ...game.party, ...party },
     stolen: [...(game.stolen ?? []), ...(state.stolen ?? [])],
     mon: Math.max(0, game.mon - (state.monLost ?? 0)),
     steps: 0,
@@ -501,7 +527,7 @@ export function afterRematch(game, state) {
     const p = game.party?.[a.id];
     if (p && !p.dead && a.alive !== false && a.hp > 0) party[a.id] = { ...p, hp: a.hp, mp: a.mp };
   }
-  return { ...game, party, items: { ...state.items }, justCleared: null };
+  return { ...withItems(game, { ...state.items }), party, justCleared: null };
 }
 
 // 元に戻したボスによっては、昔話の味方が仲間に加わる（JOIN_AFTER＝賢沼のあと猟師・蛇岸淵のあと閼伽井嶽の僧）
@@ -711,7 +737,7 @@ export function useItem(game, id) {
   if (it.kind === 'hpall') {
     if (!(game.items[id] > 0)) return { ok: false, game, text: `${it.name}は もう ない。` };
     const party = Object.fromEntries(Object.entries(game.party).map(([w, p]) => [w, p.dead ? p : { ...p, hp: Math.min(maxOf(game, w).hp, p.hp + it.amount) }]));
-    return { ok: true, game: { ...game, items: { ...game.items, [id]: game.items[id] - 1 }, party }, text: `${it.name}を みんなで 飲んだ！ HPが もどった！` };
+    return { ok: true, game: { ...withItems(game, { ...game.items, [id]: game.items[id] - 1 }), party }, text: `${it.name}を みんなで 飲んだ！ HPが もどった！` };
   }
   if (!(game.items[id] > 0)) return { ok: false, game, text: `${it.name}は もう ない。` };
   const key = it.kind === 'mp' ? 'mp' : 'hp';
@@ -724,7 +750,7 @@ export function useItem(game, id) {
   const after = Math.min(mx(who), before + it.amount);
   return {
     ok: true,
-    game: { ...game, items: { ...game.items, [id]: game.items[id] - 1 }, party: { ...game.party, [who]: { ...game.party[who], [key]: after } } },
+    game: { ...withItems(game, { ...game.items, [id]: game.items[id] - 1 }), party: { ...game.party, [who]: { ...game.party[who], [key]: after } } },
     text: `${nameOf(game, who)}に ${it.name}を 使った！ ${key === 'mp' ? '術の力' : 'HP'}が ${after - before} もどった！`,
   };
 }
