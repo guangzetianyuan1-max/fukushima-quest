@@ -1,6 +1,6 @@
 // あなたの 男・女（10/7 本人「初めの職業をえらぶで、あなたは男か女を選択できる。しおりは女、仲間①仲間②は選んだ職業(イラスト)より性別が決まる」）
 // 画面と 切り離した 計算だけ：あなたの 歩く絵と 顔の 名前を 決める
-import { JOBS, JOB_IDS } from '../data/jobs.js?v=365';
+import { JOBS, JOB_IDS } from '../data/jobs.js?v=366';
 
 export const HERO_SEXES = ['m', 'f'];
 export const SEX_NAME = { m: '男', f: '女' };

@@ -1,5 +1,5 @@
 // 戦いの計算。画面とは切り離す。log の sfx は鳴らす効果音の名前（src/audio/chip.js）。state は毎回複製して返す（元を書き換えない）。
-import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=365'; // 4人の 技の 演出の 段（10/8）
+import { jobFxPlan, JOBFX_LOOK } from './jobfx.js?v=366'; // 4人の 技の 演出の 段（10/8）
 
 export function makeRng(seed) {
   let a = seed >>> 0;
@@ -338,6 +338,7 @@ function allyAct(state, a, cmd, data, rng, log) {
     if (sp.kind === 'daze') {
       e.dazed = sp.turns;
       e.dazeText = sp.missText;
+      markSet(state, 'dazed');
       log.push({ text: sp.text });
       log.push({ text: `${e.name}${sp.hitText}` });
       return;
@@ -511,6 +512,17 @@ function clearMist(e, n, log) {
   });
 }
 
+// 10/10 本人「説明どおりの数だけ効くように」＝○ターン 効く 技は ターンの 終わりに 1 減らすが、
+//   ・敵の 行動に 効く 物（dazed・guard・cover・counter・evade・weak＝敵の 攻めを 弱める）は、その 番に 敵が もう 動いた 後で 置いたら その 番を 数えない
+//   ・味方の 攻めに 効く 物（buff）は、置いた 後に 動く 味方が その 番に いなければ その 番を 数えない
+// （前は 遅い 術者が かけると 1ターン 短く 効いた＝ザルカブリに 僧の 真言 2ターンが 1回だけ）
+const FOE_TIMED = ['dazed', 'guard', 'cover', 'counter', 'evade', 'weak'];
+const ALLY_TIMED = ['buff'];
+function markSet(state, key) {
+  if (!state._seq) return; // 1手ずつ 確かめる 試験など resolveTurn の 外
+  state._seq.set[key] = state._seq.n;
+}
+
 function jobSkill(state, a, sp, id, rng, log, target = null) {
   const e = state.enemy;
   const head = { text: `${a.name}は ${sp.verb ?? sp.name + 'を 使った'}！`, sfx: sp.sfx };
@@ -612,22 +624,28 @@ function jobSkill(state, a, sp, id, rng, log, target = null) {
     if (sp.frac) for (const t of living) heal(t, Math.round(t.maxHp * sp.frac * healScale(a)));
   } else if (k === 'buff') {
     state.buff = { mult: sp.mult, agi: sp.agi ?? 0, turns: sp.turns };
+    markSet(state, 'buff');
   } else if (k === 'guard') {
     state.guard = { mult: sp.mult, turns: sp.turns };
+    markSet(state, 'guard');
   } else if (k === 'cover') {
     state.cover = { id: a.id, turns: sp.turns };
+    markSet(state, 'cover');
   } else if (k === 'debuff') {
     e.weak = { mult: sp.mult, turns: sp.turns };
+    markSet(state, 'weak');
   } else if (k === 'seal') {
     e.sealed = 1;
   } else if (k === 'poison') {
     e.poison = { dmg: Math.max(1, Math.round(e.maxHp * sp.frac * (closed ? BIG_UNREVEALED : 1))), turns: sp.turns };
   } else if (k === 'evade') {
     state.evade = sp.evadeTurns ?? 1; // 隠れ蓑（4章）は 2ターン
+    markSet(state, 'evade');
   } else if (k === 'mistall') {
     clearMist(e, 99, log);
   } else if (k === 'counter') {
     state.counter = { id: a.id, mult: sp.mult, turns: sp.turns, big: !!sp.big };
+    markSet(state, 'counter');
   } else if (k === 'summon') {
     state.summon = { name: sp.beast, power: (a.int ?? a.atk) * sp.mult * MAGIC_K, turns: sp.turns, big: !!sp.big };
   } else if (k === 'decoy') {
@@ -682,11 +700,13 @@ function addOns(state, a, sp, log) {
   if (sp.addDaze && e.hp > 0) {
     e.dazed = Math.max(e.dazed ?? 0, sp.addDaze);
     e.dazeText = sp.missText;
+    markSet(state, 'dazed');
     log.push({ text: `${e.name}は まどわされた！ しばらく 攻撃が 当たりにくい。` });
   }
-  if (sp.addGuard) state.guard = { ...sp.addGuard };
+  if (sp.addGuard) { state.guard = { ...sp.addGuard }; markSet(state, 'guard'); }
   if (sp.addWeak) {
     e.weak = { ...sp.addWeak };
+    markSet(state, 'weak');
     log.push({ text: `${e.name}の 力が 弱まった！` });
   }
   if (sp.addMp) {
@@ -941,13 +961,17 @@ export function resolveTurn(state0, commands, data, rng) {
     ...state.allies.filter((a) => a.alive).map((a) => ({ side: 'ally', id: a.id, agi: a.agi + (state.buff?.turns > 0 ? state.buff.agi ?? 0 : 0) })),
     { side: 'enemy', id: state.enemy.id, agi: state.enemy.agi },
   ].sort((x, y) => y.agi - x.agi);
+  state._seq = { n: 0, enemyAt: -1, lastAllyAt: -1, set: {} };
   for (const actor of actors) {
     if (state.over) break;
+    state._seq.n += 1;
     if (actor.side === 'ally') {
       const a = state.allies.find((x) => x.id === actor.id);
       if (!a.alive) continue;
+      state._seq.lastAllyAt = state._seq.n;
       allyAct(state, a, commands[a.id] ?? { type: 'attack' }, data, rng, log);
     } else {
+      state._seq.enemyAt = state._seq.n;
       enemyAct(state, rng, log);
     }
     state.over = state.over || isOver(state); // 逃げた・盗んで逃げた（'fled'）は消さない
@@ -1003,13 +1027,22 @@ export function resolveTurn(state0, commands, data, rng) {
     a.mp = Math.min(a.maxMp, a.mp + a.mpRegen);
     log.push({ text: `${a.name}の 術の 力が ${a.mp - before} もどった。`, effect: { kind: 'mp', target: a.id, mp: a.mp } });
   }
-  for (const key of ['buff', 'guard', 'cover', 'counter']) if (state[key]?.turns > 0) state[key].turns -= 1;
-  if (state.enemy.weak?.turns > 0) state.enemy.weak.turns -= 1;
-  if (state.evade > 0) state.evade -= 1;
+  // その 番に まだ 効いて いない 物は 数えない（上の FOE_TIMED・ALLY_TIMED）
+  const sq = state._seq;
+  const fresh = (key) => {
+    const at = sq.set[key];
+    if (at === undefined) return false;
+    if (FOE_TIMED.includes(key)) return sq.enemyAt < 0 || sq.enemyAt < at; // 敵が 動かなかった か、置く 前に 動いた
+    return sq.lastAllyAt <= at; // 置いた 後に 動いた 味方が いない
+  };
+  for (const key of ['buff', 'guard', 'cover', 'counter']) if (state[key]?.turns > 0 && !fresh(key)) state[key].turns -= 1;
+  if (state.enemy.weak?.turns > 0 && !fresh('weak')) state.enemy.weak.turns -= 1;
+  if (state.evade > 0 && !fresh('evade')) state.evade -= 1;
   if (state.over === 'win') state.enemy.restored = true;
   if (state.silence > 0) state.silence -= 1;
   if (state.blind > 0) state.blind -= 1;
-  if (state.enemy.dazed > 0) state.enemy.dazed -= 1;
+  if (state.enemy.dazed > 0 && !fresh('dazed')) state.enemy.dazed -= 1;
+  delete state._seq;
   state.turn += 1;
   return { state, log };
 }

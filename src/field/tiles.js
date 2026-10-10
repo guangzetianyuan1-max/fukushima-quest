@@ -1,6 +1,6 @@
 // 歩く地図のマス目の絵（16×16ドット）を、プログラムで描く（本人 10/1「Claudeがドットで描く」）
 // 画面では2倍（1マス32ドット）。絵は1本の横長の帯（tileset）にして Phaser の tilemap に渡す
-import { makeRng } from '../battle/rules.js?v=365';
+import { makeRng } from '../battle/rules.js?v=366';
 
 export const TILE = 16;
 
