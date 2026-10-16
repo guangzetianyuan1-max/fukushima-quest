@@ -30,18 +30,32 @@
 .hb .cnt b{display:block;font-size:2em;color:#ffe08a;line-height:1.2}
 .hb .cnt small{font-size:.85em;color:#c9b88a}
 .hb .box{background:#f7f3ea;border-radius:10px;padding:12px 16px;margin:1em 0}
+.hb .game{display:grid;grid-template-columns:minmax(100px,30%) 1fr;align-items:center;background:#14122a;color:#f3e6c0;border-radius:14px;overflow:hidden;margin:1em 0 2em}
+.hb .game img{display:block;width:100%;height:auto;image-rendering:pixelated}
+.hb .game .play,.hb .game .sub{margin-left:0;margin-right:0}
+.hb .game .gbody{padding:14px 18px 18px}
+.hb .game h3{margin:.2em 0 .4em;color:#ffe08a;border:none!important;background:none!important;padding:0!important}
+.hb .games{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:1em 0 2em}
+.hb .games .game{margin:0;display:flex;flex-direction:column}
+.hb .games .game img{aspect-ratio:3/4;object-fit:contain;background:#0d0b1e}
+.hb .games .gbody{flex:1;display:flex;flex-direction:column}
+.hb .games .gbody p{flex:1}
+.hb .home{background:#f7f3ea;border-radius:10px;padding:10px 14px;margin:1em 0;font-size:.92em;color:#444}
+.hb .qr .home{background:none;color:#c9b88a;padding:0;margin:.8em 0 0;text-align:left}
 </style><div class="hb">
 <p class="lead">「福島昔話クエストRPG」の遊び方をまとめました。はじめての方は、上から順に読んでください。</p>
 
-<h2>1. ゲームを入れる</h2>
-<p>スマホでQRコードを読み、開いたページを ホーム画面に追加すると、アイコンからアプリのように遊べます。パソコンはブラウザで そのまま遊べます。</p>
+<h2>1. ゲームを開く</h2>
+<p>ボタンを押すか、スマホでQRコードを読むと、ブラウザでそのまま遊べます。ダウンロードはいりません。パソコンもブラウザで そのまま遊べます。よく遊ぶ方は、記録を守るために「ホーム画面に追加」しておくのがおすすめです（下の札の手順）。</p>
 <div class="qrs">
 <div class="qr"><h3>iPhone の方</h3><a class="tap" href="https://guangzetianyuan1-max.github.io/fukushima-quest/" target="_blank" rel="noopener">▶ この iPhone で開く</a>
 <p class="small">パソコンで見ている方は、iPhone のカメラでこのQRコードを読んでください</p><img src="https://guangzetianyuan1-max.github.io/fukushima-quest/assets/site/qr_iphone.png" alt="iPhone用 福島昔話クエストRPG のQRコード">
-<ol><li>上のボタンを押す（またはQRコードを読む）と、ゲームのページが開きます</li><li>LINE などのアプリの中で開いたときは、右下や右上のメニューから「Safari で開く」を選びます</li><li>Safari の下の「共有」ボタン（□に↑）を押します</li><li>「ホーム画面に追加」を押すと、ホーム画面のアイコンからアプリのように遊べます</li></ol></div>
+<ol><li>上のボタンを押す（またはQRコードを読む）と、ゲームが開いて そのまま遊べます。ダウンロードはいりません</li><li>LINE などのアプリの中で開いたときは、右下や右上のメニューから「Safari で開く」を選びます</li></ol>
+<p class="home">よく遊ぶ方へ（しなくても遊べます）：Safari の下の「共有」（□に↑）→「ホーム画面に追加」。iPhone は しばらく開かないと遊んだ記録を消すことがあるので、ホーム画面に追加しておくと記録が消えにくくなります。</p></div>
 <div class="qr"><h3>Android の方</h3><a class="tap" href="https://guangzetianyuan1-max.github.io/fukushima-quest/" target="_blank" rel="noopener">▶ この スマホで開く</a>
 <p class="small">パソコンで見ている方は、スマホのカメラ（または Google レンズ）でこのQRコードを読んでください</p><img src="https://guangzetianyuan1-max.github.io/fukushima-quest/assets/site/qr_android.png" alt="Android用 福島昔話クエストRPG のQRコード">
-<ol><li>上のボタンを押す（またはQRコードを読む）と、ゲームのページが開きます</li><li>LINE などのアプリの中で開いたときは、メニューから「Chrome で開く」を選びます</li><li>「アプリをインストール」が出たら押します（出ないときは 右上の︙から「ホーム画面に追加」）</li><li>ホーム画面のアイコンから、アプリのように遊べます</li></ol></div>
+<ol><li>上のボタンを押す（またはQRコードを読む）と、ゲームが開いて そのまま遊べます。ダウンロードはいりません</li><li>LINE などのアプリの中で開いたときは、メニューから「Chrome で開く」を選びます</li></ol>
+<p class="home">よく遊ぶ方へ（しなくても遊べます）：右上の︙ →「ホーム画面に追加」で、次からアイコンですぐ開けます。</p></div>
 </div>
 <p>はじめて開くと利用規約が出ます。読んで同意すると、題の画面になります。「はじめから」で新しい旅、「つづきから」で記録した所から遊べます。記録は 記憶①〜③の3つまで残せます。</p>
 
@@ -100,6 +114,6 @@
 </ul>
 <p class="note">記録は、その端末のブラウザの中に残ります。ブラウザの履歴やデータを消すと、記録も消えるので気をつけてください。</p>
 
-<a class="play" href="https://guangzetianyuan1-max.github.io/fukushima-quest/" target="_blank" rel="noopener">▶ 福島昔話クエストRPG で遊ぶ（無料）</a>
+<a class="play" href="https://guangzetianyuan1-max.github.io/fukushima-quest/" target="_blank" rel="noopener">▶ 福島昔話クエストRPG で遊ぶ（無料・ダウンロード不要）</a>
 <script src="https://guangzetianyuan1-max.github.io/fukushima-quest/assets/site/hima_counter.js?v=1"></script>
 </div>
