@@ -19,6 +19,7 @@
   document.addEventListener('click', function (e) {
     var el = e.target && e.target.closest ? e.target.closest('a') : null;
     if (!el) return;
+    if (el.href.indexOf('/proto/') !== -1) return; // 10/18 試作（sumo-game/proto/ninja/ など）は数えない＝相撲の URL と頭が同じで相撲に数えられてしまう
     var g = null;
     for (var i = 0; i < GAMES.length; i++) if (el.href.indexOf(GAMES[i].url) === 0) g = GAMES[i];
     if (!g) return;
